@@ -5,6 +5,8 @@ let enemies = [];
 let shots = [];
 let canvasWidth = 600;
 let canvasHeight = 600;
+let counter = 0;
+let spawn = 300;
 
 
 startBtn.addEventListener("click", () => {
@@ -70,6 +72,46 @@ class Enemy extends Character {
         super (x , y, xSpeed, ySpeed, maxSpeed, width, height, health, maxHealth)
         this.damage = damage;
         this.expGiven = expGiven;
+    }
+
+    follow(main) {
+        let xDirection = 0 
+        let yDirection = 0
+        let xModule = 0
+        let yModule = 0
+
+        if (this.x > main.x){
+            xDirection = -1
+        } 
+        else if (this.x < main.x) {
+            xDirection = 1
+        }
+        else xDirection = 0
+
+        if (this.y > main.y){
+            yDirection = -1
+        } 
+        else if (this.y < main.y) {
+            yDirection = 1
+        }
+        else yDirection = 0
+
+        xModule = Math.floor(Math.random()*(this.maxSpeed+1))
+        yModule = Math.floor((this.maxSpeed**2-xModule**2)**(1/2))
+
+        this.xSpeed = xDirection*xModule;
+        this.ySpeed = yDirection*yModule;
+
+        if (xDirection === 0) {
+            this.xSpeed = 0
+            this.ySpeed = this.maxSpeed*yDirection;
+        }
+
+        if (yDirection === 0) {
+            this.ySpeed = 0
+            this.xSpeed = this.maxSpeed*xDirection;
+        }
+
     }
 
 } 
@@ -176,6 +218,7 @@ function updateShots() {
     deleteOffScreen(shots);
 }
 
+
 function deleteOffScreen(arr) {
     
     arr = arr.filter(pos => {
@@ -183,10 +226,47 @@ function deleteOffScreen(arr) {
     })
 }
 
+function generateEnemies() {
+    let randomDirection = Math.floor(Math.random()*4) //0 top, 1 bottom, 2 right, 3 left
+    if (counter%spawn === 0) {
+        console.log(randomDirection)
+        switch(randomDirection) {
+            case(0):
+                enemies.push(new Enemy(Math.floor(Math.random()*canvasWidth), 0, 0, 0, 1, 20, 20, 20, 20, 10, 10));
+                break;
+            case (1):
+                enemies.push(new Enemy(Math.floor(Math.random()*canvasWidth), canvasHeight, 0, 0, 1, 20, 20, 20, 20, 10, 10));
+                break;
+            case (2):
+                enemies.push(new Enemy(canvasWidth, Math.floor(Math.random()*canvasHeight), 0, 0, 1, 20, 20, 20, 20, 10, 10));
+                break;
+            case (3):
+                enemies.push(new Enemy(0, Math.floor(Math.random()*canvasHeight), 0, 0, 1, 20, 20, 20, 20, 10, 10));
+                break;
+        }
+    console.log(enemies)   
+    }
+}
+
+function updateEnemies () {
+    for (let i=0; i<enemies.length; i++) {
+        enemies[i].follow(wizard);
+        enemies[i].updatePos();
+        enemies[i].drawCharacter("../images/orc.png")
+    }
+
+    deleteOffScreen(enemies);
+}
+
+
+
 function updateCanvas() {
     ctx.clearRect(0,0,600,600);
     printBackground();
     wizard.mainUpdatePos();
     updateShots();
     wizard.drawCharacter("../images/wizard-hat.png");
+    generateEnemies();
+    updateEnemies();
+    counter += 1;
 }
