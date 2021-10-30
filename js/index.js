@@ -6,7 +6,7 @@ let shots = [];
 let canvasWidth = 600;
 let canvasHeight = 600;
 let counter = 0;
-let spawn = 300;
+let spawn = 100;
 
 
 startBtn.addEventListener("click", () => {
@@ -50,6 +50,13 @@ class GameObject {
         this.x += this.xSpeed;
         this.y += this.ySpeed;
     }
+
+    checkOnScreen() {
+        if (this.x < canvasWidth + 100 && this.x > -100 && this.y>-100 && this.y<canvasHeight+100){
+            return true
+        }  
+        else return false
+    }
 }
 
 
@@ -64,6 +71,13 @@ class Character extends GameObject {
         const img = new Image();
         img.src = src
         ctx.drawImage(img, this.x, this.y, this.width, this.height)
+    }
+
+    checkAlive() {
+        if (this.health > 0) {
+            return true
+        }
+        else false
     }
 }
 
@@ -140,9 +154,10 @@ class Main extends Character {
 }
 
 class Shot extends GameObject {
-    constructor(x , y, xSpeed, ySpeed, maxSpeed, width, height, damage) {
+    constructor(x , y, xSpeed, ySpeed, maxSpeed, width, height, damage, hits) {
         super (x , y, xSpeed, ySpeed, maxSpeed, width, height);
         this.damage = damage;
+        this.hits = hits;
         this.drawShot();
     }
 
@@ -178,16 +193,17 @@ document.addEventListener("keydown", (e) => {
             wizard.ySpeed = -5;
             break;
         case "ArrowLeft":
-            shots.push(new Shot(wizard.x, wizard.y, -wizard.shotSpd, 0, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg));
+            shots.push(new Shot(wizard.x, wizard.y, -wizard.shotSpd, 0, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0));
+            console.log(shots)
             break;
         case "ArrowRight":
-            shots.push(new Shot(wizard.x, wizard.y, wizard.shotSpd, 0, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg))            
+            shots.push(new Shot(wizard.x, wizard.y, wizard.shotSpd, 0, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0))            
             break;
         case "ArrowUp":
-            shots.push(new Shot(wizard.x, wizard.y, 0, -wizard.shotSpd, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg));
+            shots.push(new Shot(wizard.x, wizard.y, 0, -wizard.shotSpd, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0));
             break;
         case "ArrowDown":
-            shots.push(new Shot(wizard.x, wizard.y, 0, wizard.shotSpd, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg));
+            shots.push(new Shot(wizard.x, wizard.y, 0, wizard.shotSpd, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0));
             break;                
 
     }
@@ -215,16 +231,10 @@ function updateShots() {
         shots[i].drawShot();
     }
 
-    deleteOffScreen(shots);
+    shots = shots.filter(shot => shot.checkOnScreen())
+    shots = shots.filter(shot => shot.hits === 0)
 }
 
-
-function deleteOffScreen(arr) {
-    
-    arr = arr.filter(pos => {
-        (pos.x < canvasWidth + 100 || pos.x > -100 || pos.y>-100||pos.y<canvasHeight+100)
-    })
-}
 
 function generateEnemies() {
     let randomDirection = Math.floor(Math.random()*4) //0 top, 1 bottom, 2 right, 3 left
@@ -232,30 +242,51 @@ function generateEnemies() {
         console.log(randomDirection)
         switch(randomDirection) {
             case(0):
-                enemies.push(new Enemy(Math.floor(Math.random()*canvasWidth), 0, 0, 0, 1, 20, 20, 20, 20, 10, 10));
+                enemies.push(new Enemy(Math.floor(Math.random()*canvasWidth), 0, 0, 0, 1, 40, 40, 20, 20, 10, 10));
                 break;
             case (1):
-                enemies.push(new Enemy(Math.floor(Math.random()*canvasWidth), canvasHeight, 0, 0, 1, 20, 20, 20, 20, 10, 10));
+                enemies.push(new Enemy(Math.floor(Math.random()*canvasWidth), canvasHeight, 0, 0, 1, 40, 40, 20, 20, 10, 10));
                 break;
             case (2):
-                enemies.push(new Enemy(canvasWidth, Math.floor(Math.random()*canvasHeight), 0, 0, 1, 20, 20, 20, 20, 10, 10));
+                enemies.push(new Enemy(canvasWidth, Math.floor(Math.random()*canvasHeight), 0, 0, 1, 40, 40, 20, 20, 10, 10));
                 break;
             case (3):
-                enemies.push(new Enemy(0, Math.floor(Math.random()*canvasHeight), 0, 0, 1, 20, 20, 20, 20, 10, 10));
+                enemies.push(new Enemy(0, Math.floor(Math.random()*canvasHeight), 0, 0, 1, 40, 40, 20, 20, 10, 10));
                 break;
         }
     console.log(enemies)   
     }
 }
 
+function objectsCollide(object1, object2) {
+    return !(object1.bottom() < object2.top() || object1.left() > object2.right() || object1.top()>object2.bottom() || object1.right()<object2.left())
+}
+
+
+function checkShot() {
+    for (let i=0; i<enemies.length; i++) {
+        for (let j=0; j<shots.length; j++) {
+            if (shots[j].hits === 0) {
+                if (objectsCollide(enemies[i], shots[j])) {
+                    enemies[i].health -= shots[j].damage;
+                    shots[j].hits += 1;
+                }
+            }
+        }
+    }
+}
 function updateEnemies () {
+    
+    checkShot();
+    enemies = enemies.filter(enemy => enemy.checkAlive())
+    
     for (let i=0; i<enemies.length; i++) {
         enemies[i].follow(wizard);
         enemies[i].updatePos();
         enemies[i].drawCharacter("../images/orc.png")
     }
 
-    deleteOffScreen(enemies);
+
 }
 
 
