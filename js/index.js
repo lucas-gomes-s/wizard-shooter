@@ -25,7 +25,7 @@ function startGame() {
 }
 
 class GameObject {
-    constructor(x , y, xSpeed, ySpeed, maxSpeed, width, height) {
+    constructor(x , y, xSpeed, ySpeed, maxSpeed, width, height, imgSrc) {
         this.x = x;
         this.y = y;
         this.xSpeed = xSpeed;
@@ -33,6 +33,7 @@ class GameObject {
         this.maxSpeed = maxSpeed;
         this.width = width;
         this.height = height;
+        this.imgSrc = imgSrc;
     }
 
     bottom() {
@@ -62,21 +63,23 @@ class GameObject {
         }  
         else return false
     }
+
+    drawObject() {
+        const img = new Image();
+        img.src = this.imgSrc
+        ctx.drawImage(img, this.x, this.y, this.width, this.height)
+    }
 }
 
 
 class Character extends GameObject {
-    constructor (x , y, xSpeed, ySpeed, maxSpeed, width, height, health, maxHealth){
-        super(x , y, xSpeed, ySpeed, maxSpeed, width, height)
+    constructor (x , y, xSpeed, ySpeed, maxSpeed, width, height, imgSource, health, maxHealth){
+        super(x , y, xSpeed, ySpeed, maxSpeed, width, height, imgSource)
         this.health = health;
         this.maxHealth = maxHealth;
     }
 
-    drawCharacter(src) {
-        const img = new Image();
-        img.src = src
-        ctx.drawImage(img, this.x, this.y, this.width, this.height)
-    }
+
 
     checkAlive() {
         if (this.health > 0) {
@@ -87,8 +90,8 @@ class Character extends GameObject {
 }
 
 class Enemy extends Character {
-    constructor (x , y, xSpeed, ySpeed, maxSpeed, width, height, health, maxHealth, damage, expGiven) {
-        super (x , y, xSpeed, ySpeed, maxSpeed, width, height, health, maxHealth)
+    constructor (x , y, maxSpeed, width, height, imgSource, health, maxHealth, damage, expGiven) {
+        super (x , y, 0, 0, maxSpeed, width, height, imgSource, health, maxHealth)
         this.damage = damage;
         this.expGiven = expGiven;
         this.dmgCd = 50;
@@ -140,7 +143,7 @@ class Enemy extends Character {
 
 class Main extends Character {
     constructor(){
-        super (280, 280, 0, 0, 1, 40, 40, 10, 10);
+        super (280, 280, 0, 0, 1, 40, 40, "../images/wizard-hat.png", 100, 100);
         this.level = 1;
         this.currentExp= 0;
         this.expNeeded= levels[0];
@@ -149,7 +152,7 @@ class Main extends Character {
         this.shotSize = 5;
         this.shotCd = 50;
         this.cooldown = 0;
-        this.drawCharacter("../images/wizard-hat.png")
+        this.drawObject()
     }
 
     //Same as GameObject pos update, except can't go Offscreen
@@ -280,23 +283,40 @@ function updateShots() {
 //Generates enemy from random directions
 //should work on parameters to create different enemies
 function generateEnemies() {
-    let randomDirection = Math.floor(Math.random()*4) //0 top, 1 bottom, 2 right, 3 left
-    if (counter%spawn === 0) {
-        switch(randomDirection) {
-            case(0):
-                enemies.push(new Enemy(Math.floor(Math.random()*canvasWidth), 0, 0, 0, 1, 30, 30, 20, 20, 10, 10));
-                break;
-            case (1):
-                enemies.push(new Enemy(Math.floor(Math.random()*canvasWidth), canvasHeight, 0, 0, 1, 30, 30, 20, 20, 10, 10));
-                break;
-            case (2):
-                enemies.push(new Enemy(canvasWidth, Math.floor(Math.random()*canvasHeight), 0, 0, 1, 30, 30, 20, 20, 10, 10));
-                break;
-            case (3):
-                enemies.push(new Enemy(0, Math.floor(Math.random()*canvasHeight), 0, 0, 1, 30, 30, 20, 20, 10, 10));
-                break;
+    for (let i=0; i<monsters.length; i++) {
+        if (monsters[i].startMinute<=minutesElapsed()) {
+            monsters[i].cooldown += 1;
+            if (monsters[i].cooldown===monsters[i].spawn) {
+                let randomDirection = Math.floor(Math.random()*4) //0 top, 1 bottom, 2 right, 3 left
+                let randomValue = Math.floor(Math.random()*canvasWidth) 
+                let x = 0;
+                let y = 0;
+                switch(randomDirection) {
+                    case(0):
+                        x = randomValue;
+                        y = 0;
+                        //enemies.push(new Enemy(randomValue, 0, monsters[i].maxSpeed, monsters[i].width, monsters[i].height, monsters[i].imgSource, monsters[i].health, monsters[i].maxHealth, monsters[i].damage, monsters[i].expGiven ));
+                        break;
+                    case (1):
+                        x= randomValue;
+                        y= canvasHeight;
+                        //enemies.push(new Enemy(randomValue, canvasHeight, monsters[i].maxSpeed, monsters[i].width, monsters[i].height, monsters[i].imgSource, monsters[i].health, monsters[i].maxHealth, monsters[i].damage, monsters[i].expGiven ));
+                        break;
+                    case (2):
+                        x=canvasWidth;
+                        y=randomValue;
+                        //enemies.push(new Enemy(canvasWidth, randomValue, monsters[i].maxSpeed, monsters[i].width, monsters[i].height, monsters[i].imgSource, monsters[i].health, monsters[i].maxHealth, monsters[i].damage, monsters[i].expGiven ));
+                        break;
+                    case (3):
+                        x = 0;
+                        y = randomValue;
+                        //enemies.push(new Enemy(0, randomValue, monsters[i].maxSpeed, monsters[i].width, monsters[i].height, monsters[i].imgSource, monsters[i].health, monsters[i].maxHealth, monsters[i].damage, monsters[i].expGiven ));
+                        break;            
+                }
+                enemies.push(new Enemy(x, y, monsters[i].maxSpeed, monsters[i].width, monsters[i].height, monsters[i].imageSrc, monsters[i].health, monsters[i].maxHealth, monsters[i].damage, monsters[i].expGiven ));
+                monsters[i].cooldown = 0;
+            }    
         }
- 
     }
 }
 
@@ -356,7 +376,7 @@ function updateEnemies () {
     for (let i=0; i<enemies.length; i++) {
         enemies[i].follow(wizard);
         enemies[i].updatePos();
-        enemies[i].drawCharacter("../images/orc.png")
+        enemies[i].drawObject()
     }
     generateEnemies();
 }
@@ -364,7 +384,7 @@ function updateEnemies () {
 function updateWizard () {
     checkDamage();
     wizard.mainUpdatePos();
-    wizard.drawCharacter("../images/wizard-hat.png");
+    wizard.drawObject();
     wizard.levelUp()
     if (!wizard.checkAlive()) {
         gameOver();

@@ -30,12 +30,37 @@ let gameOverPhrases  = [
     "'CORONAVIRUS! Shit is real! Shit is getting real!'",
     "'A Lua me traiu'",
     "'A bonekinha não sabe brincar'",
-    "'Fly you fools!'"
+    "'Fly you fools!'",
+    "'Fintchy reãis!'",
+    "'É o quê que tá aconteceno?!'",
+    "'Mirella, corre aqui!'",
+    "'Lohane Vêkanandre Sthephany Smith Bueno de HA HA HA...'",
+    "'Finally, I'll pay for my sins in Ishval'",
+    "'Já acabou, Lorena?'",
+    "'Don't follow the light, it's a train'",
+    "'All that fit food for nothing'",
+    "'I can't believe I'm going to die IN THESE clothes'",
+    "'At least it wasn't in the shower'",
+    "'I should've worn my good underwear'",
+    "'Sashay Away'",
+    "'Questão de Ordem, presidente'",
+    "'Please tell me you've saved some phoenix down'",
+    "'Microwave beeps ARE NOT passive-aggressive'"
 ]
 
-const monsters = [
+let monsters = [
     {name : "Orc",
     imageSrc : "../images/orc.png",   
-    maxHealth : 40
+    maxSpeed: 1,
+    width: 30,
+    height: 30,
+    health:50,
+    maxHealth: 50,
+    damage:10,
+    expGiven: 10,
+    startMinute: 1,
+    spawn: 100,
+    cooldown: 0
     }
 ]
+
