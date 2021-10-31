@@ -16,8 +16,12 @@ startBtn.addEventListener("click", () => {
 
 function startGame() {
     printBackground();
-    interval = setInterval(updateCanvas, 20);    
-    return wizard = new Main()
+    enemies = [];
+    shots = [];
+    counter = 0;
+    interval = setInterval(updateCanvas, 20);  
+    return wizard = new Main();
+
 }
 
 class GameObject {
@@ -87,6 +91,8 @@ class Enemy extends Character {
         super (x , y, xSpeed, ySpeed, maxSpeed, width, height, health, maxHealth)
         this.damage = damage;
         this.expGiven = expGiven;
+        this.dmgCd = 50;
+        this.cd = 0;
     }
 
     //Makes enemies move in the direction of the wizard
@@ -137,14 +143,16 @@ class Main extends Character {
         super (280, 280, 0, 0, 10, 40, 40, 100, 100);
         this.level = 1;
         this.currentExp= 0;
-        this.experience= 100;
+        this.expNeeded= 100;
         this.shotDmg = 10;
         this.shotSpd = 5;
         this.shotSize = 5;
-        this.shotCd = 2;
+        this.shotCd = 50;
+        this.cooldown = 0;
         this.drawCharacter("../images/wizard-hat.png")
     }
 
+    //Same as GameObject pos update, except can't go Offscreen
     mainUpdatePos() {
         if ((this.xSpeed>0 && this.x<canvasWidth-this.width) || (this.xSpeed<0 && this.x > 0)){
             this.x += this.xSpeed;
@@ -156,6 +164,13 @@ class Main extends Character {
 
     gainExp (enemy) {
         this.currentExp += enemy.expGiven
+    }
+
+    levelUp() {
+        if (this.currentExp>=this.expNeeded) {
+            this.currentExp = this.currentExp-this.expNeeded;
+            this.level += 1;
+        }
     }
 }
 
@@ -202,16 +217,28 @@ document.addEventListener("keydown", (e) => {
             wizard.ySpeed = -5;
             break;
         case "ArrowLeft":
-            shots.push(new Shot(wizard.x, wizard.y, -wizard.shotSpd, 0, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0));
+            if (wizard.cooldown === 0) {
+                shots.push(new Shot(wizard.x, wizard.y, -wizard.shotSpd, 0, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0));
+                wizard.cooldown = wizard.shotCd;
+            }
             break;
         case "ArrowRight":
-            shots.push(new Shot(wizard.x, wizard.y, wizard.shotSpd, 0, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0))            
-            break;a
+            if (wizard.cooldown === 0) {
+                shots.push(new Shot(wizard.x, wizard.y, wizard.shotSpd, 0, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0));
+                wizard.cooldown = wizard.shotCd;
+            }         
+            break;
         case "ArrowUp":
-            shots.push(new Shot(wizard.x, wizard.y, 0, -wizard.shotSpd, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0));
+            if (wizard.cooldown === 0) {
+                shots.push(new Shot(wizard.x, wizard.y, 0, -wizard.shotSpd, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0));
+                wizard.cooldown = wizard.shotCd;
+            }
             break;
         case "ArrowDown":
-            shots.push(new Shot(wizard.x, wizard.y, 0, wizard.shotSpd, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0));
+            if (wizard.cooldown === 0) {
+                shots.push(new Shot(wizard.x, wizard.y, 0, wizard.shotSpd, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0));
+                wizard.cooldown = wizard.shotCd;
+            }
             break;                
 
     }
@@ -299,7 +326,23 @@ function checkShot() {
 
 
 
-// Checks if shot, delete dead, gives Exp to wizard, adjust velocity, update position, redraw
+function checkDamage() {
+    for (let i=0; i<enemies.length; i++) {
+        if (enemies[i].cd > 0) {
+            enemies[i].cd -= 1;
+        }
+        else if (objectsCollide(enemies[i], wizard)) {
+            wizard.health -= enemies[i].damage;
+            enemies[i].cd = enemies[i].dmgCd;
+            ctx.fillStyle = "red"
+            ctx.fillRect(0,0, 600,600)
+        }
+    }
+}
+
+
+
+// Checks if shot, delete dead, gives Exp to wizard, adjust velocity, update position, redraw, generate new enemies
 function updateEnemies () {   
     
     checkShot();
@@ -314,19 +357,86 @@ function updateEnemies () {
         enemies[i].updatePos();
         enemies[i].drawCharacter("../images/orc.png")
     }
+    generateEnemies();
+}
 
-
+function updateWizard () {
+    checkDamage();
+    wizard.mainUpdatePos();
+    wizard.drawCharacter("../images/wizard-hat.png");
+    wizard.levelUp()
+    if (!wizard.checkAlive()) {
+        gameOver();
+    }
+    if (wizard.cooldown > 0) {
+        wizard.cooldown -= 1;
+    }
 }
 
 
-//Everything that needs to be updated in each iteraction
-function updateCanvas() {
+function updateGameElements() {
     ctx.clearRect(0,0,600,600);
     printBackground();
-    wizard.mainUpdatePos();
-    updateShots();
-    wizard.drawCharacter("../images/wizard-hat.png");
-    generateEnemies();
+    printTimer();
+    printHpBar();
+    printExpBar();
+}
+
+//Calculate and Print Time Elapsed
+function minutesElapsed() {
+    return Math.floor(counter/50/60)
+}
+
+function secondsElapsed() {
+    return Math.floor((counter/50)%60)
+}
+
+function turnToTwoDigitString (number) {
+    if (number < 10) {
+        return "0"+number
+    }
+    else return number.toString()
+}
+
+function printTimer() {
+    ctx.fillStyle = "white"
+    ctx.font = "20px arial"
+    let text = turnToTwoDigitString(minutesElapsed())+":"+turnToTwoDigitString(secondsElapsed())
+    ctx.fillText(text,278,40)
+}
+//End of Calculate and Print Time Elapsed
+
+function printHpBar() {
+    ctx.strokeStyle = "red";
+    ctx.strokeRect(50,25,200,15)
+    ctx.fillStyle="red"
+    ctx.fillRect(50,25,200*(wizard.health/wizard.maxHealth),15)
+    let img = new Image()
+    img.src = "../images/heart.png"
+    ctx.drawImage(img, 20, 22, 20, 20)
+}
+
+function printExpBar() {
+    ctx.strokeStyle = "yellow";
+    ctx.strokeRect(380,25,200,15)
+    ctx.fillStyle="yellow"
+    ctx.fillRect(380,25,200*(wizard.currentExp/wizard.expNeeded),15)
+    ctx.fillStyle = "white"
+    ctx.font = "10px arial"
+    ctx.fillText("Level", 350, 25)
+    ctx.font = "18px arial"
+    ctx.fillText(wizard.level, 355, 45)
+}
+
+function gameOver() {
+    clearInterval(interval)
+}
+
+//Everything that needs to be updated in each iteraction
+function updateCanvas() {
+    updateGameElements();
+    updateWizard();
+    updateShots();  
     updateEnemies();
     counter += 1;
 }
