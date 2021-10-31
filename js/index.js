@@ -140,10 +140,10 @@ class Enemy extends Character {
 
 class Main extends Character {
     constructor(){
-        super (280, 280, 0, 0, 10, 40, 40, 100, 100);
+        super (280, 280, 0, 0, 1, 40, 40, 10, 10);
         this.level = 1;
         this.currentExp= 0;
-        this.expNeeded= 100;
+        this.expNeeded= levels[0];
         this.shotDmg = 10;
         this.shotSpd = 5;
         this.shotSize = 5;
@@ -170,6 +170,7 @@ class Main extends Character {
         if (this.currentExp>=this.expNeeded) {
             this.currentExp = this.currentExp-this.expNeeded;
             this.level += 1;
+            this.expNeeded = levels[this.level-1]
         }
     }
 }
@@ -205,38 +206,38 @@ function printBackground() {
 document.addEventListener("keydown", (e) => {
     switch (e.key){
         case "a":
-            wizard.xSpeed = -5;
+            wizard.xSpeed = -wizard.maxSpeed;
             break;
         case "d":
-            wizard.xSpeed = 5; 
+            wizard.xSpeed = wizard.maxSpeed; 
             break;
         case "s":
-            wizard.ySpeed = 5;
+            wizard.ySpeed = wizard.maxSpeed;
             break;
         case "w":
-            wizard.ySpeed = -5;
+            wizard.ySpeed = -wizard.maxSpeed;
             break;
         case "ArrowLeft":
             if (wizard.cooldown === 0) {
-                shots.push(new Shot(wizard.x, wizard.y, -wizard.shotSpd, 0, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0));
+                shots.push(new Shot(wizard.x+wizard.width/2, wizard.y+wizard.height/2, -wizard.shotSpd, 0, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0));
                 wizard.cooldown = wizard.shotCd;
             }
             break;
         case "ArrowRight":
             if (wizard.cooldown === 0) {
-                shots.push(new Shot(wizard.x, wizard.y, wizard.shotSpd, 0, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0));
+                shots.push(new Shot(wizard.x+wizard.width/2, wizard.y+wizard.height/2, wizard.shotSpd, 0, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0));
                 wizard.cooldown = wizard.shotCd;
             }         
             break;
         case "ArrowUp":
             if (wizard.cooldown === 0) {
-                shots.push(new Shot(wizard.x, wizard.y, 0, -wizard.shotSpd, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0));
+                shots.push(new Shot(wizard.x+wizard.width/2, wizard.y+wizard.height/2, 0, -wizard.shotSpd, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0));
                 wizard.cooldown = wizard.shotCd;
             }
             break;
         case "ArrowDown":
             if (wizard.cooldown === 0) {
-                shots.push(new Shot(wizard.x, wizard.y, 0, wizard.shotSpd, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0));
+                shots.push(new Shot(wizard.x+wizard.width/2, wizard.y+wizard.height/2, 0, wizard.shotSpd, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0));
                 wizard.cooldown = wizard.shotCd;
             }
             break;                
@@ -283,16 +284,16 @@ function generateEnemies() {
     if (counter%spawn === 0) {
         switch(randomDirection) {
             case(0):
-                enemies.push(new Enemy(Math.floor(Math.random()*canvasWidth), 0, 0, 0, 1, 40, 40, 20, 20, 10, 10));
+                enemies.push(new Enemy(Math.floor(Math.random()*canvasWidth), 0, 0, 0, 1, 30, 30, 20, 20, 10, 10));
                 break;
             case (1):
-                enemies.push(new Enemy(Math.floor(Math.random()*canvasWidth), canvasHeight, 0, 0, 1, 40, 40, 20, 20, 10, 10));
+                enemies.push(new Enemy(Math.floor(Math.random()*canvasWidth), canvasHeight, 0, 0, 1, 30, 30, 20, 20, 10, 10));
                 break;
             case (2):
-                enemies.push(new Enemy(canvasWidth, Math.floor(Math.random()*canvasHeight), 0, 0, 1, 40, 40, 20, 20, 10, 10));
+                enemies.push(new Enemy(canvasWidth, Math.floor(Math.random()*canvasHeight), 0, 0, 1, 30, 30, 20, 20, 10, 10));
                 break;
             case (3):
-                enemies.push(new Enemy(0, Math.floor(Math.random()*canvasHeight), 0, 0, 1, 40, 40, 20, 20, 10, 10));
+                enemies.push(new Enemy(0, Math.floor(Math.random()*canvasHeight), 0, 0, 1, 30, 30, 20, 20, 10, 10));
                 break;
         }
  
@@ -325,7 +326,7 @@ function checkShot() {
 }
 
 
-
+//checks if wizard took damage from and enemy
 function checkDamage() {
     for (let i=0; i<enemies.length; i++) {
         if (enemies[i].cd > 0) {
@@ -428,8 +429,28 @@ function printExpBar() {
     ctx.fillText(wizard.level, 355, 45)
 }
 
+//Add Random/Fun GameOver Texts?!
 function gameOver() {
-    clearInterval(interval)
+    clearInterval(interval);
+    printBackground();
+    ctx.fillStyle = "red";
+    ctx.font = " 60px arial";
+    let gameOverString = "Game Over"
+    let gameOverStringWidth = ctx.measureText(gameOverString).width
+    ctx.fillText(gameOverString , canvasWidth/2 - gameOverStringWidth/2, 300);
+    ctx.fillStyle = "white";
+    ctx.font = "20px arial";
+    let text1 = "You were overrun by monsters." 
+    let text1Width = ctx.measureText(text1).width
+    let text2 =  "As the light fades from your eyes, you think:"
+    let text2Width = ctx.measureText(text2).width
+    let text3 = gameOverPhrases[Math.floor(Math.random()*gameOverPhrases.length)]
+    let text3Width = ctx.measureText(text3).width
+    ctx.fillText(text1 , canvasWidth/2 - text1Width/2, 330);
+    ctx.fillText(text2 , canvasWidth/2 - text2Width/2, 350);
+    ctx.fillText(text3 , canvasWidth/2 - text3Width/2, 370);
+    enemies = [];
+    updateEnemies();
 }
 
 //Everything that needs to be updated in each iteraction
