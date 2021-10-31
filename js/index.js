@@ -11,11 +11,12 @@ let spawn = 100;
 
 startBtn.addEventListener("click", () => {
     startGame();
-    interval = setInterval(updateCanvas, 20)    
+    
 })
 
 function startGame() {
     printBackground();
+    interval = setInterval(updateCanvas, 20);    
     return wizard = new Main()
 }
 
@@ -88,6 +89,7 @@ class Enemy extends Character {
         this.expGiven = expGiven;
     }
 
+    //Makes enemies move in the direction of the wizard
     follow(main) {
         let xDirection = 0 
         let yDirection = 0
@@ -151,6 +153,10 @@ class Main extends Character {
             this.y += this.ySpeed;
         }        
     }
+
+    gainExp (enemy) {
+        this.currentExp += enemy.expGiven
+    }
 }
 
 class Shot extends GameObject {
@@ -168,6 +174,7 @@ class Shot extends GameObject {
 }
 
 
+//Prints background (duh)
 function printBackground() {
     const img = new Image();
     img.src = "../images/dungeonfloor.jpg"
@@ -177,8 +184,10 @@ function printBackground() {
     
 }
 
+
+
+//Start of user inputs
 document.addEventListener("keydown", (e) => {
-    console.log(e.key)
     switch (e.key){
         case "a":
             wizard.xSpeed = -5;
@@ -194,11 +203,10 @@ document.addEventListener("keydown", (e) => {
             break;
         case "ArrowLeft":
             shots.push(new Shot(wizard.x, wizard.y, -wizard.shotSpd, 0, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0));
-            console.log(shots)
             break;
         case "ArrowRight":
             shots.push(new Shot(wizard.x, wizard.y, wizard.shotSpd, 0, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0))            
-            break;
+            break;a
         case "ArrowUp":
             shots.push(new Shot(wizard.x, wizard.y, 0, -wizard.shotSpd, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0));
             break;
@@ -224,7 +232,11 @@ document.addEventListener("keyup", (e) => {
             wizard.ySpeed = 0;
     }
 })
+//End of user inputs
 
+
+
+//update the position of shots and deletes the offscreen and the ones that already hit
 function updateShots() {
     for (let i=0; i<shots.length; i++) {
         shots[i].updatePos();
@@ -236,10 +248,12 @@ function updateShots() {
 }
 
 
+
+//Generates enemy from random directions
+//should work on parameters to create different enemies
 function generateEnemies() {
     let randomDirection = Math.floor(Math.random()*4) //0 top, 1 bottom, 2 right, 3 left
     if (counter%spawn === 0) {
-        console.log(randomDirection)
         switch(randomDirection) {
             case(0):
                 enemies.push(new Enemy(Math.floor(Math.random()*canvasWidth), 0, 0, 0, 1, 40, 40, 20, 20, 10, 10));
@@ -254,15 +268,22 @@ function generateEnemies() {
                 enemies.push(new Enemy(0, Math.floor(Math.random()*canvasHeight), 0, 0, 1, 40, 40, 20, 20, 10, 10));
                 break;
         }
-    console.log(enemies)   
+ 
     }
 }
 
+
+
+
+//checks the colision between two GameObjects
+//Maybe make it a GameObject method?
 function objectsCollide(object1, object2) {
     return !(object1.bottom() < object2.top() || object1.left() > object2.right() || object1.top()>object2.bottom() || object1.right()<object2.left())
 }
 
 
+
+//checks if each enemy was hit by each shot
 function checkShot() {
     for (let i=0; i<enemies.length; i++) {
         for (let j=0; j<shots.length; j++) {
@@ -275,10 +296,18 @@ function checkShot() {
         }
     }
 }
-function updateEnemies () {
+
+
+
+// Checks if shot, delete dead, gives Exp to wizard, adjust velocity, update position, redraw
+function updateEnemies () {   
     
     checkShot();
-    enemies = enemies.filter(enemy => enemy.checkAlive())
+    enemies = enemies.filter(enemy => {
+        if (!enemy.checkAlive()) {
+            wizard.gainExp(enemy)
+        }
+        return enemy.checkAlive()}) 
     
     for (let i=0; i<enemies.length; i++) {
         enemies[i].follow(wizard);
@@ -290,7 +319,7 @@ function updateEnemies () {
 }
 
 
-
+//Everything that needs to be updated in each iteraction
 function updateCanvas() {
     ctx.clearRect(0,0,600,600);
     printBackground();
