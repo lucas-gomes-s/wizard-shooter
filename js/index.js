@@ -143,7 +143,7 @@ class Enemy extends Character {
 
 class Main extends Character {
     constructor(){
-        super (280, 280, 0, 0, 1, 40, 40, "../images/wizard-hat.png", 100, 100);
+        super (280, 280, 0, 0, 2, 40, 40, "../images/wizard-hat.png", 100, 100);
         this.level = 1;
         this.currentExp= 0;
         this.expNeeded= levels[0];
@@ -189,6 +189,12 @@ class Shot extends GameObject {
     drawShot() {
         ctx.fillStyle = "white";
         ctx.fillRect(this.x, this.y, this.width, this.height);
+    }
+}
+
+class HpRecovery extends GameObject {
+    constructor(HpRecovered) {
+        this.HpRecovered = HpRecovered;
     }
 }
 
@@ -281,7 +287,6 @@ function updateShots() {
 
 
 //Generates enemy from random directions
-//should work on parameters to create different enemies
 function generateEnemies() {
     for (let i=0; i<monsters.length; i++) {
         if (monsters[i].startMinute<=minutesElapsed()) {
@@ -295,22 +300,18 @@ function generateEnemies() {
                     case(0):
                         x = randomValue;
                         y = 0;
-                        //enemies.push(new Enemy(randomValue, 0, monsters[i].maxSpeed, monsters[i].width, monsters[i].height, monsters[i].imgSource, monsters[i].health, monsters[i].maxHealth, monsters[i].damage, monsters[i].expGiven ));
                         break;
                     case (1):
                         x= randomValue;
                         y= canvasHeight;
-                        //enemies.push(new Enemy(randomValue, canvasHeight, monsters[i].maxSpeed, monsters[i].width, monsters[i].height, monsters[i].imgSource, monsters[i].health, monsters[i].maxHealth, monsters[i].damage, monsters[i].expGiven ));
                         break;
                     case (2):
                         x=canvasWidth;
                         y=randomValue;
-                        //enemies.push(new Enemy(canvasWidth, randomValue, monsters[i].maxSpeed, monsters[i].width, monsters[i].height, monsters[i].imgSource, monsters[i].health, monsters[i].maxHealth, monsters[i].damage, monsters[i].expGiven ));
                         break;
                     case (3):
                         x = 0;
                         y = randomValue;
-                        //enemies.push(new Enemy(0, randomValue, monsters[i].maxSpeed, monsters[i].width, monsters[i].height, monsters[i].imgSource, monsters[i].health, monsters[i].maxHealth, monsters[i].damage, monsters[i].expGiven ));
                         break;            
                 }
                 enemies.push(new Enemy(x, y, monsters[i].maxSpeed, monsters[i].width, monsters[i].height, monsters[i].imageSrc, monsters[i].health, monsters[i].maxHealth, monsters[i].damage, monsters[i].expGiven ));
