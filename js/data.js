@@ -2,8 +2,44 @@ const maxLevel = 30
 let levels = [30]
 
 for (let i=1; i<maxLevel; i++){
-    levels.push(Math.floor(levels[i-1]*(1+2/3)))
+    levels.push(Math.floor(levels[i-1]*(1.2)))
 } 
+
+let skills = [
+    {name: "Hermes' Emissary",
+    description1: "Run like the wind!",
+    description2: "Increases move speed",
+    status: "maxSpeed",
+    modifier: 1,
+    maxLevel: 5,
+    img: "../images/nimbleFeet.png"
+    },
+    {name: "Dragon Scales",
+    description1: "I've got thick skin and an elastic heart!",
+    description2: "Increases maximum HP",
+    status: "maxHealth",
+    modifier: 20,
+    maxLevel: 10,
+    img: "../images/dragonScales.png"
+    },
+    {name: "Necronomicon",
+    description1: "Give up a little Sanity, gain more power!",
+    description2: "Increases magic damage",
+    status: "shotDmg",
+    modifier: 10,
+    maxLevel: 10,
+    img: "../images/necronomicon.jpg"
+    },
+    {name: "Who is Rambo?",
+    description1: "No, really, who is this guy?!",
+    description2: "Increases casting speed",
+    status: "shotCd",
+    modifier: -10,
+    maxLevel: 5,
+    img: "../images/machineGun.png"
+    }
+]
+
 
 let gameOverPhrases  = [
     "'I should've taken anti-dungeon monster defenses in Wizard School'",
@@ -46,7 +82,10 @@ let gameOverPhrases  = [
     "'Please tell me you've saved some phoenix down'",
     "'Microwave beeps ARE NOT passive-aggressive'",
     "'I don't exist and neither do you'",
-    "'I hope I don't have to start from scratch' (you do)"
+    "'I hope I don't have to start from scratch' (you do)",
+    "'I should have chosen the blue pill'",
+    "'Hello Darkness, my old friend'",
+    "'Now God will have to hear some harsh truth'"
 ]
 
 let monsters = [
@@ -58,7 +97,7 @@ let monsters = [
     health:10,
     maxHealth: 10,
     damage:5,
-    expGiven: 10,
+    expGiven: 100,
     startMinute: 1,
     spawn: 50,
     cooldown: 0
@@ -72,7 +111,7 @@ let monsters = [
     health:20,
     maxHealth: 20,
     damage:10,
-    expGiven: 10,
+    expGiven: 40,
     startMinute: 0,
     spawn: 100,
     cooldown: 0
@@ -171,7 +210,7 @@ let monsters = [
     maxHealth: 5000,
     damage:300,
     expGiven: 1000,
-    startMinute: 0,
+    startMinute: 25,
     spawn: 5000,
     cooldown: 0
     }

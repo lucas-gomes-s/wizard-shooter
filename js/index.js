@@ -1,4 +1,5 @@
 const ctx = document.getElementById("gameArea").getContext("2d")
+const canvasElement = document.getElementById("gameArea")
 const startBtn = document.getElementById("startButton")
 let interval = "";
 let enemies = [];
@@ -6,7 +7,8 @@ let shots = [];
 let canvasWidth = 600;
 let canvasHeight = 600;
 let counter = 0;
-let spawn = 100;
+let lvlUpScreen = false;
+let lvlUpNavigation = 0;
 
 
 startBtn.addEventListener("click", () => {
@@ -19,183 +21,12 @@ function startGame() {
     enemies = [];
     shots = [];
     counter = 0;
+    if (interval) {
+        clearInterval(interval)
+    }
     interval = setInterval(updateCanvas, 20);  
     return wizard = new Main();
 
-}
-
-class GameObject {
-    constructor(x , y, xSpeed, ySpeed, maxSpeed, width, height, imgSrc) {
-        this.x = x;
-        this.y = y;
-        this.xSpeed = xSpeed;
-        this.ySpeed = ySpeed;
-        this.maxSpeed = maxSpeed;
-        this.width = width;
-        this.height = height;
-        this.imgSrc = imgSrc;
-    }
-
-    bottom() {
-        return (this.y+this.height)
-    }
-    
-    top() {
-        return this.y
-    }
-
-    left() {
-        return this.x
-    }
-
-    right() {
-        return (this.x+this.width)
-    }
-
-    updatePos(){
-        this.x += this.xSpeed;
-        this.y += this.ySpeed;
-    }
-
-    checkOnScreen() {
-        if (this.x < canvasWidth + 100 && this.x > -100 && this.y>-100 && this.y<canvasHeight+100){
-            return true
-        }  
-        else return false
-    }
-
-    drawObject() {
-        const img = new Image();
-        img.src = this.imgSrc
-        ctx.drawImage(img, this.x, this.y, this.width, this.height)
-    }
-}
-
-
-class Character extends GameObject {
-    constructor (x , y, xSpeed, ySpeed, maxSpeed, width, height, imgSource, health, maxHealth){
-        super(x , y, xSpeed, ySpeed, maxSpeed, width, height, imgSource)
-        this.health = health;
-        this.maxHealth = maxHealth;
-    }
-
-
-
-    checkAlive() {
-        if (this.health > 0) {
-            return true
-        }
-        else false
-    }
-}
-
-class Enemy extends Character {
-    constructor (x , y, maxSpeed, width, height, imgSource, health, maxHealth, damage, expGiven) {
-        super (x , y, 0, 0, maxSpeed, width, height, imgSource, health, maxHealth)
-        this.damage = damage;
-        this.expGiven = expGiven;
-        this.dmgCd = 50;
-        this.cd = 0;
-    }
-
-    //Makes enemies move in the direction of the wizard
-    follow(main) {
-        let xDirection = 0 
-        let yDirection = 0
-        let xModule = 0
-        let yModule = 0
-
-        if (this.x > main.x){
-            xDirection = -1
-        } 
-        else if (this.x < main.x) {
-            xDirection = 1
-        }
-        else xDirection = 0
-
-        if (this.y > main.y){
-            yDirection = -1
-        } 
-        else if (this.y < main.y) {
-            yDirection = 1
-        }
-        else yDirection = 0
-
-        xModule = Math.floor(Math.random()*(this.maxSpeed+1))
-        yModule = Math.floor((this.maxSpeed**2-xModule**2)**(1/2))
-
-        this.xSpeed = xDirection*xModule;
-        this.ySpeed = yDirection*yModule;
-
-        if (xDirection === 0) {
-            this.xSpeed = 0
-            this.ySpeed = this.maxSpeed*yDirection;
-        }
-
-        if (yDirection === 0) {
-            this.ySpeed = 0
-            this.xSpeed = this.maxSpeed*xDirection;
-        }
-
-    }
-
-} 
-
-class Main extends Character {
-    constructor(){
-        super (280, 280, 0, 0, 2, 40, 40, "../images/wizard-hat.png", 100, 100);
-        this.level = 1;
-        this.currentExp= 0;
-        this.expNeeded= levels[0];
-        this.shotDmg = 10;
-        this.shotSpd = 5;
-        this.shotSize = 5;
-        this.shotCd = 50;
-        this.cooldown = 0;
-        this.drawObject()
-    }
-
-    //Same as GameObject pos update, except can't go Offscreen
-    mainUpdatePos() {
-        if ((this.xSpeed>0 && this.x<canvasWidth-this.width) || (this.xSpeed<0 && this.x > 0)){
-            this.x += this.xSpeed;
-        }
-        if ((this.ySpeed>0 && this.y<canvasHeight-this.height) || (this.ySpeed<0 && this.y > 0)){
-            this.y += this.ySpeed;
-        }        
-    }
-
-    gainExp (enemy) {
-        this.currentExp += enemy.expGiven
-    }
-
-    levelUp() {
-        if (this.currentExp>=this.expNeeded) {
-            this.currentExp = this.currentExp-this.expNeeded;
-            this.level += 1;
-            this.expNeeded = levels[this.level-1]
-        }
-    }
-}
-
-class Shot extends GameObject {
-    constructor(x , y, xSpeed, ySpeed, maxSpeed, width, height, damage, hits) {
-        super (x , y, xSpeed, ySpeed, maxSpeed, width, height);
-        this.damage = damage;
-        this.hits = hits;
-        this.drawShot();
-    }
-
-    drawShot() {
-        ctx.fillStyle = "white";
-        ctx.fillRect(this.x, this.y, this.width, this.height);
-    }
-}
-
-class HpRecovery extends GameObject {
-    constructor(HpRecovered) {
-        this.HpRecovered = HpRecovered;
-    }
 }
 
 
@@ -227,12 +58,18 @@ document.addEventListener("keydown", (e) => {
             wizard.ySpeed = -wizard.maxSpeed;
             break;
         case "ArrowLeft":
+            if (lvlUpScreen && lvlUpNavigation>0) {
+                lvlUpNavigation -= 1;
+            }
             if (wizard.cooldown === 0) {
                 shots.push(new Shot(wizard.x+wizard.width/2, wizard.y+wizard.height/2, -wizard.shotSpd, 0, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0));
                 wizard.cooldown = wizard.shotCd;
             }
             break;
         case "ArrowRight":
+            if (lvlUpScreen && lvlUpNavigation<3) {
+                lvlUpNavigation += 1;
+            }
             if (wizard.cooldown === 0) {
                 shots.push(new Shot(wizard.x+wizard.width/2, wizard.y+wizard.height/2, wizard.shotSpd, 0, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0));
                 wizard.cooldown = wizard.shotCd;
@@ -249,7 +86,13 @@ document.addEventListener("keydown", (e) => {
                 shots.push(new Shot(wizard.x+wizard.width/2, wizard.y+wizard.height/2, 0, wizard.shotSpd, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0));
                 wizard.cooldown = wizard.shotCd;
             }
-            break;                
+            break;             
+        case "Enter":
+            if (lvlUpScreen && wizard.skillLvl[lvlUpNavigation]!==skills[lvlUpNavigation].maxLevel) {
+                wizard[skills[lvlUpNavigation].status] += skills[lvlUpNavigation].modifier;
+                wizard.skillLvl[lvlUpNavigation] += 1; 
+                ResumeGame();
+            }
 
     }
 })
@@ -430,6 +273,7 @@ function printTimer() {
 
 function printHpBar() {
     ctx.strokeStyle = "red";
+    ctx.lineWidth = 1;
     ctx.strokeRect(50,25,200,15)
     ctx.fillStyle="red"
     ctx.fillRect(50,25,200*(wizard.health/wizard.maxHealth),15)
@@ -440,6 +284,7 @@ function printHpBar() {
 
 function printExpBar() {
     ctx.strokeStyle = "yellow";
+    ctx.lineWidth = 1;
     ctx.strokeRect(380,25,200,15)
     ctx.fillStyle="yellow"
     ctx.fillRect(380,25,200*(wizard.currentExp/wizard.expNeeded),15)
@@ -450,7 +295,70 @@ function printExpBar() {
     ctx.fillText(wizard.level, 355, 45)
 }
 
-//Add Random/Fun GameOver Texts?!
+
+function lvlUpScreenCanvas() {
+    ctx.clearRect(0,0, canvasWidth, canvasHeight);   
+    ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+    ctx.fillRect(0, 0, 600, 600);
+    ctx.fillStyle = "red";
+    ctx.font = "50px arial";
+    let levelUpString = "Level Up!";
+    ctx.fillText(levelUpString, canvasWidth/2 - ctx.measureText(levelUpString).width/2, 150);
+    let skillString = "Choose a Skill to improve:";
+    ctx.fillStyle = "white";
+    ctx.font = "25px arial";
+    ctx.fillText(skillString, canvasWidth/2 - ctx.measureText(skillString).width/2, 200);
+    ctx.font = "15px arial"
+    skillString = "(Press 'Enter' to choose)";
+    ctx.fillText(skillString, canvasWidth/2 - ctx.measureText(skillString).width/2, 220);
+    ctx.fillRect(51, 241, 98, 98);
+    let skillImg = new Image();
+    skillImg.src = skills[0].img;
+    ctx.drawImage(skillImg, 60, 250, 80, 80);
+    ctx.fillRect(181, 241, 98, 98);
+    let skillImg1 = new Image();
+    skillImg1.src = skills[1].img;
+    ctx.drawImage(skillImg1, 190, 250, 80, 80);
+    ctx.fillRect(311, 241, 98, 98);
+    let skillImg2 = new Image();
+    skillImg2.src = skills[2].img
+    ctx.drawImage(skillImg2, 320, 250, 80, 80);
+    ctx.fillRect(441, 241, 98, 98) ;
+    let skillImg3 = new Image();
+    skillImg3.src = skills[3].img;
+    ctx.drawImage(skillImg3, 450, 250, 80, 80);
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = 5;
+    ctx.strokeRect(50+130*lvlUpNavigation, 240, 100, 100);
+    ctx.fillStyle = "white";
+    ctx.font = "25px arial";
+    ctx.fillText(skills[lvlUpNavigation].name, canvasWidth/2-ctx.measureText(skills[lvlUpNavigation].name).width/2, 390 )
+    ctx.fillStyle = "black";
+    ctx.font = "15px arial";
+    let lvlString = `Current level: ${wizard.skillLvl[lvlUpNavigation]}`
+    if (wizard.skillLvl[lvlUpNavigation] === skills[lvlUpNavigation].maxLevel){
+        lvlString = `Current level: Maxed`
+    }
+    ctx.fillText(lvlString, canvasWidth/2-ctx.measureText(lvlString).width/2, 408 )
+    ctx.font = "20px arial";
+    ctx.fillText(skills[lvlUpNavigation].description1, canvasWidth/2-ctx.measureText(skills[lvlUpNavigation].description1).width/2, 430 )
+    ctx.font = "15px arial";
+    ctx.fillText(skills[lvlUpNavigation].description2, canvasWidth/2-ctx.measureText(skills[lvlUpNavigation].description2).width/2, 450 )
+}
+
+function lvlUp() {
+    lvlUpScreen = true;
+    clearInterval(interval);
+    interval = setInterval(lvlUpScreenCanvas, 20);
+}
+
+function ResumeGame() {
+    clearInterval(interval);
+    lvlUpScreen = false;
+    lvlUpNavigation = 0;
+    interval = setInterval(updateCanvas, 20)
+}
+
 function gameOver() {
     clearInterval(interval);
     printBackground();
@@ -477,8 +385,8 @@ function gameOver() {
 //Everything that needs to be updated in each iteraction
 function updateCanvas() {
     updateGameElements();
-    updateWizard();
     updateShots();  
     updateEnemies();
+    updateWizard();
     counter += 1;
 }
