@@ -169,7 +169,11 @@ class Shot extends GameObject {
 }
 
 class HpRecovery extends GameObject {
-    constructor(HpRecovered) {
+    constructor(x , y, xSpeed, ySpeed, maxSpeed, width, height, imgSrc, HpRecovered, type) {
+        super (x , y, xSpeed, ySpeed, maxSpeed, width, height, imgSrc);
         this.HpRecovered = HpRecovered;
+        this.fadeTime = 0;
+        this.type = type;
+        this.drank = false;
     }
 }

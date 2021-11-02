@@ -9,6 +9,7 @@ let canvasHeight = 600;
 let counter = 0;
 let lvlUpScreen = false;
 let lvlUpNavigation = 0;
+let potions = [];
 
 
 startBtn.addEventListener("click", () => {
@@ -87,7 +88,7 @@ document.addEventListener("keydown", (e) => {
                 wizard.cooldown = wizard.shotCd;
             }
             break;             
-        case "Enter":
+        case "q":
             if (lvlUpScreen && wizard.skillLvl[lvlUpNavigation]!==skills[lvlUpNavigation].maxLevel) {
                 wizard[skills[lvlUpNavigation].status] += skills[lvlUpNavigation].modifier;
                 wizard.skillLvl[lvlUpNavigation] += 1; 
@@ -164,7 +165,50 @@ function generateEnemies() {
     }
 }
 
+function generatePotion() {
+    for (let i=0; i<potionInfo.length; i++) {
+        if (potionInfo[i].startMinute<=minutesElapsed()) {
+            potionInfo[i].cooldown += 1;    
+            if (potionInfo[i].cooldown === potionInfo[i].currentSpawn) {
+                potions.push (new HpRecovery(Math.floor(Math.random()*canvasWidth), Math.floor(Math.random()*canvasHeight), 0,0,0,30,30,potionInfo[i].imageSrc,potionInfo[i].recovery*wizard.maxHealth,potionInfo[i].type ))
+                potionInfo[i].cooldown = 0;
+            }
+        }
+    }
+}
 
+function drinkPotion() {
+    for (let i=0; i<potions.length; i++) {
+        if (objectsCollide(potions[i], wizard)) {
+            if (!potions[i].drank) {
+                potions[i].drank = true;
+                if (wizard.health < wizard.maxHealth) {
+                    if (wizard.health + potions[i].HpRecovered <= wizard.maxHealth) {
+                        wizard.health += potions[i].HpRecovered;
+                    }
+                    else wizard.health = wizard.maxHealth
+                }
+            }
+        }
+    }
+
+    potions = potions.filter(potion => !potion.drank)
+}
+
+function updatePotions() {
+    potions = potions.filter(potion => {
+        let thisPotion = potionInfo.filter(pot => pot.type === potion.type)
+        return (potion.fadeTime < thisPotion[0].fade)
+    })
+
+    for (let i=0; i<potions.length; i++) {
+        potions[i].fadeTime += 1;
+        potions[i].drawObject();
+    }
+
+    generatePotion();
+    drinkPotion();
+}
 
 
 //checks the colision between two GameObjects
@@ -309,7 +353,7 @@ function lvlUpScreenCanvas() {
     ctx.font = "25px arial";
     ctx.fillText(skillString, canvasWidth/2 - ctx.measureText(skillString).width/2, 200);
     ctx.font = "15px arial"
-    skillString = "(Press 'Enter' to choose)";
+    skillString = "(Press 'Q' to choose)";
     ctx.fillText(skillString, canvasWidth/2 - ctx.measureText(skillString).width/2, 220);
     ctx.fillRect(51, 241, 98, 98);
     let skillImg = new Image();
@@ -348,6 +392,10 @@ function lvlUpScreenCanvas() {
 
 function lvlUp() {
     lvlUpScreen = true;
+    if (1.3*wizard.health > wizard.maxHealth) {
+        wizard.health = wizard.maxHealth
+    }
+    else wizard.health *= 1.3
     clearInterval(interval);
     interval = setInterval(lvlUpScreenCanvas, 20);
 }
@@ -380,6 +428,8 @@ function gameOver() {
     ctx.fillText(text3 , canvasWidth/2 - text3Width/2, 370);
     enemies = [];
     updateEnemies();
+    potions = [];
+    updatePotions();
 }
 
 //Everything that needs to be updated in each iteraction
@@ -388,5 +438,6 @@ function updateCanvas() {
     updateShots();  
     updateEnemies();
     updateWizard();
+    updatePotions();
     counter += 1;
 }
