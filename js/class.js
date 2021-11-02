@@ -125,7 +125,7 @@ class Main extends Character {
         this.shotSpd = 7;
         this.shotSize = 5;
         this.shotCd = 50;
-        this.cooldown = 0;
+        this.cooldown = 50;
         this.skillLvl = [0,0,0,0];
         this.drawObject();
     }

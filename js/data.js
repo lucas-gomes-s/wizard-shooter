@@ -1,9 +1,26 @@
 const maxLevel = 50
-let levels = [50]
+let levels = [5]
 
 for (let i=1; i<maxLevel; i++){
-    levels.push(Math.floor(levels[i-1]*(1.4)))
+    if (i<5){
+        levels.push(Math.floor(levels[i-1]*(1.5)))
+        continue;
+    }
+    if (i<10) {
+        levels.push(Math.floor(levels[i-1]*(1.3)))
+        continue;
+    }
+    if (i<25) {
+        levels.push(Math.floor(levels[i-1]*(1.2)))
+        continue;
+    }
+    if (i<50) {
+        levels.push(Math.floor(levels[i-1]*(1.1)))
+        continue;
+    }
 } 
+
+console.log(levels)
 
 let skills = [
     {name: "Hermes' Emissary",
@@ -97,8 +114,8 @@ let monsters = [
     health:10,
     maxHealth: 10,
     damage:10,
-    expGiven: 20,
-    startMinute: 3,
+    expGiven: 1,
+    startMinute: 4,
     spawn: 50,
     cooldown: 0
     },
@@ -111,7 +128,7 @@ let monsters = [
     health:20,
     maxHealth: 20,
     damage:10,
-    expGiven: 20,
+    expGiven: 1,
     startMinute: 0,
     spawn: 100,
     cooldown: 0
@@ -122,12 +139,12 @@ let monsters = [
     maxSpeed: 2,
     width: 40,
     height: 40,
-    health:120,
-    maxHealth: 120,
+    health:100,
+    maxHealth: 100,
     damage:20,
-    expGiven: 50,
+    expGiven: 5,
     startMinute: 1,
-    spawn: 200,
+    spawn: 500,
     cooldown: 0
     },
 
@@ -136,26 +153,26 @@ let monsters = [
     maxSpeed: 1,
     width: 40,
     height: 40,
-    health:100,
-    maxHealth: 100,
+    health:300,
+    maxHealth: 300,
     damage:30,
-    expGiven: 100,
+    expGiven: 10,
     startMinute: 5,
-    spawn: 150,
+    spawn: 300,
     cooldown: 0
     },    
     
     {name : "Knight",
     imageSrc : "./images/enemies/knight.png",   
-    maxSpeed: 2,
+    maxSpeed: 3,
     width: 40,
     height: 40,
     health:400,
     maxHealth: 400,
     damage:50,
-    expGiven: 200,
+    expGiven: 15,
     startMinute: 7,
-    spawn: 200,
+    spawn: 500,
     cooldown: 0
     },    
     
@@ -167,7 +184,7 @@ let monsters = [
     health:300,
     maxHealth: 300,
     damage:30,
-    expGiven: 400,
+    expGiven: 30,
     startMinute: 10,
     spawn: 200,
     cooldown: 0
@@ -195,7 +212,7 @@ let monsters = [
     health:300,
     maxHealth: 300,
     damage:30,
-    expGiven: 70,
+    expGiven: 300,
     startMinute: 20,
     spawn: 200,
     cooldown: 0

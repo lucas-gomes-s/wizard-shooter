@@ -45,7 +45,9 @@ function printBackground() {
 
 //Start of user inputs
 document.addEventListener("keydown", (e) => {
+    console.log(e.key)
     switch (e.key){
+        
         case "a":
             wizard.xSpeed = -wizard.maxSpeed;
             break;
