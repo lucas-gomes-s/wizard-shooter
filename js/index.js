@@ -34,7 +34,7 @@ function startGame() {
 //Prints background (duh)
 function printBackground() {
     const img = new Image();
-    img.src = "../images/dungeonfloor.jpg"
+    img.src = "./images/dungeonfloor.jpg"
     let pattern = ctx.createPattern(img, "repeat");
     ctx.fillStyle = pattern;
     ctx.fillRect(0, 0, 600, 600)
