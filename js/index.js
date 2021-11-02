@@ -14,7 +14,8 @@ let potions = [];
 
 startBtn.addEventListener("click", () => {
     startGame();
-    
+    canvasElement.scrollIntoView();
+    canvasElement.click();
 })
 
 function startGame() {
@@ -79,12 +80,14 @@ document.addEventListener("keydown", (e) => {
             }         
             break;
         case "ArrowUp":
+            e.preventDefault();
             if (wizard.cooldown === 0) {
                 shots.push(new Shot(wizard.x+wizard.width/2, wizard.y+wizard.height/2, 0, -wizard.shotSpd, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0));
                 wizard.cooldown = wizard.shotCd;
             }
             break;
         case "ArrowDown":
+            e.preventDefault();
             if (wizard.cooldown === 0) {
                 shots.push(new Shot(wizard.x+wizard.width/2, wizard.y+wizard.height/2, 0, wizard.shotSpd, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0));
                 wizard.cooldown = wizard.shotCd;

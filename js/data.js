@@ -116,7 +116,7 @@ let monsters = [
     damage:10,
     expGiven: 1,
     startMinute: 4,
-    spawn: 50,
+    spawn: 70,
     cooldown: 0
     },
 
@@ -144,7 +144,7 @@ let monsters = [
     damage:20,
     expGiven: 5,
     startMinute: 1,
-    spawn: 500,
+    spawn: 350,
     cooldown: 0
     },
 
