@@ -12,7 +12,7 @@ let skills = [
     status: "maxSpeed",
     modifier: 1,
     maxLevel: 5,
-    img: "../images/skills/nimbleFeet.png"
+    img: "./images/skills/nimbleFeet.png"
     },
     {name: "Dragon Scales",
     description1: "I've got thick skin and an elastic heart!",
@@ -20,7 +20,7 @@ let skills = [
     status: "maxHealth",
     modifier: 20,
     maxLevel: 20,
-    img: "../images/skills/dragonScales.png"
+    img: "./images/skills/dragonScales.png"
     },
     {name: "Necronomicon",
     description1: "Give up a little Sanity, gain more power!",
@@ -28,7 +28,7 @@ let skills = [
     status: "shotDmg",
     modifier: 10,
     maxLevel: 20,
-    img: "../images/skills/necronomicon.jpg"
+    img: "./images/skills/necronomicon.jpg"
     },
     {name: "Who is Rambo?",
     description1: "No, really, who is this guy?!",
@@ -36,7 +36,7 @@ let skills = [
     status: "shotCd",
     modifier: -5,
     maxLevel: 10,
-    img: "../images/skills/machineGun.png"
+    img: "./images/skills/machineGun.png"
     }
 ]
 
@@ -90,7 +90,7 @@ let gameOverPhrases  = [
 
 let monsters = [
     {name : "Spider",
-    imageSrc : "../images/enemies/spider.png",   
+    imageSrc : "./images/enemies/spider.png",   
     maxSpeed: 3,
     width: 20,
     height: 20,
@@ -104,7 +104,7 @@ let monsters = [
     },
 
     {name : "Goblin",
-    imageSrc : "../images/enemies/goblin.png",   
+    imageSrc : "./images/enemies/goblin.png",   
     maxSpeed: 2,
     width: 30,
     height: 30,
@@ -118,7 +118,7 @@ let monsters = [
     },
 
     {name : "Orc",
-    imageSrc : "../images/enemies/orc.png",   
+    imageSrc : "./images/enemies/orc.png",   
     maxSpeed: 2,
     width: 40,
     height: 40,
@@ -132,7 +132,7 @@ let monsters = [
     },
 
     {name : "Zombie",
-    imageSrc : "../images/enemies/zombie.png",   
+    imageSrc : "./images/enemies/zombie.png",   
     maxSpeed: 1,
     width: 40,
     height: 40,
@@ -146,7 +146,7 @@ let monsters = [
     },    
     
     {name : "Knight",
-    imageSrc : "../images/enemies/knight.png",   
+    imageSrc : "./images/enemies/knight.png",   
     maxSpeed: 2,
     width: 40,
     height: 40,
@@ -160,7 +160,7 @@ let monsters = [
     },    
     
     {name : "Vampire",
-    imageSrc : "../images/enemies/vampire.png",   
+    imageSrc : "./images/enemies/vampire.png",   
     maxSpeed: 3,
     width: 40,
     height: 40,
@@ -174,7 +174,7 @@ let monsters = [
     },    
     
     {name : "Reaper",
-    imageSrc : "../images/enemies/reaper.png",   
+    imageSrc : "./images/enemies/reaper.png",   
     maxSpeed: 3,
     width: 50,
     height: 50,
@@ -188,7 +188,7 @@ let monsters = [
     },    
     
     {name : "Demon",
-    imageSrc : "../images/enemies/demon.png",   
+    imageSrc : "./images/enemies/demon.png",   
     maxSpeed: 3,
     width: 50,
     height: 50,
@@ -202,7 +202,7 @@ let monsters = [
     },    
     
     {name : "Dragon",
-    imageSrc : "../images/enemies/dragon.png",   
+    imageSrc : "./images/enemies/dragon.png",   
     maxSpeed: 1,
     width: 100,
     height: 100,
@@ -225,7 +225,7 @@ let potionInfo = [
     startMinute: 0,
     cooldown: 1,
     fade: 1000,
-    imageSrc: "../images/potions/potion.png"},
+    imageSrc: "./images/potions/potion.png"},
 
     {type: "HP Potion",
     recovery: 0.25,
@@ -235,7 +235,7 @@ let potionInfo = [
     startMinute: 10,
     fade: 1000,
     cooldown: 1,
-    imageSrc: "../images/potions/midPotion"},
+    imageSrc: "./images/potions/midPotion"},
 
     {type: "Great HP Potion",
     recovery: 0.5,
@@ -245,6 +245,6 @@ let potionInfo = [
     startMinute: 20,
     fade: 1000,
     cooldown: 1,
-    imageSrc: "../images/potions/highPotion.png"}
+    imageSrc: "./images/potions/highPotion.png"}
 
 ]

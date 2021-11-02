@@ -34,7 +34,7 @@ function startGame() {
 //Prints background (duh)
 function printBackground() {
     const img = new Image();
-    img.src = "/images/dungeonfloor.jpg"
+    img.src = "./images/dungeonfloor.jpg"
     let pattern = ctx.createPattern(img, "repeat");
     ctx.fillStyle = pattern;
     ctx.fillRect(0, 0, 600, 600)
@@ -322,7 +322,7 @@ function printHpBar() {
     ctx.fillStyle="red"
     ctx.fillRect(50,25,200*(wizard.health/wizard.maxHealth),15)
     let img = new Image()
-    img.src = "../images/heart.png"
+    img.src = "./images/heart.png"
     ctx.drawImage(img, 20, 22, 20, 20)
 }
 
