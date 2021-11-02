@@ -117,7 +117,7 @@ class Enemy extends Character {
 
 class Main extends Character {
     constructor(){
-        super (280, 280, 0, 0, 2, 40, 40, "../images/wizard-hat.png", 100, 100);
+        super (280, 280, 0, 0, 2, 40, 40, "./images/wizard-hat.png", 100, 100);
         this.level = 1;
         this.currentExp= 0;
         this.expNeeded= levels[0];
