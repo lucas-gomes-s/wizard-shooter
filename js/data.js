@@ -115,7 +115,7 @@ let monsters = [
     damage:10,
     expGiven: 1,
     startMinute: 4,
-    spawn: 70,
+    spawn: 50,
     cooldown: 0
     },
 
@@ -143,7 +143,7 @@ let monsters = [
     damage:20,
     expGiven: 5,
     startMinute: 1,
-    spawn: 350,
+    spawn: 150,
     cooldown: 0
     },
 
@@ -157,7 +157,7 @@ let monsters = [
     damage:30,
     expGiven: 10,
     startMinute: 5,
-    spawn: 300,
+    spawn: 200,
     cooldown: 0
     },    
     
@@ -171,7 +171,7 @@ let monsters = [
     damage:50,
     expGiven: 15,
     startMinute: 7,
-    spawn: 500,
+    spawn: 400,
     cooldown: 0
     },    
     
@@ -185,7 +185,7 @@ let monsters = [
     damage:30,
     expGiven: 30,
     startMinute: 10,
-    spawn: 200,
+    spawn: 100,
     cooldown: 0
     },    
     
@@ -222,12 +222,12 @@ let monsters = [
     maxSpeed: 5,
     width: 100,
     height: 100,
-    health:6000,
-    maxHealth: 6000,
-    damage:300,
+    health:10000,
+    maxHealth: 10000,
+    damage:3000,
     expGiven: 1000,
     startMinute: 25,
-    spawn: 5000,
+    spawn: 2000,
     cooldown: 0
     }
 ]
