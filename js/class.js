@@ -170,10 +170,12 @@ class Main extends Character {
     }
 
     bgUpdate() {
-        if (bgX>canvasWidth-2 && bgX>canvasWidth+2 ) {
+        console.log(bgX)
+        if ((bgX>canvasWidth-4 && bgX<canvasWidth+4)|| (bgX>-canvasWidth-4 && bgX<-canvasWidth+4)) {
             bgX = 0
         };
-        if (bgY>canvasHeight-2 && bgY>canvasHeight+2) {
+        if ((bgY>canvasHeight-4 && bgY<canvasHeight+4)|| (bgY>-canvasHeight-4 && bgY<-canvasHeight+4))
+        {
             bgY = 0
         }
         bgX -= this.xSpeed
