@@ -11,6 +11,9 @@ let lvlUpScreen = false;
 let lvlUpNavigation = 0;
 let potions = [];
 let hpBar = false;
+let bgX = 0;
+let bgY=0;
+
 
 
 startBtn.addEventListener("click", () => {
@@ -20,7 +23,7 @@ startBtn.addEventListener("click", () => {
 })
 
 function startGame() {
-    printBackground();
+    printBackground(0,0);
     enemies = [];
     shots = [];
     counter = 0;
@@ -28,18 +31,26 @@ function startGame() {
         clearInterval(interval)
     }
     interval = setInterval(updateCanvas, 20);  
-    return wizard = new Main();
+    return wizard= new Main()
 
 }
 
 
 //Prints background (duh)
-function printBackground() {
+function printBackground(bgX, bgY) {
     const img = new Image();
     img.src = "./images/dungeonfloor.jpg"
-    let pattern = ctx.createPattern(img, "repeat");
-    ctx.fillStyle = pattern;
-    ctx.fillRect(0, 0, 600, 600)
+    //let pattern = ctx.createPattern(img, "repeat");
+    //ctx.fillStyle = pattern;
+    ctx.drawImage(img, bgX, bgY, canvasWidth, canvasHeight)
+    ctx.drawImage(img,bgX-canvasWidth, bgY, canvasWidth, canvasHeight)
+    ctx.drawImage(img,bgX-canvasWidth, bgY+canvasHeight, canvasWidth, canvasHeight)
+    ctx.drawImage(img,bgX-canvasWidth, bgY-canvasHeight, canvasWidth, canvasHeight)
+    ctx.drawImage(img,bgX, bgY-canvasHeight, canvasWidth, canvasHeight)
+    ctx.drawImage(img,bgX+canvasWidth, bgY-canvasHeight, canvasWidth, canvasHeight)
+    ctx.drawImage(img,bgX+canvasWidth, bgY, canvasWidth, canvasHeight)
+    ctx.drawImage(img,bgX+canvasWidth, bgY+canvasHeight, canvasWidth, canvasHeight)
+    ctx.drawImage(img,bgX, bgY+canvasHeight, canvasWidth, canvasHeight)
     
 }
 
@@ -134,7 +145,7 @@ document.addEventListener("keyup", (e) => {
 //update the position of shots and deletes the offscreen and the ones that already hit
 function updateShots() {
     for (let i=0; i<shots.length; i++) {
-        shots[i].updatePos();
+        shots[i].updatePos(wizard);
         shots[i].drawShot();
     }
 
@@ -217,6 +228,7 @@ function updatePotions() {
 
     for (let i=0; i<potions.length; i++) {
         potions[i].fadeTime += 1;
+        potions[i].updatePos(wizard)
         potions[i].drawObject();
     }
 
@@ -277,7 +289,7 @@ function updateEnemies () {
     
     for (let i=0; i<enemies.length; i++) {
         enemies[i].follow(wizard);
-        enemies[i].updatePos();
+        enemies[i].updatePos(wizard);
         enemies[i].drawObject()
         if (hpBar) {
             enemies[i].printHealthBar();
@@ -286,9 +298,11 @@ function updateEnemies () {
     generateEnemies();
 }
 
-function updateWizard () {
+function updateWizard () {    
+    
     checkDamage();
-    wizard.mainUpdatePos();
+    //wizard.mainUpdatePos();
+    wizard.bgUpdate();
     wizard.drawObject();
     if (hpBar) {
         wizard.printHealthBar();
@@ -305,7 +319,7 @@ function updateWizard () {
 
 function updateGameElements() {
     ctx.clearRect(0,0,600,600);
-    printBackground();
+    printBackground(bgX, bgY);
     printTimer();
     printHpBar();
     printExpBar();
@@ -429,7 +443,7 @@ function ResumeGame() {
 
 function gameOver() {
     clearInterval(interval);
-    printBackground();
+    printBackground(0,0);
     ctx.fillStyle = "red";
     ctx.font = " 60px arial";
     let gameOverString = "Game Over"

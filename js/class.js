@@ -26,9 +26,30 @@ class GameObject {
         return (this.x+this.width)
     }
 
-    updatePos(){
+    updatePos(main){
+        this.x += this.xSpeed - main.xSpeed;
+        this.y += this.ySpeed - main.ySpeed;        
+    }
+
+    //not being used
+    //method for making characters "cross the walls"
+    updatePosModified(){
+        if (this.y <= 0 ) {
+            this.y = 600
+        }
+        if (this.y>=canvasHeight) {
+            this.y = 0
+        }
+        if (this.x <= 0) {
+            this.x = 600
+        }
+        if (this.x >= canvasWidth) {
+            this.x = 0
+        }
+
         this.x += this.xSpeed;
         this.y += this.ySpeed;
+        
     }
 
     checkOnScreen() {
@@ -146,6 +167,17 @@ class Main extends Character {
         if ((this.ySpeed>0 && this.y<canvasHeight-this.height) || (this.ySpeed<0 && this.y > 0)){
             this.y += this.ySpeed;
         }        
+    }
+
+    bgUpdate() {
+        if (bgX%canvasWidth === 0) {
+            bgX = 0
+        };
+        if (bgY%canvasHeight === 0) {
+            bgY = 0
+        }
+        bgX -= this.xSpeed
+        bgY -= this.ySpeed
     }
 
     gainExp (enemy) {
