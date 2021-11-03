@@ -12,6 +12,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 20px;
 }
 
 #title {
@@ -56,7 +57,7 @@ body {
     display: flex;
 }
 
-#instructions div {
+.instructions-info {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -66,9 +67,13 @@ body {
     width: 40%
 }
 
-#instructions p {
+.instructions-info p {
     font-weight: bold;
-    font-size: 1.3em;
+    font-size: 1.3rem;
+}
+
+#qKey {
+    width: 40%
 }
 
 #startDiv {

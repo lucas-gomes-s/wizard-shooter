@@ -61,6 +61,14 @@ class Character extends GameObject {
         }
         else false
     }
+
+    printHealthBar() {
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 1;
+        ctx.strokeRect(this.x,this.y-10,this.width,5)
+        ctx.fillStyle="red"
+        ctx.fillRect(this.x,this.y-10,this.width*(this.health/this.maxHealth),5)       
+    }
 }
 
 class Enemy extends Character {

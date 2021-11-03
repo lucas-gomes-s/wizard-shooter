@@ -9,6 +9,9 @@
         <div id="titleImage">
             <img id= "title" src = "./images/title.png">
         </div>
+        <div id="startDiv">
+            <button id="startButton">Start Game</button>
+        </div>
         <div id="content">
             <div id = "intro">               
                 <h3>After an insane night-out you wake up in an unfamiliar dungeon.</h3> 
@@ -19,20 +22,22 @@
             <div id="instructionsContainer">    
                 <h2>Instructions</h2>
                 <div id="instructions"> 
-                    <div id="move">
+                    <div id="move" class = "instructions-info">
                         <img id="wasd" src="./images/wasd.png">
-                        <p>Move</p>
+                        <p class = "instructions-p">Move</p>
                     </div>
-                    <div id="shoot">
+                    <div id="shoot" class = "instructions-info">
                         <img id="directional" src="./images/directionalKeys.png">
-                        <p>Shoot</p>
+                        <p class = "instructions-p">Shoot</p>
                     </div>
+                </div>
+                <div class = "instructions-info">
+                    <img id="qKey" src="./images/q.png">
+                    <p class = "instructions-p">Toggle HP Bar</p>
                 </div>
             </div>
         </div>
-        <div id="startDiv">
-            <button id="startButton">Start Game</button>
-        </div>
+
         <script type="text/javascript" src="./js/data.js"></script>
         <script type="text/javascript" src="./js/class.js"></script>
         <script type="text/javascript" src="./js/index.js"></script>

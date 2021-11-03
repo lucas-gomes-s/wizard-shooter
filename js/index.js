@@ -10,6 +10,7 @@ let counter = 0;
 let lvlUpScreen = false;
 let lvlUpNavigation = 0;
 let potions = [];
+let hpBar = false;
 
 
 startBtn.addEventListener("click", () => {
@@ -99,6 +100,10 @@ document.addEventListener("keydown", (e) => {
                 wizard.skillLvl[lvlUpNavigation] += 1; 
                 ResumeGame();
             }
+            else if (!lvlUpScreen) {
+                hpBar = true;
+            }
+            break;
 
     }
 })
@@ -116,6 +121,11 @@ document.addEventListener("keyup", (e) => {
             break;
         case "w":
             wizard.ySpeed = 0;
+        case "q":
+            if (!lvlUpScreen) {
+                hpBar = false;
+            }
+            break;
     }
 })
 //End of user inputs
@@ -270,6 +280,9 @@ function updateEnemies () {
         enemies[i].follow(wizard);
         enemies[i].updatePos();
         enemies[i].drawObject()
+        if (hpBar) {
+            enemies[i].printHealthBar();
+        }
     }
     generateEnemies();
 }
@@ -278,6 +291,9 @@ function updateWizard () {
     checkDamage();
     wizard.mainUpdatePos();
     wizard.drawObject();
+    if (hpBar) {
+        wizard.printHealthBar();
+    }
     wizard.levelUp()
     if (!wizard.checkAlive()) {
         gameOver();
