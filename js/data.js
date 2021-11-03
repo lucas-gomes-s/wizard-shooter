@@ -20,7 +20,6 @@ for (let i=1; i<maxLevel; i++){
     }
 } 
 
-console.log(levels)
 
 let skills = [
     {name: "Hermes' Emissary",

@@ -47,7 +47,6 @@ function printBackground() {
 
 //Start of user inputs
 document.addEventListener("keydown", (e) => {
-    console.log(e.key)
     switch (e.key){
         
         case "a":
@@ -447,6 +446,11 @@ function gameOver() {
     ctx.fillText(text1 , canvasWidth/2 - text1Width/2, 330);
     ctx.fillText(text2 , canvasWidth/2 - text2Width/2, 350);
     ctx.fillText(text3 , canvasWidth/2 - text3Width/2, 370);
+    ctx.fillStyle = "yellow";
+    ctx.font = "15px arial";
+    let text4 = `You surived for ${turnToTwoDigitString(minutesElapsed())+":"+turnToTwoDigitString(secondsElapsed())}. Try Harder.`
+    let text4Width = ctx.measureText(text4).width
+    ctx.fillText(text4 , canvasWidth/2 - text4Width/2, 420);
     enemies = [];
     updateEnemies();
     potions = [];
