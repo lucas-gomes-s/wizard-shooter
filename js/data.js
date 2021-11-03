@@ -107,7 +107,7 @@ let gameOverPhrases  = [
 let monsters = [
     {name : "Spider",
     imageSrc : "./images/enemies/spider.png",   
-    maxSpeed: 3,
+    maxSpeed: 4,
     width: 20,
     height: 20,
     health:10,
@@ -135,11 +135,11 @@ let monsters = [
 
     {name : "Orc",
     imageSrc : "./images/enemies/orc.png",   
-    maxSpeed: 2,
+    maxSpeed: 3,
     width: 40,
     height: 40,
-    health:100,
-    maxHealth: 100,
+    health:150,
+    maxHealth: 150,
     damage:20,
     expGiven: 5,
     startMinute: 1,
@@ -149,7 +149,7 @@ let monsters = [
 
     {name : "Zombie",
     imageSrc : "./images/enemies/zombie.png",   
-    maxSpeed: 3,
+    maxSpeed: 2,
     width: 40,
     height: 40,
     health:300,
