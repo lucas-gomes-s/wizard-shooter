@@ -53,7 +53,7 @@ class GameObject {
     }
 
     checkOnScreen() {
-        if (this.x < canvasWidth + 100 && this.x > -100 && this.y>-100 && this.y<canvasHeight+100){
+        if (this.x < 2*canvasWidth && this.x > -2*canvasWidth && this.y>-2*canvasHeight && this.y<2*canvasHeight){
             return true
         }  
         else return false
@@ -151,7 +151,7 @@ class Main extends Character {
         this.currentExp= 0;
         this.expNeeded= levels[0];
         this.shotDmg = 10;
-        this.shotSpd = 7;
+        this.shotSpd = 8;
         this.shotSize = 5;
         this.shotCd = 50;
         this.cooldown = 50;

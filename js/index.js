@@ -295,6 +295,7 @@ function updateEnemies () {
             enemies[i].printHealthBar();
         }
     }
+    enemies = enemies.filter(enemy => {return enemy.checkOnScreen()})
     generateEnemies();
 }
 
