@@ -4,18 +4,18 @@ Wizard Shooter is a 1-week project in CSS, HTML and Vanilla JavaScript done duri
 
 >Play it [here](https://fitz552.github.io/wizard-shooter/)
 
-# About the Game
+## About the Game
 After a wild night-out you wake up in an unfamiliar dungeon.
 
 Use your magic to try to survive.
 
-# Game Instruction
+## Game Instruction
 - Walk around using WASD
 - Shoot using Directional Arrows
 - Pick your skills wisely
 - Survive!
 
-# Contribution
+## Contribution
 
 
 >This is a free software, product of a study about webdev. Feel free to contribute in any way you want
@@ -26,7 +26,7 @@ Commit your changes (git commit -am 'Add some fooBar')
 Push to the branch (git push origin feature/fooBar)
 Create a new Pull Request
 
-# IronHack Miscelania
+## IronHack
 
 - Deployed game [link](https://fitz552.github.io/wizard-shooter/)
 - Presentation [link](https://docs.google.com/presentation/d/1f6KZOAQbaHc2opn7Utvzz10aALow47Y_48NhELgFjEY/edit?usp=sharing)
