@@ -1,0 +1,5302 @@
+{
+  "combatBalance": {
+    "demonShotMultiplier": 0.5,
+    "demonWindup": 55,
+    "reaperRecovery": 25,
+    "nonNecroHeal": 0.35,
+    "chilledDamageBonus": 0.25
+  },
+  "results": [
+    {
+      "primary": "ice",
+      "secondary": null,
+      "seed": 1,
+      "seconds": 825.4,
+      "phase": "over",
+      "level": 27,
+      "kills": 1196,
+      "xp": 8708,
+      "health": 0,
+      "maxEnemies": 64,
+      "firstUpgrade": 6.28,
+      "secondaryOfferedAt": null,
+      "secondaryAt": null,
+      "secondaryLevel": null,
+      "fusion": null,
+      "fusionAt": null,
+      "fusionLevel": null,
+      "mastery": "absolute-zero",
+      "masteryAt": 254.5,
+      "masteryLevel": 15,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 5,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "phantom",
+        "boots": "trail",
+        "relic": "lantern"
+      },
+      "chestsOpened": 7,
+      "lootHistory": [
+        {
+          "id": "echo",
+          "tick": 6073,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "hourglass",
+          "tick": 11146,
+          "source": "Blood moon reward"
+        },
+        {
+          "id": "escape",
+          "tick": 21038,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "lantern",
+          "tick": 36083,
+          "source": "Guardian reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 11136,
+          "startedAt": 10530,
+          "progress": 19,
+          "goal": 19,
+          "hits": 0
+        },
+        {
+          "id": "collapse",
+          "outcome": "completed",
+          "tick": 27046,
+          "startedAt": 25546,
+          "progress": 0,
+          "goal": 3,
+          "hits": 0
+        },
+        {
+          "id": "altar",
+          "outcome": "failed",
+          "tick": 41270,
+          "startedAt": 40536,
+          "progress": 733,
+          "goal": 1500,
+          "hits": 0
+        }
+      ],
+      "gold": 279,
+      "goldEarned": 539,
+      "goldSpent": 260,
+      "marketHistory": [
+        {
+          "id": "phantom",
+          "price": 90,
+          "tick": 18042
+        },
+        {
+          "id": "trail",
+          "price": 170,
+          "tick": 33027
+        }
+      ],
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 11151
+        },
+        {
+          "id": "hourglass",
+          "tick": 12151
+        },
+        {
+          "id": "hourglass",
+          "tick": 13151
+        },
+        {
+          "id": "hourglass",
+          "tick": 14326
+        },
+        {
+          "id": "hourglass",
+          "tick": 15426
+        },
+        {
+          "id": "hourglass",
+          "tick": 16481
+        },
+        {
+          "id": "hourglass",
+          "tick": 18051
+        },
+        {
+          "id": "hourglass",
+          "tick": 19071
+        },
+        {
+          "id": "hourglass",
+          "tick": 20071
+        },
+        {
+          "id": "hourglass",
+          "tick": 21126
+        },
+        {
+          "id": "escape",
+          "tick": 21261
+        },
+        {
+          "id": "escape",
+          "tick": 21816
+        },
+        {
+          "id": "hourglass",
+          "tick": 22126
+        },
+        {
+          "id": "escape",
+          "tick": 22636
+        },
+        {
+          "id": "hourglass",
+          "tick": 23216
+        },
+        {
+          "id": "escape",
+          "tick": 23376
+        },
+        {
+          "id": "hourglass",
+          "tick": 24246
+        },
+        {
+          "id": "escape",
+          "tick": 24891
+        },
+        {
+          "id": "hourglass",
+          "tick": 25251
+        },
+        {
+          "id": "escape",
+          "tick": 25696
+        },
+        {
+          "id": "hourglass",
+          "tick": 26256
+        },
+        {
+          "id": "escape",
+          "tick": 26306
+        },
+        {
+          "id": "escape",
+          "tick": 27166
+        },
+        {
+          "id": "hourglass",
+          "tick": 27296
+        },
+        {
+          "id": "escape",
+          "tick": 27736
+        },
+        {
+          "id": "hourglass",
+          "tick": 28296
+        },
+        {
+          "id": "escape",
+          "tick": 28406
+        },
+        {
+          "id": "escape",
+          "tick": 28936
+        },
+        {
+          "id": "hourglass",
+          "tick": 29406
+        },
+        {
+          "id": "escape",
+          "tick": 29916
+        },
+        {
+          "id": "hourglass",
+          "tick": 30406
+        },
+        {
+          "id": "escape",
+          "tick": 30521
+        },
+        {
+          "id": "hourglass",
+          "tick": 31506
+        },
+        {
+          "id": "escape",
+          "tick": 31846
+        },
+        {
+          "id": "escape",
+          "tick": 32511
+        },
+        {
+          "id": "hourglass",
+          "tick": 32511
+        },
+        {
+          "id": "hourglass",
+          "tick": 33511
+        },
+        {
+          "id": "trail",
+          "tick": 33586
+        },
+        {
+          "id": "trail",
+          "tick": 34106
+        },
+        {
+          "id": "hourglass",
+          "tick": 34511
+        },
+        {
+          "id": "trail",
+          "tick": 34876
+        },
+        {
+          "id": "trail",
+          "tick": 35481
+        },
+        {
+          "id": "hourglass",
+          "tick": 35536
+        },
+        {
+          "id": "trail",
+          "tick": 36371
+        },
+        {
+          "id": "lantern",
+          "tick": 36536
+        },
+        {
+          "id": "trail",
+          "tick": 37141
+        },
+        {
+          "id": "lantern",
+          "tick": 37286
+        },
+        {
+          "id": "lantern",
+          "tick": 38036
+        },
+        {
+          "id": "trail",
+          "tick": 38511
+        },
+        {
+          "id": "lantern",
+          "tick": 38801
+        },
+        {
+          "id": "trail",
+          "tick": 39021
+        },
+        {
+          "id": "lantern",
+          "tick": 39651
+        },
+        {
+          "id": "trail",
+          "tick": 40021
+        },
+        {
+          "id": "lantern",
+          "tick": 40506
+        },
+        {
+          "id": "trail",
+          "tick": 40536
+        },
+        {
+          "id": "trail",
+          "tick": 41036
+        },
+        {
+          "id": "lantern",
+          "tick": 41256
+        }
+      ],
+      "telemetry": {
+        "casts": 1014,
+        "bolts": 1192,
+        "boltsHit": 756,
+        "directHits": 1514,
+        "damage": 56862,
+        "overkill": 97634.09999999998,
+        "damageBySource": {
+          "direct:ice": {
+            "effective": 54732,
+            "overkill": 92971.09999999998,
+            "hits": 1514
+          },
+          "gear:trail:active": {
+            "effective": 439,
+            "overkill": 812,
+            "hits": 9
+          },
+          "gear:lantern:active": {
+            "effective": 1130,
+            "overkill": 3388,
+            "hits": 16
+          },
+          "gear:lantern:passive": {
+            "effective": 364,
+            "overkill": 436,
+            "hits": 5
+          },
+          "gear:trail:passive": {
+            "effective": 197,
+            "overkill": 27,
+            "hits": 4
+          }
+        },
+        "incoming": 470.42499999999956,
+        "prevented": 222,
+        "incomingBySource": {
+          "contact:Goblin": {
+            "requested": 75,
+            "applied": 50,
+            "prevented": 25,
+            "hits": 15
+          },
+          "contact:Spider": {
+            "requested": 45,
+            "applied": 25,
+            "prevented": 20,
+            "hits": 9
+          },
+          "contact:Orc": {
+            "requested": 107,
+            "applied": 81,
+            "prevented": 26,
+            "hits": 8
+          },
+          "contact:Zombie": {
+            "requested": 120,
+            "applied": 105,
+            "prevented": 15,
+            "hits": 8
+          },
+          "contact:Knight": {
+            "requested": 181,
+            "applied": 81,
+            "prevented": 100,
+            "hits": 9
+          },
+          "contact:Vampire": {
+            "requested": 108,
+            "applied": 68.42499999999954,
+            "prevented": 36,
+            "hits": 6
+          },
+          "contact:Reaper": {
+            "requested": 60,
+            "applied": 60,
+            "prevented": 0,
+            "hits": 2
+          }
+        },
+        "healing": 370.42500000000564,
+        "healingBySource": {
+          "potion": 60.55000000000015,
+          "level-up": 122.0750000000011,
+          "balance:recovery": 187.79999999999777
+        },
+        "selfDamage": 0,
+        "selfDamageBySource": {},
+        "windows": {
+          "0": {
+            "damage": 7370,
+            "incoming": 127,
+            "healing": 127,
+            "casts": 327,
+            "bolts": 368,
+            "boltsHit": 241
+          },
+          "5": {
+            "damage": 21129.000000000004,
+            "incoming": 142,
+            "healing": 142,
+            "casts": 375,
+            "bolts": 450,
+            "boltsHit": 294
+          },
+          "10": {
+            "damage": 28363.000000000004,
+            "incoming": 201.42499999999953,
+            "healing": 101.42499999999939,
+            "casts": 312,
+            "bolts": 374,
+            "boltsHit": 221
+          }
+        },
+        "seconds": 825.4,
+        "dps": 68.89023503755755,
+        "accuracy": 0.6342281879194631,
+        "hitsPerCast": 1.4930966469428009
+      },
+      "stats": {
+        "damage": 160,
+        "castTicks": 30,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 323,
+          "health": 100,
+          "enemies": 9
+        },
+        "600": {
+          "level": 23,
+          "kills": 783,
+          "health": 100,
+          "enemies": 14
+        }
+      }
+    },
+    {
+      "primary": "ice",
+      "secondary": null,
+      "seed": 2,
+      "seconds": 961.18,
+      "phase": "over",
+      "level": 29,
+      "kills": 1494,
+      "xp": 12271,
+      "health": 0,
+      "maxEnemies": 82,
+      "firstUpgrade": 7.72,
+      "secondaryOfferedAt": null,
+      "secondaryAt": null,
+      "secondaryLevel": null,
+      "fusion": null,
+      "fusionAt": null,
+      "fusionLevel": null,
+      "mastery": "absolute-zero",
+      "masteryAt": 272.18,
+      "masteryLevel": 15,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 5,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "prism",
+        "robe": "phantom",
+        "boots": "trail",
+        "relic": "lantern"
+      },
+      "chestsOpened": 7,
+      "lootHistory": [
+        {
+          "id": "runner",
+          "tick": 6923,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "bloodwood",
+          "tick": 18611,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "phantom",
+          "tick": 21035,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "lantern",
+          "tick": 33920,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "trail",
+          "tick": 41981,
+          "source": "Magical anomaly reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 11466,
+          "startedAt": 10532,
+          "progress": 19,
+          "goal": 19,
+          "hits": 0
+        },
+        {
+          "id": "altar",
+          "outcome": "completed",
+          "tick": 27656,
+          "startedAt": 26156,
+          "progress": 1500,
+          "goal": 1500,
+          "hits": 0
+        },
+        {
+          "id": "anomaly",
+          "outcome": "completed",
+          "tick": 41178,
+          "startedAt": 40531,
+          "progress": 3,
+          "goal": 3,
+          "hits": 0
+        }
+      ],
+      "gold": 496,
+      "goldEarned": 711,
+      "goldSpent": 215,
+      "marketHistory": [
+        {
+          "id": "fang",
+          "price": 45,
+          "tick": 18028
+        },
+        {
+          "id": "prism",
+          "price": 170,
+          "tick": 33034
+        }
+      ],
+      "activeHistory": [
+        {
+          "id": "runner",
+          "tick": 9336
+        },
+        {
+          "id": "runner",
+          "tick": 10206
+        },
+        {
+          "id": "runner",
+          "tick": 10666
+        },
+        {
+          "id": "runner",
+          "tick": 11226
+        },
+        {
+          "id": "runner",
+          "tick": 11646
+        },
+        {
+          "id": "runner",
+          "tick": 12301
+        },
+        {
+          "id": "runner",
+          "tick": 12656
+        },
+        {
+          "id": "runner",
+          "tick": 13346
+        },
+        {
+          "id": "runner",
+          "tick": 14171
+        },
+        {
+          "id": "runner",
+          "tick": 15146
+        },
+        {
+          "id": "runner",
+          "tick": 15501
+        },
+        {
+          "id": "runner",
+          "tick": 15866
+        },
+        {
+          "id": "runner",
+          "tick": 16441
+        },
+        {
+          "id": "runner",
+          "tick": 16821
+        },
+        {
+          "id": "runner",
+          "tick": 17741
+        },
+        {
+          "id": "runner",
+          "tick": 18436
+        },
+        {
+          "id": "runner",
+          "tick": 20206
+        },
+        {
+          "id": "runner",
+          "tick": 21876
+        },
+        {
+          "id": "runner",
+          "tick": 22336
+        },
+        {
+          "id": "runner",
+          "tick": 22761
+        },
+        {
+          "id": "runner",
+          "tick": 23126
+        },
+        {
+          "id": "runner",
+          "tick": 24196
+        },
+        {
+          "id": "runner",
+          "tick": 24926
+        },
+        {
+          "id": "runner",
+          "tick": 25306
+        },
+        {
+          "id": "runner",
+          "tick": 25716
+        },
+        {
+          "id": "runner",
+          "tick": 26906
+        },
+        {
+          "id": "runner",
+          "tick": 27476
+        },
+        {
+          "id": "runner",
+          "tick": 27826
+        },
+        {
+          "id": "runner",
+          "tick": 28311
+        },
+        {
+          "id": "runner",
+          "tick": 29331
+        },
+        {
+          "id": "runner",
+          "tick": 30346
+        },
+        {
+          "id": "runner",
+          "tick": 31991
+        },
+        {
+          "id": "runner",
+          "tick": 32401
+        },
+        {
+          "id": "runner",
+          "tick": 32781
+        },
+        {
+          "id": "lantern",
+          "tick": 33921
+        },
+        {
+          "id": "runner",
+          "tick": 33936
+        },
+        {
+          "id": "runner",
+          "tick": 34486
+        },
+        {
+          "id": "lantern",
+          "tick": 34671
+        },
+        {
+          "id": "lantern",
+          "tick": 35586
+        },
+        {
+          "id": "runner",
+          "tick": 35681
+        },
+        {
+          "id": "runner",
+          "tick": 36031
+        },
+        {
+          "id": "lantern",
+          "tick": 36336
+        },
+        {
+          "id": "runner",
+          "tick": 36696
+        },
+        {
+          "id": "lantern",
+          "tick": 37171
+        },
+        {
+          "id": "runner",
+          "tick": 37241
+        },
+        {
+          "id": "runner",
+          "tick": 37731
+        },
+        {
+          "id": "lantern",
+          "tick": 37966
+        },
+        {
+          "id": "runner",
+          "tick": 38216
+        },
+        {
+          "id": "runner",
+          "tick": 38666
+        },
+        {
+          "id": "lantern",
+          "tick": 38716
+        },
+        {
+          "id": "runner",
+          "tick": 39226
+        },
+        {
+          "id": "lantern",
+          "tick": 39491
+        },
+        {
+          "id": "runner",
+          "tick": 39711
+        },
+        {
+          "id": "lantern",
+          "tick": 40246
+        },
+        {
+          "id": "runner",
+          "tick": 40316
+        },
+        {
+          "id": "runner",
+          "tick": 40681
+        },
+        {
+          "id": "lantern",
+          "tick": 41021
+        },
+        {
+          "id": "runner",
+          "tick": 41216
+        },
+        {
+          "id": "runner",
+          "tick": 41591
+        },
+        {
+          "id": "lantern",
+          "tick": 41771
+        },
+        {
+          "id": "trail",
+          "tick": 42431
+        },
+        {
+          "id": "lantern",
+          "tick": 42551
+        },
+        {
+          "id": "trail",
+          "tick": 42996
+        },
+        {
+          "id": "lantern",
+          "tick": 43301
+        },
+        {
+          "id": "trail",
+          "tick": 43541
+        },
+        {
+          "id": "trail",
+          "tick": 44121
+        },
+        {
+          "id": "lantern",
+          "tick": 44126
+        },
+        {
+          "id": "trail",
+          "tick": 44706
+        },
+        {
+          "id": "lantern",
+          "tick": 44916
+        },
+        {
+          "id": "trail",
+          "tick": 45311
+        },
+        {
+          "id": "lantern",
+          "tick": 45666
+        },
+        {
+          "id": "trail",
+          "tick": 46116
+        },
+        {
+          "id": "lantern",
+          "tick": 46416
+        },
+        {
+          "id": "trail",
+          "tick": 46761
+        },
+        {
+          "id": "lantern",
+          "tick": 47181
+        },
+        {
+          "id": "trail",
+          "tick": 47276
+        },
+        {
+          "id": "trail",
+          "tick": 47806
+        },
+        {
+          "id": "lantern",
+          "tick": 48011
+        }
+      ],
+      "telemetry": {
+        "casts": 1187,
+        "bolts": 1187,
+        "boltsHit": 844,
+        "directHits": 1818,
+        "damage": 78024,
+        "overkill": 140926.95000000007,
+        "damageBySource": {
+          "direct:ice": {
+            "effective": 72591.79999999999,
+            "overkill": 129413.65000000002,
+            "hits": 1818
+          },
+          "gear:lantern:active": {
+            "effective": 3821.7,
+            "overkill": 9822.3,
+            "hits": 48
+          },
+          "gear:lantern:passive": {
+            "effective": 1271.5,
+            "overkill": 1158.5,
+            "hits": 15
+          },
+          "gear:trail:active": {
+            "effective": 170,
+            "overkill": 271,
+            "hits": 3
+          },
+          "gear:trail:passive": {
+            "effective": 169,
+            "overkill": 261.49999999999994,
+            "hits": 7
+          }
+        },
+        "incoming": 780.3835699999975,
+        "prevented": 573,
+        "incomingBySource": {
+          "contact:Orc": {
+            "requested": 91,
+            "applied": 78,
+            "prevented": 13,
+            "hits": 7
+          },
+          "contact:Spider": {
+            "requested": 93,
+            "applied": 61,
+            "prevented": 32,
+            "hits": 18
+          },
+          "contact:Goblin": {
+            "requested": 165,
+            "applied": 60,
+            "prevented": 105,
+            "hits": 33
+          },
+          "contact:Zombie": {
+            "requested": 210,
+            "applied": 60,
+            "prevented": 150,
+            "hits": 14
+          },
+          "contact:Knight": {
+            "requested": 176,
+            "applied": 107.38356999999749,
+            "prevented": 57,
+            "hits": 9
+          },
+          "contact:Vampire": {
+            "requested": 216,
+            "applied": 90,
+            "prevented": 126,
+            "hits": 12
+          },
+          "contact:Reaper": {
+            "requested": 414,
+            "applied": 324,
+            "prevented": 90,
+            "hits": 13
+          }
+        },
+        "healing": 870.3835700000134,
+        "healingBySource": {
+          "level-up": 189.93856999999923,
+          "balance:recovery": 309.84999999999957,
+          "potion": 192.4500000000003,
+          "gear:fang": 178.14500000000135
+        },
+        "selfDamage": 190,
+        "selfDamageBySource": {
+          "gear:bloodwood": 190
+        },
+        "windows": {
+          "0": {
+            "damage": 6370,
+            "incoming": 54,
+            "healing": 74,
+            "casts": 297,
+            "bolts": 297,
+            "boltsHit": 209
+          },
+          "5": {
+            "damage": 22837,
+            "incoming": 137,
+            "healing": 283.00000000000017,
+            "casts": 374,
+            "bolts": 374,
+            "boltsHit": 263
+          },
+          "10": {
+            "damage": 38499,
+            "incoming": 433,
+            "healing": 381.99890000000096,
+            "casts": 429,
+            "bolts": 429,
+            "boltsHit": 303
+          },
+          "15": {
+            "damage": 10318,
+            "incoming": 156.3835699999975,
+            "healing": 131.38466999999903,
+            "casts": 87,
+            "bolts": 87,
+            "boltsHit": 69
+          }
+        },
+        "seconds": 961.18,
+        "dps": 81.17522212280738,
+        "accuracy": 0.7110362257792755,
+        "hitsPerCast": 1.531592249368155
+      },
+      "stats": {
+        "damage": 180,
+        "castTicks": 35,
+        "speed": 4,
+        "maxHealth": 120
+      },
+      "milestones": {
+        "300": {
+          "level": 15,
+          "kills": 260,
+          "health": 120,
+          "enemies": 71
+        },
+        "600": {
+          "level": 23,
+          "kills": 781,
+          "health": 120,
+          "enemies": 24
+        },
+        "900": {
+          "level": 28,
+          "kills": 1359,
+          "health": 25,
+          "enemies": 17
+        }
+      }
+    },
+    {
+      "primary": "ice",
+      "secondary": "fire",
+      "seed": 1,
+      "seconds": 1508.92,
+      "phase": "victory",
+      "level": 38,
+      "kills": 2843,
+      "xp": 36853,
+      "health": 47,
+      "maxEnemies": 82,
+      "firstUpgrade": 6.28,
+      "secondaryOfferedAt": 221.06,
+      "secondaryAt": 221.06,
+      "secondaryLevel": 13,
+      "fusion": "steam",
+      "fusionAt": 355.8,
+      "fusionLevel": 18,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": true,
+      "build": {
+        "fire": 4,
+        "ice": 5,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "meteor",
+        "robe": "aegis",
+        "boots": "trail",
+        "relic": "lantern"
+      },
+      "chestsOpened": 14,
+      "lootHistory": [
+        {
+          "id": "echo",
+          "tick": 6073,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "hourglass",
+          "tick": 12036,
+          "source": "Dungeon collapse reward"
+        },
+        {
+          "id": "thorns",
+          "tick": 16508,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "swift",
+          "tick": 21041,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "trail",
+          "tick": 30847,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "prism",
+          "tick": 36043,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "lantern",
+          "tick": 42311,
+          "source": "Cursed altar reward"
+        },
+        {
+          "id": "aegis",
+          "tick": 61110,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "meteor",
+          "tick": 66165,
+          "source": "Dungeon treasure"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "collapse",
+          "outcome": "completed",
+          "tick": 12030,
+          "startedAt": 10530,
+          "progress": 0,
+          "goal": 3,
+          "hits": 0
+        },
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 26078,
+          "startedAt": 25528,
+          "progress": 24,
+          "goal": 24,
+          "hits": 0
+        },
+        {
+          "id": "altar",
+          "outcome": "completed",
+          "tick": 42303,
+          "startedAt": 40803,
+          "progress": 1500,
+          "goal": 1500,
+          "hits": 0
+        },
+        {
+          "id": "anomaly",
+          "outcome": "completed",
+          "tick": 55956,
+          "startedAt": 55611,
+          "progress": 3,
+          "goal": 3,
+          "hits": 0
+        },
+        {
+          "id": "shrine",
+          "outcome": "completed",
+          "tick": 70181,
+          "startedAt": 69118,
+          "progress": 750,
+          "goal": 750,
+          "hits": 0
+        }
+      ],
+      "gold": 1275,
+      "goldEarned": 1365,
+      "goldSpent": 90,
+      "marketHistory": [
+        {
+          "id": "runner",
+          "price": 90,
+          "tick": 18124
+        }
+      ],
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 12037
+        },
+        {
+          "id": "hourglass",
+          "tick": 13101
+        },
+        {
+          "id": "hourglass",
+          "tick": 14141
+        },
+        {
+          "id": "hourglass",
+          "tick": 15211
+        },
+        {
+          "id": "hourglass",
+          "tick": 16211
+        },
+        {
+          "id": "hourglass",
+          "tick": 17246
+        },
+        {
+          "id": "hourglass",
+          "tick": 18246
+        },
+        {
+          "id": "runner",
+          "tick": 18406
+        },
+        {
+          "id": "hourglass",
+          "tick": 19366
+        },
+        {
+          "id": "runner",
+          "tick": 19506
+        },
+        {
+          "id": "runner",
+          "tick": 19976
+        },
+        {
+          "id": "hourglass",
+          "tick": 20456
+        },
+        {
+          "id": "runner",
+          "tick": 20616
+        },
+        {
+          "id": "hourglass",
+          "tick": 21541
+        },
+        {
+          "id": "hourglass",
+          "tick": 22581
+        },
+        {
+          "id": "hourglass",
+          "tick": 23896
+        },
+        {
+          "id": "hourglass",
+          "tick": 24926
+        },
+        {
+          "id": "hourglass",
+          "tick": 25991
+        },
+        {
+          "id": "hourglass",
+          "tick": 26996
+        },
+        {
+          "id": "hourglass",
+          "tick": 28046
+        },
+        {
+          "id": "hourglass",
+          "tick": 29191
+        },
+        {
+          "id": "hourglass",
+          "tick": 30371
+        },
+        {
+          "id": "trail",
+          "tick": 30851
+        },
+        {
+          "id": "trail",
+          "tick": 31551
+        },
+        {
+          "id": "hourglass",
+          "tick": 31911
+        },
+        {
+          "id": "trail",
+          "tick": 33066
+        },
+        {
+          "id": "hourglass",
+          "tick": 33146
+        },
+        {
+          "id": "trail",
+          "tick": 33571
+        },
+        {
+          "id": "hourglass",
+          "tick": 34331
+        },
+        {
+          "id": "trail",
+          "tick": 34511
+        },
+        {
+          "id": "hourglass",
+          "tick": 35431
+        },
+        {
+          "id": "trail",
+          "tick": 36241
+        },
+        {
+          "id": "hourglass",
+          "tick": 36491
+        },
+        {
+          "id": "trail",
+          "tick": 36796
+        },
+        {
+          "id": "hourglass",
+          "tick": 37696
+        },
+        {
+          "id": "trail",
+          "tick": 38271
+        },
+        {
+          "id": "hourglass",
+          "tick": 38791
+        },
+        {
+          "id": "trail",
+          "tick": 38866
+        },
+        {
+          "id": "trail",
+          "tick": 39366
+        },
+        {
+          "id": "hourglass",
+          "tick": 39846
+        },
+        {
+          "id": "trail",
+          "tick": 40146
+        },
+        {
+          "id": "trail",
+          "tick": 40701
+        },
+        {
+          "id": "hourglass",
+          "tick": 40981
+        },
+        {
+          "id": "trail",
+          "tick": 41451
+        },
+        {
+          "id": "trail",
+          "tick": 41976
+        },
+        {
+          "id": "hourglass",
+          "tick": 41991
+        },
+        {
+          "id": "trail",
+          "tick": 42581
+        },
+        {
+          "id": "lantern",
+          "tick": 43046
+        },
+        {
+          "id": "lantern",
+          "tick": 44056
+        },
+        {
+          "id": "trail",
+          "tick": 44111
+        },
+        {
+          "id": "lantern",
+          "tick": 44996
+        },
+        {
+          "id": "trail",
+          "tick": 45526
+        },
+        {
+          "id": "lantern",
+          "tick": 45746
+        },
+        {
+          "id": "trail",
+          "tick": 46061
+        },
+        {
+          "id": "lantern",
+          "tick": 46521
+        },
+        {
+          "id": "trail",
+          "tick": 46871
+        },
+        {
+          "id": "lantern",
+          "tick": 47286
+        },
+        {
+          "id": "trail",
+          "tick": 47626
+        },
+        {
+          "id": "lantern",
+          "tick": 48036
+        },
+        {
+          "id": "trail",
+          "tick": 48411
+        },
+        {
+          "id": "lantern",
+          "tick": 48886
+        },
+        {
+          "id": "trail",
+          "tick": 48996
+        },
+        {
+          "id": "lantern",
+          "tick": 49701
+        },
+        {
+          "id": "trail",
+          "tick": 49791
+        },
+        {
+          "id": "lantern",
+          "tick": 50751
+        },
+        {
+          "id": "trail",
+          "tick": 51206
+        },
+        {
+          "id": "lantern",
+          "tick": 51671
+        },
+        {
+          "id": "trail",
+          "tick": 52016
+        },
+        {
+          "id": "lantern",
+          "tick": 52656
+        },
+        {
+          "id": "trail",
+          "tick": 53006
+        },
+        {
+          "id": "lantern",
+          "tick": 53896
+        },
+        {
+          "id": "trail",
+          "tick": 54371
+        },
+        {
+          "id": "lantern",
+          "tick": 54841
+        },
+        {
+          "id": "trail",
+          "tick": 54971
+        },
+        {
+          "id": "trail",
+          "tick": 55556
+        },
+        {
+          "id": "lantern",
+          "tick": 55791
+        },
+        {
+          "id": "lantern",
+          "tick": 56861
+        },
+        {
+          "id": "trail",
+          "tick": 57401
+        },
+        {
+          "id": "lantern",
+          "tick": 57831
+        },
+        {
+          "id": "trail",
+          "tick": 57946
+        },
+        {
+          "id": "trail",
+          "tick": 58501
+        },
+        {
+          "id": "lantern",
+          "tick": 58621
+        },
+        {
+          "id": "trail",
+          "tick": 59626
+        },
+        {
+          "id": "lantern",
+          "tick": 59626
+        },
+        {
+          "id": "lantern",
+          "tick": 60381
+        },
+        {
+          "id": "lantern",
+          "tick": 61621
+        },
+        {
+          "id": "trail",
+          "tick": 61821
+        },
+        {
+          "id": "lantern",
+          "tick": 63201
+        },
+        {
+          "id": "trail",
+          "tick": 63241
+        },
+        {
+          "id": "lantern",
+          "tick": 63991
+        },
+        {
+          "id": "lantern",
+          "tick": 64761
+        },
+        {
+          "id": "trail",
+          "tick": 64811
+        },
+        {
+          "id": "trail",
+          "tick": 65671
+        },
+        {
+          "id": "lantern",
+          "tick": 65856
+        },
+        {
+          "id": "trail",
+          "tick": 66596
+        },
+        {
+          "id": "lantern",
+          "tick": 66891
+        },
+        {
+          "id": "trail",
+          "tick": 67116
+        },
+        {
+          "id": "lantern",
+          "tick": 68416
+        },
+        {
+          "id": "trail",
+          "tick": 69071
+        },
+        {
+          "id": "lantern",
+          "tick": 69321
+        },
+        {
+          "id": "trail",
+          "tick": 69611
+        },
+        {
+          "id": "lantern",
+          "tick": 70081
+        },
+        {
+          "id": "trail",
+          "tick": 70541
+        },
+        {
+          "id": "lantern",
+          "tick": 71261
+        },
+        {
+          "id": "trail",
+          "tick": 71271
+        },
+        {
+          "id": "trail",
+          "tick": 72026
+        },
+        {
+          "id": "lantern",
+          "tick": 72806
+        }
+      ],
+      "telemetry": {
+        "casts": 5515,
+        "bolts": 5664,
+        "boltsHit": 1955,
+        "directHits": 2326,
+        "damage": 225018,
+        "overkill": 214833.425,
+        "damageBySource": {
+          "direct:ice": {
+            "effective": 142420.75,
+            "overkill": 144369.375,
+            "hits": 2326
+          },
+          "fire:burn": {
+            "effective": 29570.5,
+            "overkill": 10468.7,
+            "hits": 659
+          },
+          "gear:thorns": {
+            "effective": 2821,
+            "overkill": 1569,
+            "hits": 81
+          },
+          "fusion:steam": {
+            "effective": 29239.15,
+            "overkill": 27350.35,
+            "hits": 850
+          },
+          "fire:burst": {
+            "effective": 11323.1,
+            "overkill": 10888,
+            "hits": 397
+          },
+          "gear:trail:active": {
+            "effective": 1036.5,
+            "overkill": 2068.5,
+            "hits": 26
+          },
+          "gear:trail:passive": {
+            "effective": 410,
+            "overkill": 155,
+            "hits": 9
+          },
+          "gear:lantern:active": {
+            "effective": 6186,
+            "overkill": 15036,
+            "hits": 80
+          },
+          "gear:lantern:passive": {
+            "effective": 1062.5,
+            "overkill": 1777.5,
+            "hits": 19
+          },
+          "gear:meteor": {
+            "effective": 948.5,
+            "overkill": 1151,
+            "hits": 19
+          }
+        },
+        "incoming": 1580,
+        "prevented": 312,
+        "incomingBySource": {
+          "contact:Goblin": {
+            "requested": 72,
+            "applied": 67,
+            "prevented": 5,
+            "hits": 14
+          },
+          "contact:Spider": {
+            "requested": 40,
+            "applied": 40,
+            "prevented": 0,
+            "hits": 8
+          },
+          "contact:Orc": {
+            "requested": 94,
+            "applied": 94,
+            "prevented": 0,
+            "hits": 7
+          },
+          "contact:Knight": {
+            "requested": 209,
+            "applied": 209,
+            "prevented": 0,
+            "hits": 11
+          },
+          "contact:Zombie": {
+            "requested": 214,
+            "applied": 195,
+            "prevented": 19,
+            "hits": 14
+          },
+          "contact:Vampire": {
+            "requested": 252,
+            "applied": 198,
+            "prevented": 54,
+            "hits": 14
+          },
+          "contact:Reaper": {
+            "requested": 376,
+            "applied": 278,
+            "prevented": 98,
+            "hits": 12
+          },
+          "projectile:Demon": {
+            "requested": 543,
+            "applied": 445,
+            "prevented": 98,
+            "hits": 38
+          },
+          "projectile:Dragon": {
+            "requested": 92,
+            "applied": 54,
+            "prevented": 38,
+            "hits": 2
+          }
+        },
+        "healing": 1526.6999999999796,
+        "healingBySource": {
+          "potion": 589.7205000000013,
+          "level-up": 295.6860150000016,
+          "balance:recovery": 641.2934850000224
+        },
+        "selfDamage": 0,
+        "selfDamageBySource": {},
+        "windows": {
+          "0": {
+            "damage": 6438.999999999998,
+            "incoming": 67,
+            "healing": 67,
+            "casts": 318,
+            "bolts": 357,
+            "boltsHit": 227
+          },
+          "5": {
+            "damage": 22762.025000000005,
+            "incoming": 295,
+            "healing": 257.0249999999993,
+            "casts": 364,
+            "bolts": 437,
+            "boltsHit": 254
+          },
+          "10": {
+            "damage": 40762.975000000006,
+            "incoming": 290,
+            "healing": 304.27500000000146,
+            "casts": 483,
+            "bolts": 520,
+            "boltsHit": 316
+          },
+          "15": {
+            "damage": 63092,
+            "incoming": 540,
+            "healing": 481.09155000000595,
+            "casts": 823,
+            "bolts": 823,
+            "boltsHit": 425
+          },
+          "20": {
+            "damage": 73741,
+            "incoming": 334,
+            "healing": 416.60845000000324,
+            "casts": 3081,
+            "bolts": 3081,
+            "boltsHit": 646
+          },
+          "25": {
+            "damage": 18221,
+            "incoming": 54,
+            "healing": 0.7000000000000028,
+            "casts": 446,
+            "bolts": 446,
+            "boltsHit": 87
+          }
+        },
+        "seconds": 1508.92,
+        "dps": 149.12520213132572,
+        "accuracy": 0.3451624293785311,
+        "hitsPerCast": 0.42175883952855847
+      },
+      "stats": {
+        "damage": 170,
+        "castTicks": 1,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 15,
+          "kills": 250,
+          "health": 100,
+          "enemies": 80
+        },
+        "600": {
+          "level": 23,
+          "kills": 785,
+          "health": 62,
+          "enemies": 13
+        },
+        "900": {
+          "level": 28,
+          "kills": 1379,
+          "health": 76,
+          "enemies": 6
+        },
+        "1200": {
+          "level": 34,
+          "kills": 2072,
+          "health": 17,
+          "enemies": 17
+        },
+        "1500": {
+          "level": 38,
+          "kills": 2834,
+          "health": 100,
+          "enemies": 5
+        }
+      }
+    },
+    {
+      "primary": "ice",
+      "secondary": "fire",
+      "seed": 2,
+      "seconds": 233.88,
+      "phase": "over",
+      "level": 12,
+      "kills": 150,
+      "xp": 443,
+      "health": 0,
+      "maxEnemies": 108,
+      "firstUpgrade": 7.72,
+      "secondaryOfferedAt": 142.44,
+      "secondaryAt": 142.44,
+      "secondaryLevel": 10,
+      "fusion": "steam",
+      "fusionAt": null,
+      "fusionLevel": null,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 2,
+        "ice": 2,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": null,
+        "robe": null,
+        "boots": "runner",
+        "relic": null
+      },
+      "chestsOpened": 1,
+      "lootHistory": [
+        {
+          "id": "runner",
+          "tick": 6923,
+          "source": "Dungeon treasure"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "altar",
+          "outcome": "failed",
+          "tick": 11694,
+          "startedAt": 10570,
+          "progress": 1123,
+          "goal": 1500,
+          "hits": 0
+        }
+      ],
+      "gold": 37,
+      "goldEarned": 37,
+      "goldSpent": 0,
+      "marketHistory": [],
+      "activeHistory": [
+        {
+          "id": "runner",
+          "tick": 8771
+        },
+        {
+          "id": "runner",
+          "tick": 9136
+        },
+        {
+          "id": "runner",
+          "tick": 9621
+        },
+        {
+          "id": "runner",
+          "tick": 10816
+        },
+        {
+          "id": "runner",
+          "tick": 11281
+        },
+        {
+          "id": "runner",
+          "tick": 11641
+        }
+      ],
+      "telemetry": {
+        "casts": 231,
+        "bolts": 231,
+        "boltsHit": 154,
+        "directHits": 154,
+        "damage": 2850,
+        "overkill": 6259,
+        "damageBySource": {
+          "direct:ice": {
+            "effective": 2640,
+            "overkill": 6140,
+            "hits": 154
+          },
+          "fire:burn": {
+            "effective": 210,
+            "overkill": 119,
+            "hits": 16
+          }
+        },
+        "incoming": 123.35,
+        "prevented": 0,
+        "incomingBySource": {
+          "contact:Orc": {
+            "requested": 13,
+            "applied": 13,
+            "prevented": 0,
+            "hits": 1
+          },
+          "contact:Spider": {
+            "requested": 81,
+            "applied": 80.35,
+            "prevented": 0,
+            "hits": 16
+          },
+          "contact:Goblin": {
+            "requested": 15,
+            "applied": 15,
+            "prevented": 0,
+            "hits": 3
+          },
+          "contact:Zombie": {
+            "requested": 15,
+            "applied": 15,
+            "prevented": 0,
+            "hits": 1
+          }
+        },
+        "healing": 23.349999999999994,
+        "healingBySource": {
+          "level-up": 23,
+          "balance:recovery": 0.3499999999999943
+        },
+        "selfDamage": 0,
+        "selfDamageBySource": {},
+        "windows": {
+          "0": {
+            "damage": 2850,
+            "incoming": 123.35,
+            "healing": 23.349999999999994,
+            "casts": 231,
+            "bolts": 231,
+            "boltsHit": 154
+          }
+        },
+        "seconds": 233.88,
+        "dps": 12.185736275012827,
+        "accuracy": 0.6666666666666666,
+        "hitsPerCast": 0.6666666666666666
+      },
+      "stats": {
+        "damage": 70,
+        "castTicks": 50,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {}
+    },
+    {
+      "primary": "ice",
+      "secondary": "lightning",
+      "seed": 1,
+      "seconds": 1504.02,
+      "phase": "victory",
+      "level": 38,
+      "kills": 2840,
+      "xp": 37080,
+      "health": 100,
+      "maxEnemies": 61,
+      "firstUpgrade": 6.28,
+      "secondaryOfferedAt": 154.54,
+      "secondaryAt": 154.54,
+      "secondaryLevel": 10,
+      "fusion": "thunderfrost",
+      "fusionAt": 184,
+      "fusionLevel": 12,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": true,
+      "build": {
+        "fire": 0,
+        "ice": 5,
+        "lightning": 5,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "prism",
+        "robe": "aegis",
+        "boots": "phaseboots",
+        "relic": "lantern"
+      },
+      "chestsOpened": 14,
+      "lootHistory": [
+        {
+          "id": "echo",
+          "tick": 6073,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "escape",
+          "tick": 11050,
+          "source": "Treasure guardian reward"
+        },
+        {
+          "id": "wardrobe",
+          "tick": 16328,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "linen",
+          "tick": 27035,
+          "source": "Dungeon collapse reward"
+        },
+        {
+          "id": "trail",
+          "tick": 30835,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "lantern",
+          "tick": 36038,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "aegis",
+          "tick": 60215,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "phaseboots",
+          "tick": 66058,
+          "source": "Dungeon treasure"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "guardian",
+          "outcome": "completed",
+          "tick": 11045,
+          "startedAt": 10529,
+          "progress": 1,
+          "goal": 1,
+          "hits": 0
+        },
+        {
+          "id": "collapse",
+          "outcome": "completed",
+          "tick": 27029,
+          "startedAt": 25529,
+          "progress": 0,
+          "goal": 3,
+          "hits": 2
+        },
+        {
+          "id": "anomaly",
+          "outcome": "completed",
+          "tick": 40928,
+          "startedAt": 40642,
+          "progress": 3,
+          "goal": 3,
+          "hits": 0
+        },
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 56070,
+          "startedAt": 55531,
+          "progress": 34,
+          "goal": 34,
+          "hits": 0
+        },
+        {
+          "id": "altar",
+          "outcome": "completed",
+          "tick": 70527,
+          "startedAt": 69027,
+          "progress": 1500,
+          "goal": 1500,
+          "hits": 0
+        }
+      ],
+      "gold": 1107,
+      "goldEarned": 1367,
+      "goldSpent": 260,
+      "marketHistory": [
+        {
+          "id": "gambler",
+          "price": 90,
+          "tick": 18179
+        },
+        {
+          "id": "prism",
+          "price": 170,
+          "tick": 33319
+        }
+      ],
+      "activeHistory": [
+        {
+          "id": "escape",
+          "tick": 11641
+        },
+        {
+          "id": "escape",
+          "tick": 12961
+        },
+        {
+          "id": "escape",
+          "tick": 14676
+        },
+        {
+          "id": "escape",
+          "tick": 16346
+        },
+        {
+          "id": "escape",
+          "tick": 16881
+        },
+        {
+          "id": "escape",
+          "tick": 17551
+        },
+        {
+          "id": "escape",
+          "tick": 18381
+        },
+        {
+          "id": "escape",
+          "tick": 19646
+        },
+        {
+          "id": "escape",
+          "tick": 20156
+        },
+        {
+          "id": "escape",
+          "tick": 20976
+        },
+        {
+          "id": "escape",
+          "tick": 21531
+        },
+        {
+          "id": "escape",
+          "tick": 22346
+        },
+        {
+          "id": "escape",
+          "tick": 24951
+        },
+        {
+          "id": "escape",
+          "tick": 25851
+        },
+        {
+          "id": "escape",
+          "tick": 26471
+        },
+        {
+          "id": "escape",
+          "tick": 26936
+        },
+        {
+          "id": "escape",
+          "tick": 27406
+        },
+        {
+          "id": "escape",
+          "tick": 28646
+        },
+        {
+          "id": "escape",
+          "tick": 29446
+        },
+        {
+          "id": "escape",
+          "tick": 30381
+        },
+        {
+          "id": "trail",
+          "tick": 30936
+        },
+        {
+          "id": "trail",
+          "tick": 31866
+        },
+        {
+          "id": "trail",
+          "tick": 32451
+        },
+        {
+          "id": "trail",
+          "tick": 33111
+        },
+        {
+          "id": "lantern",
+          "tick": 36111
+        },
+        {
+          "id": "trail",
+          "tick": 36206
+        },
+        {
+          "id": "lantern",
+          "tick": 37181
+        },
+        {
+          "id": "lantern",
+          "tick": 37931
+        },
+        {
+          "id": "trail",
+          "tick": 38306
+        },
+        {
+          "id": "lantern",
+          "tick": 39186
+        },
+        {
+          "id": "trail",
+          "tick": 39201
+        },
+        {
+          "id": "trail",
+          "tick": 39771
+        },
+        {
+          "id": "lantern",
+          "tick": 40536
+        },
+        {
+          "id": "trail",
+          "tick": 40756
+        },
+        {
+          "id": "lantern",
+          "tick": 42086
+        },
+        {
+          "id": "trail",
+          "tick": 42556
+        },
+        {
+          "id": "trail",
+          "tick": 43101
+        },
+        {
+          "id": "lantern",
+          "tick": 43401
+        },
+        {
+          "id": "lantern",
+          "tick": 45121
+        },
+        {
+          "id": "trail",
+          "tick": 45196
+        },
+        {
+          "id": "lantern",
+          "tick": 46456
+        },
+        {
+          "id": "trail",
+          "tick": 47881
+        },
+        {
+          "id": "lantern",
+          "tick": 50311
+        },
+        {
+          "id": "trail",
+          "tick": 51661
+        },
+        {
+          "id": "trail",
+          "tick": 53271
+        },
+        {
+          "id": "trail",
+          "tick": 53821
+        },
+        {
+          "id": "trail",
+          "tick": 54541
+        },
+        {
+          "id": "trail",
+          "tick": 57556
+        },
+        {
+          "id": "trail",
+          "tick": 58236
+        },
+        {
+          "id": "trail",
+          "tick": 59661
+        },
+        {
+          "id": "trail",
+          "tick": 60246
+        },
+        {
+          "id": "trail",
+          "tick": 63051
+        },
+        {
+          "id": "trail",
+          "tick": 65261
+        },
+        {
+          "id": "trail",
+          "tick": 65936
+        },
+        {
+          "id": "phaseboots",
+          "tick": 68856
+        },
+        {
+          "id": "phaseboots",
+          "tick": 74316
+        },
+        {
+          "id": "phaseboots",
+          "tick": 74881
+        }
+      ],
+      "telemetry": {
+        "casts": 32177,
+        "bolts": 32335,
+        "boltsHit": 2595,
+        "directHits": 2691,
+        "damage": 226591.18,
+        "overkill": 230810.57,
+        "damageBySource": {
+          "direct:ice": {
+            "effective": 167846.275,
+            "overkill": 181676.725,
+            "hits": 2691
+          },
+          "lightning:chain": {
+            "effective": 56364.03,
+            "overkill": 46411.72,
+            "hits": 1709
+          },
+          "gear:trail:active": {
+            "effective": 485.125,
+            "overkill": 639.875,
+            "hits": 13
+          },
+          "gear:lantern:active": {
+            "effective": 1856,
+            "overkill": 2032,
+            "hits": 24
+          },
+          "gear:lantern:passive": {
+            "effective": 39.75000000000001,
+            "overkill": 50.24999999999999,
+            "hits": 1
+          }
+        },
+        "incoming": 454.67999999999995,
+        "prevented": 368.32000000000016,
+        "incomingBySource": {
+          "contact:Goblin": {
+            "requested": 110,
+            "applied": 25,
+            "prevented": 85,
+            "hits": 22
+          },
+          "contact:Spider": {
+            "requested": 30,
+            "applied": 20,
+            "prevented": 10,
+            "hits": 6
+          },
+          "contact:Orc": {
+            "requested": 65,
+            "applied": 48.879999999999995,
+            "prevented": 16.12,
+            "hits": 5
+          },
+          "contact:Zombie": {
+            "requested": 105,
+            "applied": 69.60000000000001,
+            "prevented": 35.400000000000006,
+            "hits": 7
+          },
+          "contact:Knight": {
+            "requested": 49,
+            "applied": 0,
+            "prevented": 49,
+            "hits": 2
+          },
+          "hazard:rubble": {
+            "requested": 36,
+            "applied": 36,
+            "prevented": 0,
+            "hits": 2
+          },
+          "contact:Vampire": {
+            "requested": 36,
+            "applied": 15.840000000000003,
+            "prevented": 20.16,
+            "hits": 2
+          },
+          "contact:Reaper": {
+            "requested": 248,
+            "applied": 188.40000000000003,
+            "prevented": 59.60000000000001,
+            "hits": 8
+          },
+          "projectile:Demon": {
+            "requested": 144,
+            "applied": 50.95999999999998,
+            "prevented": 93.03999999999999,
+            "hits": 10
+          }
+        },
+        "healing": 454.68000000000814,
+        "healingBySource": {
+          "potion": 121.17000000000057,
+          "level-up": 125.76500000000053,
+          "balance:recovery": 207.74499999999892
+        },
+        "selfDamage": 0,
+        "selfDamageBySource": {},
+        "windows": {
+          "0": {
+            "damage": 7575,
+            "incoming": 63,
+            "healing": 63,
+            "casts": 318,
+            "bolts": 357,
+            "boltsHit": 232
+          },
+          "5": {
+            "damage": 21688,
+            "incoming": 85.44,
+            "healing": 85.44,
+            "casts": 433,
+            "bolts": 520,
+            "boltsHit": 293
+          },
+          "10": {
+            "damage": 38630.68,
+            "incoming": 66.88000000000001,
+            "healing": 66.88000000000001,
+            "casts": 1433,
+            "bolts": 1465,
+            "boltsHit": 510
+          },
+          "15": {
+            "damage": 65353.5,
+            "incoming": 195.36,
+            "healing": 174.20999999999992,
+            "casts": 14812,
+            "bolts": 14812,
+            "boltsHit": 804
+          },
+          "20": {
+            "damage": 75116,
+            "incoming": 44,
+            "healing": 65.15000000000009,
+            "casts": 14980,
+            "bolts": 14980,
+            "boltsHit": 683
+          },
+          "25": {
+            "damage": 18228,
+            "incoming": 0,
+            "healing": 0,
+            "casts": 201,
+            "bolts": 201,
+            "boltsHit": 73
+          }
+        },
+        "seconds": 1504.02,
+        "dps": 150.65702583742237,
+        "accuracy": 0.08025359517550641,
+        "hitsPerCast": 0.08363116511794139
+      },
+      "stats": {
+        "damage": 160,
+        "castTicks": 1,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 322,
+          "health": 100,
+          "enemies": 9
+        },
+        "600": {
+          "level": 23,
+          "kills": 787,
+          "health": 100,
+          "enemies": 9
+        },
+        "900": {
+          "level": 28,
+          "kills": 1360,
+          "health": 100,
+          "enemies": 8
+        },
+        "1200": {
+          "level": 34,
+          "kills": 2069,
+          "health": 79,
+          "enemies": 6
+        },
+        "1500": {
+          "level": 38,
+          "kills": 2835,
+          "health": 100,
+          "enemies": 4
+        }
+      }
+    },
+    {
+      "primary": "ice",
+      "secondary": "lightning",
+      "seed": 2,
+      "seconds": 1511.5,
+      "phase": "over",
+      "level": 38,
+      "kills": 2841,
+      "xp": 35005,
+      "health": 0,
+      "maxEnemies": 129,
+      "firstUpgrade": 7.72,
+      "secondaryOfferedAt": 219.2,
+      "secondaryAt": 219.2,
+      "secondaryLevel": 12,
+      "fusion": "thunderfrost",
+      "fusionAt": 263.22,
+      "fusionLevel": 14,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": true,
+      "build": {
+        "fire": 0,
+        "ice": 3,
+        "lightning": 5,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "prism",
+        "robe": "aegis",
+        "boots": "phaseboots",
+        "relic": "lantern"
+      },
+      "chestsOpened": 13,
+      "lootHistory": [
+        {
+          "id": "runner",
+          "tick": 6923,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "hourglass",
+          "tick": 13335,
+          "source": "Cursed altar reward"
+        },
+        {
+          "id": "bloodwood",
+          "tick": 21961,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "thorns",
+          "tick": 30295,
+          "source": "Blood moon reward"
+        },
+        {
+          "id": "trail",
+          "tick": 30875,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "lantern",
+          "tick": 36041,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "phaseboots",
+          "tick": 66035,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "aegis",
+          "tick": 69295,
+          "source": "Treasure guardian reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "altar",
+          "outcome": "completed",
+          "tick": 13329,
+          "startedAt": 11829,
+          "progress": 1500,
+          "goal": 1500,
+          "hits": 0
+        },
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 26088,
+          "startedAt": 25554,
+          "progress": 25,
+          "goal": 24,
+          "hits": 0
+        },
+        {
+          "id": "shrine",
+          "outcome": "completed",
+          "tick": 41868,
+          "startedAt": 40557,
+          "progress": 750,
+          "goal": 750,
+          "hits": 0
+        },
+        {
+          "id": "collapse",
+          "outcome": "completed",
+          "tick": 57040,
+          "startedAt": 55540,
+          "progress": 0,
+          "goal": 3,
+          "hits": 0
+        },
+        {
+          "id": "guardian",
+          "outcome": "completed",
+          "tick": 69278,
+          "startedAt": 69027,
+          "progress": 1,
+          "goal": 1,
+          "hits": 0
+        }
+      ],
+      "gold": 1152,
+      "goldEarned": 1367,
+      "goldSpent": 215,
+      "marketHistory": [
+        {
+          "id": "linen",
+          "price": 45,
+          "tick": 19438
+        },
+        {
+          "id": "prism",
+          "price": 170,
+          "tick": 33045
+        }
+      ],
+      "activeHistory": [
+        {
+          "id": "runner",
+          "tick": 9336
+        },
+        {
+          "id": "runner",
+          "tick": 9916
+        },
+        {
+          "id": "runner",
+          "tick": 10526
+        },
+        {
+          "id": "runner",
+          "tick": 10966
+        },
+        {
+          "id": "runner",
+          "tick": 11361
+        },
+        {
+          "id": "runner",
+          "tick": 12536
+        },
+        {
+          "id": "hourglass",
+          "tick": 13376
+        },
+        {
+          "id": "runner",
+          "tick": 13516
+        },
+        {
+          "id": "hourglass",
+          "tick": 14666
+        },
+        {
+          "id": "runner",
+          "tick": 15481
+        },
+        {
+          "id": "hourglass",
+          "tick": 15666
+        },
+        {
+          "id": "runner",
+          "tick": 15956
+        },
+        {
+          "id": "runner",
+          "tick": 16401
+        },
+        {
+          "id": "hourglass",
+          "tick": 16771
+        },
+        {
+          "id": "runner",
+          "tick": 16891
+        },
+        {
+          "id": "hourglass",
+          "tick": 17776
+        },
+        {
+          "id": "runner",
+          "tick": 17971
+        },
+        {
+          "id": "runner",
+          "tick": 18481
+        },
+        {
+          "id": "hourglass",
+          "tick": 18911
+        },
+        {
+          "id": "runner",
+          "tick": 19031
+        },
+        {
+          "id": "runner",
+          "tick": 19561
+        },
+        {
+          "id": "hourglass",
+          "tick": 19971
+        },
+        {
+          "id": "runner",
+          "tick": 20466
+        },
+        {
+          "id": "runner",
+          "tick": 21036
+        },
+        {
+          "id": "hourglass",
+          "tick": 21281
+        },
+        {
+          "id": "runner",
+          "tick": 21416
+        },
+        {
+          "id": "runner",
+          "tick": 21826
+        },
+        {
+          "id": "runner",
+          "tick": 22261
+        },
+        {
+          "id": "hourglass",
+          "tick": 22291
+        },
+        {
+          "id": "runner",
+          "tick": 22691
+        },
+        {
+          "id": "hourglass",
+          "tick": 23326
+        },
+        {
+          "id": "runner",
+          "tick": 23406
+        },
+        {
+          "id": "hourglass",
+          "tick": 24326
+        },
+        {
+          "id": "runner",
+          "tick": 24516
+        },
+        {
+          "id": "runner",
+          "tick": 25056
+        },
+        {
+          "id": "hourglass",
+          "tick": 25401
+        },
+        {
+          "id": "runner",
+          "tick": 25796
+        },
+        {
+          "id": "runner",
+          "tick": 26476
+        },
+        {
+          "id": "hourglass",
+          "tick": 26501
+        },
+        {
+          "id": "hourglass",
+          "tick": 27746
+        },
+        {
+          "id": "runner",
+          "tick": 27836
+        },
+        {
+          "id": "runner",
+          "tick": 29071
+        },
+        {
+          "id": "runner",
+          "tick": 29501
+        },
+        {
+          "id": "hourglass",
+          "tick": 29646
+        },
+        {
+          "id": "hourglass",
+          "tick": 30801
+        },
+        {
+          "id": "runner",
+          "tick": 30826
+        },
+        {
+          "id": "trail",
+          "tick": 31306
+        },
+        {
+          "id": "hourglass",
+          "tick": 31966
+        },
+        {
+          "id": "trail",
+          "tick": 32026
+        },
+        {
+          "id": "hourglass",
+          "tick": 33286
+        },
+        {
+          "id": "trail",
+          "tick": 34046
+        },
+        {
+          "id": "hourglass",
+          "tick": 34691
+        },
+        {
+          "id": "trail",
+          "tick": 35271
+        },
+        {
+          "id": "hourglass",
+          "tick": 35846
+        },
+        {
+          "id": "trail",
+          "tick": 35961
+        },
+        {
+          "id": "trail",
+          "tick": 36476
+        },
+        {
+          "id": "lantern",
+          "tick": 36866
+        },
+        {
+          "id": "trail",
+          "tick": 36976
+        },
+        {
+          "id": "trail",
+          "tick": 37596
+        },
+        {
+          "id": "lantern",
+          "tick": 38211
+        },
+        {
+          "id": "trail",
+          "tick": 38336
+        },
+        {
+          "id": "lantern",
+          "tick": 39016
+        },
+        {
+          "id": "trail",
+          "tick": 39071
+        },
+        {
+          "id": "lantern",
+          "tick": 39786
+        },
+        {
+          "id": "trail",
+          "tick": 39851
+        },
+        {
+          "id": "trail",
+          "tick": 40521
+        },
+        {
+          "id": "lantern",
+          "tick": 40701
+        },
+        {
+          "id": "trail",
+          "tick": 41036
+        },
+        {
+          "id": "lantern",
+          "tick": 41516
+        },
+        {
+          "id": "trail",
+          "tick": 41801
+        },
+        {
+          "id": "trail",
+          "tick": 42626
+        },
+        {
+          "id": "trail",
+          "tick": 43716
+        },
+        {
+          "id": "lantern",
+          "tick": 44191
+        },
+        {
+          "id": "trail",
+          "tick": 44681
+        },
+        {
+          "id": "lantern",
+          "tick": 45016
+        },
+        {
+          "id": "trail",
+          "tick": 45226
+        },
+        {
+          "id": "trail",
+          "tick": 45761
+        },
+        {
+          "id": "lantern",
+          "tick": 45766
+        },
+        {
+          "id": "lantern",
+          "tick": 46731
+        },
+        {
+          "id": "trail",
+          "tick": 47291
+        },
+        {
+          "id": "trail",
+          "tick": 48211
+        },
+        {
+          "id": "lantern",
+          "tick": 48211
+        },
+        {
+          "id": "trail",
+          "tick": 48811
+        },
+        {
+          "id": "lantern",
+          "tick": 48976
+        },
+        {
+          "id": "lantern",
+          "tick": 49761
+        },
+        {
+          "id": "trail",
+          "tick": 49806
+        },
+        {
+          "id": "trail",
+          "tick": 50366
+        },
+        {
+          "id": "lantern",
+          "tick": 50966
+        },
+        {
+          "id": "trail",
+          "tick": 51296
+        },
+        {
+          "id": "lantern",
+          "tick": 51721
+        },
+        {
+          "id": "trail",
+          "tick": 51881
+        },
+        {
+          "id": "lantern",
+          "tick": 52821
+        },
+        {
+          "id": "trail",
+          "tick": 53266
+        },
+        {
+          "id": "lantern",
+          "tick": 54211
+        },
+        {
+          "id": "trail",
+          "tick": 54451
+        },
+        {
+          "id": "lantern",
+          "tick": 55231
+        },
+        {
+          "id": "trail",
+          "tick": 55256
+        },
+        {
+          "id": "lantern",
+          "tick": 56211
+        },
+        {
+          "id": "lantern",
+          "tick": 57481
+        },
+        {
+          "id": "trail",
+          "tick": 57721
+        },
+        {
+          "id": "lantern",
+          "tick": 58321
+        },
+        {
+          "id": "trail",
+          "tick": 58986
+        },
+        {
+          "id": "lantern",
+          "tick": 59501
+        },
+        {
+          "id": "lantern",
+          "tick": 60296
+        },
+        {
+          "id": "trail",
+          "tick": 60491
+        },
+        {
+          "id": "lantern",
+          "tick": 61051
+        },
+        {
+          "id": "trail",
+          "tick": 61771
+        },
+        {
+          "id": "lantern",
+          "tick": 62376
+        },
+        {
+          "id": "trail",
+          "tick": 62476
+        },
+        {
+          "id": "trail",
+          "tick": 63056
+        },
+        {
+          "id": "lantern",
+          "tick": 63521
+        },
+        {
+          "id": "trail",
+          "tick": 63556
+        },
+        {
+          "id": "lantern",
+          "tick": 64631
+        },
+        {
+          "id": "lantern",
+          "tick": 65686
+        },
+        {
+          "id": "phaseboots",
+          "tick": 66891
+        },
+        {
+          "id": "lantern",
+          "tick": 67401
+        },
+        {
+          "id": "lantern",
+          "tick": 68511
+        },
+        {
+          "id": "phaseboots",
+          "tick": 68686
+        },
+        {
+          "id": "phaseboots",
+          "tick": 69166
+        },
+        {
+          "id": "lantern",
+          "tick": 69306
+        },
+        {
+          "id": "phaseboots",
+          "tick": 69666
+        },
+        {
+          "id": "lantern",
+          "tick": 70186
+        },
+        {
+          "id": "phaseboots",
+          "tick": 70546
+        },
+        {
+          "id": "lantern",
+          "tick": 71386
+        },
+        {
+          "id": "lantern",
+          "tick": 72421
+        },
+        {
+          "id": "phaseboots",
+          "tick": 73041
+        },
+        {
+          "id": "lantern",
+          "tick": 73726
+        },
+        {
+          "id": "lantern",
+          "tick": 74476
+        }
+      ],
+      "telemetry": {
+        "casts": 3345,
+        "bolts": 3345,
+        "boltsHit": 1599,
+        "directHits": 1767,
+        "damage": 212539,
+        "overkill": 284017.0625,
+        "damageBySource": {
+          "direct:ice": {
+            "effective": 121447.9375,
+            "overkill": 178126.125,
+            "hits": 1767
+          },
+          "lightning:chain": {
+            "effective": 81543.9375,
+            "overkill": 84670.5625,
+            "hits": 2000
+          },
+          "gear:thorns": {
+            "effective": 1172,
+            "overkill": 268,
+            "hits": 22
+          },
+          "gear:trail:active": {
+            "effective": 1496.5,
+            "overkill": 2382.5,
+            "hits": 30
+          },
+          "gear:lantern:passive": {
+            "effective": 775.5,
+            "overkill": 1234.5,
+            "hits": 14
+          },
+          "gear:lantern:active": {
+            "effective": 5980.625,
+            "overkill": 17293.375,
+            "hits": 82
+          },
+          "gear:trail:passive": {
+            "effective": 122.5,
+            "overkill": 42,
+            "hits": 3
+          }
+        },
+        "incoming": 1078.75,
+        "prevented": 364.7,
+        "incomingBySource": {
+          "contact:Orc": {
+            "requested": 68,
+            "applied": 42,
+            "prevented": 26,
+            "hits": 5
+          },
+          "contact:Spider": {
+            "requested": 30,
+            "applied": 19.400000000000006,
+            "prevented": 10.6,
+            "hits": 6
+          },
+          "contact:Goblin": {
+            "requested": 16,
+            "applied": 15.400000000000006,
+            "prevented": 0.5999999999999996,
+            "hits": 3
+          },
+          "contact:Zombie": {
+            "requested": 30,
+            "applied": 15,
+            "prevented": 15,
+            "hits": 2
+          },
+          "contact:Knight": {
+            "requested": 143,
+            "applied": 62,
+            "prevented": 81,
+            "hits": 7
+          },
+          "contact:Vampire": {
+            "requested": 95,
+            "applied": 59,
+            "prevented": 36,
+            "hits": 5
+          },
+          "contact:Reaper": {
+            "requested": 398,
+            "applied": 300.5,
+            "prevented": 97.5,
+            "hits": 13
+          },
+          "projectile:Demon": {
+            "requested": 513,
+            "applied": 453,
+            "prevented": 60,
+            "hits": 35
+          },
+          "projectile:Dragon": {
+            "requested": 152,
+            "applied": 112.45000000000002,
+            "prevented": 38,
+            "hits": 4
+          }
+        },
+        "healing": 1102.7500000000175,
+        "healingBySource": {
+          "level-up": 261.3850000000019,
+          "balance:recovery": 572.6300000000198,
+          "potion": 268.7350000000015
+        },
+        "selfDamage": 124,
+        "selfDamageBySource": {
+          "gear:bloodwood": 124
+        },
+        "windows": {
+          "0": {
+            "damage": 5824,
+            "incoming": 62,
+            "healing": 62,
+            "casts": 297,
+            "bolts": 297,
+            "boltsHit": 215
+          },
+          "5": {
+            "damage": 23402,
+            "incoming": 8.800000000000011,
+            "healing": 92.64999999999995,
+            "casts": 315,
+            "bolts": 315,
+            "boltsHit": 220
+          },
+          "10": {
+            "damage": 38698,
+            "incoming": 236,
+            "healing": 276.14999999999975,
+            "casts": 487,
+            "bolts": 487,
+            "boltsHit": 282
+          },
+          "15": {
+            "damage": 64381,
+            "incoming": 414,
+            "healing": 414.0000000000051,
+            "casts": 750,
+            "bolts": 750,
+            "boltsHit": 378
+          },
+          "20": {
+            "damage": 74069,
+            "incoming": 245.5,
+            "healing": 244.14999999999935,
+            "casts": 1439,
+            "bolts": 1439,
+            "boltsHit": 480
+          },
+          "25": {
+            "damage": 6165,
+            "incoming": 112.45000000000002,
+            "healing": 13.800000000000345,
+            "casts": 57,
+            "bolts": 57,
+            "boltsHit": 24
+          }
+        },
+        "seconds": 1511.5,
+        "dps": 140.6146212371816,
+        "accuracy": 0.4780269058295964,
+        "hitsPerCast": 0.5282511210762332
+      },
+      "stats": {
+        "damage": 200,
+        "castTicks": 10,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 15,
+          "kills": 239,
+          "health": 100,
+          "enemies": 98
+        },
+        "600": {
+          "level": 23,
+          "kills": 794,
+          "health": 98,
+          "enemies": 11
+        },
+        "900": {
+          "level": 28,
+          "kills": 1366,
+          "health": 100,
+          "enemies": 11
+        },
+        "1200": {
+          "level": 34,
+          "kills": 2074,
+          "health": 100,
+          "enemies": 7
+        },
+        "1500": {
+          "level": 38,
+          "kills": 2827,
+          "health": 99,
+          "enemies": 5
+        }
+      }
+    },
+    {
+      "primary": "ice",
+      "secondary": "necro",
+      "seed": 1,
+      "seconds": 817.88,
+      "phase": "over",
+      "level": 27,
+      "kills": 1184,
+      "xp": 8487,
+      "health": 0,
+      "maxEnemies": 96,
+      "firstUpgrade": 6.28,
+      "secondaryOfferedAt": 237.86,
+      "secondaryAt": 237.86,
+      "secondaryLevel": 14,
+      "fusion": "gravefrost",
+      "fusionAt": 374.46,
+      "fusionLevel": 18,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 5,
+        "lightning": 0,
+        "necro": 4,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "prism",
+        "robe": "phantom",
+        "boots": "trail",
+        "relic": "lantern"
+      },
+      "chestsOpened": 7,
+      "lootHistory": [
+        {
+          "id": "echo",
+          "tick": 6073,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "hourglass",
+          "tick": 12036,
+          "source": "Dungeon collapse reward"
+        },
+        {
+          "id": "silk",
+          "tick": 17312,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "escape",
+          "tick": 21914,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "trail",
+          "tick": 32680,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "lantern",
+          "tick": 36040,
+          "source": "Dungeon treasure"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "collapse",
+          "outcome": "completed",
+          "tick": 12030,
+          "startedAt": 10530,
+          "progress": 0,
+          "goal": 3,
+          "hits": 0
+        },
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 26291,
+          "startedAt": 25530,
+          "progress": 25,
+          "goal": 24,
+          "hits": 0
+        },
+        {
+          "id": "shrine",
+          "outcome": "failed",
+          "tick": 40894,
+          "startedAt": 40562,
+          "progress": 121,
+          "goal": 750,
+          "hits": 0
+        }
+      ],
+      "gold": 274,
+      "goldEarned": 534,
+      "goldSpent": 260,
+      "marketHistory": [
+        {
+          "id": "phantom",
+          "price": 90,
+          "tick": 19132
+        },
+        {
+          "id": "prism",
+          "price": 170,
+          "tick": 33587
+        }
+      ],
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 12266
+        },
+        {
+          "id": "hourglass",
+          "tick": 13291
+        },
+        {
+          "id": "hourglass",
+          "tick": 14416
+        },
+        {
+          "id": "hourglass",
+          "tick": 15506
+        },
+        {
+          "id": "hourglass",
+          "tick": 16506
+        },
+        {
+          "id": "hourglass",
+          "tick": 17561
+        },
+        {
+          "id": "hourglass",
+          "tick": 18561
+        },
+        {
+          "id": "hourglass",
+          "tick": 19696
+        },
+        {
+          "id": "hourglass",
+          "tick": 20746
+        },
+        {
+          "id": "hourglass",
+          "tick": 21746
+        },
+        {
+          "id": "hourglass",
+          "tick": 22816
+        },
+        {
+          "id": "escape",
+          "tick": 22921
+        },
+        {
+          "id": "escape",
+          "tick": 23391
+        },
+        {
+          "id": "hourglass",
+          "tick": 23861
+        },
+        {
+          "id": "escape",
+          "tick": 24446
+        },
+        {
+          "id": "hourglass",
+          "tick": 24941
+        },
+        {
+          "id": "escape",
+          "tick": 25431
+        },
+        {
+          "id": "hourglass",
+          "tick": 25961
+        },
+        {
+          "id": "hourglass",
+          "tick": 27521
+        },
+        {
+          "id": "escape",
+          "tick": 27671
+        },
+        {
+          "id": "escape",
+          "tick": 28241
+        },
+        {
+          "id": "hourglass",
+          "tick": 28521
+        },
+        {
+          "id": "escape",
+          "tick": 28691
+        },
+        {
+          "id": "escape",
+          "tick": 29351
+        },
+        {
+          "id": "hourglass",
+          "tick": 29521
+        },
+        {
+          "id": "escape",
+          "tick": 29946
+        },
+        {
+          "id": "hourglass",
+          "tick": 30581
+        },
+        {
+          "id": "escape",
+          "tick": 30911
+        },
+        {
+          "id": "hourglass",
+          "tick": 31606
+        },
+        {
+          "id": "escape",
+          "tick": 31976
+        },
+        {
+          "id": "escape",
+          "tick": 32431
+        },
+        {
+          "id": "hourglass",
+          "tick": 33021
+        },
+        {
+          "id": "trail",
+          "tick": 33306
+        },
+        {
+          "id": "trail",
+          "tick": 33811
+        },
+        {
+          "id": "hourglass",
+          "tick": 34026
+        },
+        {
+          "id": "hourglass",
+          "tick": 35511
+        },
+        {
+          "id": "trail",
+          "tick": 35616
+        },
+        {
+          "id": "trail",
+          "tick": 36156
+        },
+        {
+          "id": "trail",
+          "tick": 36696
+        },
+        {
+          "id": "lantern",
+          "tick": 36836
+        },
+        {
+          "id": "trail",
+          "tick": 37406
+        },
+        {
+          "id": "lantern",
+          "tick": 37586
+        },
+        {
+          "id": "trail",
+          "tick": 38031
+        },
+        {
+          "id": "lantern",
+          "tick": 38336
+        },
+        {
+          "id": "trail",
+          "tick": 38716
+        },
+        {
+          "id": "lantern",
+          "tick": 39086
+        },
+        {
+          "id": "trail",
+          "tick": 39461
+        },
+        {
+          "id": "lantern",
+          "tick": 39836
+        },
+        {
+          "id": "trail",
+          "tick": 40001
+        },
+        {
+          "id": "trail",
+          "tick": 40501
+        },
+        {
+          "id": "lantern",
+          "tick": 40626
+        }
+      ],
+      "telemetry": {
+        "casts": 1139,
+        "bolts": 1294,
+        "boltsHit": 825,
+        "directHits": 1215,
+        "damage": 55222.00000000001,
+        "overkill": 53129.93750000001,
+        "damageBySource": {
+          "direct:ice": {
+            "effective": 41503.54375000001,
+            "overkill": 44921.64375000001,
+            "hits": 1215
+          },
+          "fusion:gravefrost": {
+            "effective": 11440.106249999997,
+            "overkill": 5914.293749999998,
+            "hits": 566
+          },
+          "gear:trail:active": {
+            "effective": 427,
+            "overkill": 347,
+            "hits": 8
+          },
+          "gear:lantern:active": {
+            "effective": 1659.6,
+            "overkill": 1750.5,
+            "hits": 17
+          },
+          "gear:trail:passive": {
+            "effective": 181.75,
+            "overkill": 96.5,
+            "hits": 7
+          },
+          "gear:lantern:passive": {
+            "effective": 10,
+            "overkill": 100,
+            "hits": 1
+          }
+        },
+        "incoming": 503,
+        "prevented": 176,
+        "incomingBySource": {
+          "contact:Goblin": {
+            "requested": 36,
+            "applied": 31,
+            "prevented": 5,
+            "hits": 7
+          },
+          "contact:Spider": {
+            "requested": 36,
+            "applied": 26,
+            "prevented": 10,
+            "hits": 7
+          },
+          "contact:Orc": {
+            "requested": 65,
+            "applied": 52,
+            "prevented": 13,
+            "hits": 5
+          },
+          "contact:Knight": {
+            "requested": 157,
+            "applied": 57,
+            "prevented": 100,
+            "hits": 8
+          },
+          "contact:Zombie": {
+            "requested": 90,
+            "applied": 60,
+            "prevented": 30,
+            "hits": 6
+          },
+          "contact:Vampire": {
+            "requested": 113,
+            "applied": 95,
+            "prevented": 18,
+            "hits": 6
+          },
+          "contact:Reaper": {
+            "requested": 188,
+            "applied": 182,
+            "prevented": 0,
+            "hits": 6
+          }
+        },
+        "healing": 403,
+        "healingBySource": {
+          "potion": 20,
+          "level-up": 60.60000000000001,
+          "balance:recovery": 11,
+          "necro:kill": 311.4
+        },
+        "selfDamage": 0,
+        "selfDamageBySource": {},
+        "windows": {
+          "0": {
+            "damage": 6272,
+            "incoming": 49,
+            "healing": 49,
+            "casts": 328,
+            "bolts": 369,
+            "boltsHit": 234
+          },
+          "5": {
+            "damage": 22830.324999999997,
+            "incoming": 180,
+            "healing": 160,
+            "casts": 447,
+            "bolts": 537,
+            "boltsHit": 329
+          },
+          "10": {
+            "damage": 26119.674999999996,
+            "incoming": 274,
+            "healing": 194,
+            "casts": 364,
+            "bolts": 388,
+            "boltsHit": 262
+          }
+        },
+        "seconds": 817.88,
+        "dps": 67.51846236611729,
+        "accuracy": 0.6375579598145286,
+        "hitsPerCast": 1.0667251975417031
+      },
+      "stats": {
+        "damage": 120,
+        "castTicks": 30,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 15,
+          "kills": 253,
+          "health": 100,
+          "enemies": 77
+        },
+        "600": {
+          "level": 23,
+          "kills": 784,
+          "health": 80,
+          "enemies": 13
+        }
+      }
+    },
+    {
+      "primary": "ice",
+      "secondary": "necro",
+      "seed": 2,
+      "seconds": 362.18,
+      "phase": "over",
+      "level": 16,
+      "kills": 282,
+      "xp": 1003,
+      "health": 0,
+      "maxEnemies": 171,
+      "firstUpgrade": 7.72,
+      "secondaryOfferedAt": 286.22,
+      "secondaryAt": 286.22,
+      "secondaryLevel": 14,
+      "fusion": "gravefrost",
+      "fusionAt": 362.08,
+      "fusionLevel": 16,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 3,
+        "lightning": 0,
+        "necro": 2,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": null,
+        "robe": "thorns",
+        "boots": "runner",
+        "relic": "hourglass"
+      },
+      "chestsOpened": 2,
+      "lootHistory": [
+        {
+          "id": "runner",
+          "tick": 6923,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "hourglass",
+          "tick": 13551,
+          "source": "Cursed altar reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "altar",
+          "outcome": "completed",
+          "tick": 13541,
+          "startedAt": 12041,
+          "progress": 1500,
+          "goal": 1500,
+          "hits": 0
+        }
+      ],
+      "gold": 25,
+      "goldEarned": 115,
+      "goldSpent": 90,
+      "marketHistory": [
+        {
+          "id": "thorns",
+          "price": 90,
+          "tick": 18027
+        }
+      ],
+      "activeHistory": [
+        {
+          "id": "runner",
+          "tick": 9336
+        },
+        {
+          "id": "runner",
+          "tick": 9916
+        },
+        {
+          "id": "runner",
+          "tick": 10526
+        },
+        {
+          "id": "runner",
+          "tick": 10966
+        },
+        {
+          "id": "runner",
+          "tick": 11966
+        },
+        {
+          "id": "runner",
+          "tick": 12606
+        },
+        {
+          "id": "runner",
+          "tick": 12966
+        },
+        {
+          "id": "runner",
+          "tick": 13481
+        },
+        {
+          "id": "hourglass",
+          "tick": 13596
+        },
+        {
+          "id": "runner",
+          "tick": 14011
+        },
+        {
+          "id": "hourglass",
+          "tick": 14606
+        },
+        {
+          "id": "runner",
+          "tick": 14971
+        },
+        {
+          "id": "runner",
+          "tick": 15401
+        },
+        {
+          "id": "hourglass",
+          "tick": 15631
+        },
+        {
+          "id": "runner",
+          "tick": 16226
+        },
+        {
+          "id": "hourglass",
+          "tick": 16706
+        },
+        {
+          "id": "runner",
+          "tick": 16886
+        },
+        {
+          "id": "hourglass",
+          "tick": 17756
+        },
+        {
+          "id": "runner",
+          "tick": 18086
+        }
+      ],
+      "telemetry": {
+        "casts": 360,
+        "bolts": 360,
+        "boltsHit": 254,
+        "directHits": 302,
+        "damage": 8734,
+        "overkill": 15715,
+        "damageBySource": {
+          "direct:ice": {
+            "effective": 6779,
+            "overkill": 14880,
+            "hits": 302
+          },
+          "gear:thorns": {
+            "effective": 1955,
+            "overkill": 835,
+            "hits": 62
+          }
+        },
+        "incoming": 204,
+        "prevented": 557,
+        "incomingBySource": {
+          "contact:Orc": {
+            "requested": 296,
+            "applied": 39,
+            "prevented": 257,
+            "hits": 22
+          },
+          "contact:Spider": {
+            "requested": 127,
+            "applied": 20,
+            "prevented": 107,
+            "hits": 25
+          },
+          "contact:Goblin": {
+            "requested": 26,
+            "applied": 11,
+            "prevented": 15,
+            "hits": 5
+          },
+          "contact:Zombie": {
+            "requested": 165,
+            "applied": 115,
+            "prevented": 45,
+            "hits": 11
+          },
+          "contact:Knight": {
+            "requested": 152,
+            "applied": 19,
+            "prevented": 133,
+            "hits": 8
+          }
+        },
+        "healing": 104,
+        "healingBySource": {
+          "level-up": 48.90000000000026,
+          "balance:recovery": 16.09999999999974,
+          "necro:kill": 39
+        },
+        "selfDamage": 0,
+        "selfDamageBySource": {},
+        "windows": {
+          "0": {
+            "damage": 4569,
+            "incoming": 59,
+            "healing": 59,
+            "casts": 297,
+            "bolts": 297,
+            "boltsHit": 207
+          },
+          "5": {
+            "damage": 4165,
+            "incoming": 145,
+            "healing": 45,
+            "casts": 63,
+            "bolts": 63,
+            "boltsHit": 47
+          }
+        },
+        "seconds": 362.18,
+        "dps": 24.115080899000496,
+        "accuracy": 0.7055555555555556,
+        "hitsPerCast": 0.8388888888888889
+      },
+      "stats": {
+        "damage": 90,
+        "castTicks": 50,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 14,
+          "kills": 207,
+          "health": 100,
+          "enemies": 131
+        }
+      }
+    },
+    {
+      "primary": "ice",
+      "secondary": "arcane",
+      "seed": 1,
+      "seconds": 1154.58,
+      "phase": "over",
+      "level": 33,
+      "kills": 1959,
+      "xp": 19769,
+      "health": 0,
+      "maxEnemies": 73,
+      "firstUpgrade": 6.28,
+      "secondaryOfferedAt": 183.02,
+      "secondaryAt": 183.02,
+      "secondaryLevel": 11,
+      "fusion": "mirror",
+      "fusionAt": 219.1,
+      "fusionLevel": 13,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 5,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 3
+      },
+      "equipment": {
+        "staff": "prism",
+        "robe": "phantom",
+        "boots": "trail",
+        "relic": "lantern"
+      },
+      "chestsOpened": 11,
+      "lootHistory": [
+        {
+          "id": "echo",
+          "tick": 6073,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "phantom",
+          "tick": 12520,
+          "source": "Dungeon collapse reward"
+        },
+        {
+          "id": "fang",
+          "tick": 17079,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "swift",
+          "tick": 21297,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "hourglass",
+          "tick": 26252,
+          "source": "Blood moon reward"
+        },
+        {
+          "id": "trail",
+          "tick": 36476,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "lantern",
+          "tick": 41133,
+          "source": "Magical anomaly reward"
+        },
+        {
+          "id": "prism",
+          "tick": 45701,
+          "source": "Guardian reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "collapse",
+          "outcome": "completed",
+          "tick": 12515,
+          "startedAt": 11015,
+          "progress": 0,
+          "goal": 3,
+          "hits": 0
+        },
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 26239,
+          "startedAt": 25553,
+          "progress": 24,
+          "goal": 24,
+          "hits": 0
+        },
+        {
+          "id": "anomaly",
+          "outcome": "completed",
+          "tick": 41123,
+          "startedAt": 40530,
+          "progress": 3,
+          "goal": 3,
+          "hits": 0
+        },
+        {
+          "id": "altar",
+          "outcome": "completed",
+          "tick": 57667,
+          "startedAt": 56167,
+          "progress": 1500,
+          "goal": 1500,
+          "hits": 0
+        }
+      ],
+      "gold": 931,
+      "goldEarned": 931,
+      "goldSpent": 0,
+      "marketHistory": [],
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 26486
+        },
+        {
+          "id": "hourglass",
+          "tick": 27726
+        },
+        {
+          "id": "hourglass",
+          "tick": 28946
+        },
+        {
+          "id": "hourglass",
+          "tick": 30056
+        },
+        {
+          "id": "hourglass",
+          "tick": 31056
+        },
+        {
+          "id": "hourglass",
+          "tick": 32081
+        },
+        {
+          "id": "hourglass",
+          "tick": 33271
+        },
+        {
+          "id": "hourglass",
+          "tick": 35036
+        },
+        {
+          "id": "hourglass",
+          "tick": 36041
+        },
+        {
+          "id": "trail",
+          "tick": 36806
+        },
+        {
+          "id": "hourglass",
+          "tick": 37121
+        },
+        {
+          "id": "trail",
+          "tick": 37406
+        },
+        {
+          "id": "hourglass",
+          "tick": 38141
+        },
+        {
+          "id": "trail",
+          "tick": 38326
+        },
+        {
+          "id": "hourglass",
+          "tick": 39261
+        },
+        {
+          "id": "trail",
+          "tick": 39291
+        },
+        {
+          "id": "hourglass",
+          "tick": 40276
+        },
+        {
+          "id": "trail",
+          "tick": 40391
+        },
+        {
+          "id": "trail",
+          "tick": 40981
+        },
+        {
+          "id": "lantern",
+          "tick": 41276
+        },
+        {
+          "id": "trail",
+          "tick": 41606
+        },
+        {
+          "id": "trail",
+          "tick": 43381
+        },
+        {
+          "id": "lantern",
+          "tick": 43771
+        },
+        {
+          "id": "trail",
+          "tick": 44461
+        },
+        {
+          "id": "lantern",
+          "tick": 44871
+        },
+        {
+          "id": "trail",
+          "tick": 44981
+        },
+        {
+          "id": "trail",
+          "tick": 45551
+        },
+        {
+          "id": "lantern",
+          "tick": 45621
+        },
+        {
+          "id": "lantern",
+          "tick": 46451
+        },
+        {
+          "id": "trail",
+          "tick": 46506
+        },
+        {
+          "id": "trail",
+          "tick": 47066
+        },
+        {
+          "id": "lantern",
+          "tick": 47241
+        },
+        {
+          "id": "trail",
+          "tick": 47836
+        },
+        {
+          "id": "lantern",
+          "tick": 48056
+        },
+        {
+          "id": "trail",
+          "tick": 48751
+        },
+        {
+          "id": "lantern",
+          "tick": 49031
+        },
+        {
+          "id": "trail",
+          "tick": 49286
+        },
+        {
+          "id": "trail",
+          "tick": 50176
+        },
+        {
+          "id": "lantern",
+          "tick": 50176
+        },
+        {
+          "id": "trail",
+          "tick": 50971
+        },
+        {
+          "id": "lantern",
+          "tick": 51141
+        },
+        {
+          "id": "lantern",
+          "tick": 52121
+        },
+        {
+          "id": "trail",
+          "tick": 52141
+        },
+        {
+          "id": "lantern",
+          "tick": 52931
+        },
+        {
+          "id": "trail",
+          "tick": 52961
+        },
+        {
+          "id": "lantern",
+          "tick": 53681
+        },
+        {
+          "id": "trail",
+          "tick": 53931
+        },
+        {
+          "id": "lantern",
+          "tick": 54546
+        },
+        {
+          "id": "trail",
+          "tick": 54571
+        },
+        {
+          "id": "trail",
+          "tick": 55106
+        },
+        {
+          "id": "lantern",
+          "tick": 55331
+        },
+        {
+          "id": "trail",
+          "tick": 55606
+        },
+        {
+          "id": "trail",
+          "tick": 56231
+        },
+        {
+          "id": "lantern",
+          "tick": 56246
+        },
+        {
+          "id": "trail",
+          "tick": 57166
+        },
+        {
+          "id": "lantern",
+          "tick": 57166
+        },
+        {
+          "id": "trail",
+          "tick": 57711
+        }
+      ],
+      "telemetry": {
+        "casts": 1802,
+        "bolts": 4313,
+        "boltsHit": 2220,
+        "directHits": 3029,
+        "damage": 121915.79999999999,
+        "overkill": 119950.88750000003,
+        "damageBySource": {
+          "direct:ice": {
+            "effective": 117349.83124999999,
+            "overkill": 110026.35625000001,
+            "hits": 3029
+          },
+          "gear:trail:passive": {
+            "effective": 173,
+            "overkill": 166.5,
+            "hits": 7
+          },
+          "gear:trail:active": {
+            "effective": 1096.5,
+            "overkill": 2206.5,
+            "hits": 25
+          },
+          "gear:lantern:active": {
+            "effective": 2723.5,
+            "overkill": 6384.5,
+            "hits": 34
+          },
+          "gear:lantern:passive": {
+            "effective": 572.96875,
+            "overkill": 1167.03125,
+            "hits": 11
+          }
+        },
+        "incoming": 838.24,
+        "prevented": 634,
+        "incomingBySource": {
+          "contact:Goblin": {
+            "requested": 71,
+            "applied": 36,
+            "prevented": 35,
+            "hits": 14
+          },
+          "contact:Spider": {
+            "requested": 40,
+            "applied": 25,
+            "prevented": 15,
+            "hits": 8
+          },
+          "contact:Orc": {
+            "requested": 94,
+            "applied": 55,
+            "prevented": 39,
+            "hits": 7
+          },
+          "contact:Knight": {
+            "requested": 167,
+            "applied": 48,
+            "prevented": 119,
+            "hits": 8
+          },
+          "contact:Vampire": {
+            "requested": 277,
+            "applied": 141,
+            "prevented": 136,
+            "hits": 14
+          },
+          "contact:Zombie": {
+            "requested": 75,
+            "applied": 45,
+            "prevented": 30,
+            "hits": 5
+          },
+          "contact:Reaper": {
+            "requested": 428,
+            "applied": 210,
+            "prevented": 218,
+            "hits": 14
+          },
+          "projectile:Demon": {
+            "requested": 326,
+            "applied": 278.24000000000007,
+            "prevented": 42,
+            "hits": 23
+          }
+        },
+        "healing": 738.2400000000123,
+        "healingBySource": {
+          "potion": 336.6000000000008,
+          "level-up": 116.19650000000041,
+          "balance:recovery": 277.69349999999844,
+          "gear:fang": 7.750000000000085
+        },
+        "selfDamage": 0,
+        "selfDamageBySource": {},
+        "windows": {
+          "0": {
+            "damage": 7316,
+            "incoming": 63,
+            "healing": 63,
+            "casts": 324,
+            "bolts": 507,
+            "boltsHit": 320
+          },
+          "5": {
+            "damage": 21848.55,
+            "incoming": 13,
+            "healing": 13,
+            "casts": 434,
+            "bolts": 976,
+            "boltsHit": 538
+          },
+          "10": {
+            "damage": 38843.25,
+            "incoming": 228,
+            "healing": 227.99999999999926,
+            "casts": 534,
+            "bolts": 1293,
+            "boltsHit": 682
+          },
+          "15": {
+            "damage": 53907.99999999999,
+            "incoming": 534.24,
+            "healing": 434.2400000000044,
+            "casts": 510,
+            "bolts": 1537,
+            "boltsHit": 680
+          }
+        },
+        "seconds": 1154.58,
+        "dps": 105.59320272306813,
+        "accuracy": 0.5147229306747044,
+        "hitsPerCast": 1.6809100998890123
+      },
+      "stats": {
+        "damage": 180,
+        "castTicks": 25,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 323,
+          "health": 100,
+          "enemies": 7
+        },
+        "600": {
+          "level": 23,
+          "kills": 784,
+          "health": 100,
+          "enemies": 13
+        },
+        "900": {
+          "level": 28,
+          "kills": 1362,
+          "health": 100,
+          "enemies": 7
+        }
+      }
+    },
+    {
+      "primary": "ice",
+      "secondary": "arcane",
+      "seed": 2,
+      "seconds": 1248.6,
+      "phase": "over",
+      "level": 34,
+      "kills": 2195,
+      "xp": 23670,
+      "health": 0,
+      "maxEnemies": 85,
+      "firstUpgrade": 7.72,
+      "secondaryOfferedAt": 184.22,
+      "secondaryAt": 184.22,
+      "secondaryLevel": 11,
+      "fusion": "mirror",
+      "fusionAt": 278.2,
+      "fusionLevel": 15,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 5,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 5
+      },
+      "equipment": {
+        "staff": "prism",
+        "robe": "phantom",
+        "boots": "trail",
+        "relic": "lantern"
+      },
+      "chestsOpened": 10,
+      "lootHistory": [
+        {
+          "id": "runner",
+          "tick": 6923,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "phantom",
+          "tick": 11593,
+          "source": "Blood moon reward"
+        },
+        {
+          "id": "hourglass",
+          "tick": 16512,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "prism",
+          "tick": 31778,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "trail",
+          "tick": 36035,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "lantern",
+          "tick": 42182,
+          "source": "Dungeon collapse reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 11587,
+          "startedAt": 10597,
+          "progress": 19,
+          "goal": 19,
+          "hits": 0
+        },
+        {
+          "id": "anomaly",
+          "outcome": "completed",
+          "tick": 26553,
+          "startedAt": 25528,
+          "progress": 3,
+          "goal": 3,
+          "hits": 0
+        },
+        {
+          "id": "collapse",
+          "outcome": "completed",
+          "tick": 42176,
+          "startedAt": 40676,
+          "progress": 0,
+          "goal": 3,
+          "hits": 0
+        },
+        {
+          "id": "altar",
+          "outcome": "completed",
+          "tick": 57030,
+          "startedAt": 55530,
+          "progress": 1500,
+          "goal": 1500,
+          "hits": 0
+        }
+      ],
+      "gold": 985,
+      "goldEarned": 1030,
+      "goldSpent": 45,
+      "marketHistory": [
+        {
+          "id": "swift",
+          "price": 45,
+          "tick": 18033
+        }
+      ],
+      "activeHistory": [
+        {
+          "id": "runner",
+          "tick": 9336
+        },
+        {
+          "id": "runner",
+          "tick": 9846
+        },
+        {
+          "id": "runner",
+          "tick": 10306
+        },
+        {
+          "id": "runner",
+          "tick": 11096
+        },
+        {
+          "id": "runner",
+          "tick": 11626
+        },
+        {
+          "id": "runner",
+          "tick": 13086
+        },
+        {
+          "id": "runner",
+          "tick": 14806
+        },
+        {
+          "id": "runner",
+          "tick": 16051
+        },
+        {
+          "id": "runner",
+          "tick": 16761
+        },
+        {
+          "id": "hourglass",
+          "tick": 16841
+        },
+        {
+          "id": "runner",
+          "tick": 17481
+        },
+        {
+          "id": "hourglass",
+          "tick": 17996
+        },
+        {
+          "id": "hourglass",
+          "tick": 19146
+        },
+        {
+          "id": "hourglass",
+          "tick": 20191
+        },
+        {
+          "id": "hourglass",
+          "tick": 21191
+        },
+        {
+          "id": "hourglass",
+          "tick": 22306
+        },
+        {
+          "id": "hourglass",
+          "tick": 23306
+        },
+        {
+          "id": "hourglass",
+          "tick": 24516
+        },
+        {
+          "id": "hourglass",
+          "tick": 25571
+        },
+        {
+          "id": "hourglass",
+          "tick": 26776
+        },
+        {
+          "id": "hourglass",
+          "tick": 27806
+        },
+        {
+          "id": "hourglass",
+          "tick": 28821
+        },
+        {
+          "id": "hourglass",
+          "tick": 29826
+        },
+        {
+          "id": "hourglass",
+          "tick": 30906
+        },
+        {
+          "id": "hourglass",
+          "tick": 31931
+        },
+        {
+          "id": "hourglass",
+          "tick": 32931
+        },
+        {
+          "id": "hourglass",
+          "tick": 33936
+        },
+        {
+          "id": "hourglass",
+          "tick": 34936
+        },
+        {
+          "id": "hourglass",
+          "tick": 35936
+        },
+        {
+          "id": "trail",
+          "tick": 36526
+        },
+        {
+          "id": "trail",
+          "tick": 37116
+        },
+        {
+          "id": "hourglass",
+          "tick": 37166
+        },
+        {
+          "id": "trail",
+          "tick": 37616
+        },
+        {
+          "id": "hourglass",
+          "tick": 38626
+        },
+        {
+          "id": "trail",
+          "tick": 38791
+        },
+        {
+          "id": "trail",
+          "tick": 39416
+        },
+        {
+          "id": "hourglass",
+          "tick": 39751
+        },
+        {
+          "id": "trail",
+          "tick": 40391
+        },
+        {
+          "id": "trail",
+          "tick": 40966
+        },
+        {
+          "id": "hourglass",
+          "tick": 40971
+        },
+        {
+          "id": "trail",
+          "tick": 41766
+        },
+        {
+          "id": "hourglass",
+          "tick": 42126
+        },
+        {
+          "id": "trail",
+          "tick": 42406
+        },
+        {
+          "id": "trail",
+          "tick": 43046
+        },
+        {
+          "id": "lantern",
+          "tick": 43126
+        },
+        {
+          "id": "lantern",
+          "tick": 44081
+        },
+        {
+          "id": "trail",
+          "tick": 44481
+        },
+        {
+          "id": "lantern",
+          "tick": 45051
+        },
+        {
+          "id": "trail",
+          "tick": 45196
+        },
+        {
+          "id": "trail",
+          "tick": 45721
+        },
+        {
+          "id": "lantern",
+          "tick": 45816
+        },
+        {
+          "id": "trail",
+          "tick": 46221
+        },
+        {
+          "id": "lantern",
+          "tick": 46806
+        },
+        {
+          "id": "trail",
+          "tick": 46941
+        },
+        {
+          "id": "lantern",
+          "tick": 47906
+        },
+        {
+          "id": "trail",
+          "tick": 48266
+        },
+        {
+          "id": "trail",
+          "tick": 48966
+        },
+        {
+          "id": "lantern",
+          "tick": 49011
+        },
+        {
+          "id": "trail",
+          "tick": 49596
+        },
+        {
+          "id": "lantern",
+          "tick": 49786
+        },
+        {
+          "id": "lantern",
+          "tick": 50711
+        },
+        {
+          "id": "trail",
+          "tick": 50731
+        },
+        {
+          "id": "trail",
+          "tick": 51276
+        },
+        {
+          "id": "lantern",
+          "tick": 52136
+        },
+        {
+          "id": "trail",
+          "tick": 52886
+        },
+        {
+          "id": "lantern",
+          "tick": 52891
+        },
+        {
+          "id": "trail",
+          "tick": 53996
+        },
+        {
+          "id": "lantern",
+          "tick": 54121
+        },
+        {
+          "id": "trail",
+          "tick": 54901
+        },
+        {
+          "id": "lantern",
+          "tick": 54971
+        },
+        {
+          "id": "trail",
+          "tick": 55821
+        },
+        {
+          "id": "lantern",
+          "tick": 55896
+        },
+        {
+          "id": "trail",
+          "tick": 56491
+        },
+        {
+          "id": "lantern",
+          "tick": 56651
+        },
+        {
+          "id": "trail",
+          "tick": 57096
+        },
+        {
+          "id": "lantern",
+          "tick": 57616
+        },
+        {
+          "id": "trail",
+          "tick": 58086
+        },
+        {
+          "id": "lantern",
+          "tick": 58621
+        },
+        {
+          "id": "trail",
+          "tick": 58711
+        },
+        {
+          "id": "lantern",
+          "tick": 59396
+        },
+        {
+          "id": "lantern",
+          "tick": 60151
+        },
+        {
+          "id": "trail",
+          "tick": 60181
+        },
+        {
+          "id": "trail",
+          "tick": 61116
+        },
+        {
+          "id": "lantern",
+          "tick": 61256
+        },
+        {
+          "id": "trail",
+          "tick": 61741
+        },
+        {
+          "id": "lantern",
+          "tick": 62021
+        },
+        {
+          "id": "trail",
+          "tick": 62331
+        }
+      ],
+      "telemetry": {
+        "casts": 1881,
+        "bolts": 5012,
+        "boltsHit": 2422,
+        "directHits": 3221,
+        "damage": 145951.62500000003,
+        "overkill": 154551.5187500001,
+        "damageBySource": {
+          "direct:ice": {
+            "effective": 139084.35625000004,
+            "overkill": 140126.78750000003,
+            "hits": 3221
+          },
+          "gear:trail:active": {
+            "effective": 1436.50625,
+            "overkill": 2073.49375,
+            "hits": 29
+          },
+          "gear:trail:passive": {
+            "effective": 82,
+            "overkill": 142,
+            "hits": 5
+          },
+          "gear:lantern:passive": {
+            "effective": 1072.8,
+            "overkill": 1797.2,
+            "hits": 20
+          },
+          "gear:lantern:active": {
+            "effective": 4275.9625,
+            "overkill": 10412.0375,
+            "hits": 57
+          }
+        },
+        "incoming": 625.5,
+        "prevented": 840,
+        "incomingBySource": {
+          "contact:Orc": {
+            "requested": 156,
+            "applied": 65,
+            "prevented": 91,
+            "hits": 12
+          },
+          "contact:Spider": {
+            "requested": 45,
+            "applied": 25,
+            "prevented": 20,
+            "hits": 9
+          },
+          "contact:Goblin": {
+            "requested": 71,
+            "applied": 21,
+            "prevented": 50,
+            "hits": 14
+          },
+          "contact:Knight": {
+            "requested": 195,
+            "applied": 81,
+            "prevented": 114,
+            "hits": 10
+          },
+          "contact:Zombie": {
+            "requested": 79,
+            "applied": 30,
+            "prevented": 49,
+            "hits": 5
+          },
+          "contact:Vampire": {
+            "requested": 126,
+            "applied": 54,
+            "prevented": 72,
+            "hits": 7
+          },
+          "contact:Reaper": {
+            "requested": 376,
+            "applied": 23.50000000000005,
+            "prevented": 346,
+            "hits": 12
+          },
+          "projectile:Demon": {
+            "requested": 396,
+            "applied": 326,
+            "prevented": 70,
+            "hits": 27
+          },
+          "contact:Demon": {
+            "requested": 28,
+            "applied": 0,
+            "prevented": 28,
+            "hits": 1
+          }
+        },
+        "healing": 525.5000000000115,
+        "healingBySource": {
+          "level-up": 78.95000000000059,
+          "balance:recovery": 270.99999999999824,
+          "potion": 175.55000000000135
+        },
+        "selfDamage": 0,
+        "selfDamageBySource": {},
+        "windows": {
+          "0": {
+            "damage": 6923,
+            "incoming": 57,
+            "healing": 57,
+            "casts": 297,
+            "bolts": 412,
+            "boltsHit": 283
+          },
+          "5": {
+            "damage": 22101.000000000004,
+            "incoming": 55,
+            "healing": 55,
+            "casts": 387,
+            "bolts": 1009,
+            "boltsHit": 545
+          },
+          "10": {
+            "damage": 38604.000000000015,
+            "incoming": 164,
+            "healing": 163.99999999999974,
+            "casts": 500,
+            "bolts": 1500,
+            "boltsHit": 693
+          },
+          "15": {
+            "damage": 66032,
+            "incoming": 186,
+            "healing": 186,
+            "casts": 600,
+            "bolts": 1800,
+            "boltsHit": 773
+          },
+          "20": {
+            "damage": 12291.625000000002,
+            "incoming": 163.50000000000006,
+            "healing": 63.50000000000005,
+            "casts": 97,
+            "bolts": 291,
+            "boltsHit": 128
+          }
+        },
+        "seconds": 1248.6,
+        "dps": 116.89221928559991,
+        "accuracy": 0.48324022346368717,
+        "hitsPerCast": 1.712387028176502
+      },
+      "stats": {
+        "damage": 170,
+        "castTicks": 25,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 269,
+          "health": 100,
+          "enemies": 63
+        },
+        "600": {
+          "level": 23,
+          "kills": 790,
+          "health": 100,
+          "enemies": 7
+        },
+        "900": {
+          "level": 28,
+          "kills": 1358,
+          "health": 100,
+          "enemies": 11
+        },
+        "1200": {
+          "level": 34,
+          "kills": 2074,
+          "health": 100,
+          "enemies": 13
+        }
+      }
+    }
+  ]
+}
