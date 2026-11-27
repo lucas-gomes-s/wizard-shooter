@@ -1,3 +1,4 @@
+import {GameAudio,loadAudio,saveAudio} from './audio.js';
 import {environments,environmentById,environmentConfig} from './environments.js';
 import {loadProfile,saveProfile,recordProgress,newProgressSession,runConfig,available,contracts,sigils,achievements} from './progression.js';
 import {equipment} from './equipment.js';
@@ -16,6 +17,18 @@ const $=id=>document.getElementById(id);
 const canvas=$('gameArea'), ctx=canvas.getContext('2d'), arena=$('arena');
 const game=new Game(config), clock=new FixedClock();
 let storage=null;try{storage=window.localStorage}catch{}
+const audio=new GameAudio(loadAudio(storage),window.AudioContext||window.webkitAudioContext||null);
+function audioControls(){
+ $('muteAudio').setAttribute('aria-pressed',String(audio.settings.muted));$('muteAudio').textContent=audio.settings.muted?'Sound off':'Sound on';
+ $('sfxVolume').value=Math.round(audio.settings.sfx*100);$('musicVolume').value=Math.round(audio.settings.music*100);
+ $('audioStatus').textContent=audio.Context?'Audio starts after interaction.':'Audio unavailable in this browser.';
+}
+function changeAudio(patch){audio.update({...audio.settings,...patch});saveAudio(storage,audio.settings);audioControls();}
+$('muteAudio').addEventListener('click',()=>{changeAudio({muted:!audio.settings.muted});if(!audio.settings.muted)void audio.unlock();if(screen==='play')focus(canvas)});
+for(const [id,key] of [['sfxVolume','sfx'],['musicVolume','music']])$(id).addEventListener('input',()=>changeAudio({[key]:Number($(id).value)/100}));
+// Autoplay policy: creation/resume only from a real gesture, never on page load.
+for(const type of ['pointerdown','keydown'])document.addEventListener(type,e=>{if(e.isTrusted&&!audio.ready&&!document.hidden)void audio.unlock()},{capture:true});
+audioControls();
 const loaded=loadProfile(storage),profile=loaded.profile;let profileSaved=loaded.saved,progressSession=null,runSigil='violet';
 function persistProfile(){profileSaved=saveProfile(storage,profile);return profileSaved}
 function checkpoint(){const unlocked=recordProgress(profile,game,progressSession);if(progressSession?.recorded)persistProfile();return unlocked}
@@ -50,7 +63,9 @@ new ResizeObserver(resize).observe(arena);window.addEventListener('resize',resiz
 function clearInput(){activeKeys.clear();keys.clear();aimOrder=[];clock.reset();}
 function focus(el){el.focus({preventScroll:true});}
 function setScreen(next){
-  screen=next;clearInput();dirty=true;
+  const previous=screen;screen=next;clearInput();dirty=true;
+  audio.setPlaying(next==='play'&&!document.hidden);
+  if(next!==previous&&!document.hidden){const cue={upgrade:'upgrade',loot:'loot',shop:'shop',over:'defeat',victory:'victory'}[next];if(cue)audio.cue(cue);}
   for(const [name,panel] of Object.entries(panels))panel.hidden=name!==next;
   $('overlay').hidden=next==='play';
   $('pauseButton').disabled=!['play','pause'].includes(next);
@@ -98,9 +113,9 @@ function startRun(){
   if(!ready)return;
   checkpoint();game.config=environmentConfig(runConfig(config,profile.selection.contract),profile.selection.environment);progressSession=newProgressSession(profile.selection.contract,profile.selection.environment);runSigil=profile.selection.sigil;
   Object.assign(game,viewportFor(surface.width,surface.height));game.start(startingSchool);
-  fx.clear();lastHud='';setScreen('play');
+  audio.reset();void audio.unlock();fx.clear();lastHud='';setScreen('play');
 }
-function home(){checkpoint();progressSession=null;game.config=config;game.reset();fx.clear();Object.assign(game,viewportFor(surface.width,surface.height));setScreen('home');}
+function home(){audio.reset();checkpoint();progressSession=null;game.config=config;game.reset();fx.clear();Object.assign(game,viewportFor(surface.width,surface.height));setScreen('home');}
 function pause(){if(screen==='play')setScreen('pause');}
 function resume(){if(screen==='pause')setScreen('play');}
 function ask(action){confirmAction=action;setScreen('confirm');}
@@ -213,8 +228,8 @@ document.addEventListener('keydown',e=>{
   keys.add(e.code);
 });
 document.addEventListener('keyup',e=>{keys.delete(e.code);aimOrder=aimOrder.filter(k=>k!==e.code)});
-window.addEventListener('blur',()=>{clearInput();pause()});
-document.addEventListener('visibilitychange',()=>{clearInput();if(document.hidden)pause()});
+window.addEventListener('blur',()=>{clearInput();pause();audio.stopVoices()});
+document.addEventListener('visibilitychange',()=>{clearInput();if(document.hidden){pause();audio.setPlaying(false);audio.stopVoices()}});
 function input(){const result={x:Number(keys.has('KeyD'))-Number(keys.has('KeyA')),y:Number(keys.has('KeyS'))-Number(keys.has('KeyW')),aim:aimVectors[aimOrder[aimOrder.length-1]],boots:activeKeys.has('Space'),relic:activeKeys.has('KeyE')};activeKeys.clear();return result}
 function buildUpgrades(){
   const root=$('upgradeCards');root.replaceChildren();$('upgradeLevel').textContent='Level '+game.player.level+' reached';
@@ -265,7 +280,8 @@ function updateHud(){
   meter('healthMeter',p.health/max);meter('xpMeter',maxed?1:p.currentExp/p.expNeeded);
 }
 function step(){
-  fx.advance();const running=game.step(input());fx.collect(game.events);fx.collect(game.visualEvents);return running;
+  fx.advance();const running=game.step(input());fx.collect(game.events);fx.collect(game.visualEvents);
+  audio.collect(game.events.filter(e=>e.type!=='victory'));audio.collect(game.visualEvents);audio.observe(game);return running;
 }
 function background(){
   const W=game.width,H=game.height,c=game.camera,tile=600,env=environmentById(screen==='home'||screen==='profile'?profile.selection.environment:game.config.environment);
@@ -377,6 +393,7 @@ function frame(now){
     clock.advance(now,step);dirty=true;
     if(game.phase==='upgrade')setScreen('upgrade');else if(game.phase==='loot')setScreen('loot');else if(game.phase==='shop')setScreen('shop');else if(game.phase==='over')setScreen('over');else if(game.phase==='victory')setScreen('victory');
   }
+  if(screen==='play'&&!document.hidden)audio.pump(game.boss||game.miniboss?'boss':environmentById(game.config.environment).id);
   if(dirty){render();updateHud();dirty=false;}
   requestAnimationFrame(frame);
 }
