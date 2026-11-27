@@ -116,8 +116,8 @@ Carry forward prior technical gates: deterministic RNG and versioned schema; 100
 
 ## Immediate execution queue
 
-1. Enemy behavior framework and three counterplay roles (web slow, charge, ranged) plus telegraph/feedback. Establish enemy cooldown and attack-budget tests.
-2. Dragon attack patterns and encounter director; fix current targeting/collision shortcomings and profile device. Add automated balance scenarios using current abilities and upgrades.
+1. Enemy behavior framework and three counterplay roles (web slow, charge, ranged) plus telegraph/feedback. Initial implementation and CI passed at 94b96be; device playtest pending.
+2. Dragon alternating attacks and line-of-sight targeting initially implemented. Bounded combat feedback and a 72-run controlled headless benchmark added; check CI results, extend seeds/profiles, profile device, then tune director.
 3. Tune first-run progression and upgrade frequency with actual playtest evidence.
 4. Stable alpha signing and save export/import in parallel with 1–3, before recruiting repeat testers.
 5. Minimum onboarding and first-fusion tutorial; prepare early noncommercial Play closed test (Phase 1B). Continue Phase 2 progression, Grimoire and lineage improvements during testing.

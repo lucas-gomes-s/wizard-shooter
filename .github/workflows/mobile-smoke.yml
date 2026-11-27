@@ -45,6 +45,29 @@ jobs:
           set -o pipefail
           timeout 45 Godot_v4.5.1-stable_linux.x86_64 --headless --path mobile --quit-after 20 2>&1 | tee /tmp/launch.log
           if grep -E 'SCRIPT ERROR|Parse Error|Failed to load script' /tmp/launch.log; then exit 1; fi
+  balance-baseline:
+    needs: smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Godot
+        run: |
+          curl -fL --retry 3 https://github.com/godotengine/godot-builds/releases/download/4.5.1-stable/Godot_v4.5.1-stable_linux.x86_64.zip -o /tmp/godot.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          chmod +x /tmp/godot/Godot_v4.5.1-stable_linux.x86_64
+          echo "/tmp/godot" >> "$GITHUB_PATH"
+      - name: Headless balance matrix
+        run: |
+          set -o pipefail
+          timeout 240 Godot_v4.5.1-stable_linux.x86_64 --headless --path mobile --script tools/balance_benchmark.gd -- --seeds=2 --seconds=120 --output=/tmp/balance.json 2>&1 | tee /tmp/balance.log
+          if grep -E 'SCRIPT ERROR|Parse Error|Failed to load script' /tmp/balance.log; then exit 1; fi
+          python -c 'import json; d=json.load(open("/tmp/balance.json")); assert len(d["runs"])==72 and len(d["groups"])==36'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wizard-shooter-balance-baseline
+          path: /tmp/balance.json
+          retention-days: 30
   android-alpha:
     needs: smoke
     if: github.event_name != 'pull_request'

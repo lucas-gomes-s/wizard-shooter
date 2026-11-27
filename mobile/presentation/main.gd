@@ -569,6 +569,9 @@ func _draw() -> void:
 	for shot in run.shots:
 		if visible_margin.has_point(shot.pos):
 			var projectile: Texture2D = arena_art.projectiles[shot.affinity]
+			var heading: Vector2 = shot.vel.normalized()
+			var shot_color := FIRE if shot.affinity == "fire" else (ICE if shot.affinity == "ice" else STEAM)
+			draw_line(shot.pos - heading * (13.0 if shot.affinity == "ice" else 8.0), shot.pos, Color(shot_color, 0.65), 3.0)
 			draw_texture(projectile, shot.pos - Vector2(4, 4))
 	if run.special_fx > 0:
 		var radius: float = float(run.kit.special.radius)
@@ -583,11 +586,14 @@ func _draw() -> void:
 	sprites.draw_wizard(self, run.phenotype, run.player, frame, 1.2)
 	if run.ward > 0: draw_arc(run.player, 22, 0, TAU, 24, Color("#c6e6ed"), 2.0)
 	if run.webbed: draw_arc(run.player, 18, 0, TAU, 24, Color("#efcfa1"), 2.0)
+	_draw_combat_feedback(visible_margin)
 	draw_set_transform(Vector2.ZERO)
 	# Mask the world outside the playfield, leaving all touch/HUD controls screen-fixed.
 	draw_rect(Rect2(0, 0, 360, 88), Color("#1b1924"))
 	draw_rect(Rect2(0, 536, 360, 104), Color("#1b1924"))
 	draw_rect(PLAYFIELD, Color("#48404e"), false, 2.0)
+	if run.player_hit_fx > 0:
+		draw_rect(PLAYFIELD.grow(-3), Color(1.0, 0.34, 0.29, float(run.player_hit_fx) * 2.5), false, 3.0)
 	draw_rect(Rect2(12, 73, 220, 8), Color("#502e40"))
 	draw_rect(Rect2(12, 73, 220 * run.hp / run.max_hp, 8), Color("#c66c73"))
 	if run.blessing > 0:
@@ -608,6 +614,29 @@ func _draw() -> void:
 	if paused or run.pending_upgrades > 0:
 		draw_rect(Rect2(0, 90, 360, 446), Color(0.04, 0.03, 0.06, 0.76))
 
+
+func _draw_combat_feedback(view: Rect2) -> void:
+	var font := ThemeDB.fallback_font
+	for fx in run.hit_fx:
+		if not view.has_point(fx.pos): continue
+		var p: Vector2 = fx.pos
+		var color := FIRE if fx.affinity == "fire" else (ICE if fx.affinity == "ice" else STEAM)
+		if fx.kind == "hurt": color = Color("#ff9c87")
+		var progress := 1.0 - float(fx.life) / 0.55
+		var alpha := 1.0 - progress
+		if fx.kind == "defeat":
+			for i in range(5):
+				var offset := Vector2.from_angle(i * TAU / 5.0) * (5.0 + progress * 17.0)
+				draw_rect(Rect2(p + offset - Vector2.ONE, Vector2(3,3)), Color(color, alpha))
+			continue
+		if progress < 0.40:
+			for i in range(4):
+				var offset := Vector2.from_angle(i * TAU / 4.0 + 0.7) * (5.0 + progress * 15.0)
+				draw_rect(Rect2(p + offset, Vector2(2,2)), Color(color, alpha))
+		var label_text := "%s%d" % ["-" if fx.kind == "hurt" else "", maxi(1, roundi(float(fx.amount)))]
+		var point := p + Vector2(-6, -13 - progress * 14)
+		draw_string(font, point + Vector2(1,1), label_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color(0.06,0.04,0.08,alpha))
+		draw_string(font, point, label_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color(color,alpha))
 
 func _draw_enemy_hazards(view: Rect2) -> void:
 	var danger := Color("#f3a35f")

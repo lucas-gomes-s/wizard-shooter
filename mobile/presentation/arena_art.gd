@@ -86,7 +86,10 @@ func draw_enemy(canvas: CanvasItem, enemy: Dictionary, elapsed: float) -> void:
 	if float(enemy.get("freeze", 0.0)) > 0: tint = Color("#c4f5ff")
 	if enemy.burn > 0: tint = tint.lerp(Color("#ffaf83"), 0.4)
 	if enemy.attack == "charge": tint = tint.lerp(Color("#f9bd86"), 0.45)
+	if elapsed < float(enemy.get("hit_until", 0.0)): tint = tint.lerp(Color("#fff3cb"), 0.75)
 	canvas.draw_texture_rect(enemies[kind], Rect2(pos - Vector2(size, size) / 2.0 + Vector2(0, bob), Vector2(size, size)), false, tint)
+	if float(enemy.get("freeze", 0.0)) > 0:
+		canvas.draw_arc(pos, radius + 4, 0, TAU, 12, Color("#bcecfb"), 1.5)
 	if kind == 3:
 		var bar := Rect2(pos + Vector2(-20, -size / 2.0 - 6), Vector2(40, 3))
 		canvas.draw_rect(bar, Color("#452934"))

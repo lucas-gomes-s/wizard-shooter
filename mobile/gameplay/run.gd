@@ -78,6 +78,15 @@ var enemy_bolts: Array[Dictionary] = []
 var danger_flashes: Array[Dictionary] = []
 var webbed := false
 var last_hit := ""
+var total_damage_dealt := 0.0
+var total_damage_taken := 0.0
+var basic_casts := 0
+var special_casts := 0
+var total_run_xp := 0
+var peak_enemies := 0
+var hit_fx: Array[Dictionary] = []
+const MAX_HIT_FX := 40
+var player_hit_fx := 0.0
 
 func _init(p: Dictionary, is_endless: bool, level: int, seed: int) -> void:
 	phenotype = p.duplicate(true)
@@ -109,6 +118,10 @@ func step(dt: float, movement: Vector2, special: bool) -> void:
 	auto_cd = maxf(0, auto_cd - dt)
 	special_cd = maxf(0, special_cd - dt)
 	hurt_cd = maxf(0, hurt_cd - dt)
+	player_hit_fx = maxf(0, player_hit_fx - dt)
+	for i in range(hit_fx.size() - 1, -1, -1):
+		hit_fx[i].life -= dt
+		if hit_fx[i].life <= 0: hit_fx.remove_at(i)
 	special_fx = maxf(0, special_fx - dt)
 	ward = maxf(0, ward - dt)
 	trail = maxf(0, trail - dt)
@@ -128,6 +141,7 @@ func step(dt: float, movement: Vector2, special: bool) -> void:
 	if not endless and elapsed >= FINITE_SECONDS and not boss_spawned:
 		boss_spawned = true
 		_spawn(3)
+	peak_enemies = maxi(peak_enemies, enemies.size())
 	if auto_cd <= 0:
 		if _cast_basic(): auto_cd = interval
 	if special and special_cd <= 0:
@@ -141,7 +155,7 @@ func step(dt: float, movement: Vector2, special: bool) -> void:
 	for enemy in enemies:
 		if enemy.hp <= 0: continue
 		if enemy.burn > 0:
-			enemy.hp -= float(enemy.get("burn_dps", effective_damage() * 0.20)) * dt
+			_damage_enemy(enemy, float(enemy.get("burn_dps", effective_damage() * 0.20)) * dt, "fire", false)
 			enemy.burn = maxf(0, enemy.burn - dt)
 		if enemy.hp <= 0: continue
 		var frozen: bool = float(enemy.get("freeze", 0.0)) > 0
@@ -158,7 +172,8 @@ func step(dt: float, movement: Vector2, special: bool) -> void:
 			var dead: Dictionary = enemies[i]
 			if str(dead.get("encounter", "")) == "":
 				kills += 1
-				xp += int(dead.xp)
+				_gain_xp(int(dead.xp))
+			_add_hit_fx(dead.pos, 0.0, str(phenotype.affinity), "defeat")
 			if dead.kind == 3: boss_defeated = true
 			enemies.remove_at(i)
 	if hp <= 0:
@@ -326,7 +341,7 @@ func _claim(site: Dictionary) -> void:
 	match str(site.kind):
 		"treasure":
 			treasure_count += 1
-			xp += 6
+			_gain_xp(6)
 			exploration_xp += 4
 			exploration_essence += 2
 			_announce("Treasure: +6 run XP, +2 essence")
@@ -345,7 +360,7 @@ func _claim(site: Dictionary) -> void:
 			if active_encounter.is_empty() or active_encounter.id != id or _guards_remaining() > 0: return
 			encounters_cleared += 1
 			treasure_count += 1
-			xp += 12
+			_gain_xp(12)
 			exploration_xp += 8
 			exploration_essence += 4
 			active_encounter = {}
@@ -433,11 +448,13 @@ func _cast_basic() -> bool:
 	shots.append({"pos":player,"vel":direction * float(spec.speed),"life":float(spec.life),
 		"damage":effective_damage() * float(spec.power),"pierce":int(spec.pierce),"hit":{},
 		"effects":spec.effects.duplicate(true),"affinity":phenotype.affinity})
+	basic_casts += 1
 	return true
 
 func _cast_special() -> void:
 	var spec: Dictionary = kit.special
 	special_cd = float(spec.cooldown)
+	special_casts += 1
 	special_fx = 0.35
 	ward = float(spec.get("ward", 0.0))
 	trail = float(spec.get("trail", 0.0))
@@ -447,7 +464,7 @@ func _cast_special() -> void:
 	else:
 		for enemy in enemies:
 			if enemy.hp <= 0 or player.distance_to(enemy.pos) > float(spec.radius): continue
-			enemy.hp -= effective_damage() * float(spec.power)
+			_damage_enemy(enemy, effective_damage() * float(spec.power), str(phenotype.affinity))
 			_apply_effects(enemy, spec.effects, effective_damage())
 
 func _apply_effects(enemy: Dictionary, effects: Array, source_damage: float) -> void:
@@ -468,7 +485,7 @@ func _apply_effects(enemy: Dictionary, effects: Array, source_damage: float) -> 
 				enemy.freeze = maxf(float(enemy.get("freeze", 0.0)), duration)
 			"shatter":
 				if float(enemy.get("chill", 0.0)) > 0:
-					enemy.hp -= source_damage * float(effect.power)
+					_damage_enemy(enemy, source_damage * float(effect.power), "ice")
 					enemy.chill = 0.0
 					_flash(enemy.pos, 19.0, "ice")
 			"cloud":
@@ -485,7 +502,7 @@ func _update_shots(dt: float) -> void:
 			if enemy.hp <= 0 or shot.hit.has(enemy.uid): continue
 			if shot.pos.distance_to(enemy.pos) > float(enemy.radius) + 3.0: continue
 			shot.hit[enemy.uid] = true
-			enemy.hp -= float(shot.damage)
+			_damage_enemy(enemy, float(shot.damage), str(shot.affinity))
 			_apply_effects(enemy, shot.effects, float(shot.damage))
 			if int(shot.pierce) <= 0:
 				shot.life = 0.0
@@ -512,7 +529,7 @@ func _update_clouds(dt: float) -> void:
 			enemy.slow = maxf(float(enemy.slow), 0.4)
 			# Existing burning targets take additional steam pressure.
 			if enemy.burn > 0: steam *= 1.25
-		enemy.hp -= (fire + steam) * dt
+		_damage_enemy(enemy, (fire + steam) * dt, "steam", false)
 	for i in range(clouds.size() - 1, -1, -1):
 		clouds[i].life -= dt
 		if clouds[i].life <= 0: clouds.remove_at(i)
@@ -531,11 +548,15 @@ func _burn_death_bursts() -> void:
 		_flash(center, burst_radius, "fire")
 		for enemy in enemies:
 			if enemy.hp > 0 and center.distance_to(enemy.pos) <= burst_radius:
-				enemy.hp -= effective_damage() * burst_power
+				_damage_enemy(enemy, effective_damage() * burst_power, "fire")
 
 func take_hit(amount: float, source: String) -> bool:
 	if hurt_cd > 0 or hp <= 0: return false
+	var before := hp
 	hp = maxf(0, hp - amount * float(kit.modifiers.incoming) * (0.45 if ward > 0 else 1.0))
+	total_damage_taken += before - hp
+	player_hit_fx = 0.20
+	_add_hit_fx(player, before - hp, "hostile", "hurt")
 	hurt_cd = 0.45
 	last_hit = source
 	return true
@@ -571,3 +592,20 @@ func _update_enemy_hazards(dt: float) -> void:
 	for i in range(danger_flashes.size() - 1, -1, -1):
 		danger_flashes[i].life -= dt
 		if danger_flashes[i].life <= 0: danger_flashes.remove_at(i)
+
+func _gain_xp(amount: int) -> void:
+	xp += amount
+	total_run_xp += amount
+
+func _damage_enemy(enemy: Dictionary, amount: float, affinity: String, visual: bool = true) -> void:
+	if enemy.hp <= 0 or amount <= 0: return
+	var previous: float = enemy.hp
+	enemy.hp -= amount
+	total_damage_dealt += minf(previous, amount)
+	if visual:
+		enemy.hit_until = elapsed + 0.10
+		_add_hit_fx(enemy.pos, minf(previous, amount), affinity, "hit")
+
+func _add_hit_fx(point: Vector2, amount: float, affinity: String, kind: String) -> void:
+	if hit_fx.size() >= MAX_HIT_FX: hit_fx.pop_front()
+	hit_fx.append({"pos":point,"amount":amount,"affinity":affinity,"kind":kind,"life":0.55})

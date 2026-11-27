@@ -78,6 +78,7 @@ func _initialize() -> void:
 	_test_abilities(p)
 	_test_upgrades(p)
 	_test_enemies(p)
+	_test_combat_metrics(p)
 	print("Wizard Shooter smoke: %d failures; 1000 founder/fusion samples" % failures)
 	quit(0 if failures == 0 else 1)
 
@@ -386,3 +387,25 @@ func _test_enemies(base: Dictionary) -> void:
 		check(not World.line_clear(7,center-Vector2(25,0),center+Vector2(25,0),2.0), "Pillar blocks line of sight")
 		break
 	print("Enemy behavior checks complete")
+
+func _test_combat_metrics(p: Dictionary) -> void:
+	var run := RunModel.new(p,true,1,7)
+	run._spawn(0)
+	var enemy: Dictionary = run.enemies[0]
+	var initial_hp: float = enemy.hp
+	run._damage_enemy(enemy,initial_hp+100.0,"fire")
+	check(absf(run.total_damage_dealt-initial_hp)<0.001,"Damage metric excludes overkill")
+	check(run.hit_fx.size()==1,"Direct hit creates feedback")
+	run._damage_enemy(enemy,5.0,"fire")
+	check(run.hit_fx.size()==1,"Dead enemy cannot add damage")
+	run._gain_xp(5)
+	check(run.total_run_xp==5 and run.xp==5,"Cumulative run XP")
+	var hp_before := run.hp
+	run.take_hit(10.0,"test")
+	check(absf(run.total_damage_taken-(hp_before-run.hp))<0.001 and run.player_hit_fx>0,"Player hit feedback and metric")
+	var before := run.total_damage_taken
+	run.take_hit(10.0,"test")
+	check(before==run.total_damage_taken,"Immunity does not count prevented damage")
+	for i in range(100): run._add_hit_fx(Vector2.ZERO,1.0,"ice","hit")
+	check(run.hit_fx.size()==RunModel.MAX_HIT_FX,"Hit feedback bounded")
+	print("Combat telemetry checks complete")
