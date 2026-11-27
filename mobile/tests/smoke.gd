@@ -5,6 +5,8 @@ const Academy = preload("res://domain/academy.gd")
 const RunModel = preload("res://gameplay/run.gd")
 const Sprites = preload("res://presentation/sprite_library.gd")
 const ArenaArt = preload("res://presentation/arena_art.gd")
+const World = preload("res://gameplay/dungeon_world.gd")
+const DungeonArt = preload("res://presentation/dungeon_art.gd")
 var failures := 0
 
 func check(condition: bool, message: String) -> void:
@@ -66,5 +68,56 @@ func _initialize() -> void:
 	run.hp = 0
 	run.step(1.0 / 60.0, Vector2.ZERO, false)
 	check(run.outcome == "Defeated", "Death ends run")
+	_test_world(p)
 	print("Wizard Shooter smoke: %d failures; 1000 founder/fusion samples" % failures)
 	quit(0 if failures == 0 else 1)
+
+func _test_world(p: Dictionary) -> void:
+	check(World.chunk_at(Vector2(-1, -257)) == Vector2i(-1, -2), "Negative chunk coordinates")
+	var chunk := Vector2i(-3, 6)
+	var first := DungeonArt.chunk_image(7, chunk)
+	var second := DungeonArt.chunk_image(7, chunk)
+	check(first.get_data() == second.get_data(), "Chunk regeneration deterministic")
+	check(first.get_data() != DungeonArt.chunk_image(8, chunk).get_data(), "World seed varies terrain")
+	var art := DungeonArt.new()
+	art.reset(7)
+	for i in range(16):
+		art.prepare(Rect2(Vector2(i * 1024, -i * 512), Vector2(360, 448)))
+		check(art.cache.size() <= 9, "Chunk cache bounded while exploring")
+	var found := false
+	for x in range(-4, 5):
+		var pillar := World.pillar(7, Vector2i(x, 0))
+		if pillar.is_empty(): continue
+		found = true
+		var pos: Vector2 = pillar.pos
+		check(not World.clear_at(7, pos, 7), "Pillar collision center")
+		var from := pos - Vector2(19, 0)
+		var moved := World.move(7, from, Vector2(2, 0), 7)
+		check(moved == from, "Cannot walk through pillar")
+		break
+	check(found, "Pillar fixture exists")
+	var exploration := RunModel.new(p, true, 1, 7)
+	exploration.spawn_cd = 100000.0
+	for i in range(600):
+		exploration.step(1.0 / 60.0, Vector2.LEFT, false)
+	check(exploration.player.x < -500, "Unbounded westward travel")
+	for i in range(600):
+		exploration.step(1.0 / 60.0, Vector2.UP, false)
+	check(exploration.player.y < -500, "Unbounded northward travel")
+	for i in range(40):
+		exploration._spawn(i % 3)
+		var enemy: Dictionary = exploration.enemies.back()
+		var offset: Vector2 = enemy.pos - exploration.player
+		check(absf(offset.x) >= 260 or absf(offset.y) >= 304, "Enemies spawn outside camera")
+		check(World.clear_at(7, enemy.pos, float(enemy.radius)), "Spawn clear of obstacles")
+	var previous_kills := exploration.kills
+	exploration.player += Vector2(4000, 4000)
+	exploration._recycle_far_enemies()
+	check(exploration.enemies.is_empty() and exploration.kills == previous_kills, "No rewards for recycling distant enemies")
+	exploration._spawn(3)
+	exploration.enemies[0].hp = 123.0
+	exploration.player += Vector2(4000, 4000)
+	exploration._recycle_far_enemies()
+	check(exploration.enemies.size() == 1 and exploration.enemies[0].hp == 123.0, "Boss relocates without resetting health")
+	check(exploration.player.distance_to(exploration.enemies[0].pos) < RunModel.BOSS_RELOCATE_DISTANCE, "Boss remains reachable")
+	print("Infinite world checks complete")

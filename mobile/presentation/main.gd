@@ -5,12 +5,17 @@ const ProfileStore = preload("res://persistence/profile_store.gd")
 const RunModel = preload("res://gameplay/run.gd")
 const SpriteLibrary = preload("res://presentation/sprite_library.gd")
 const ArenaArt = preload("res://presentation/arena_art.gd")
+const DungeonArt = preload("res://presentation/dungeon_art.gd")
+const PLAYFIELD := Rect2(0, 88, 360, 448)
+const CAMERA_CENTER := Vector2(180, 312)
 const FIRE := Color("#ef8052")
 const ICE := Color("#84d7e8")
 const STEAM := Color("#c7b7d8")
 var academy := Academy.new(int(Time.get_unix_time_from_system()), ProfileStore.new())
 var sprites := SpriteLibrary.new()
 var arena_art := ArenaArt.new()
+var dungeon_art := DungeonArt.new()
+var camera_position := Vector2.ZERO
 var run: Variant
 var selected := 0
 var partner_index := -1
@@ -354,6 +359,8 @@ func _start(endless: bool) -> void:
 		_refresh_academy()
 		return
 	run = RunModel.new(active.phenotype, endless, difficulty, 1000 + run_id)
+	camera_position = run.player
+	dungeon_art.reset(run.world_seed)
 	screen = "run"
 	paused = false
 	_clear_input()
@@ -449,6 +456,9 @@ func _physics_process(dt: float) -> void:
 			movement = ((touch_current - touch_origin) / 35.0).limit_length()
 			if movement.length() < 0.12: movement = Vector2.ZERO
 		run.step(dt, movement, special_requested or (space and not prev_space))
+		var target: Vector2 = run.player
+		camera_position = camera_position.lerp(target, 1.0 - exp(-dt * 12.0))
+		camera_position = target + (camera_position - target).limit_length(24.0)
 		if run.pending_upgrades > 0:
 			_clear_input()
 		if run.outcome != "":
@@ -507,16 +517,19 @@ func _draw() -> void:
 			_draw_card(c, Rect2(100, 214, 160, 138), "DESCENDANT")
 		return
 	if screen != "run" or run == null: return
-	draw_texture(arena_art.floor_texture, Vector2(0, 88))
-	draw_rect(Rect2(0, 88, 360, 448), Color("#48404e"), false, 2.0)
+	var camera := camera_position.round()
+	var view := Rect2(camera - PLAYFIELD.size / 2.0, PLAYFIELD.size)
+	var visible_margin := view.grow(40)
+	draw_set_transform(CAMERA_CENTER - camera)
+	dungeon_art.draw_world(self, view)
 	var color: Color = FIRE if run.phenotype.affinity == "fire" else (ICE if run.phenotype.affinity == "ice" else STEAM)
-	draw_rect(Rect2(12, 73, 220, 8), Color("#502e40"))
-	draw_rect(Rect2(12, 73, 220 * run.hp / run.max_hp, 8), Color("#c66c73"))
 	for e in run.enemies:
-		arena_art.draw_enemy(self, e, float(run.elapsed))
+		if visible_margin.has_point(e.pos):
+			arena_art.draw_enemy(self, e, float(run.elapsed))
 	for shot in run.shots:
-		var projectile: Texture2D = arena_art.projectiles[run.phenotype.affinity]
-		draw_texture(projectile, shot.pos - Vector2(4, 4))
+		if visible_margin.has_point(shot.pos):
+			var projectile: Texture2D = arena_art.projectiles[run.phenotype.affinity]
+			draw_texture(projectile, shot.pos - Vector2(4, 4))
 	if run.special_fx > 0:
 		var radius := 82.0 if run.phenotype.mutation == "crystal_wings" else 66.0
 		var fraction := 1.0 - float(run.special_fx) / 0.35
@@ -528,6 +541,18 @@ func _draw() -> void:
 			draw_rect(Rect2(run.player + offset - Vector2(2, 2), Vector2(4, 4)), fade)
 	var frame: int = int(run.elapsed * 6) % 2 if movement.length_squared() > 0 else 0
 	sprites.draw_wizard(self, run.phenotype, run.player, frame, 1.2)
+	draw_set_transform(Vector2.ZERO)
+	# Mask the world outside the playfield, leaving all touch/HUD controls screen-fixed.
+	draw_rect(Rect2(0, 0, 360, 88), Color("#1b1924"))
+	draw_rect(Rect2(0, 536, 360, 104), Color("#1b1924"))
+	draw_rect(PLAYFIELD, Color("#48404e"), false, 2.0)
+	draw_rect(Rect2(12, 73, 220, 8), Color("#502e40"))
+	draw_rect(Rect2(12, 73, 220 * run.hp / run.max_hp, 8), Color("#c66c73"))
+	for e in run.enemies:
+		if int(e.kind) == 3 and not view.has_point(e.pos):
+			var direction: Vector2 = camera.direction_to(e.pos)
+			var arrow := CAMERA_CENTER + direction * 150.0
+			draw_colored_polygon(PackedVector2Array([arrow + direction * 9, arrow - direction * 5 + direction.orthogonal() * 6, arrow - direction * 5 - direction.orthogonal() * 6]), Color("#e07468"))
 	var origin := touch_origin if touch_id != -1 else Vector2(68, 573)
 	var thumb := origin + movement * 30.0
 	draw_circle(origin, 34, Color(0.7, 0.7, 0.8, 0.12))
