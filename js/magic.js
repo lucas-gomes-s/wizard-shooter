@@ -22,8 +22,10 @@ export function upgradeOffers(player,skills,rng=Math.random){
  const combos=synergies.filter(s=>!m.synergies.includes(s.id)&&s.requires.every(id=>m.ranks[id]>=2)).map(s=>({kind:'synergy',id:s.id,name:s.name,glyph:s.glyph,color:s.color,description:s.description,flavor:'Synergy · '+s.requires.map(id=>schoolById[id].name).join(' + '),rank:0,max:1}));
  if(player.level===2&&magic.length>=3&&Object.values(m.ranks).every(rank=>rank===0)){return Array.from({length:3},()=>sample(magic,rng))}
  const offers=[];
- if(combos.length)offers.push(sample(combos,rng));
- if(magic.length)offers.push(sample(magic,rng));
+ // Give new players a reliable path to damage or mobility rather than a dead-end roll.
+ if(player.level<=4&&Object.values(m.ranks).some(rank=>rank>0)){const priority=basic.findIndex(o=>o.index===(player.level===3?0:2));if(priority>=0)offers.push(basic.splice(priority,1)[0]);}
+ if(combos.length&&offers.length<3)offers.push(sample(combos,rng));
+ if(magic.length&&offers.length<3)offers.push(sample(magic,rng));
  const pool=[...basic,...magic,...combos];
  while(offers.length<3&&pool.length)offers.push(sample(pool,rng));
  return offers;
