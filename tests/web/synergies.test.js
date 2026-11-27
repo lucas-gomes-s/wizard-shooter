@@ -7,8 +7,8 @@ const enemy=(x,y=280,h=100)=>({x,y,width:20,height:20,maxSpeed:0,health:h,maxHea
 const bolt=(x,y=280,extra={})=>({x,y,width:5,height:5,vx:0,vy:0,damage:10,remaining:1,...extra});
 const close=(a,b)=>assert.ok(Math.abs(a-b)<1e-7,a+' != '+b);
 function build(id){
- const combo=synergies.find(s=>s.id===id),g=new Game(config,()=>.99),p=g.player;
- g.start(combo.requires[0]);p.level=10; // use the ordinary upgrade path
+ const combo=synergies.find(s=>s.id===id),g=new Game(config,()=>.99);
+ g.start(combo.requires[0]);g.player.level=10; // use the ordinary upgrade path
  for(const school of combo.requires)while(g.player.magic.ranks[school]<2)assert.ok(applyUpgrade(g.player,{kind:'school',id:school},config.skills,0));
  assert.ok(applyUpgrade(g.player,{kind:'synergy',id},config.skills,0));return g;
 }
