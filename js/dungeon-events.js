@@ -34,6 +34,7 @@ function finish(g,outcome){
  // Event-only threats disappear without kills, healing or XP on expiration.
  g.enemies=g.enemies.filter(o=>o.eventSerial!==e.serial);
  g.hazards=g.hazards.filter(o=>o.eventSerial!==e.serial);
+ g.hostiles=g.hostiles.filter(o=>o.eventSerial!==e.serial);
  s.active=null;
 }
 function eventEnemy(g,e,guardian=false){
