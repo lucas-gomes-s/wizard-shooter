@@ -14,6 +14,7 @@ const PixelArt = preload("res://presentation/pixel_ui_art.gd")
 const UpgradeCard = preload("res://presentation/upgrade_card.gd")
 const CastButton = preload("res://presentation/cast_button.gd")
 const GameAudio = preload("res://presentation/game_audio.gd")
+const Collection = preload("res://presentation/collection_art.gd")
 const PLAYFIELD := Rect2(0, 88, 360, 448)
 const CAMERA_CENTER := Vector2(180, 312)
 const FIRE := Color("#ef8052")
@@ -77,8 +78,19 @@ var fusion_confirm: Button
 var reveal_panel: VBoxContainer
 var reveal_info: Label
 var revealed: Dictionary = {}
-var active_picker: OptionButton
-var partner_picker: OptionButton
+var roster_panel: Control
+var roster_buttons: Array[Button] = []
+var roster_prev: Button
+var roster_next: Button
+var roster_page := 0
+var detail_panel: VBoxContainer
+var detail_info: Label
+var detail_active: Button
+var detail_apprentice: Button
+var detail_lock: Button
+var detail_index := 0
+var detail_origin := "academy"
+var clear_apprentice: Button
 var status_label: Label
 var fuse_button: Button
 var summon_button: Button
@@ -100,6 +112,7 @@ func _ready() -> void:
 	add_child(ui)
 	ui.theme = Fantasy.make_theme()
 	_build_ui()
+	if academy.roster.size()>1: partner_index=1
 	_show_academy()
 	_show_title()
 
@@ -127,15 +140,6 @@ func _box_at(pos: Vector2, size: Vector2) -> VBoxContainer:
 	v.add_theme_constant_override("separation", 5)
 	ui.add_child(v)
 	return v
-
-func _picker(parent: Node, callback: Callable) -> OptionButton:
-	var picker := OptionButton.new()
-	picker.fit_to_longest_item = false
-	picker.custom_minimum_size = Vector2(0, 34)
-	picker.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	picker.item_selected.connect(callback)
-	parent.add_child(picker)
-	return picker
 
 func _pair(parent: Node) -> HBoxContainer:
 	var row := HBoxContainer.new()
@@ -165,28 +169,38 @@ func _build_ui() -> void:
 	title_menu_button.position = Vector2(294, 5)
 	title_menu_button.size = Vector2(58, 30)
 	title_menu_button.add_theme_font_size_override("font_size", 11)
-	academy_panel = _box_at(Vector2(16, 205), Vector2(328, 420))
-	var pickers := _pair(academy_panel)
-	active_picker = _picker(pickers, _select_active)
-	partner_picker = _picker(pickers, _select_partner)
-	info = _label(academy_panel, "", 13)
-	info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	var actions := _pair(academy_panel)
-	summon_button = _button(actions, "Summon • 10", _summon)
-	fuse_button = _button(actions, "Fusion chamber", _ask_fuse)
-	summon_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	fuse_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	academy_panel = _box_at(Vector2(16, 298), Vector2(328, 328))
+	academy_panel.add_theme_constant_override("separation",7)
 	var collection := _pair(academy_panel)
-	lock_button = _button(collection, "Lock wizard", _lock_wizard)
-	var archive_button := _button(collection, "Archive / lineage", _show_archive)
-	lock_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	archive_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	difficulty_button = _button(academy_panel, "Difficulty: I", _cycle_difficulty)
-	start_finite = _button(academy_panel, "Enter dungeon", func() -> void: _start(false))
+	var browse := _button(collection,"Wizard collection",_show_roster)
+	browse.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	var details := _button(collection,"Inspect active",func() -> void: _show_detail(selected,"academy"))
+	details.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	var training := _pair(academy_panel)
+	clear_apprentice = _button(training,"Clear apprentice",_clear_apprentice)
+	clear_apprentice.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	lock_button = _button(training,"Lock wizard",_lock_wizard)
+	lock_button.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	var actions := _pair(academy_panel)
+	summon_button = _button(actions,"Summon • 10",_summon)
+	fuse_button = _button(actions,"Fusion chamber",_ask_fuse)
+	summon_button.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	fuse_button.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	var options := _pair(academy_panel)
+	difficulty_button = _button(options,"Difficulty: I",_cycle_difficulty)
+	difficulty_button.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	var archive_button := _button(options,"Ancestry archive",_show_archive)
+	archive_button.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	start_finite = _button(academy_panel,"Enter dungeon",func() -> void: _start(false))
+	start_finite.custom_minimum_size.y=42
 	Fantasy.primary(start_finite)
-	start_endless = _button(academy_panel, "Endless survival", func() -> void: _start(true))
-	status_label = _label(academy_panel, "", 12)
-	status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	start_endless = _button(academy_panel,"Endless survival",func() -> void: _start(true))
+	start_endless.custom_minimum_size.y=36
+	info = _label(academy_panel,"",12)
+	info.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	status_label = _label(academy_panel,"",11)
+	status_label.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	_build_collection()
 	fusion_panel = _box_at(Vector2(24, 326), Vector2(312, 270))
 	fusion_hint = _label(fusion_panel, "", 15)
 	fusion_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -246,11 +260,118 @@ func _build_ui() -> void:
 	archive_dialog.add_child(archive_text)
 	add_child(archive_dialog)
 
+func _build_collection() -> void:
+	roster_panel=Control.new()
+	roster_panel.mouse_filter=Control.MOUSE_FILTER_IGNORE
+	ui.add_child(roster_panel)
+	for i in range(Collection.PAGE_SIZE):
+		var button := _button(roster_panel,"",_open_roster_slot.bind(i))
+		var r := Collection.card_rect(i)
+		button.position=r.position
+		button.size=r.size
+		# Card art is drawn beneath native buttons; transparent normal state.
+		var empty := StyleBoxEmpty.new()
+		button.add_theme_stylebox_override("normal",empty)
+		button.add_theme_stylebox_override("hover",Fantasy.style(Color(0.85,0.72,0.95,0.08),Fantasy.GOLD))
+		button.add_theme_stylebox_override("pressed",Fantasy.style(Color(0.85,0.72,0.95,0.14),Fantasy.GOLD))
+		roster_buttons.append(button)
+	roster_prev=_button(roster_panel,"Previous",func() -> void: _change_page(-1))
+	roster_next=_button(roster_panel,"Next",func() -> void: _change_page(1))
+	roster_prev.position=Vector2(12,522)
+	roster_prev.size=Vector2(108,37)
+	roster_next.position=Vector2(240,522)
+	roster_next.size=Vector2(108,37)
+	var back := _button(roster_panel,"Return to Academy",_show_academy)
+	back.position=Vector2(12,578)
+	back.size=Vector2(336,42)
+	detail_panel=_box_at(Vector2(22,275),Vector2(316,340))
+	detail_panel.add_theme_constant_override("separation",8)
+	detail_info=_label(detail_panel,"",13)
+	detail_info.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	detail_info.custom_minimum_size.y=100
+	detail_active=_button(detail_panel,"Set active wizard",_assign_active)
+	Fantasy.primary(detail_active)
+	detail_apprentice=_button(detail_panel,"Assign apprentice",_assign_apprentice)
+	detail_lock=_button(detail_panel,"Lock wizard",_lock_detail)
+	_button(detail_panel,"Back",_back_detail)
+
+func _show_roster() -> void:
+	if academy.blocked or academy.roster.is_empty(): return
+	screen="roster"
+	roster_page=clampi(roster_page,0,Collection.pages(academy.roster.size())-1)
+	_refresh_roster()
+	_sync_visibility()
+	queue_redraw()
+
+func _refresh_roster() -> void:
+	for i in range(roster_buttons.size()):
+		var index := roster_page*Collection.PAGE_SIZE+i
+		roster_buttons[i].visible=index<academy.roster.size()
+		roster_buttons[i].tooltip_text=Collection.title(academy.roster[index]) if index<academy.roster.size() else ""
+	roster_prev.disabled=roster_page==0
+	roster_next.disabled=roster_page>=Collection.pages(academy.roster.size())-1
+
+func _change_page(step: int) -> void:
+	roster_page=clampi(roster_page+step,0,Collection.pages(academy.roster.size())-1)
+	_refresh_roster()
+	queue_redraw()
+
+func _open_roster_slot(slot: int) -> void:
+	_show_detail(roster_page*Collection.PAGE_SIZE+slot,"roster")
+
+func _show_detail(index: int,origin: String) -> void:
+	if academy.blocked or index<0 or index>=academy.roster.size(): return
+	detail_index=index
+	detail_origin=origin
+	screen="detail"
+	_refresh_detail()
+	_sync_visibility()
+	queue_redraw()
+
+func _refresh_detail() -> void:
+	var c: Dictionary=academy.roster[detail_index]
+	detail_info.text=Collection.details(c)
+	if not academy.error.is_empty(): detail_info.text+="\n"+academy.error
+	detail_active.disabled=detail_index==selected
+	detail_active.text="Active wizard" if detail_index==selected else "Set active wizard"
+	detail_apprentice.disabled=detail_index==selected
+	detail_apprentice.text="Remove apprentice" if detail_index==partner_index else "Assign apprentice"
+	detail_lock.text="Unlock wizard" if c.locked else "Lock wizard"
+
+func _assign_active() -> void:
+	if screen!="detail": return
+	selected=detail_index
+	if partner_index==selected: partner_index=-1
+	_refresh_detail()
+	queue_redraw()
+
+func _assign_apprentice() -> void:
+	if screen!="detail" or detail_index==selected: return
+	partner_index=-1 if partner_index==detail_index else detail_index
+	_refresh_detail()
+	queue_redraw()
+
+func _lock_detail() -> void:
+	if screen!="detail": return
+	academy.toggle_lock(str(academy.roster[detail_index].id))
+	_refresh_detail()
+	queue_redraw()
+
+func _back_detail() -> void:
+	if detail_origin=="roster": _show_roster()
+	else: _show_academy()
+
+func _clear_apprentice() -> void:
+	partner_index=-1
+	_refresh_academy()
+	queue_redraw()
+
 func _lock_wizard() -> void:
 	if academy.blocked: return
 	var c: Dictionary = academy.roster[selected]
 	academy.toggle_lock(c.id)
 	_refresh_academy()
+	queue_redraw()
 
 func _lineage_records() -> Array[Dictionary]:
 	var records: Array[Dictionary] = []
@@ -319,8 +440,6 @@ func _show_academy() -> void:
 	selected = clampi(selected, 0, academy.roster.size() - 1)
 	if partner_index == selected or partner_index >= academy.roster.size():
 		partner_index = -1
-	if partner_index < 0 and academy.roster.size() > 1:
-		partner_index = (selected + 1) % academy.roster.size()
 	_refresh_academy()
 	_sync_visibility()
 	queue_redraw()
@@ -337,39 +456,14 @@ func _refresh_academy() -> void:
 		_disable_controls(academy_panel)
 		return
 	var c: Dictionary = academy.roster[selected]
-	var p: Dictionary = c.phenotype
-	active_picker.clear()
-	partner_picker.clear()
-	partner_picker.add_item("No apprentice", -1)
-	for i in range(academy.roster.size()):
-		var record: Dictionary = academy.roster[i]
-		var label := "%s · %s" % [record.phenotype.affinity.capitalize(), str(record.id).right(4)]
-		active_picker.add_item(label, i)
-		if i != selected: partner_picker.add_item(label, i)
-	active_picker.select(selected)
-	partner_picker.select(0)
-	for i in range(1, partner_picker.item_count):
-		if partner_picker.get_item_id(i) == partner_index: partner_picker.select(i)
-	var p2: Dictionary = academy.roster[partner_index] if partner_index >= 0 else {}
-	var kit: Dictionary = Abilities.compile(p)
-	info.text = "HP %d  •  Speed %d  •  Power %.1f\n%s / %s\nPassive: %s\n%s" % [int(p.health), int(p.speed), float(p.damage) * float(kit.modifiers.damage), kit.basic.name, kit.special.name, Abilities.passive_names(p), str(p.mutation).replace("_", " ").capitalize() if p.mutation != "none" else "No expressed mutation"]
-	difficulty_button.text = "Difficulty: %s" % ["I", "II", "III"][difficulty - 1]
-	lock_button.text = "Unlock wizard" if c.locked else "Lock wizard"
-	summon_button.disabled = academy.essence < 10
-	fuse_button.disabled = p2.is_empty()
-	status_label.text = academy.error if not academy.error.is_empty() else academy.notice
-	if status_label.text.is_empty(): status_label.text = "Shared training: apprentice gains 25% XP."
-
-func _select_active(index: int) -> void:
-	selected = active_picker.get_item_id(index)
-	if partner_index == selected: partner_index = -1
-	_refresh_academy()
-	queue_redraw()
-
-func _select_partner(index: int) -> void:
-	partner_index = -1 if index == 0 else partner_picker.get_item_id(index)
-	_refresh_academy()
-	queue_redraw()
+	var p2: Dictionary = academy.roster[partner_index] if partner_index>=0 else {}
+	info.text="Fusion ready" if academy.eligible(c,p2) else "Fusion requires two mature, unlocked Tier I wizards."
+	difficulty_button.text="Difficulty: %s" % ["I","II","III"][difficulty-1]
+	lock_button.text="Unlock wizard" if c.locked else "Lock wizard"
+	clear_apprentice.disabled=partner_index<0
+	summon_button.disabled=academy.essence<10
+	fuse_button.disabled=p2.is_empty()
+	status_label.text=academy.error if not academy.error.is_empty() else academy.notice
 
 func _summon() -> void:
 	if academy.summon():
@@ -489,6 +583,8 @@ func _sync_visibility() -> void:
 	title_panel.visible = screen == "title"
 	title_menu_button.visible = screen == "academy"
 	academy_panel.visible = screen == "academy"
+	roster_panel.visible=screen=="roster"
+	detail_panel.visible=screen=="detail"
 	fusion_panel.visible = screen == "fusion"
 	reveal_panel.visible = screen == "reveal" and reveal_time>=REVEAL_DURATION
 	reveal_skip.visible = screen=="reveal" and reveal_time<REVEAL_DURATION
@@ -616,8 +712,23 @@ func _draw() -> void:
 	if screen == "academy":
 		_draw_title("THE ACADEMY", "%d essence   •   %d active   •   %d retired" % [academy.essence, academy.roster.size(), academy.archive.size()])
 		if academy.blocked or academy.roster.is_empty(): return
-		_draw_card(academy.roster[selected], Rect2(16, 55, 160, 140), "ACTIVE")
-		_draw_card(academy.roster[partner_index] if partner_index >= 0 else {}, Rect2(184, 55, 160, 140), "APPRENTICE")
+		Collection.hero(self,sprites,academy.roster[selected])
+		Collection.apprentice(self,sprites,academy.roster[partner_index] if partner_index>=0 else {})
+		return
+	if screen=="roster":
+		_draw_title("WIZARD COLLECTION","%d wizards • choose a portrait to inspect" % academy.roster.size())
+		for i in range(Collection.PAGE_SIZE):
+			var index := roster_page*Collection.PAGE_SIZE+i
+			if index>=academy.roster.size(): break
+			Collection.tile(self,sprites,academy.roster[index],Collection.card_rect(i),Collection.role(index,selected,partner_index))
+		Fantasy.text_at(self,"%d / %d" % [roster_page+1,Collection.pages(academy.roster.size())],Vector2(180,545),13,Fantasy.GOLD,true)
+		return
+	if screen=="detail":
+		var c: Dictionary=academy.roster[detail_index]
+		_draw_title("WIZARD GRIMOIRE",str(c.id))
+		Collection.hero(self,sprites,c,"WIZARD RECORD")
+		Fantasy.frame(self,Rect2(12,224,336,42))
+		Fantasy.text_at(self,Collection.role(detail_index,selected,partner_index),Vector2(180,250),13,Fantasy.GOLD,true)
 		return
 	if screen == "fusion":
 		_draw_title("FUSION CHAMBER", "Two bloodlines. One descendant.")
