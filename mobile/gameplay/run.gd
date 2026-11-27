@@ -82,6 +82,8 @@ var last_hit := ""
 var total_damage_dealt := 0.0
 var total_damage_taken := 0.0
 var basic_casts := 0
+# Presentation telemetry only; never read by simulation decisions.
+var last_basic_direction := Vector2.DOWN
 var special_casts := 0
 var total_run_xp := 0
 var peak_enemies := 0
@@ -458,6 +460,7 @@ func _cast_basic() -> bool:
 	shots.append({"pos":player,"vel":direction * float(spec.speed),"life":float(spec.life),
 		"damage":effective_damage() * float(spec.power),"pierce":int(spec.pierce),"hit":{},
 		"effects":spec.effects.duplicate(true),"affinity":phenotype.affinity})
+	last_basic_direction = direction
 	basic_casts += 1
 	return true
 

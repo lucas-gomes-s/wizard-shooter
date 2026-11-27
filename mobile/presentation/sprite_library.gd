@@ -2,6 +2,10 @@ extends RefCounted
 ## Resolve independent atlas tiles using only the relevant expressed attributes.
 const ATLAS = preload("res://assets/characters/prototype/layers.png")
 const MANIFEST = "res://assets/characters/prototype/manifest.json"
+const Rig = preload("res://presentation/directional_rig.gd")
+const MAX_POSES := 96
+var atlas_pixels: Image
+var pose_cache: Dictionary = {}
 var data: Dictionary
 var entries: Array
 var layer_order: Array
@@ -13,6 +17,8 @@ func _init() -> void:
 	data = parsed
 	entries = data.characters
 	layer_order = data.layer_order
+	atlas_pixels = ATLAS.get_image()
+	atlas_pixels.convert(Image.FORMAT_RGBA8)
 
 func tiles(p: Dictionary, frame: int) -> Array:
 	var key := "%s|%s|%s|%s|%s|%s|%s" % [p.body, p.affinity, p.mutation, p.hat, p.robe, p.staff, frame]
@@ -57,3 +63,26 @@ func draw_wizard(canvas: CanvasItem, p: Dictionary, feet: Vector2, frame: int, s
 		var n := int(tile)
 		var source := Rect2(Vector2(n % 8, floori(n / 8.0)) * 32, Vector2(32, 32))
 		canvas.draw_texture_rect_region(ATLAS, dst, source)
+
+func pose_image(p: Dictionary,frame: int,direction: String,casting: bool = false) -> Image:
+	var layers: Dictionary = {}
+	var indices := tiles(p,frame)
+	for i in range(layer_order.size()):
+		var n := int(indices[i])
+		var source := Rect2i(Vector2i(n%8,floori(n/8.0))*32,Vector2i(32,32))
+		layers[str(layer_order[i])]=atlas_pixels.get_region(source)
+	return Rig.compose(p,layers,direction,casting)
+
+func pose_texture(p: Dictionary,frame: int,direction: String,casting: bool = false) -> Texture2D:
+	# Key by resolved atlas indices and phenotype inputs used by the rear/profile composer.
+	var key := "%s|%s|%s|%s|%s|%s" % [str(tiles(p,frame)),p.body,p.affinity,p.robe,direction,casting]
+	if pose_cache.has(key): return pose_cache[key]
+	if pose_cache.size()>=MAX_POSES: pose_cache.erase(pose_cache.keys()[0])
+	var texture := ImageTexture.create_from_image(pose_image(p,frame,direction,casting))
+	pose_cache[key]=texture
+	return texture
+
+func draw_actor(canvas: CanvasItem,p: Dictionary,feet: Vector2,frame: int,direction: String,casting: bool,scale_factor: float = 1.0) -> void:
+	var texture := pose_texture(p,frame,direction,casting)
+	var destination := Rect2(feet-Rig.FEET*scale_factor,Vector2.ONE*32.0*scale_factor)
+	canvas.draw_texture_rect(texture,destination,false)

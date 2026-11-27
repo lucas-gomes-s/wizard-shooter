@@ -16,6 +16,7 @@ const CastButton = preload("res://presentation/cast_button.gd")
 const GameAudio = preload("res://presentation/game_audio.gd")
 const Collection = preload("res://presentation/collection_art.gd")
 const ElementFX = preload("res://presentation/element_fx.gd")
+const Rig = preload("res://presentation/directional_rig.gd")
 const PLAYFIELD := Rect2(0, 88, 360, 448)
 const CAMERA_CENTER := Vector2(180, 312)
 const FIRE := Color("#ef8052")
@@ -70,6 +71,9 @@ var displayed_hp := 1.0
 var previous_level := 1
 var level_flash := 0.0
 var player_stride := 0.0
+var walk_facing := "south"
+var cast_facing := "south"
+var cast_pose_remaining := 0.0
 var player_moving := false
 var dust: Array[Dictionary] = []
 var dust_distance := 0.0
@@ -542,6 +546,9 @@ func _start(endless: bool) -> void:
 	elemental_fx.reset()
 	audio.reset_run()
 	player_stride = 0.0
+	walk_facing = "south"
+	cast_facing = "south"
+	cast_pose_remaining = 0.0
 	player_moving = false
 	dust_distance = 0.0
 	dust.clear()
@@ -677,6 +684,12 @@ func _physics_process(dt: float) -> void:
 		if run.special_casts>audio_before.special: elemental_fx.capture(run)
 		audio.after_step(audio_before,run)
 		_update_motion_art(previous,dt)
+		if run.basic_casts>audio_before.basic:
+			cast_facing=Rig.facing(run.last_basic_direction,walk_facing)
+			cast_pose_remaining=0.16
+		elif run.special_casts>audio_before.special:
+			cast_facing=walk_facing
+			cast_pose_remaining=0.22
 		var target: Vector2 = run.player
 		camera_position = camera_position.lerp(target, 1.0 - exp(-dt * 12.0))
 		camera_position = target + (camera_position - target).limit_length(24.0)
@@ -858,6 +871,8 @@ func _update_motion_art(previous: Vector2,dt: float) -> void:
 	var current: Vector2 = run.player
 	var distance := previous.distance_to(current)
 	player_moving = distance>0.05
+	if player_moving: walk_facing=Rig.facing(current-previous,walk_facing)
+	cast_pose_remaining=maxf(0,cast_pose_remaining-dt)
 	player_stride = fposmod(player_stride+distance,16.0)
 	dust_distance += distance
 	if dust_distance>=12.0:
@@ -879,10 +894,12 @@ func _draw_player_art(color: Color) -> void:
 	var frame := 1 if player_moving and player_stride>=8.0 else 0
 	var bob := -1.0 if frame==1 else 0.0
 	if not player_moving: bob = -1.0 if sin(float(run.elapsed)*2.6)>0.65 else 0.0
-	sprites.draw_wizard(self,run.phenotype,feet+Vector2(0,bob),frame,1.2)
+	var casting := cast_pose_remaining>0
+	var direction := cast_facing if casting else walk_facing
+	sprites.draw_actor(self,run.phenotype,feet+Vector2(0,bob),frame,direction,casting,1.2)
 	if run.special_fx>0:
 		var pulse := float(run.special_fx)/0.35
-		var spark := feet+Vector2(10,-18)
+		var spark := feet+Vector2(-10 if direction=="west" else 10,-18)
 		draw_circle(spark,5,Color(color,pulse*0.35))
 		draw_rect(Rect2(spark-Vector2(1,1),Vector2(3,3)),color.lightened(0.55))
 

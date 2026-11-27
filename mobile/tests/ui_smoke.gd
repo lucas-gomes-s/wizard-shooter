@@ -55,6 +55,11 @@ func _test() -> void:
 	app._start(false)
 	await process_frame
 	check(app.screen=="run" and not app.title_panel.visible and app.special_button.visible,"Quick expedition navigation")
+	app.walk_facing="west"
+	app._update_motion_art(app.run.player,1.0/60.0)
+	check(app.walk_facing=="west","Idle facing retained")
+	app._update_motion_art(app.run.player-Vector2(0,2),1.0/60.0)
+	check(app.walk_facing=="south","Actual displacement drives facing")
 	var cast_count: int = app.run.special_casts
 	app.special_requested=true
 	await physics_frame

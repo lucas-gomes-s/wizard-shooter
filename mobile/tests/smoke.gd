@@ -10,6 +10,7 @@ const DungeonArt = preload("res://presentation/dungeon_art.gd")
 const Abilities = preload("res://gameplay/ability_catalog.gd")
 const Upgrades = preload("res://gameplay/upgrade_catalog.gd")
 const EnemyAI = preload("res://gameplay/enemy_behavior.gd")
+const Rig = preload("res://presentation/directional_rig.gd")
 var failures := 0
 
 func check(condition: bool, message: String) -> void:
@@ -45,6 +46,7 @@ func _initialize() -> void:
 		affinities[p.affinity] = true
 	check(bodies.size() == 3, "All body types sampled")
 	check(affinities.size() == 3, "All affinities sampled")
+	_test_directional(library)
 	var academy := Academy.new()
 	var a: Dictionary = academy.roster[0]
 	var b: Dictionary = academy.roster[1]
@@ -442,3 +444,28 @@ func _test_balance_config(p: Dictionary) -> void:
 	check(absf(RunModel.Balance.spawn_delay(16,1,false,tuned.balance)-RunModel.Balance.spawn_delay(16,1,false,base.balance)*2)<0.001,"Recovery interval")
 	check(base.balance == defaults,"Experiment cannot mutate defaults")
 	print("Balance configuration checks complete")
+
+func _test_directional(library: Sprites) -> void:
+	check(Rig.facing(Vector2.RIGHT)=="east" and Rig.facing(Vector2.LEFT)=="west","Horizontal facing")
+	check(Rig.facing(Vector2.UP)=="north" and Rig.facing(Vector2.DOWN)=="south","Vertical facing")
+	check(Rig.facing(Vector2.ZERO,"west")=="west","Idle preserves facing")
+	check(Rig.facing(Vector2(1,1),"east")=="east","Diagonal hysteresis")
+	var variants: Dictionary = {}
+	for i in range(100):
+		var p := Genetics.express(Genetics.fuse(Genetics.founder(i),Genetics.founder(i+5000),i+10000))
+		var key := "%s/%s/%s" % [p.body,p.affinity,p.mutation]
+		if variants.has(key): continue
+		variants[key]=true
+		var front := library.pose_image(p,0,"south")
+		for direction in Rig.DIRECTIONS:
+			var image := library.pose_image(p,0,direction)
+			check(image.get_size()==Vector2i(32,32) and image.get_used_rect().get_area()>0,"Directional pose exists "+key+"/"+direction)
+			if direction!="south": check(front.get_data()!=image.get_data(),"Facing has distinct art")
+			var cast := library.pose_image(p,0,direction,true)
+			check(cast.get_data()!=image.get_data(),"Cast pose differs")
+			var walk := library.pose_image(p,1,direction)
+			check(walk.get_data()!=image.get_data(),"Walk frame differs "+key+"/"+direction)
+			library.pose_texture(p,0,direction)
+			library.pose_texture(p,1,direction,true)
+			check(library.pose_cache.size()<=library.MAX_POSES,"Directional cache bounded")
+	print("Directional sprite checks complete: %d phenotype groups" % variants.size())
