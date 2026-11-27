@@ -31,6 +31,21 @@ try{
   await page.waitForFunction(()=>document.getElementById('timer').textContent!=='00:00');
   await page.keyboard.up('KeyD');await page.keyboard.up('ArrowRight');
   await page.screenshot({path:'web-smoke-artifacts/gameplay.png'});
+  // Force a safe showcase through test-only access to simulation state.
+  await page.evaluate(()=>{
+    const g=window.__wizardTestGame,p=g.player,x=p.x+p.width/2,y=p.y+p.height/2,t=g.tick;
+    g.hazards.push({type:'web',x:x+100,y:y+70,radius:46,activeAt:t,until:t+500,damage:0,hit:false});
+    g.hazards.push({type:'web',x:x-100,y:y+70,radius:46,activeAt:t+100,until:t+500,damage:0,hit:false});
+    g.enemies.push({name:'Goblin',imageSrc:'./images/enemies/goblin.png',x:x+85,y:y-100,width:30,height:30,health:100,maxHealth:100,maxSpeed:0,damage:0,expGiven:0,cd:0,burnUntil:t+500,burnNext:t+500,slowUntil:t+500,slowFactor:.5,freezeUntil:t+500,curseUntil:t+500});
+    p.magic.ranks.arcane=2;p.magic.shieldReady=true;
+  });
+  await page.waitForTimeout(120);
+  await page.screenshot({path:'web-smoke-artifacts/elemental-effects.png'});
+  await page.locator('#effectsMode').selectOption('off');
+  await page.waitForTimeout(120);
+  await page.screenshot({path:'web-smoke-artifacts/essential-telegraphs.png'});
+  await page.locator('#effectsMode').selectOption('full');
+  await page.evaluate(()=>{const g=window.__wizardTestGame;g.enemies=[];g.hazards=[];g.player.magic.ranks.arcane=0;g.player.magic.shieldReady=false;});
   await page.evaluate(()=>{const game=window.__wizardTestGame;game.player.currentExp=game.player.expNeeded;});
   await page.locator('#upgradePanel').waitFor({state:'visible'});
   assert.equal(await page.locator('#upgradeCards .upgrade-card').count(),3);
@@ -46,7 +61,9 @@ try{
   await page.locator('#restartButton').click();await page.locator('#confirmPanel').waitFor({state:'visible'});
   await page.locator('#cancelButton').click();await page.locator('#pausePanel').waitFor({state:'visible'});
   await page.locator('#resumeButton').click();await page.locator('#overlay').waitFor({state:'hidden'});
-  await page.locator('#effectsToggle').uncheck();assert.equal(await page.locator('#effectsToggle').isChecked(),false);
+  await page.locator('#effectsMode').selectOption('off');assert.equal(await page.locator('#effectsMode').inputValue(),'off');
+  await page.locator('#effectsMode').selectOption('reduced');assert.equal(await page.locator('#effectsMode').inputValue(),'reduced');
+  await page.locator('#effectsMode').selectOption('full');
   await page.setViewportSize({width:800,height:700});
   await page.waitForFunction(()=>document.getElementById('gameArea').width===document.getElementById('arena').clientWidth);
   assert.ok((await canvas.boundingBox()).width<800);

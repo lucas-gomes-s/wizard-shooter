@@ -27,7 +27,7 @@ function begin(e,tick,kind,duration,extra={}){e.action={kind,until:tick+duration
 export function stepEnemy(game,e,factor=1){
  const p=game.player,t=game.tick,{d,dx,dy}=vector(e,p),speed=e.maxSpeed*factor;
  if(e.nextAttack===undefined)e.nextAttack=t+50;
- if(e.name==='Dragon')e.bossPhase=e.health/e.maxHealth<=.33?3:e.health/e.maxHealth<=.66?2:1;
+ if(e.name==='Dragon'){const previous=e.bossPhase;e.bossPhase=e.health/e.maxHealth<=.33?3:e.health/e.maxHealth<=.66?2:1;if(previous!==undefined&&previous!==e.bossPhase)game.emitVisual('phase',e,e.bossPhase,'fire')}
  // Stun holds position, but does not let a completed windup fire while frozen.
  if(factor===0){if(e.action)e.action.until++;e.nextAttack++;return;}
  if(d>0&&(!e.action||e.action.kind!=='charge'))e.facing=Math.atan2(dy,dx);
@@ -42,7 +42,7 @@ export function stepEnemy(game,e,factor=1){
   switch(a.kind){
    case 'orc-windup':begin(e,t,'charge',22,{angle:a.angle});return;
    case 'recover':return;
-   case 'reaper-windup':e.x=a.x-e.width/2;e.y=a.y-e.height/2;cooldown(e,t,175);return;
+   case 'reaper-windup':game.emitVisual('teleport',e);e.x=a.x-e.width/2;e.y=a.y-e.height/2;game.emitVisual('teleport',e);cooldown(e,t,175);return;
    case 'demon-windup':for(const offset of [-.23,0,.23])fire(game,e,a.angle+offset,Math.round(e.damage*.65),5.3);cooldown(e,t,110);return;
    case 'dragon-windup':{
     const n=e.bossPhase===1?5:e.bossPhase===2?8:12;
