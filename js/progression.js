@@ -1,9 +1,10 @@
+import {environments} from './environments.js';
 import {schools,synergies,masteries} from './magic.js';
 import {equipment} from './equipment.js';
 import {dungeonEvents} from './dungeon-events.js';
 export const PROFILE_KEY='wizard-shooter.profile.v1';
 const ids=xs=>xs.map(x=>x.id);
-const known={schools:ids(schools),items:ids(equipment),fusions:ids(synergies),masteries:ids(masteries),events:ids(dungeonEvents),winningSchools:ids(schools),contracts:['purist','nomad','dry']};
+const known={schools:ids(schools),items:ids(equipment),fusions:ids(synergies),masteries:ids(masteries),events:ids(dungeonEvents),winningSchools:ids(schools),contracts:['purist','nomad','dry'],visitedEnvironments:ids(environments),winningEnvironments:ids(environments)};
 export const contracts=[
  {id:'standard',name:'Standard expedition',description:'All normal mechanics available.',requires:null},
  {id:'purist',name:'Purist oath',description:'Secondary schools are forbidden. Pure mastery remains available.',requires:'master'},
@@ -31,9 +32,10 @@ export const achievements=[
  {id:'explorer',name:'Dungeon explorer',description:'Complete every type of optional event.',check:p=>p.events.length>=6},
  {id:'dragon',name:'Dragon slayer',description:'Defeat the Ancient Dragon.',check:p=>p.wins>=1},
  {id:'five',name:'Five paths',description:'Win with every starting school.',check:p=>p.winningSchools.length>=5},
+ {id:'worldwalker',name:'Worldwalker',description:'Defeat the dragon in all three environments.',check:p=>p.winningEnvironments.length>=environments.length},
  {id:'oath',name:'Oathkeeper',description:'Win with an optional contract.',check:p=>p.contracts.length>=1}
 ];
-export function freshProfile(){return {version:1,runs:0,wins:0,kills:0,ticks:0,bestTicks:0,bestKills:0,bestLevel:0,schools:[],items:[],fusions:[],masteries:[],events:[],winningSchools:[],contracts:[],achievements:[],selection:{contract:'standard',sigil:'violet'}}}
+export function freshProfile(){return {version:1,runs:0,wins:0,kills:0,ticks:0,bestTicks:0,bestKills:0,bestLevel:0,schools:[],items:[],fusions:[],masteries:[],events:[],winningSchools:[],contracts:[],visitedEnvironments:[],winningEnvironments:[],achievements:[],selection:{contract:'standard',sigil:'violet',environment:'crypt'}}}
 const count=v=>Number.isSafeInteger(v)&&v>=0?v:0;
 export function normalizeProfile(raw){
  const p=freshProfile();if(!raw||raw.version!==1)return p;
@@ -43,13 +45,14 @@ export function normalizeProfile(raw){
  p.achievements=achievements.filter(a=>a.check(p)).map(a=>a.id);
  p.selection.contract=available(contracts,raw.selection?.contract,p)?raw.selection.contract:'standard';
  p.selection.sigil=available(sigils,raw.selection?.sigil,p)?raw.selection.sigil:'violet';
+ p.selection.environment=available(environments,raw.selection?.environment,p)?raw.selection.environment:'crypt';
  return p;
 }
 export function available(catalog,id,p){const entry=catalog.find(x=>x.id===id);return !!entry&&(!entry.requires||p.achievements.includes(entry.requires))}
 export function loadProfile(storage){try{return {profile:normalizeProfile(JSON.parse(storage?.getItem(PROFILE_KEY)||'null')),saved:!!storage}}catch{return {profile:freshProfile(),saved:false}}}
 export function saveProfile(storage,p){try{if(!storage)return false;storage.setItem(PROFILE_KEY,JSON.stringify(p));return true}catch{return false}}
 export function runConfig(base,contract){return {...base,...(contract==='nomad'?{economyEnabled:false}:{}),...(contract==='dry'?{potionInfo:[]}:{}),pureOath:contract==='purist'}}
-export function newProgressSession(contract='standard'){return {contract,tick:0,kills:0,recorded:false,won:false}}
+export function newProgressSession(contract='standard',environment='crypt'){return {contract,environment,tick:0,kills:0,recorded:false,won:false}}
 function addKnown(p,key,values){for(const v of values)if(known[key].includes(v)&&!p[key].includes(v))p[key].push(v)}
 // Victory can be checkpointed immediately, then endless stats added later without another run/win.
 export function recordProgress(p,g,session){
@@ -59,10 +62,11 @@ export function recordProgress(p,g,session){
  p.ticks+=Math.max(0,g.tick-session.tick);p.kills+=Math.max(0,g.kills-session.kills);
  session.tick=Math.max(session.tick,g.tick);session.kills=Math.max(session.kills,g.kills);
  p.bestTicks=Math.max(p.bestTicks,g.tick);p.bestKills=Math.max(p.bestKills,g.kills);p.bestLevel=Math.max(p.bestLevel,player.level);
+ addKnown(p,'visitedEnvironments',[session.environment]);
  addKnown(p,'schools',Object.keys(m.ranks).filter(id=>m.ranks[id]>0));
  addKnown(p,'items',[...Object.values(player.equipment),...g.lootHistory.map(x=>x.id),...g.market.history.map(x=>x.id)]);
  addKnown(p,'fusions',m.synergies);addKnown(p,'masteries',[m.mastery]);addKnown(p,'events',g.dungeon.history.filter(x=>x.outcome==='completed').map(x=>x.id));
- if(g.bossDefeated&&!session.won){session.won=true;p.wins++;addKnown(p,'winningSchools',[m.primary]);addKnown(p,'contracts',[session.contract]);}
+ if(g.bossDefeated&&!session.won){session.won=true;p.wins++;addKnown(p,'winningSchools',[m.primary]);addKnown(p,'contracts',[session.contract]);addKnown(p,'winningEnvironments',[session.environment]);}
  p.achievements=achievements.filter(a=>a.check(p)).map(a=>a.id);
  return p.achievements.filter(id=>!old.has(id));
 }
