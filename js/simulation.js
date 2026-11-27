@@ -1,4 +1,4 @@
-import {freshEvents,stepDungeon,recordEventDeath} from './dungeon-events.js';
+import {freshEvents,stepDungeon,recordEventDeath,recordEventHazard} from './dungeon-events.js';
 import {freshEquipment,hasGear,equipItem,lootOffers,treasureMinutes,gearMovement,gearCast,gearDamage} from './equipment.js';
 import {spawnInterval} from './balance.js';
 import {ENEMY_CAP,BOSS_MINUTE,initEnemy,stepEnemy,stepHazards,frontalMultiplier} from './enemies.js';
@@ -28,6 +28,7 @@ export class Game{
  start(school){this.reset();if(!Object.hasOwn(this.player.magic.ranks,school))return false;this.player.magic.ranks[school]=1;this.player.magic.primary=school;this.player.cooldown=0;return true}
  emit(type,object,value=0,school=null,extra={}){if(this.events.length<128)this.events.push({type,x:object.x+object.width/2,y:object.y+object.height/2,value,school,...extra})}
  emitVisual(type,object,value=0,school=null,extra={}){if(this.visualEvents.length<128)this.visualEvents.push({type,x:object.x+object.width/2,y:object.y+object.height/2,value,school,...extra})}
+ recordDungeonHazard(h,damage){recordEventHazard(this,h,damage)}
  get camera(){return {x:this.player.x+this.player.width/2-this.width/2,y:this.player.y+this.player.height/2-this.height/2}}
  get seconds(){return Math.floor(this.tick/50)}
  visible(o,margin=600){const c=this.camera;return o.x+o.width>=c.x-margin&&o.x<=c.x+this.width+margin&&o.y+o.height>=c.y-margin&&o.y<=c.y+this.height+margin}
