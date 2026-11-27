@@ -1,5 +1,10 @@
 name: Mobile balance optimization
 on:
+  push:
+    paths:
+      - 'mobile/tools/optimize_balance.py'
+      - 'mobile/tools/test_optimize_balance.py'
+      - '.github/workflows/mobile-optimize.yml'
   workflow_dispatch:
     inputs:
       trials:
@@ -37,9 +42,9 @@ jobs:
         run: python -m unittest discover -s mobile/tools -p test_optimize_balance.py
       - name: Optimize and validate
         env:
-          TRIALS: ${{ inputs.trials }}
-          TRAIN: ${{ inputs.train_seeds }}
-          VALID: ${{ inputs.validation_seeds }}
+          TRIALS: ${{ inputs.trials || '2' }}
+          TRAIN: ${{ inputs.train_seeds || '1' }}
+          VALID: ${{ inputs.validation_seeds || '1' }}
           ALL_BODIES: ${{ inputs.all_bodies }}
         run: |
           args=()

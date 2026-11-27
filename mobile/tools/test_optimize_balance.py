@@ -9,7 +9,7 @@ def matrix(wins):
 
 class ObjectiveTest(unittest.TestCase):
     def test_not_trivial_or_impossible(self):
-        rows=matrix(False)*20
+        rows=[r for _ in range(20) for r in matrix(False)]
         counters={}
         for r in rows:
             key=(r["difficulty"],r["strategy"],r["affinity"])
