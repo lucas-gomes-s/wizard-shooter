@@ -10,6 +10,9 @@ const Abilities = preload("res://gameplay/ability_catalog.gd")
 const Upgrades = preload("res://gameplay/upgrade_catalog.gd")
 const EnemyAI = preload("res://gameplay/enemy_behavior.gd")
 const Fantasy = preload("res://presentation/fantasy_ui.gd")
+const PixelArt = preload("res://presentation/pixel_ui_art.gd")
+const UpgradeCard = preload("res://presentation/upgrade_card.gd")
+const CastButton = preload("res://presentation/cast_button.gd")
 const PLAYFIELD := Rect2(0, 88, 360, 448)
 const CAMERA_CENTER := Vector2(180, 312)
 const FIRE := Color("#ef8052")
@@ -39,12 +42,12 @@ var ui: Control
 var info: Label
 var start_finite: Button
 var start_endless: Button
-var special_button: Button
+var special_button: CastButton
 var pause_button: Button
 var extract_button: Button
 var upgrade_panel: VBoxContainer
 var upgrade_heading: Label
-var upgrade_buttons: Array[Button] = []
+var upgrade_buttons: Array[UpgradeCard] = []
 var result_panel: VBoxContainer
 var academy_panel: VBoxContainer
 var title_panel: VBoxContainer
@@ -184,7 +187,11 @@ func _build_ui() -> void:
 	next.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_button(lineage_panel, "Retired records", _show_retired_records)
 	_button(lineage_panel, "Return to academy", _show_academy)
-	special_button = _button(ui, "CAST", func() -> void: special_requested = true)
+	special_button = CastButton.new()
+	special_button.focus_mode = Control.FOCUS_NONE
+	special_button.pressed.connect(func() -> void: special_requested = true)
+	ui.add_child(special_button)
+	special_button.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	special_button.position = Vector2(248, 552)
 	special_button.size = Vector2(100, 60)
 	pause_button = _button(ui, "II", _toggle_pause)
@@ -200,10 +207,10 @@ func _build_ui() -> void:
 	var subtitle := _label(upgrade_panel, "Your genes shape the available paths.", 12)
 	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	for i in range(3):
-		var card := _button(upgrade_panel, "", _upgrade.bind(i))
-		card.custom_minimum_size = Vector2(324, 70)
-		card.add_theme_font_size_override("font_size", 12)
-		card.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		var card := UpgradeCard.new()
+		card.focus_mode = Control.FOCUS_NONE
+		card.pressed.connect(_upgrade.bind(i))
+		upgrade_panel.add_child(card)
 		upgrade_buttons.append(card)
 	result_panel = _box_at(Vector2(28, 220), Vector2(304, 160))
 	_label(result_panel, "")
@@ -454,12 +461,11 @@ func _refresh_upgrades() -> void:
 		button.visible = i < run.upgrade_offer.size()
 		if not button.visible: continue
 		var id: String = run.upgrade_offer[i]
-		button.text = Upgrades.description(id, int(run.upgrade_ranks.get(id, 0)))
 		var d: Dictionary = Upgrades.DEFINITIONS[id]
 		var color := Color("#e9dfd0")
 		if d.has("affinity"): color = FIRE if d.affinity == "fire" else (ICE if d.affinity == "ice" else STEAM)
 		elif d.category != "Universal": color = Color("#c6b5e6")
-		button.add_theme_color_override("font_color", color)
+		button.configure(id,d,int(run.upgrade_ranks.get(id,0)),color)
 
 func _clear_input() -> void:
 	touch_id = -1
@@ -477,7 +483,7 @@ func _input(event: InputEvent) -> void:
 	if screen != "run" or paused or run.pending_upgrades > 0: return
 	if event is InputEventScreenTouch:
 		if event.pressed and Rect2(248, 552, 100, 60).has_point(event.position):
-			special_requested = true
+			if run.special_cd <= 0: special_requested = true
 			get_viewport().set_input_as_handled()
 			return
 		if event.pressed and touch_id == -1 and event.position.x < 220 and event.position.y > 525:
@@ -527,9 +533,7 @@ func _physics_process(dt: float) -> void:
 			previous_level = int(run.run_level)
 			level_flash = 0.9
 		level_flash = maxf(0.0,level_flash-dt)
-		special_button.text = str(run.kit.special.name) if run.special_cd <= 0 else "%.1fs" % run.special_cd
-		special_button.add_theme_font_size_override("font_size", 10)
-		special_button.disabled = paused or run.special_cd > 0 or run.pending_upgrades > 0
+		special_button.configure(str(run.phenotype.affinity),str(run.kit.special.name),float(run.special_cd),float(run.kit.special.cooldown),paused or run.pending_upgrades>0)
 		extract_button.disabled = paused or run.elapsed < 30 or run.pending_upgrades > 0
 	queue_redraw()
 
@@ -537,8 +541,8 @@ func _draw() -> void:
 	draw_rect(Rect2(0, 0, 360, 640), Color("#1b1924"))
 	if screen == "title":
 		Fantasy.hall(self,float(Time.get_ticks_msec())/1000.0)
-		Fantasy.text_at(self,"WIZARD",Vector2(180,104),39,Fantasy.GOLD,true)
-		Fantasy.text_at(self,"SHOOTER",Vector2(180,144),35,Fantasy.IVORY,true)
+		PixelArt.heading(self,"WIZARD",Vector2(180,104),5,Fantasy.GOLD)
+		PixelArt.heading(self,"SHOOTER",Vector2(180,144),5,Fantasy.IVORY)
 		Fantasy.text_at(self,"FORGE YOUR BLOODLINE",Vector2(180,170),11,Fantasy.MUTED,true)
 		if not academy.blocked and not academy.roster.is_empty():
 			sprites.draw_wizard(self,academy.roster[selected].phenotype,Vector2(180,324),0,4.0)
@@ -632,6 +636,7 @@ func _draw() -> void:
 	if run.player_hit_fx > 0:
 		draw_rect(PLAYFIELD.grow(-3), Color(1.0, 0.34, 0.29, float(run.player_hit_fx) * 2.5), false, 3.0)
 	_draw_hud()
+	Fantasy.text_at(self,str(run.kit.special.name),Vector2(298,631),10,Fantasy.MUTED,true)
 	if run.site_notice_time > 0:
 		draw_rect(Rect2(8, 94, 344, 23), Color(0.09, 0.07, 0.13, 0.90))
 		_center_text(run.site_notice, Vector2(180, 110), 12, Color("#e6d2ac"))
@@ -648,7 +653,7 @@ func _draw() -> void:
 	if paused or run.pending_upgrades > 0:
 		draw_rect(Rect2(0, 90, 360, 446), Color(0.04, 0.03, 0.06, 0.76))
 		if paused: Fantasy.text_at(self,"PAUSED",Vector2(180,305),24,Fantasy.GOLD,true)
-		else: Fantasy.frame(self,Rect2(10,151,340,370),Color("#977ab5"))
+		else: Fantasy.frame(self,Rect2(10,151,340,376),Color("#977ab5"))
 
 
 func _draw_hud() -> void:
@@ -742,7 +747,7 @@ func _center_text(value: String, baseline: Vector2, size: int, color: Color) -> 
 	draw_string(font, baseline - Vector2(width / 2.0, 0), value, HORIZONTAL_ALIGNMENT_LEFT, -1, size, color)
 
 func _draw_title(value: String, subtitle: String) -> void:
-	_center_text(value, Vector2(180, 25), 19, Color("#e8d4a7"))
+	PixelArt.heading(self,value,Vector2(180,25),2,Fantasy.GOLD)
 	_center_text(subtitle, Vector2(180, 44), 12, Color("#b5a5bc"))
 
 func _draw_card(c: Dictionary, rect: Rect2, role: String) -> void:
@@ -755,6 +760,7 @@ func _draw_card(c: Dictionary, rect: Rect2, role: String) -> void:
 	var p: Dictionary = c.phenotype
 	var hue: Color = FIRE if p.affinity == "fire" else (ICE if p.affinity == "ice" else STEAM)
 	draw_circle(Vector2(center, rect.position.y + 58), 31, Color(hue, 0.09))
+	draw_texture_rect(PixelArt.icon(str(p.affinity),hue),Rect2(rect.position+Vector2(8,24),Vector2(18,18)),false)
 	sprites.draw_wizard(self, p, Vector2(center, rect.position.y + 81), 0, 2.0)
 	_center_text("%s · Tier %d" % [p.affinity.capitalize(), p.tier], Vector2(center, rect.position.y + 97), 13, hue)
 	_center_text("%s%s" % [p.body.capitalize(), " / Locked" if c.locked else ""], Vector2(center, rect.position.y + 112), 11, Color("#d1c5d5"))
