@@ -1,0 +1,157 @@
+name: Mobile Android bundle
+on:
+  push:
+    paths:
+      - 'mobile/export_presets.cfg'
+      - 'mobile/project.godot'
+      - 'mobile/assets/branding/**'
+      - 'mobile/tools/android_release.py'
+      - '.github/workflows/mobile-release.yml'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Validation uses a disposable key; release uses the owner's upload key"
+        type: choice
+        options: [validation, release]
+        default: validation
+      version_name:
+        description: "Human-readable version"
+        type: string
+        default: "0.2.0-beta.1"
+      last_play_version_code:
+        description: "Highest version code already uploaded to Play (0 for first upload)"
+        type: string
+        default: "0"
+permissions:
+  contents: read
+concurrency:
+  group: mobile-android-bundle
+  cancel-in-progress: false
+jobs:
+  bundle:
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      RELEASE_MODE: ${{ inputs.mode || 'validation' }}
+      VERSION_NAME: ${{ inputs.version_name || '0.2.0-beta.1' }}
+      LAST_PLAY_CODE: ${{ inputs.last_play_version_code || '0' }}
+      GODOT_VERSION: "4.5.1"
+      BUNDLETOOL_VERSION: "1.18.2"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Validate version and configure disposable checkout
+        run: |
+          set -euo pipefail
+          [[ "$LAST_PLAY_CODE" =~ ^(0|[1-9][0-9]{0,9})$ ]]
+          code=$((1000 + GITHUB_RUN_NUMBER))
+          if [[ "$RELEASE_MODE" == release ]]; then
+            test "$GITHUB_EVENT_NAME" = workflow_dispatch
+            test "$GITHUB_RUN_ATTEMPT" = 1
+            test "$code" -gt "$LAST_PLAY_CODE"
+          fi
+          python3 mobile/tools/android_release.py configure --root mobile --code "$code" --name "$VERSION_NAME"
+          echo "VERSION_CODE=$code" >> "$GITHUB_ENV"
+      - name: Install pinned Godot and export templates
+        run: |
+          set -euo pipefail
+          curl -fL --retry 3 "https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip" -o /tmp/godot.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          mv "/tmp/godot/Godot_v${GODOT_VERSION}-stable_linux.x86_64" /tmp/godot/godot
+          chmod +x /tmp/godot/godot
+          echo /tmp/godot >> "$GITHUB_PATH"
+          curl -fL --retry 3 "https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz" -o /tmp/templates.tpz
+          dest="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+          mkdir -p "$dest"
+          unzip -j /tmp/templates.tpz templates/android_debug.apk templates/android_release.apk templates/android_source.zip templates/version.txt -d "$dest"
+      - name: Install Android SDK 36 and build dependencies
+        run: |
+          set -eo pipefail
+          sdk="$ANDROID_HOME"
+          sdkmanager --sdk_root="$sdk" --install "platform-tools" "build-tools;35.0.0" "build-tools;36.0.0" "platforms;android-35" "platforms;android-36" "ndk;28.1.13356709" "cmake;3.10.2.4988404"
+          mkdir -p "$HOME/.config/godot"
+          printf '[gd_resource type="EditorSettings" format=3]\n\n[resource]\nexport/android/java_sdk_path = "%s"\nexport/android/android_sdk_path = "%s"\n' "$JAVA_HOME" "$sdk" > "$HOME/.config/godot/editor_settings-4.5.tres"
+          curl -fL --retry 3 "https://github.com/google/bundletool/releases/download/$BUNDLETOOL_VERSION/bundletool-all-$BUNDLETOOL_VERSION.jar" -o /tmp/bundletool.jar
+      - name: Import and run release regression tests
+        run: |
+          set -euo pipefail
+          godot --headless --path mobile --import 2>&1 | tee /tmp/import.log
+          for script in smoke persistence ui_smoke; do
+            timeout 120 godot --headless --path mobile --script "tests/$script.gd" 2>&1 | tee "/tmp/$script.log"
+          done
+          if grep -E 'SCRIPT ERROR|Parse Error|Failed to load script' /tmp/import.log /tmp/smoke.log /tmp/persistence.log /tmp/ui_smoke.log; then exit 1; fi
+      - name: Install Gradle template and export unsigned bundle
+        run: |
+          set -euo pipefail
+          mkdir -p mobile/export
+          godot --headless --path mobile --editor --install-android-build-template --quit
+          test -f mobile/android/build/gradlew
+          godot --headless --path mobile --export-release "Android Play Bundle" export/wizard-shooter.aab 2>&1 | tee /tmp/export.log
+          if grep -E 'SCRIPT ERROR|Parse Error|Failed to export|Export failed' /tmp/export.log; then exit 1; fi
+          test -s mobile/export/wizard-shooter.aab
+      - name: Sign and verify bundle (disposable key for validation)
+        env:
+          UPLOAD_KEY_B64: ${{ inputs.mode == 'release' && secrets.ANDROID_UPLOAD_KEYSTORE_B64 || '' }}
+          UPLOAD_PASSWORD: ${{ inputs.mode == 'release' && secrets.ANDROID_UPLOAD_PASSWORD || '' }}
+          UPLOAD_ALIAS: ${{ inputs.mode == 'release' && secrets.ANDROID_UPLOAD_ALIAS || '' }}
+          UPLOAD_FINGERPRINT: ${{ inputs.mode == 'release' && vars.ANDROID_UPLOAD_SHA256 || '' }}
+        run: |
+          set -euo pipefail
+          umask 077
+          key="$RUNNER_TEMP/upload.p12"
+          trap 'rm -f "$key"' EXIT
+          if [[ "$RELEASE_MODE" == release ]]; then
+            test -n "$UPLOAD_KEY_B64" && test -n "$UPLOAD_PASSWORD" && test -n "$UPLOAD_ALIAS" && test -n "$UPLOAD_FINGERPRINT"
+            printf '%s' "$UPLOAD_KEY_B64" | base64 --decode > "$key"
+          else
+            UPLOAD_PASSWORD=$(openssl rand -hex 24)
+            export UPLOAD_PASSWORD
+            UPLOAD_ALIAS=validation
+            keytool -genkeypair -storetype PKCS12 -keystore "$key" -storepass:env UPLOAD_PASSWORD -alias "$UPLOAD_ALIAS" -keyalg RSA -keysize 2048 -validity 3650 -dname "CN=Wizard Shooter Validation Only"
+          fi
+          cert=$(keytool -exportcert -keystore "$key" -storepass:env UPLOAD_PASSWORD -alias "$UPLOAD_ALIAS" | sha256sum | cut -d' ' -f1)
+          if [[ "$RELEASE_MODE" == release ]]; then
+            expected=$(printf '%s' "$UPLOAD_FINGERPRINT" | tr -d ':[:space:]' | tr 'A-F' 'a-f')
+            test "$cert" = "$expected"
+          fi
+          bundle=mobile/export/wizard-shooter.aab
+          jarsigner -keystore "$key" -storepass:env UPLOAD_PASSWORD "$bundle" "$UPLOAD_ALIAS"
+          jarsigner -verify -strict -keystore "$key" -storepass:env UPLOAD_PASSWORD "$bundle" "$UPLOAD_ALIAS"
+          printf '%s\n' "$cert" > mobile/export/upload-certificate-sha256.txt
+      - name: Validate manifest, permissions, 16KB alignment and assets
+        run: |
+          set -euo pipefail
+          python3 mobile/tools/android_release.py validate --bundle mobile/export/wizard-shooter.aab --bundletool /tmp/bundletool.jar --code "$VERSION_CODE" --name "$VERSION_NAME" --output mobile/export/bundle-validation.json
+          cd mobile/export
+          printf 'mode=%s\ncommit=%s\nversion=%s\nversionCode=%s\n' "$RELEASE_MODE" "$GITHUB_SHA" "$VERSION_NAME" "$VERSION_CODE" > build-info.txt
+          sha256sum wizard-shooter.aab > SHA256SUMS
+      - name: Upload validation evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: wizard-shooter-validation-${{ github.run_number }}
+          path: |
+            mobile/export/bundle-validation.json
+            mobile/export/build-info.txt
+            mobile/export/upload-certificate-sha256.txt
+            mobile/export/SHA256SUMS
+          if-no-files-found: error
+          retention-days: 30
+      - name: Upload owner-signed Play bundle
+        if: github.event_name == 'workflow_dispatch' && inputs.mode == 'release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: wizard-shooter-play-${{ github.run_number }}
+          path: |
+            mobile/export/wizard-shooter.aab
+            mobile/export/bundle-validation.json
+            mobile/export/build-info.txt
+            mobile/export/upload-certificate-sha256.txt
+            mobile/export/SHA256SUMS
+          if-no-files-found: error
+          retention-days: 90

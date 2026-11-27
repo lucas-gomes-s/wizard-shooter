@@ -8,3 +8,8 @@ export/
 *.ipa
 *.keystore
 *.p12
+
+android/
+*.jks
+*.pem
+*.der

@@ -33,3 +33,6 @@ Design specification v0.1, 2026-11-27. The first Python/Pillow procedural sprite
 ## Development
 
 Target Godot 4 stable, statically typed GDScript, Android first for physical testing, iOS compatible. The initial baseline is Godot 4.5.1 stable. Android Alpha export preset and CI artifact build are configured; check the current Actions run for an APK. Device testing is still required. See roadmap for the first runnable vertical slice. 
+
+## Android release
+[Release runbook](docs/ANDROID_RELEASE.md). Separate Gradle AAB pipeline for Play candidate; existing debug APK unchanged. Owner signing and actual Play/device validation are required before distribution.
