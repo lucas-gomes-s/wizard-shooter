@@ -1,10 +1,12 @@
-<html>
-    <header>
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Wizard Shooter</title>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta http-equiv="X-UA-Compatible" content="ie=edge" />
         <link rel="stylesheet" href="./styles/style.css" />       
-    </header>
+    </head>
     <body>
         <div id="titleImage">
             <img id= "title" src = "./images/title.png">
@@ -18,7 +20,7 @@
                 <h3>Those monsters over there don't look too friendly.</h3> 
                 <h3>Try and Survive!</h3>            
             </div>
-            <canvas id="gameArea" width="600px" height=600px></canvas>
+            <canvas id="gameArea" width="600" height="600"></canvas>
             <div id="instructionsContainer">    
                 <h2>Instructions</h2>
                 <div id="instructions"> 
@@ -33,13 +35,11 @@
                 </div>
                 <div class = "instructions-info">
                     <img id="qKey" src="./images/q.png">
-                    <p class = "instructions-p">Toggle HP Bar</p>
+                    <p class = "instructions-p">Hold: HP bars / Confirm skill</p>
                 </div>
             </div>
         </div>
 
-        <script type="text/javascript" src="./js/data.js"></script>
-        <script type="text/javascript" src="./js/entities.js"></script>
-        <script type="text/javascript" src="./js/index.js"></script>
+        <script type="module" src="./js/index.js"></script>
     </body>
 </html>
