@@ -1,0 +1,467 @@
+{
+  "seeds": [
+    1,
+    2,
+    3
+  ],
+  "holdoutSeed": 3,
+  "baseline": {
+    "n": 75,
+    "wins": 16,
+    "dragon": 29,
+    "blocked": 0,
+    "at5": 73,
+    "at10": 70,
+    "at15": 60,
+    "at20": 31,
+    "meanSeconds": 1143.4199999999996
+  },
+  "candidate": {
+    "n": 75,
+    "wins": 30,
+    "dragon": 49,
+    "blocked": 0,
+    "at5": 74,
+    "at10": 73,
+    "at15": 66,
+    "at20": 49,
+    "meanSeconds": 1313.2823999999996
+  },
+  "primary": [
+    {
+      "p": "fire",
+      "baseline": {
+        "n": 15,
+        "wins": 1,
+        "dragon": 1,
+        "blocked": 0,
+        "at5": 15,
+        "at10": 13,
+        "at15": 9,
+        "at20": 1,
+        "meanSeconds": 905.9986666666667
+      },
+      "candidate": {
+        "n": 15,
+        "wins": 5,
+        "dragon": 8,
+        "blocked": 0,
+        "at5": 15,
+        "at10": 15,
+        "at15": 13,
+        "at20": 8,
+        "meanSeconds": 1269.5853333333334
+      }
+    },
+    {
+      "p": "ice",
+      "baseline": {
+        "n": 15,
+        "wins": 0,
+        "dragon": 2,
+        "blocked": 0,
+        "at5": 13,
+        "at10": 13,
+        "at15": 8,
+        "at20": 2,
+        "meanSeconds": 904.9906666666666
+      },
+      "candidate": {
+        "n": 15,
+        "wins": 5,
+        "dragon": 7,
+        "blocked": 0,
+        "at5": 14,
+        "at10": 14,
+        "at15": 10,
+        "at20": 7,
+        "meanSeconds": 1150.8586666666667
+      }
+    },
+    {
+      "p": "lightning",
+      "baseline": {
+        "n": 15,
+        "wins": 3,
+        "dragon": 7,
+        "blocked": 0,
+        "at5": 15,
+        "at10": 14,
+        "at15": 14,
+        "at20": 8,
+        "meanSeconds": 1244.9066666666668
+      },
+      "candidate": {
+        "n": 15,
+        "wins": 7,
+        "dragon": 9,
+        "blocked": 0,
+        "at5": 15,
+        "at10": 14,
+        "at15": 13,
+        "at20": 9,
+        "meanSeconds": 1269.04
+      }
+    },
+    {
+      "p": "necro",
+      "baseline": {
+        "n": 15,
+        "wins": 9,
+        "dragon": 12,
+        "blocked": 0,
+        "at5": 15,
+        "at10": 15,
+        "at15": 15,
+        "at20": 12,
+        "meanSeconds": 1417.724
+      },
+      "candidate": {
+        "n": 15,
+        "wins": 5,
+        "dragon": 13,
+        "blocked": 0,
+        "at5": 15,
+        "at10": 15,
+        "at15": 15,
+        "at20": 13,
+        "meanSeconds": 1446.1586666666665
+      }
+    },
+    {
+      "p": "arcane",
+      "baseline": {
+        "n": 15,
+        "wins": 3,
+        "dragon": 7,
+        "blocked": 0,
+        "at5": 15,
+        "at10": 15,
+        "at15": 14,
+        "at20": 8,
+        "meanSeconds": 1243.48
+      },
+      "candidate": {
+        "n": 15,
+        "wins": 8,
+        "dragon": 12,
+        "blocked": 0,
+        "at5": 15,
+        "at10": 15,
+        "at15": 15,
+        "at20": 12,
+        "meanSeconds": 1430.7693333333334
+      }
+    }
+  ],
+  "pure": {
+    "baseline": {
+      "n": 15,
+      "wins": 4,
+      "dragon": 5,
+      "blocked": 0,
+      "at5": 14,
+      "at10": 13,
+      "at15": 10,
+      "at20": 6,
+      "meanSeconds": 1075.9733333333334
+    },
+    "candidate": {
+      "n": 15,
+      "wins": 8,
+      "dragon": 9,
+      "blocked": 0,
+      "at5": 15,
+      "at10": 15,
+      "at15": 13,
+      "at20": 9,
+      "meanSeconds": 1269.9679999999998
+    }
+  },
+  "hybrid": {
+    "baseline": {
+      "n": 60,
+      "wins": 12,
+      "dragon": 24,
+      "blocked": 0,
+      "at5": 59,
+      "at10": 57,
+      "at15": 50,
+      "at20": 25,
+      "meanSeconds": 1160.2816666666665
+    },
+    "candidate": {
+      "n": 60,
+      "wins": 22,
+      "dragon": 40,
+      "blocked": 0,
+      "at5": 59,
+      "at10": 58,
+      "at15": 53,
+      "at20": 40,
+      "meanSeconds": 1324.111
+    }
+  },
+  "pairs": [
+    {
+      "p": "fire",
+      "s": "ice",
+      "baseline": {
+        "n": 6,
+        "wins": 0,
+        "dragon": 1,
+        "blocked": 0,
+        "at5": 5,
+        "at10": 4,
+        "at15": 2,
+        "at20": 1,
+        "meanSeconds": 773.4499999999999
+      },
+      "candidate": {
+        "n": 6,
+        "wins": 1,
+        "dragon": 1,
+        "blocked": 0,
+        "at5": 5,
+        "at10": 5,
+        "at15": 4,
+        "at20": 1,
+        "meanSeconds": 950.8066666666667
+      }
+    },
+    {
+      "p": "fire",
+      "s": "lightning",
+      "baseline": {
+        "n": 6,
+        "wins": 0,
+        "dragon": 0,
+        "blocked": 0,
+        "at5": 6,
+        "at10": 6,
+        "at15": 4,
+        "at20": 0,
+        "meanSeconds": 969.1033333333334
+      },
+      "candidate": {
+        "n": 6,
+        "wins": 2,
+        "dragon": 3,
+        "blocked": 0,
+        "at5": 6,
+        "at10": 6,
+        "at15": 6,
+        "at20": 3,
+        "meanSeconds": 1289.6533333333334
+      }
+    },
+    {
+      "p": "fire",
+      "s": "necro",
+      "baseline": {
+        "n": 6,
+        "wins": 2,
+        "dragon": 3,
+        "blocked": 0,
+        "at5": 6,
+        "at10": 6,
+        "at15": 6,
+        "at20": 3,
+        "meanSeconds": 1265.05
+      },
+      "candidate": {
+        "n": 6,
+        "wins": 1,
+        "dragon": 5,
+        "blocked": 0,
+        "at5": 6,
+        "at10": 6,
+        "at15": 6,
+        "at20": 5,
+        "meanSeconds": 1433.0966666666666
+      }
+    },
+    {
+      "p": "fire",
+      "s": "arcane",
+      "baseline": {
+        "n": 6,
+        "wins": 1,
+        "dragon": 3,
+        "blocked": 0,
+        "at5": 6,
+        "at10": 6,
+        "at15": 6,
+        "at20": 3,
+        "meanSeconds": 1256.81
+      },
+      "candidate": {
+        "n": 6,
+        "wins": 2,
+        "dragon": 4,
+        "blocked": 0,
+        "at5": 6,
+        "at10": 6,
+        "at15": 6,
+        "at20": 4,
+        "meanSeconds": 1375.0166666666667
+      }
+    },
+    {
+      "p": "ice",
+      "s": "lightning",
+      "baseline": {
+        "n": 6,
+        "wins": 1,
+        "dragon": 1,
+        "blocked": 0,
+        "at5": 6,
+        "at10": 5,
+        "at15": 4,
+        "at20": 1,
+        "meanSeconds": 951.6833333333334
+      },
+      "candidate": {
+        "n": 6,
+        "wins": 1,
+        "dragon": 2,
+        "blocked": 0,
+        "at5": 6,
+        "at10": 5,
+        "at15": 3,
+        "at20": 2,
+        "meanSeconds": 1025.9400000000003
+      }
+    },
+    {
+      "p": "ice",
+      "s": "necro",
+      "baseline": {
+        "n": 6,
+        "wins": 1,
+        "dragon": 2,
+        "blocked": 0,
+        "at5": 6,
+        "at10": 6,
+        "at15": 6,
+        "at20": 2,
+        "meanSeconds": 1190.27
+      },
+      "candidate": {
+        "n": 6,
+        "wins": 4,
+        "dragon": 5,
+        "blocked": 0,
+        "at5": 6,
+        "at10": 6,
+        "at15": 5,
+        "at20": 5,
+        "meanSeconds": 1424.5200000000002
+      }
+    },
+    {
+      "p": "ice",
+      "s": "arcane",
+      "baseline": {
+        "n": 6,
+        "wins": 0,
+        "dragon": 0,
+        "blocked": 0,
+        "at5": 6,
+        "at10": 6,
+        "at15": 4,
+        "at20": 0,
+        "meanSeconds": 928.2833333333333
+      },
+      "candidate": {
+        "n": 6,
+        "wins": 1,
+        "dragon": 3,
+        "blocked": 0,
+        "at5": 6,
+        "at10": 6,
+        "at15": 5,
+        "at20": 3,
+        "meanSeconds": 1260.26
+      }
+    },
+    {
+      "p": "lightning",
+      "s": "necro",
+      "baseline": {
+        "n": 6,
+        "wins": 2,
+        "dragon": 6,
+        "blocked": 0,
+        "at5": 6,
+        "at10": 6,
+        "at15": 6,
+        "at20": 6,
+        "meanSeconds": 1513.3266666666666
+      },
+      "candidate": {
+        "n": 6,
+        "wins": 2,
+        "dragon": 6,
+        "blocked": 0,
+        "at5": 6,
+        "at10": 6,
+        "at15": 6,
+        "at20": 6,
+        "meanSeconds": 1520.58
+      }
+    },
+    {
+      "p": "lightning",
+      "s": "arcane",
+      "baseline": {
+        "n": 6,
+        "wins": 1,
+        "dragon": 2,
+        "blocked": 0,
+        "at5": 6,
+        "at10": 6,
+        "at15": 6,
+        "at20": 3,
+        "meanSeconds": 1240.0633333333333
+      },
+      "candidate": {
+        "n": 6,
+        "wins": 5,
+        "dragon": 5,
+        "blocked": 0,
+        "at5": 6,
+        "at10": 6,
+        "at15": 6,
+        "at20": 5,
+        "meanSeconds": 1442.0400000000002
+      }
+    },
+    {
+      "p": "necro",
+      "s": "arcane",
+      "baseline": {
+        "n": 6,
+        "wins": 4,
+        "dragon": 6,
+        "blocked": 0,
+        "at5": 6,
+        "at10": 6,
+        "at15": 6,
+        "at20": 6,
+        "meanSeconds": 1514.7766666666666
+      },
+      "candidate": {
+        "n": 6,
+        "wins": 3,
+        "dragon": 6,
+        "blocked": 0,
+        "at5": 6,
+        "at10": 6,
+        "at15": 6,
+        "at20": 6,
+        "meanSeconds": 1519.1966666666665
+      }
+    }
+  ]
+}
