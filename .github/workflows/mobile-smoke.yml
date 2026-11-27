@@ -63,7 +63,7 @@ jobs:
           curl -fL --retry 3 https://github.com/godotengine/godot-builds/releases/download/4.5.1-stable/Godot_v4.5.1-stable_export_templates.tpz -o /tmp/templates.tpz
           dest="$HOME/.local/share/godot/export_templates/4.5.1.stable"
           mkdir -p "$dest"
-          unzip -j /tmp/templates.tpz templates/android_debug.apk templates/version.txt -d "$dest"
+          unzip -j /tmp/templates.tpz templates/android_debug.apk templates/android_release.apk templates/android_source.zip templates/version.txt -d "$dest"
       - name: Install Android command-line tools
         run: |
           sdk="$RUNNER_TEMP/android-sdk"
@@ -95,7 +95,7 @@ jobs:
           if grep -E 'SCRIPT ERROR|Parse Error|Failed to export|Export failed' /tmp/android-export.log; then exit 1; fi
           test -s mobile/export/wizard-shooter-alpha.apk
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose mobile/export/wizard-shooter-alpha.apk
-          unzip -Z1 mobile/export/wizard-shooter-alpha.apk | grep -E 'assets/.*\.pck|assets/project.binary'
+          unzip -Z1 mobile/export/wizard-shooter-alpha.apk | grep -E 'assets/.*\.pck|assets/project.binary|assets/.*manifest.json'
       - name: Upload Android alpha
         uses: actions/upload-artifact@v4
         with:
