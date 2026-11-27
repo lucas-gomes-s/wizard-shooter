@@ -38,7 +38,7 @@ export function canLearnSchool(player,id){
  if(!Object.hasOwn(schoolById,id))return false;
  const m=player.magic,rank=m.ranks[id],count=learnedSchools(m).length;
  if(rank>0)return rank<5;
- return count===0||(!m.mastery&&count<MAX_SCHOOLS&&player.level>=SECOND_SCHOOL_LEVEL);
+ return count===0||(!m.mastery&&!m.pureOath&&count<MAX_SCHOOLS&&player.level>=SECOND_SCHOOL_LEVEL);
 }
 export function eligibleMastery(player){
  const m=player.magic;
