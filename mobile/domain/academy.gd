@@ -9,6 +9,8 @@ var essence := 10
 var next_seed: int
 var next_run_id := 1
 var settled_runs: Dictionary = {}
+var active_id := ""
+var apprentice_id := ""
 var store: Variant
 var blocked := false
 var error := ""
@@ -29,13 +31,16 @@ func _init(seed: int = 42, profile_store: Variant = null) -> void:
 	next_seed = seed
 	_add(Genetics.founder(_seed()))
 	_add(Genetics.founder(_seed()))
+	active_id=str(roster[0].id)
+	apprentice_id=str(roster[1].id)
 	if store != null and not store.commit(snapshot()):
 		blocked = true
 		error = store.error
 
 func snapshot() -> Dictionary:
 	return {"roster": roster.duplicate(true), "archive": archive.duplicate(true), "essence": essence,
-		"next_seed": next_seed, "next_run_id": next_run_id, "settled_runs": settled_runs.duplicate(true)}
+		"next_seed": next_seed, "next_run_id": next_run_id, "settled_runs": settled_runs.duplicate(true),
+		"active_id":active_id,"apprentice_id":apprentice_id}
 
 func _restore(p: Dictionary) -> void:
 	roster.clear()
@@ -52,6 +57,9 @@ func _restore(p: Dictionary) -> void:
 	next_seed = int(p.next_seed)
 	next_run_id = int(p.next_run_id)
 	settled_runs = p.settled_runs.duplicate(true)
+	# Schema 1 profiles written before assignment persistence have neither field.
+	active_id=str(p.get("active_id",roster[0].id))
+	apprentice_id=str(p.get("apprentice_id",roster[1].id if roster.size()>1 else ""))
 
 func _normalize_record(record: Dictionary) -> void:
 	record.xp = int(record.xp)
@@ -88,6 +96,32 @@ func find_active(id: String) -> Dictionary:
 		if c.id == id: return c
 	return {}
 
+func assign(active: String, apprentice: String) -> bool:
+	if blocked or find_active(active).is_empty() or active==apprentice or (not apprentice.is_empty() and find_active(apprentice).is_empty()):
+		error="Invalid wizard assignment."
+		return false
+	if active==active_id and apprentice==apprentice_id:
+		error=""
+		return true
+	var before := snapshot()
+	active_id=active
+	apprentice_id=apprentice
+	return _commit(before)
+
+func restore_backup(profile: Dictionary) -> bool:
+	# Import is a full replacement, never a merge. No live state changes before durable commit.
+	if not Store.valid_profile(profile):
+		error="Invalid backup profile."
+		return false
+	if store!=null and not store.restore_profile(profile):
+		error=store.error
+		return false
+	_restore(profile)
+	blocked=false
+	error=""
+	notice="Backup restored."
+	return true
+
 func summon() -> bool:
 	if blocked: return false
 	if essence < 10:
@@ -95,7 +129,8 @@ func summon() -> bool:
 		return false
 	var before := snapshot()
 	essence -= 10
-	_add(Genetics.founder(_seed()))
+	var newcomer := _add(Genetics.founder(_seed()))
+	active_id=str(newcomer.id)
 	return _commit(before)
 
 func eligible(a: Dictionary, b: Dictionary) -> bool:
@@ -123,6 +158,8 @@ func fuse(a: Dictionary, b: Dictionary) -> Dictionary:
 	archive.append(a)
 	archive.append(b)
 	var result := _add(child, [a.id, b.id])
+	active_id=str(result.id)
+	apprentice_id=""
 	if not _commit(before): return {}
 	return result
 

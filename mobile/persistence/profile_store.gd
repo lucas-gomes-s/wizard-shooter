@@ -82,6 +82,12 @@ static func valid_profile(p: Variant) -> bool:
 			if used_parents.has(id): return false
 			used_parents[id] = true
 	if used_parents.size() != retired.size(): return false
+	# Optional paired fields preserve compatibility with earlier schema 1 saves.
+	if p.has("active_id") or p.has("apprentice_id"):
+		if not p.get("active_id") is String or not p.get("apprentice_id") is String: return false
+		if not records.has(p.active_id) or retired.has(p.active_id): return false
+		if p.apprentice_id==p.active_id: return false
+		if not p.apprentice_id.is_empty() and (not records.has(p.apprentice_id) or retired.has(p.apprentice_id)): return false
 	for id in p.settled_runs:
 		if not id is String or not id.is_valid_int() or int(id) < 1 or int(id) >= int(p.next_run_id) or p.settled_runs[id] != true: return false
 	return true
@@ -148,3 +154,25 @@ func commit(profile: Dictionary) -> bool:
 	current_slot = next_slot
 	revision += 1
 	return true
+
+func restore_profile(profile: Dictionary) -> bool:
+	# Re-read disk before replacing anything. Never downgrade a future schema.
+	var loaded := load_profile()
+	var a := _read(0)
+	var b := _read(1)
+	if a.status=="unsupported" or b.status=="unsupported":
+		error="Update the game before restoring a backup."
+		return false
+	if loaded.status=="blocked":
+		# Neither copy is usable. Preserve the exact original files before recovery.
+		var stamp := "%d_%d" % [int(Time.get_unix_time_from_system()),Time.get_ticks_usec()]
+		for slot in range(2):
+			var src := slot_path(slot)
+			if FileAccess.file_exists(src):
+				var dst := src+".corrupt."+stamp
+				if DirAccess.copy_absolute(ProjectSettings.globalize_path(src),ProjectSettings.globalize_path(dst))!=OK:
+					error="Cannot preserve corrupt save; recovery refused."
+					return false
+		current_slot=-1
+		revision=0
+	return commit(profile)

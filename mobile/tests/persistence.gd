@@ -1,6 +1,7 @@
 extends SceneTree
 const Academy = preload("res://domain/academy.gd")
 const Store = preload("res://persistence/profile_store.gd")
+const Backup = preload("res://persistence/profile_backup.gd")
 var failures := 0
 
 func check(condition: bool, message: String) -> void:
@@ -81,5 +82,42 @@ func _initialize() -> void:
 	var future := Academy.new(42, Store.new(future_prefix))
 	check(future.blocked, "Future schema blocks overwrite")
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(future_store.slot_path(0)))
+	_test_backup(prefix+"_backup")
 	print("Wizard Shooter persistence: %d failures" % failures)
 	quit(0 if failures == 0 else 1)
+
+func _test_backup(prefix: String) -> void:
+	var a := Academy.new(42,Store.new(prefix))
+	var first: String=a.roster[0].id
+	var second: String=a.roster[1].id
+	var legacy := a.snapshot()
+	legacy.erase("active_id")
+	legacy.erase("apprentice_id")
+	check(Store.valid_profile(legacy),"Legacy profile accepted")
+	check(a.assign(second,""),"Assign active and explicit empty apprentice")
+	var b := Academy.new(999,Store.new(prefix))
+	check(b.active_id==second and b.apprentice_id=="","Assignments survive reload")
+	check(not b.assign(first,first),"Self apprentice rejected")
+	var bad := b.snapshot()
+	bad.active_id="missing"
+	check(not Store.valid_profile(bad),"Missing active rejected")
+	var raw := Backup.encode(b.snapshot())
+	var decoded := Backup.decode(raw)
+	check(decoded.has("profile"),"Backup round trip")
+	check(Backup.decode(raw+"garbage").has("error"),"Malformed backup rejected")
+	var envelope: Dictionary=JSON.parse_string(raw)
+	envelope.checksum="bad"
+	check(Backup.decode(JSON.stringify(envelope)).has("error"),"Checksum rejected")
+	var inactive: String=b.store.slot_path(1-b.store.current_slot)
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(inactive))
+	DirAccess.make_dir_absolute(ProjectSettings.globalize_path(inactive))
+	check(not b.assign(first,second) and b.active_id==second and b.apprentice_id=="","Failed assignment rolls back")
+	check(not b.restore_backup(legacy) and b.active_id==second,"Failed restore leaves memory intact")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(inactive))
+	check(b.restore_backup(legacy),"Legacy restore accepted")
+	check(b.active_id==first and b.apprentice_id==second,"Legacy defaults restored")
+	check(b.restore_backup(decoded.profile),"Backup replaces current collection")
+	var c := Academy.new(999,Store.new(prefix))
+	check(c.active_id==second and c.apprentice_id=="","Restored profile survives restart")
+	for slot in range(2):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(c.store.slot_path(slot)))

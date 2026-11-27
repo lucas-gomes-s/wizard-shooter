@@ -21,6 +21,7 @@ const Results = preload("res://presentation/result_art.gd")
 const VisualSettings = preload("res://presentation/visual_settings.gd")
 const Profiler = preload("res://presentation/performance_monitor.gd")
 const Onboarding = preload("res://presentation/onboarding.gd")
+const Backup = preload("res://persistence/profile_backup.gd")
 const PLAYFIELD := Rect2(0, 88, 360, 448)
 const CAMERA_CENTER := Vector2(180, 312)
 const FIRE := Color("#ef8052")
@@ -84,6 +85,12 @@ var guide_toggle: Button
 var guide_start: Button
 var guide_notice: Label
 var guide_origin := "title"
+var backup_panel: VBoxContainer
+var backup_text: TextEdit
+var backup_notice: Label
+var backup_confirm: Button
+var backup_export: Button
+var pending_backup: Dictionary = {}
 var reveal_skip: Button
 var reveal_time := 0.0
 const REVEAL_DURATION := 1.65
@@ -146,7 +153,7 @@ func _ready() -> void:
 	add_child(ui)
 	ui.theme = Fantasy.make_theme()
 	_build_ui()
-	if academy.roster.size()>1: partner_index=1
+	_sync_assignments()
 	_show_academy()
 	_show_title()
 
@@ -198,6 +205,7 @@ func _build_ui() -> void:
 	settings_button.size=Vector2(130,34)
 	_build_settings()
 	_build_guide()
+	_build_backup()
 	title_menu_button = _button(ui, "Menu", _show_title)
 	title_menu_button.position = Vector2(294, 5)
 	title_menu_button.size = Vector2(58, 30)
@@ -378,16 +386,26 @@ func _refresh_detail() -> void:
 	detail_apprentice.text="Remove apprentice" if detail_index==partner_index else "Assign apprentice"
 	detail_lock.text="Unlock wizard" if c.locked else "Lock wizard"
 
+func _sync_assignments() -> void:
+	selected=0
+	partner_index=-1
+	for i in range(academy.roster.size()):
+		if academy.roster[i].id==academy.active_id: selected=i
+		if academy.roster[i].id==academy.apprentice_id: partner_index=i
+
 func _assign_active() -> void:
 	if screen!="detail": return
-	selected=detail_index
-	if partner_index==selected: partner_index=-1
+	var id: String=academy.roster[detail_index].id
+	academy.assign(id,"" if id==academy.apprentice_id else academy.apprentice_id)
+	_sync_assignments()
 	_refresh_detail()
 	queue_redraw()
 
 func _assign_apprentice() -> void:
 	if screen!="detail" or detail_index==selected: return
-	partner_index=-1 if partner_index==detail_index else detail_index
+	var id: String=academy.roster[detail_index].id
+	academy.assign(academy.active_id,"" if id==academy.apprentice_id else id)
+	_sync_assignments()
 	_refresh_detail()
 	queue_redraw()
 
@@ -402,7 +420,8 @@ func _back_detail() -> void:
 	else: _show_academy()
 
 func _clear_apprentice() -> void:
-	partner_index=-1
+	academy.assign(academy.active_id,"")
+	_sync_assignments()
 	_refresh_academy()
 	queue_redraw()
 
@@ -479,9 +498,7 @@ func _show_academy() -> void:
 		_sync_visibility()
 		queue_redraw()
 		return
-	selected = clampi(selected, 0, academy.roster.size() - 1)
-	if partner_index == selected or partner_index >= academy.roster.size():
-		partner_index = -1
+	_sync_assignments()
 	_refresh_academy()
 	_sync_visibility()
 	queue_redraw()
@@ -511,9 +528,8 @@ func _refresh_academy() -> void:
 	status_label.text=academy.error if not academy.error.is_empty() else academy.notice
 
 func _summon() -> void:
-	if academy.summon():
-		selected = academy.roster.size() - 1
-		if partner_index == selected: partner_index = -1
+	academy.summon()
+	_sync_assignments()
 	_refresh_academy()
 	queue_redraw()
 
@@ -536,8 +552,7 @@ func _fuse() -> void:
 	ritual_parents=[academy.roster[selected].duplicate(true),academy.roster[partner_index].duplicate(true)]
 	var child: Dictionary = academy.fuse(academy.roster[selected], academy.roster[partner_index])
 	if not child.is_empty():
-		selected = academy.roster.size() - 1
-		partner_index = -1
+		_sync_assignments()
 		revealed = child
 		reveal_time=0.0
 		audio.play_sound("ritual",5,-10.0)
@@ -620,6 +635,103 @@ func _start_guided() -> void:
 	guide.save_settings()
 	_start(false)
 
+func _build_backup() -> void:
+	backup_panel=_box_at(Vector2(20,78),Vector2(320,542))
+	backup_panel.add_theme_constant_override("separation",7)
+	_label(backup_panel,"Export your entire collection as text. Keep it outside the app before uninstalling.",12).autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	backup_export=_button(backup_panel,"Generate backup",_generate_backup)
+	backup_text=TextEdit.new()
+	backup_text.custom_minimum_size=Vector2(320,160)
+	backup_text.wrap_mode=TextEdit.LINE_WRAPPING_BOUNDARY
+	backup_text.placeholder_text="Paste backup text here"
+	backup_text.text_changed.connect(_invalidate_backup)
+	backup_panel.add_child(backup_text)
+	var actions := _pair(backup_panel)
+	var copy := _button(actions,"Copy text",_copy_backup)
+	var paste := _button(actions,"Paste text",_paste_backup)
+	copy.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	paste.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	_button(backup_panel,"Validate restore",_validate_backup)
+	backup_notice=_label(backup_panel,"",11)
+	backup_notice.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	backup_notice.custom_minimum_size.y=52
+	backup_confirm=_button(backup_panel,"Replace current collection",_restore_backup)
+	backup_confirm.disabled=true
+	_button(backup_panel,"Back",_close_backup)
+
+func _open_backup() -> void:
+	if screen!="settings" or settings_origin!="title" or run!=null: return
+	screen="backup"
+	backup_text.text=""
+	_invalidate_backup()
+	backup_export.disabled=academy.blocked or academy.roster.is_empty()
+	_sync_visibility()
+	queue_redraw()
+
+func _close_backup() -> void:
+	if screen!="backup": return
+	backup_text.text=""
+	_invalidate_backup()
+	screen="settings"
+	_sync_visibility()
+	queue_redraw()
+
+func _invalidate_backup() -> void:
+	pending_backup.clear()
+	backup_confirm.disabled=true
+	backup_notice.text="Restoring replaces the current collection, not a merge."
+
+func _generate_backup() -> void:
+	if screen!="backup" or academy.blocked: return
+	backup_text.text=Backup.encode(academy.snapshot())
+	_invalidate_backup()
+	backup_notice.text="Backup generated. Copy it to a safe place." if not backup_text.text.is_empty() else "Cannot export this profile."
+
+func _copy_backup() -> void:
+	if backup_text.text.is_empty(): return
+	DisplayServer.clipboard_set(backup_text.text)
+	backup_notice.text="Copy requested. Verify the text in your external backup location."
+
+func _paste_backup() -> void:
+	backup_text.text=DisplayServer.clipboard_get()
+	_invalidate_backup()
+
+func _validate_backup() -> void:
+	if screen!="backup": return
+	_invalidate_backup()
+	var decoded := Backup.decode(backup_text.text)
+	if decoded.has("error"):
+		backup_notice.text=decoded.error
+		return
+	pending_backup=decoded.profile
+	backup_confirm.disabled=false
+	backup_notice.text=Backup.summary(pending_backup)+"\nReplace current progress? Export it first if needed."
+
+func _restore_backup() -> void:
+	if screen!="backup" or pending_backup.is_empty() or run!=null: return
+	# Validate the current text again even if a platform failed to emit text_changed.
+	var decoded := Backup.decode(backup_text.text)
+	if not decoded.has("profile") or decoded.profile!=pending_backup:
+		_invalidate_backup()
+		backup_notice.text="Backup changed. Validate again."
+		return
+	if not academy.restore_backup(pending_backup):
+		backup_notice.text=academy.error
+		return
+	_sync_assignments()
+	roster_page=0
+	# Academy controls may have been disabled while a damaged save blocked play.
+	_enable_controls(academy_panel)
+	_invalidate_backup()
+	backup_text.text=""
+	backup_export.disabled=false
+	backup_notice.text="Backup restored. Return to title to play."
+
+func _enable_controls(root: Node) -> void:
+	for node in root.get_children():
+		if node is BaseButton: node.disabled=false
+		_enable_controls(node)
+
 func _build_settings() -> void:
 	settings_panel=_box_at(Vector2(24,92),Vector2(312,500))
 	settings_panel.add_theme_constant_override("separation",8)
@@ -629,6 +741,8 @@ func _build_settings() -> void:
 		settings_options[key]=_button(settings_panel,"",_toggle_visual.bind(key))
 	_label(settings_panel,"Simplified effects retain spell boundaries and enemy warnings.",11).autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	_button(settings_panel,"Export performance report",_export_performance)
+	var backup_link := _button(settings_panel,"Save backup / restore",_open_backup)
+	settings_options["backup"]=backup_link
 	settings_notice=_label(settings_panel,"",11)
 	settings_notice.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	var back := _button(settings_panel,"Back",_close_settings)
@@ -646,6 +760,9 @@ func _open_settings() -> void:
 
 func _close_settings() -> void:
 	if screen!="settings": return
+	if settings_origin=="title":
+		_show_title()
+		return
 	screen=settings_origin
 	_clear_input()
 	_sync_visibility()
@@ -657,6 +774,7 @@ func _refresh_settings() -> void:
 	settings_options.simple_effects.text="Spell effects: "+("SIMPLE" if settings.simple_effects else "FULL")
 	settings_options.damage_numbers.text="Damage numbers: "+("ON" if settings.damage_numbers else "OFF")
 	settings_options.monitor.text="Performance overlay: "+("ON" if settings.monitor else "OFF")
+	settings_options.backup.disabled=settings_origin=="run"
 
 func _toggle_visual(key: String) -> void:
 	match key:
@@ -798,6 +916,7 @@ func _sync_visibility() -> void:
 	guide_panel.visible=screen=="guide"
 	guide_button.visible=screen in ["title","academy"]
 	settings_panel.visible=screen=="settings"
+	backup_panel.visible=screen=="backup"
 	settings_button.visible=screen=="title" or (in_run and paused)
 	settings_button.position=Vector2(115,604) if screen=="title" else Vector2(115,340)
 	sound_toggle.text="SFX ON" if audio.effects_enabled else "SFX OFF"
@@ -909,6 +1028,10 @@ func _physics_process(dt: float) -> void:
 
 func _draw() -> void:
 	draw_rect(Rect2(0, 0, 360, 640), Color("#1b1924"))
+	if screen=="backup":
+		_draw_title("SAVE BACKUP","Local collection transfer")
+		Fantasy.frame(self,Rect2(12,62,336,566))
+		return
 	if screen=="guide":
 		_draw_title("WIZARD GUIDE","Learn by playing")
 		Fantasy.frame(self,Rect2(12,62,336,566))
