@@ -10,7 +10,7 @@ button:focus-visible,input:focus-visible,canvas:focus-visible{outline:2px solid 
 button.primary{background:var(--gold);color:#241c19;border-color:#f3dba9;font-weight:750}
 button.primary:hover:not(:disabled){background:#f5d7a3;color:#171218}
 button.quiet{background:#211e2b}
-.game-shell{width:100%;min-height:100vh;min-height:100dvh;height:100vh;height:100dvh;display:grid;grid-template-rows:auto auto auto minmax(0,1fr) auto;gap:10px;padding:14px clamp(12px,2.3vw,36px);max-width:1920px;margin:auto}
+.game-shell{width:100%;min-height:100vh;min-height:100dvh;height:100vh;height:100dvh;display:grid;grid-template-rows:auto auto auto auto minmax(0,1fr) auto;gap:10px;padding:14px clamp(12px,2.3vw,36px);max-width:1920px;margin:auto}
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .brand{display:flex;gap:12px;align-items:center}
 .brand-mark{color:var(--gold);font-size:34px;line-height:1;border:1px solid #6c5a48;border-radius:10px;width:48px;height:48px;display:grid;place-items:center;background:#292330}
