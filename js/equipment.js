@@ -33,7 +33,7 @@ export const treasureMinutes=[2,7,12,17,22];
 export function freshEquipment(){return {staff:null,robe:null,boots:null,relic:null}}
 export function hasGear(p,id){return p.equipment?.[itemById[id]?.slot]===id}
 export function equipItem(p,id,tick=0){
- const item=itemById[id];if(!item||!p.equipment||hasGear(p,id))return false;
+ const item=Object.hasOwn(itemById,id)?itemById[id]:null;if(!item||!p.equipment||hasGear(p,id))return false;
  p.equipment[item.slot]=id;
  p.gearState[item.slot]={readyAt:tick,activeUntil:0,count:0};
  if(id==='hourglass'||id==='mending')p.gearState[item.slot].readyAt=tick+(id==='hourglass'?400:100);
