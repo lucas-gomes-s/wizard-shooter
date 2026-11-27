@@ -61,7 +61,9 @@ try{
   await page.locator('#upgradePanel').waitFor({state:'visible'});
   assert.ok((await page.locator('#upgradeHint').textContent()).includes('permanent'));
   const secondary=await page.evaluate(()=>window.__wizardTestGame.offers.findIndex(o=>o.kind==='school'&&o.rank===0));
-  assert.ok(secondary>=0);await page.locator('#upgradeCards .upgrade-card').nth(secondary).click();
+  assert.ok(secondary>=0);
+  assert.ok((await page.locator('#upgradeCards .upgrade-card').nth(secondary).locator('.synergy-preview').textContent()).includes('Fusion:'));
+  await page.locator('#upgradeCards .upgrade-card').nth(secondary).click();
   await page.waitForFunction(()=>document.getElementById('spellBuild').textContent.includes('Two schools learned'));
   await page.keyboard.press('Escape');await page.locator('#pausePanel').waitFor({state:'visible'});
   const time=await page.locator('#timer').textContent();await page.waitForTimeout(1200);assert.equal(await page.locator('#timer').textContent(),time);
