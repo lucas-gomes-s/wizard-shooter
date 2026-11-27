@@ -1,7 +1,7 @@
 // Targeted benchmark: no forced cards, no injected XP, no gameplay overrides.
 import {Game} from './simulation.js';
 import {schools,synergyFor} from './magic.js';
-import {seededRng,botInput,botLoot} from './balance-bot.js';
+import {seededRng,botInput,botLoot,botPurchase} from './balance-bot.js';
 
 export function buildTargets(){
  return schools.flatMap(a=>[{primary:a.id,secondary:null},...schools.filter(b=>b.id!==a.id).map(b=>({primary:a.id,secondary:b.id}))]);
@@ -37,7 +37,8 @@ export function simulateBuild(config,{primary,secondary=null,seed=1,seconds=1800
  const combo=synergyFor(primary,secondary);
  const milestones={};
  for(let n=0;n<seconds*50&&g.phase!=='over'&&g.phase!=='victory';n++){
-  while(g.phase==='upgrade'||g.phase==='loot'){
+  while(g.phase==='upgrade'||g.phase==='loot'||g.phase==='shop'){
+   if(g.phase==='shop'){g.choosePurchase(botPurchase(g));continue;}
    if(g.phase==='loot'){g.chooseLoot(botLoot(g));continue;}
    const p=g.player;
    if(firstUpgrade===null)firstUpgrade=g.tick/50;
@@ -56,7 +57,7 @@ export function simulateBuild(config,{primary,secondary=null,seed=1,seconds=1800
   if(g.tick%15000===0)milestones[g.tick/50]={level:g.player.level,kills:g.kills,health:Math.round(g.player.health),enemies:g.enemies.length};
  }
  const p=g.player,xp=config.levels.slice(0,p.level-1).reduce((a,b)=>a+b,0)+p.currentExp;
- return {primary,secondary,seed,seconds:g.tick/50,phase:blocked?'blocked':g.phase,level:p.level,kills:g.kills,xp,health:Math.round(p.health),maxEnemies,firstUpgrade,secondaryOfferedAt,secondaryAt,secondaryLevel,fusion:combo?.id??null,fusionAt,fusionLevel,mastery:p.magic.mastery,masteryAt,masteryLevel,reachedDragon:g.bossSpawned,build:{...p.magic.ranks},equipment:{...p.equipment},chestsOpened:g.chestsOpened,lootHistory:g.lootHistory,eventHistory:g.dungeon.history,stats:{damage:p.shotDmg,castTicks:p.shotCd,speed:p.maxSpeed,maxHealth:p.maxHealth},milestones};
+ return {primary,secondary,seed,seconds:g.tick/50,phase:blocked?'blocked':g.phase,level:p.level,kills:g.kills,xp,health:Math.round(p.health),maxEnemies,firstUpgrade,secondaryOfferedAt,secondaryAt,secondaryLevel,fusion:combo?.id??null,fusionAt,fusionLevel,mastery:p.magic.mastery,masteryAt,masteryLevel,reachedDragon:g.bossSpawned,build:{...p.magic.ranks},equipment:{...p.equipment},chestsOpened:g.chestsOpened,lootHistory:g.lootHistory,eventHistory:g.dungeon.history,gold:p.gold,goldEarned:g.market.earned,goldSpent:g.market.spent,marketHistory:g.market.history,activeHistory:g.activeHistory,stats:{damage:p.shotDmg,castTicks:p.shotCd,speed:p.maxSpeed,maxHealth:p.maxHealth},milestones};
 }
 export function benchmarkBuilds(config,{seconds=1800,seeds=[1,2,3],decisionTicks=5,targets=buildTargets()}={}){
  return targets.flatMap(target=>seeds.map(seed=>simulateBuild(config,{...target,seconds,seed,decisionTicks})));
