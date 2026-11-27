@@ -249,7 +249,7 @@ export class Game{
    if(e.cd>0)e.cd--;
    else if(overlaps(e,p)){
     e.cd=50;const dealt=this.hurtPlayer(e.damage,'contact',hash);
-    if(e.name==='Vampire'&&dealt>0){e.health=Math.min(e.maxHealth,e.health+dealt*2);this.emitVisual('drain',e,dealt,null,{fromX:p.x+p.width/2,fromY:p.y+p.height/2})}
+    if(e.name==='Vampire'&&dealt>0&&e.health>0){e.health=Math.min(e.maxHealth,e.health+dealt*2);this.emitVisual('drain',e,dealt,null,{fromX:p.x+p.width/2,fromY:p.y+p.height/2})}
    }
   }
   if(this.deathQueue.length){this.resolveDeaths(hash);if(this.bossDefeated&&!this.endless){this.phase='victory';return false}}
