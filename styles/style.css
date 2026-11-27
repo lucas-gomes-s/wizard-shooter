@@ -10,7 +10,7 @@ button:focus-visible,input:focus-visible,canvas:focus-visible{outline:2px solid 
 button.primary{background:var(--gold);color:#241c19;border-color:#f3dba9;font-weight:750}
 button.primary:hover:not(:disabled){background:#f5d7a3;color:#171218}
 button.quiet{background:#211e2b}
-.game-shell{width:100%;min-height:100vh;min-height:100dvh;height:100vh;height:100dvh;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;gap:10px;padding:14px clamp(12px,2.3vw,36px);max-width:1920px;margin:auto}
+.game-shell{width:100%;min-height:100vh;min-height:100dvh;height:100vh;height:100dvh;display:grid;grid-template-rows:auto auto auto minmax(0,1fr) auto;gap:10px;padding:14px clamp(12px,2.3vw,36px);max-width:1920px;margin:auto}
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .brand{display:flex;gap:12px;align-items:center}
 .brand-mark{color:var(--gold);font-size:34px;line-height:1;border:1px solid #6c5a48;border-radius:10px;width:48px;height:48px;display:grid;place-items:center;background:#292330}
@@ -47,7 +47,7 @@ canvas{display:block;width:100%;height:100%;outline:none}
 kbd{display:inline-block;background:#201c29;border:1px solid #4d4355;border-bottom:2px solid #65576e;border-radius:4px;padding:1px 5px;margin:0 1px;font:600 11px/1.4 system-ui;color:var(--text);white-space:nowrap}
 .menu-buttons{display:grid;gap:8px;width:min(100%,300px)}
 .upgrade-panel{width:min(100%,1000px)}
-.upgrade-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;width:100%}
+.upgrade-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;width:100%}
 .upgrade-card{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:9px;background:#211d2b;padding:14px;border-radius:10px;min-width:0}
 .upgrade-card[aria-current="true"]{border:2px solid var(--gold);padding:13px;background:#342a3b;box-shadow:0 0 0 2px #e5c48b20}
 .upgrade-card img{width:52px;height:52px;object-fit:contain;border:1px solid #514457;border-radius:8px;background:#15121e}
@@ -71,3 +71,10 @@ blockquote{margin:0;color:var(--gold);font-family:Georgia,serif;font-style:itali
 @media(max-width:700px){.game-shell{padding:8px;gap:7px}.brand-mark{display:none}.header-actions button{padding:7px 10px}.hud{gap:8px;grid-template-columns:1fr auto auto 1fr;padding:8px}.meter-label{font-size:10px;flex-wrap:wrap;gap:2px}.run-time,.kill-count{min-width:42px}.upgrade-cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.upgrade-card{padding:10px;gap:5px}.upgrade-card[aria-current="true"]{padding:9px}.upgrade-card img{width:38px;height:38px}.footer-note{display:none}.footer{gap:5px 12px}.panel{gap:10px}}
 @media(max-height:600px){.game-shell{min-height:500px}.panel{padding:14px;gap:8px}.sigil{width:56px;height:56px}.sigil img{width:40px;height:40px}.panel h2{font-size:30px}.upgrade-card .skill-flavor{display:none}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+
+.spell-build{display:flex;gap:6px;flex-wrap:wrap;align-items:center;min-height:26px;font-size:12px;color:var(--muted)}
+.spell-chip{color:var(--school,var(--violet));border:1px solid var(--school,#53465f);border-radius:5px;padding:2px 8px;white-space:nowrap;font-size:11px}
+.spell-glyph{display:grid;place-items:center;width:52px;height:52px;border:1px solid var(--school);border-radius:9px;background:#17131f;color:var(--school);font-size:34px}
+.upgrade-card .skill-title,.upgrade-card .skill-effect{color:var(--school,var(--gold))}
+@media(max-width:700px){.spell-build{max-height:62px;overflow:auto}.spell-glyph{width:38px;height:38px;font-size:25px}.upgrade-cards{grid-template-columns:repeat(3,minmax(0,1fr))}.upgrade-card{overflow-wrap:anywhere}}
+@media(max-width:480px){.upgrade-cards{grid-template-columns:1fr}.upgrade-card{display:grid;grid-template-columns:38px 1fr;align-items:center}.upgrade-card span:not(.spell-glyph){grid-column:2}.upgrade-card img,.spell-glyph{grid-row:1/4}}
