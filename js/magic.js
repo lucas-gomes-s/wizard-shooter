@@ -9,13 +9,21 @@ export const schools=[
 export const synergies=[
  {id:'steam',name:'Steam eruption',glyph:'♨',color:'#e4f2ff',requires:['fire','ice'],description:'Every direct hit releases steam: 35% damage and a 50% slow to other enemies within 70 units.'},
  {id:'storm',name:'Storm prism',glyph:'✷',color:'#f2d4ff',requires:['lightning','arcane'],description:'Chain lightning jumps to one additional enemy, with 30 extra units of range.'},
- {id:'soulfire',name:'Soulfire',glyph:'✺',color:'#f6b18c',requires:['fire','necro'],description:'Burning enemies that die release 60% bolt damage to other enemies within 60 units.'}
+ {id:'soulfire',name:'Soulfire',glyph:'✺',color:'#f6b18c',requires:['fire','necro'],description:'Burning enemies that die release 60% bolt damage to other enemies within 60 units.'},
+ {"id":"plasma","name":"Plasma surge","glyph":"⚡","color":"#ffb34f","requires":["fire","lightning"],"description":"Chain lightning also ignites each struck target for 2 seconds at 20% bolt damage per half second. Burns refresh, never stack."},
+ {"id":"starfall","name":"Starfire","glyph":"✦","color":"#ff8fc8","requires":["fire","arcane"],"description":"Every fourth cast releases a wide fan of five explosive bolts at 65% base damage each. Direct impacts release a 25% burst within 45 units."},
+ {"id":"thunderfrost","name":"Thunderfrost","glyph":"❅","color":"#a2e7ff","requires":["ice","lightning"],"description":"Chain lightning chills its targets by 45% for 2 seconds. Chaining to an already chilled target freezes it for 0.4 seconds, at most once every 2 seconds per target."},
+ {"id":"gravefrost","name":"Gravefrost","glyph":"☠","color":"#8df2d8","requires":["ice","necro"],"description":"Slaying a chilled enemy releases a 60-unit pulse dealing 35% base damage and slowing nearby enemies by 50% for 2 seconds. Each death can pulse only once."},
+ {"id":"mirror","name":"Glacial mirror","glyph":"◇","color":"#c4e9ff","requires":["ice","arcane"],"description":"Gain one additional piercing target per bolt. When the arcane shield blocks a contact hit, freeze enemies within 90 units for 0.8 seconds."},
+ {"id":"reaping","name":"Soul conductor","glyph":"ϟ","color":"#a2ff8b","requires":["lightning","necro"],"description":"Chain strikes mark targets for 2 seconds. Killing a marked enemy restores 3 additional HP and releases a 40% base-damage soul bolt into the nearest enemy within 120 units."},
+ {"id":"soulward","name":"Soul ward","glyph":"✧","color":"#b4f6c7","requires":["necro","arcane"],"description":"Every kill reduces the active shield recharge by 0.5 seconds. When a shield blocks a contact hit, heal 8 HP and release a 70-unit pulse for 50% base damage."}
 ];
 export const SECOND_SCHOOL_LEVEL=10;
 export const MAX_SCHOOLS=2;
 export const schoolById=Object.fromEntries(schools.map(s=>[s.id,s]));
 export function freshMagic(){return {ranks:Object.fromEntries(schools.map(s=>[s.id,0])),primary:null,secondary:null,synergies:[],shieldUntil:0,shieldReady:false}}
 export function dominantSchool(magic){return schoolById[magic.primary]||schools.reduce((best,s)=>magic.ranks[s.id]>(best?magic.ranks[best.id]:0)?s:best,null)}
+export function synergyFor(a,b){return synergies.find(s=>s.requires.includes(a)&&s.requires.includes(b)&&a!==b)||null}
 export function learnedSchools(magic){return schools.filter(s=>magic.ranks[s.id]>0)}
 export function canLearnSchool(player,id){
  if(!Object.hasOwn(schoolById,id))return false;
@@ -61,11 +69,12 @@ export function applyUpgrade(player,offer,skills,tick){
 }
 export function boltPattern(player,dx,dy){
  const rank=player.magic.ranks.arcane;
- const angles=rank>=3?[-.14,0,.14]:rank>=1?[-.085,.085]:[0];
- const multiplier=rank>=5?.85:rank>=3?.7:rank>=1?.75:1;
- return angles.map(a=>({vx:(dx*Math.cos(a)-dy*Math.sin(a))*player.shotSpd,vy:(dx*Math.sin(a)+dy*Math.cos(a))*player.shotSpd,damage:player.shotDmg*multiplier}));
+ const star=player.magic.synergies.includes('starfall')&&(player.magic.casts||0)%4===0;
+ const angles=star?[-.30,-.15,0,.15,.30]:rank>=3?[-.14,0,.14]:rank>=1?[-.085,.085]:[0];
+ const multiplier=star?.65:rank>=5?.85:rank>=3?.7:rank>=1?.75:1;
+ return angles.map(a=>({star,vx:(dx*Math.cos(a)-dy*Math.sin(a))*player.shotSpd,vy:(dx*Math.sin(a)+dy*Math.cos(a))*player.shotSpd,damage:player.shotDmg*multiplier}));
 }
-export function pierceCount(player){return player.magic.ranks.ice>=5?3:player.magic.ranks.ice>=3?2:1}
+export function pierceCount(player){return (player.magic.ranks.ice>=5?3:player.magic.ranks.ice>=3?2:1)+Number(player.magic.synergies.includes('mirror'))}
 export function center(o){return {x:o.x+o.width/2,y:o.y+o.height/2}}
 export function nearby(hash,origin,radius,excluded=new Set()){
  const c=center(origin), box={x:c.x-radius,y:c.y-radius,width:radius*2,height:radius*2};
