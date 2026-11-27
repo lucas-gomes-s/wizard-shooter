@@ -20,7 +20,7 @@ An offline portrait-oriented action survival roguelite in which the character is
 
 ## Status
 
-Design specification v0.1, 2026-11-27. The first Python/Pillow procedural sprite prototype and generated assets are implemented; a first Godot source prototype now exists. The first Godot build passed automated import, smoke tests and headless startup; physical device testing remains pending. Numeric parameters are hypotheses, not validated balance. Decisions labeled established reflect the agreed design; defaults and open questions can change. Work in this directory only; do not import legacy assets until their licenses are verified. No ads, paid random acquisition, backend, multiplayer or functional equipment in initial scope.
+Design specification v0.1, 2026-11-27. The first Python/Pillow procedural sprite prototype and generated assets are implemented; a first Godot source prototype now exists. The first Godot build and persistence recovery tests passed automated validation; physical device testing remains pending. Numeric parameters are hypotheses, not validated balance. Decisions labeled established reflect the agreed design; defaults and open questions can change. Work in this directory only; do not import legacy assets until their licenses are verified. No ads, paid random acquisition, backend, multiplayer or functional equipment in initial scope.
 
 ## Sprite prototype
 
@@ -32,4 +32,4 @@ Design specification v0.1, 2026-11-27. The first Python/Pillow procedural sprite
 
 ## Development
 
-Target Godot 4 stable, statically typed GDScript, Android first for physical testing, iOS compatible. The initial baseline is Godot 4.5.1 stable. Export setup remains pending. See roadmap for the first runnable vertical slice. 
+Target Godot 4 stable, statically typed GDScript, Android first for physical testing, iOS compatible. The initial baseline is Godot 4.5.1 stable. Android Alpha export preset and CI artifact build are configured; check the current Actions run for an APK. Device testing is still required. See roadmap for the first runnable vertical slice. 

@@ -4,6 +4,7 @@ const Genetics = preload("res://domain/genetics.gd")
 const Academy = preload("res://domain/academy.gd")
 const RunModel = preload("res://gameplay/run.gd")
 const Sprites = preload("res://presentation/sprite_library.gd")
+const ArenaArt = preload("res://presentation/arena_art.gd")
 var failures := 0
 
 func check(condition: bool, message: String) -> void:
@@ -13,6 +14,13 @@ func check(condition: bool, message: String) -> void:
 
 func _initialize() -> void:
 	var library := Sprites.new()
+	for kind in range(4):
+		var image := ArenaArt.enemy_image(kind)
+		check(image.get_size() == Vector2i(16, 16), "Enemy sprite dimensions")
+		check(image.get_used_rect().get_area() > 0, "Enemy sprite nonempty")
+	for affinity in ["fire", "ice", "steam"]:
+		check(ArenaArt.projectile_image(affinity).get_used_rect().get_area() > 0, "Spell sprite nonempty")
+	check(ArenaArt.floor_image().get_size() == Vector2i(360, 448), "Floor dimensions")
 	var bodies: Dictionary = {}
 	var affinities: Dictionary = {}
 	for i in range(1000):

@@ -159,6 +159,7 @@ func _spawn(kind: int) -> void:
 	d.kind = kind
 	d.pos = pos
 	d.hp *= 1.0 + (difficulty - 1) * 0.25
+	d.max_hp = d.hp
 	d.damage *= 1.0 + (difficulty - 1) * 0.18
 	d.slow = 0.0
 	d.burn = 0.0

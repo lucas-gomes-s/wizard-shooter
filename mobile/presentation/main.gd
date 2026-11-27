@@ -4,11 +4,13 @@ const Academy = preload("res://domain/academy.gd")
 const ProfileStore = preload("res://persistence/profile_store.gd")
 const RunModel = preload("res://gameplay/run.gd")
 const SpriteLibrary = preload("res://presentation/sprite_library.gd")
+const ArenaArt = preload("res://presentation/arena_art.gd")
 const FIRE := Color("#ef8052")
 const ICE := Color("#84d7e8")
 const STEAM := Color("#c7b7d8")
 var academy := Academy.new(int(Time.get_unix_time_from_system()), ProfileStore.new())
 var sprites := SpriteLibrary.new()
+var arena_art := ArenaArt.new()
 var run: Variant
 var selected := 0
 var partner_index := -1
@@ -334,7 +336,8 @@ func _physics_process(dt: float) -> void:
 	special_requested = false
 	if screen == "run":
 		run_hud.text = "HP %d/%d    Lv %d\nXP %d/%d    %ds    Kills %d%s" % [int(run.hp), int(run.max_hp), run.run_level, run.xp, run.next_xp, int(run.elapsed), run.kills, "  PAUSED" if paused else ""]
-		special_button.text = "CAST" if run.special_cd <= 0 else "%.1fs" % run.special_cd
+		special_button.text = str(run.phenotype.special) if run.special_cd <= 0 else "%.1fs" % run.special_cd
+		special_button.add_theme_font_size_override("font_size", 12)
 		special_button.disabled = paused or run.special_cd > 0 or run.pending_upgrades > 0
 		extract_button.disabled = paused or run.elapsed < 30 or run.pending_upgrades > 0
 	queue_redraw()
@@ -347,19 +350,25 @@ func _draw() -> void:
 		sprites.draw_wizard(self, c.phenotype, Vector2(180, 112), 0, 3.0)
 		return
 	if screen != "run" or run == null: return
-	for x in range(0, 360, 16):
-		for y in range(88, 536, 16):
-			var shade := Color("#302b38") if (floori(x / 16.0) + floori(y / 16.0)) % 2 == 0 else Color("#2b2733")
-			draw_rect(Rect2(x, y, 15, 15), shade)
+	draw_texture(arena_art.floor_texture, Vector2(0, 88))
+	draw_rect(Rect2(0, 88, 360, 448), Color("#48404e"), false, 2.0)
 	var color: Color = FIRE if run.phenotype.affinity == "fire" else (ICE if run.phenotype.affinity == "ice" else STEAM)
 	draw_rect(Rect2(12, 73, 220, 8), Color("#502e40"))
 	draw_rect(Rect2(12, 73, 220 * run.hp / run.max_hp, 8), Color("#c66c73"))
 	for e in run.enemies:
-		_draw_enemy(e)
+		arena_art.draw_enemy(self, e, float(run.elapsed))
 	for shot in run.shots:
-		draw_rect(Rect2(shot.pos - Vector2(2, 2), Vector2(5, 5)), color)
+		var projectile: Texture2D = arena_art.projectiles[run.phenotype.affinity]
+		draw_texture(projectile, shot.pos - Vector2(4, 4))
 	if run.special_fx > 0:
-		draw_arc(run.player, 66, 0, TAU, 32, color, 3.0)
+		var radius := 82.0 if run.phenotype.mutation == "crystal_wings" else 66.0
+		var fraction := 1.0 - float(run.special_fx) / 0.35
+		var ring := radius * (0.45 + 0.55 * fraction)
+		var fade := Color(color, 1.0 - fraction)
+		draw_arc(run.player, ring, 0, TAU, 32, fade, 3.0)
+		for i in range(12):
+			var offset := Vector2.from_angle(i * TAU / 12.0) * ring
+			draw_rect(Rect2(run.player + offset - Vector2(2, 2), Vector2(4, 4)), fade)
 	var frame: int = int(run.elapsed * 6) % 2 if movement.length_squared() > 0 else 0
 	sprites.draw_wizard(self, run.phenotype, run.player, frame, 1.2)
 	var origin := touch_origin if touch_id != -1 else Vector2(68, 573)
@@ -370,15 +379,3 @@ func _draw() -> void:
 	if paused or run.pending_upgrades > 0:
 		draw_rect(Rect2(0, 90, 360, 446), Color(0.04, 0.03, 0.06, 0.76))
 
-func _draw_enemy(e: Dictionary) -> void:
-	var pos: Vector2 = e.pos
-	var radius := float(e.radius)
-	var color: Color = [Color("#718d52"), Color("#8c5c76"), Color("#8d745b"), Color("#b6524d")][int(e.kind)]
-	if e.slow > 0: color = color.lerp(ICE, 0.45)
-	if e.kind == 1:
-		for i in range(3):
-			draw_rect(Rect2(pos + Vector2(-10, -5 + i * 4), Vector2(20, 2)), Color("#211d28"))
-	draw_rect(Rect2(pos - Vector2(radius, radius), Vector2(radius * 2, radius * 2)), Color("#171620"))
-	draw_rect(Rect2(pos - Vector2(radius - 2, radius - 2), Vector2(radius * 2 - 4, radius * 2 - 4)), color)
-	draw_rect(Rect2(pos + Vector2(-4, -2), Vector2(2, 2)), Color("#ffe1a4"))
-	draw_rect(Rect2(pos + Vector2(2, -2), Vector2(2, 2)), Color("#ffe1a4"))
