@@ -1,3 +1,4 @@
+import {itemAttunements} from './attunements.js';
 import {Game} from './simulation.js';
 import {itemById} from './equipment.js';
 import {schools} from './magic.js';
@@ -43,12 +44,13 @@ export function botInput(g){
  return {x,y,aim,boots,relic};
 }
 const gearValues={quickwand:6,longshot:4,echo:7,bloodwood:7,prism:8,meteor:9,linen:6,wardrobe:4,thorns:7,phantom:7,mending:5,aegis:9,swift:6,silk:3,runner:5,escape:5,trail:7,phaseboots:9,tonic:4,fang:7,gambler:6,hourglass:6,lantern:8,crown:7};
+function gearScore(p,id){return (gearValues[id]||0)+(itemAttunements(id).some(a=>p.magic.ranks[a.school]>=2)?1.5:0)}
 export function botLoot(g){
  const values=gearValues;
  let best=-1,score=0;
  for(const [i,item] of g.loot.entries()){
   const old=itemById[g.player.equipment[item.slot]];
-  const value=(values[item.id]||0)-(values[old?.id]||0);
+  const value=gearScore(g.player,item.id)-gearScore(g.player,old?.id);
   if(value>score){score=value;best=i;}
  }
  return best;
@@ -57,7 +59,7 @@ export function botPurchase(g){
  const p=g.player;let best=-1,score=0;
  for(const [i,o] of g.market.offers.entries()){
   if(o.price>p.gold)continue;
-  const value=o.kind==='heal'?(p.health<p.maxHealth*.55?8:0):((gearValues[o.id]||0)-(gearValues[p.equipment[o.slot]]||0));
+  const value=o.kind==='heal'?(p.health<p.maxHealth*.55?8:0):(gearScore(p,o.id)-gearScore(p,p.equipment[o.slot]));
   const v=value-o.price/100;
   if(v>score){score=v;best=i;}
  }
@@ -82,7 +84,7 @@ export function simulate(config,{school='fire',seed=1,seconds=180,decisionTicks=
   while(lastLevel<g.player.level){spentXP+=config.levels[lastLevel-1];lastLevel++}
   earnedXP=spentXP+g.player.currentExp;
  }
- return {school,seed,seconds:g.tick/50,phase:g.phase,level:g.player.level,firstUpgrade,kills:g.kills,xp:earnedXP,health:Math.round(g.player.health),maxEnemies,build:g.player.magic.ranks,equipment:{...g.player.equipment},chestsOpened:g.chestsOpened,lootHistory:g.lootHistory,eventHistory:g.dungeon.history,gold:g.player.gold,marketHistory:g.market.history,goldEarned:g.market.earned,goldSpent:g.market.spent,activeHistory:g.activeHistory};
+ return {school,seed,seconds:g.tick/50,phase:g.phase,level:g.player.level,firstUpgrade,kills:g.kills,xp:earnedXP,health:Math.round(g.player.health),maxEnemies,build:g.player.magic.ranks,equipment:{...g.player.equipment},chestsOpened:g.chestsOpened,lootHistory:g.lootHistory,eventHistory:g.dungeon.history,gold:g.player.gold,marketHistory:g.market.history,goldEarned:g.market.earned,goldSpent:g.market.spent,activeHistory:g.activeHistory,telemetry:g.reportCombat()};
 }
 export function benchmark(config,{seconds=180,seeds=[1,2,3],decisionTicks=5}={}){
  return schools.flatMap(s=>seeds.map(seed=>simulate(config,{school:s.id,seed,seconds,decisionTicks})));
