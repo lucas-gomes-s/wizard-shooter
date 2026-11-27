@@ -79,6 +79,14 @@ try{
   await page.locator('#lootPanel').waitFor({state:'visible'});
   await page.locator('#skipLoot').click();await page.locator('#overlay').waitFor({state:'hidden'});
   assert.equal(await page.evaluate(()=>window.__wizardTestGame.lootHistory.length),1);
+  await page.evaluate(()=>{const g=window.__wizardTestGame,p=g.player;p.gold=500;g.market.merchant={x:p.x+20,y:p.y+20,until:g.tick+100,tier:2};});
+  await page.locator('#shopPanel').waitFor({state:'visible'});
+  assert.equal(await page.locator('#shopCards .shop-card').count(),4);
+  await page.screenshot({path:'web-smoke-artifacts/merchant.png'});
+  await page.locator('#shopCards .shop-card').first().click();
+  await page.locator('#overlay').waitFor({state:'hidden'});
+  assert.equal(await page.evaluate(()=>window.__wizardTestGame.market.history.length),1);
+
   await page.evaluate(()=>{const g=window.__wizardTestGame;g.tick=210*50;g.nextTreasure=1;g.step();});
   await page.locator('#eventHud').waitFor({state:'visible'});
   assert.ok((await page.locator('#eventTitle').textContent()).includes('OPTIONAL CHALLENGE'));
