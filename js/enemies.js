@@ -91,7 +91,7 @@ export function stepHazards(game,hash=null){
   if(t>=h.until)return false;
   if(t>=h.activeAt&&inCircle(p,h.x,h.y,h.radius)){
    if(h.type==='web')p.webUntil=Math.max(p.webUntil||0,t+12);
-   else if(!h.hit){h.hit=true;game.hurtPlayer(h.damage,'hazard',hash);}
+   else if(!h.hit){h.hit=true;const dealt=game.hurtPlayer(h.damage,'hazard',hash);game.recordDungeonHazard?.(h,dealt);}
   }
   return true;
  });
