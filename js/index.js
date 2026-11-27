@@ -1,3 +1,4 @@
+import {environments,environmentById,environmentConfig} from './environments.js';
 import {loadProfile,saveProfile,recordProgress,newProgressSession,runConfig,available,contracts,sigils,achievements} from './progression.js';
 import {equipment} from './equipment.js';
 import {dungeonEvents} from './dungeon-events.js';
@@ -63,24 +64,26 @@ function setScreen(next){
   else if(next==='loot')buildLoot();
   else if(next==='shop')buildShop();
   else if(next==='over'){$('resultUnlocks').textContent=unlockText(checkpoint());showResults();focus($('retryButton'));}
-  else if(next==='victory'){$('victoryUnlocks').textContent=unlockText(checkpoint());$('victoryTime').textContent=formatTime(game.seconds);$('victoryKills').textContent=game.kills;focus($('endlessButton'));}
+  else if(next==='victory'){$('victoryTitle').textContent=environmentById(game.config.environment).boss+' defeated.';$('victoryUnlocks').textContent=unlockText(checkpoint());$('victoryTime').textContent=formatTime(game.seconds);$('victoryKills').textContent=game.kills;focus($('endlessButton'));}
 }
 function buildStarters(){const root=$('starterCards');root.replaceChildren();for(const school of schools){const button=document.createElement('button');button.type='button';button.className='starter-card';button.style.setProperty('--school',school.color);button.dataset.school=school.id;button.setAttribute('aria-pressed',String(startingSchool===school.id));const glyph=document.createElement('span');glyph.className='starter-glyph';glyph.textContent=school.glyph;const name=document.createElement('strong');name.textContent=school.name;const detail=document.createElement('span');detail.textContent=school.ranks[0];button.append(glyph,name,detail);button.addEventListener('click',()=>{startingSchool=school.id;for(const card of root.children)card.setAttribute('aria-pressed',String(card.dataset.school===startingSchool));});root.append(button)}}
 buildStarters();
 function refreshProfileControls(){
  $('profileSummary').textContent=profile.runs+' expeditions · '+profile.wins+' victories · '+profile.achievements.length+'/'+achievements.length+' achievements'+(profileSaved?'':' · Save unavailable');
- for(const [id,catalog,key] of [['contractSelect',contracts,'contract'],['sigilSelect',sigils,'sigil']]){
+ for(const [id,catalog,key] of [['contractSelect',contracts,'contract'],['sigilSelect',sigils,'sigil'],['environmentSelect',environments,'environment']]){
   const el=$(id);el.replaceChildren();
   for(const entry of catalog){const opt=document.createElement('option');opt.value=entry.id;opt.disabled=!available(catalog,entry.id,profile);opt.textContent=entry.name+(opt.disabled?' (unlock: '+achievements.find(a=>a.id===entry.requires).name+')':'');el.append(opt);}
   el.value=profile.selection[key];
  }
  $('contractDescription').textContent=contracts.find(c=>c.id===profile.selection.contract).description;
+ $('environmentDescription').textContent=environmentById(profile.selection.environment).description;
+ $('environmentSelect').style.borderColor=environmentById(profile.selection.environment).color;dirty=true;
 }
 function renderProfile(){
  $('profileStats').textContent=profile.runs+' expeditions · '+profile.wins+' victories · '+profile.kills.toLocaleString()+' kills · Best '+formatTime(Math.floor(profile.bestTicks/50))+' · Highest level '+profile.bestLevel;
  $('profileStorage').textContent=profileSaved?'Saved locally in this browser. No account or network tracking.':'Local storage unavailable; progress may be lost when you leave.';
  const root=$('codexEntries');root.replaceChildren();
- const groups=[['Achievements',achievements,profile.achievements],['Equipment',equipment,profile.items],['School fusions',synergies,profile.fusions],['Pure masteries',masteries,profile.masteries],['Dungeon challenges',dungeonEvents,profile.events],['Starting schools',schools,profile.schools],['Contract victories',contracts.filter(c=>c.id!=='standard'),profile.contracts],['Victories by starting school',schools,profile.winningSchools]];
+ const groups=[['Achievements',achievements,profile.achievements],['Equipment',equipment,profile.items],['School fusions',synergies,profile.fusions],['Pure masteries',masteries,profile.masteries],['Dungeon challenges',dungeonEvents,profile.events],['Starting schools',schools,profile.schools],['Contract victories',contracts.filter(c=>c.id!=='standard'),profile.contracts],['Victories by starting school',schools,profile.winningSchools],['Environments explored',environments,profile.visitedEnvironments],['Environment victories',environments,profile.winningEnvironments]];
  for(const [name,entries,found] of groups){
   const section=document.createElement('section');section.className='codex-group';const h=document.createElement('h3');h.textContent=name+' · '+found.length+'/'+entries.length;section.append(h);
   for(const entry of entries){const row=document.createElement('div');row.className='codex-entry'+(found.includes(entry.id)?' discovered':'');const title=document.createElement('strong');title.textContent=(found.includes(entry.id)?'✓ ':'○ ')+entry.name;const desc=document.createElement('span');desc.textContent=entry.description||'';row.append(title,desc);section.append(row);}
@@ -89,11 +92,11 @@ function renderProfile(){
 }
 $('profileButton').addEventListener('click',()=>setScreen('profile'));
 $('profileBack').addEventListener('click',()=>setScreen('home'));
-for(const [id,catalog,key] of [['contractSelect',contracts,'contract'],['sigilSelect',sigils,'sigil']])$(id).addEventListener('change',()=>{const value=$(id).value;if(available(catalog,value,profile)){profile.selection[key]=value;persistProfile();}refreshProfileControls();});
+for(const [id,catalog,key] of [['contractSelect',contracts,'contract'],['sigilSelect',sigils,'sigil'],['environmentSelect',environments,'environment']])$(id).addEventListener('change',()=>{const value=$(id).value;if(available(catalog,value,profile)){profile.selection[key]=value;persistProfile();}refreshProfileControls();});
 refreshProfileControls();
 function startRun(){
   if(!ready)return;
-  checkpoint();game.config=runConfig(config,profile.selection.contract);progressSession=newProgressSession(profile.selection.contract);runSigil=profile.selection.sigil;
+  checkpoint();game.config=environmentConfig(runConfig(config,profile.selection.contract),profile.selection.environment);progressSession=newProgressSession(profile.selection.contract,profile.selection.environment);runSigil=profile.selection.sigil;
   Object.assign(game,viewportFor(surface.width,surface.height));game.start(startingSchool);
   fx.clear();lastHud='';setScreen('play');
 }
@@ -252,6 +255,7 @@ function updateBuild(){const m=game.player.magic,signature=JSON.stringify([m.ran
 function meter(id,value){const percent=Math.round(Math.max(0,Math.min(1,value))*100),node=$(id);node.firstElementChild.style.width=percent+'%';node.setAttribute('aria-valuenow',percent);}
 function updateBoss(){const boss=game.boss||game.miniboss,signature=boss?[boss.title||boss.name,Math.ceil(boss.health),boss.bossPhase].join('|'):String(game.endless);if(signature===lastBoss)return;lastBoss=signature;const node=$('bossHud');node.hidden=!boss&&!game.endless;if(boss){$('bossName').textContent=boss.boss?'Ancient Dragon · Phase '+boss.bossPhase+' / 3':boss.title;$('bossHealth').textContent=Math.ceil(boss.health)+' / '+boss.maxHealth;meter('bossMeter',boss.health/boss.maxHealth);$('bossMeter').hidden=false}else{$('bossName').textContent='Endless survival';$('bossHealth').textContent='Dragon defeated';$('bossMeter').hidden=true}}
 function updateHud(){
+  const env=environmentById(screen==='home'||screen==='profile'?profile.selection.environment:game.config.environment);if($('biomeName').textContent!==env.name)$('biomeName').textContent=env.name;
   updateBoss();updateGear();updateDungeon();updateMarket();
   updateBuild();const p=game.player,health=Math.ceil(p.health),max=p.maxHealth,maxed=p.level>=config.maxLevel;
   const xp=maxed?'MAX':p.currentExp+' / '+p.expNeeded+' XP';
@@ -264,11 +268,25 @@ function step(){
   fx.advance();const running=game.step(input());fx.collect(game.events);fx.collect(game.visualEvents);return running;
 }
 function background(){
-  const W=game.width,H=game.height,c=game.camera,tile=600;
+  const W=game.width,H=game.height,c=game.camera,tile=600,env=environmentById(screen==='home'||screen==='profile'?profile.selection.environment:game.config.environment);
   const x=-((c.x%tile+tile)%tile),y=-((c.y%tile+tile)%tile);
-  ctx.fillStyle='#24202a';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle=env.ground;ctx.fillRect(0,0,W,H);
   const floor=images.get('./images/dungeonfloor.jpg');
-  if(floor){for(let iy=y;iy<H;iy+=tile)for(let ix=x;ix<W;ix+=tile)ctx.drawImage(floor,ix,iy,tile,tile);ctx.fillStyle='rgba(18,14,26,.53)';ctx.fillRect(0,0,W,H);}
+  if(floor){for(let iy=y;iy<H;iy+=tile)for(let ix=x;ix<W;ix+=tile)ctx.drawImage(floor,ix,iy,tile,tile);ctx.fillStyle=env.tint;ctx.fillRect(0,0,W,H);}
+  if(env.id!=='crypt')drawBiomeFloor(env,c,W,H);
+}
+// World-anchored decorations: deterministic, no simulation RNG or collidable obstacles.
+function drawBiomeFloor(env,c,W,H){
+ const cell=115,frost=env.id==='frost';ctx.save();
+ for(let iy=Math.floor(c.y/cell);iy<=Math.floor((c.y+H)/cell);iy++)for(let ix=Math.floor(c.x/cell);ix<=Math.floor((c.x+W)/cell);ix++){
+  const n=(Math.imul(ix,73856093)^Math.imul(iy,19349663))>>>0;
+  if(n%3===0)continue;
+  const x=ix*cell-c.x+24+n%64,y=iy*cell-c.y+18+(n>>>8)%72;
+  ctx.lineWidth=1.5;ctx.strokeStyle=frost?'#82c9ed55':'#e38a4855';ctx.fillStyle=frost?'#78c9ec22':'#de6b2522';
+  if(frost){ctx.beginPath();ctx.moveTo(x-15,y+8);ctx.lineTo(x-5,y-12);ctx.lineTo(x+1,y-2);ctx.lineTo(x+7,y-22);ctx.lineTo(x+15,y+8);ctx.closePath();ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(x+7,y-22);ctx.lineTo(x+4,y+8);ctx.stroke();}
+  else{ctx.beginPath();ctx.moveTo(x-25,y-10);ctx.lineTo(x-8,y+2);ctx.lineTo(x-2,y-5);ctx.lineTo(x+12,y+13);ctx.lineTo(x+24,y+7);ctx.stroke();if(n%5===1){ctx.fillRect(x-13,y-13,26,26);ctx.strokeRect(x-13,y-13,26,26);for(let j=-7;j<=7;j+=7){ctx.beginPath();ctx.moveTo(x+j,y-11);ctx.lineTo(x+j,y+11);ctx.stroke();}}}
+ }
+ ctx.restore();
 }
 function shadow(x,y,w,h){ctx.fillStyle='rgba(6,5,11,.43)';ctx.beginPath();ctx.ellipse(x+w/2,y+h*.88,w*.44,h*.18,0,0,Math.PI*2);ctx.fill();}
 function bar(x,y,w,h,fraction,color){const f=Math.max(0,Math.min(1,fraction));ctx.fillStyle='#1c1723';ctx.fillRect(x,y,w,h);ctx.fillStyle=color;ctx.fillRect(x,y,w*f,h);}
@@ -348,6 +366,7 @@ function render(){
   if(keys.has('KeyQ'))bar(px,py-8,p.width,4,p.health/p.maxHealth,'#e27279');
   for(const s of game.shots)if(game.visible(s,0))drawProjectile(ctx,s,c,game.tick,fx.mode);
   for(const s of game.hostiles)if(game.visible({x:s.x-s.radius,y:s.y-s.radius,width:2*s.radius,height:2*s.radius},20))drawProjectile(ctx,s,c,game.tick,fx.mode,true);
+  if(p.frostUntil>game.tick){ctx.strokeStyle='#93d9ff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(px+p.width/2,py+p.height/2,26,0,Math.PI*2);ctx.stroke();}
   if(p.webUntil>game.tick)drawWeb(ctx,px+p.width/2,py+p.height/2,26,true,game.tick,fx.mode);
   fx.draw(ctx,c,p,game.tick);
   if(game.flash&&fx.mode!=='off'){const strength=fx.mode==='full'?.16:.07;ctx.fillStyle='rgba(175,38,54,'+strength+')';ctx.fillRect(0,0,game.width,game.height);}
