@@ -1,3 +1,4 @@
+import {freshEvents,stepDungeon,recordEventDeath} from './dungeon-events.js';
 import {freshEquipment,hasGear,equipItem,lootOffers,treasureMinutes,gearMovement,gearCast,gearDamage} from './equipment.js';
 import {spawnInterval} from './balance.js';
 import {ENEMY_CAP,BOSS_MINUTE,initEnemy,stepEnemy,stepHazards,frontalMultiplier} from './enemies.js';
@@ -23,7 +24,7 @@ export class FixedClock{
 
 export class Game{
  constructor(config,rng=Math.random){this.config=config;this.rng=rng;this.width=600;this.height=600;this.reset()}
- reset(){this.phase='playing';this.tick=0;this.chests=[];this.nextTreasure=0;this.loot=[];this.lootSource=null;this.lootHistory=[];this.chestsOpened=0;this.kills=0;this.enemies=[];this.shots=[];this.potions=[];this.flash=0;this.events=[];this.visualEvents=[];this.offers=[];this.selected=0;this.deathQueue=[];this.hostiles=[];this.hazards=[];this.spawnCount=0;this.minibossSpawned=new Set();this.bossSpawned=false;this.bossDefeated=false;this.victoryTick=null;this.endless=false;this.enemyTimers=this.config.monsters.map(()=>0);this.potionTimers=this.config.potionInfo.map(()=>0);this.player={x:280,y:280,width:40,height:40,maxSpeed:2,health:100,maxHealth:100,level:1,currentExp:0,expNeeded:this.config.levels[0],shotDmg:10,shotSpd:8,shotSize:5,shotCd:50,cooldown:50,skillLvl:this.config.skills.map(()=>0),magic:freshMagic(),equipment:freshEquipment(),gearState:Object.fromEntries(['staff','robe','boots','relic'].map(slot=>[slot,{readyAt:0,activeUntil:0,count:0}]))}}
+ reset(){this.phase='playing';this.tick=0;this.dungeon=freshEvents();this.chests=[];this.nextTreasure=0;this.loot=[];this.lootSource=null;this.lootHistory=[];this.chestsOpened=0;this.kills=0;this.enemies=[];this.shots=[];this.potions=[];this.flash=0;this.events=[];this.visualEvents=[];this.offers=[];this.selected=0;this.deathQueue=[];this.hostiles=[];this.hazards=[];this.spawnCount=0;this.minibossSpawned=new Set();this.bossSpawned=false;this.bossDefeated=false;this.victoryTick=null;this.endless=false;this.enemyTimers=this.config.monsters.map(()=>0);this.potionTimers=this.config.potionInfo.map(()=>0);this.player={x:280,y:280,width:40,height:40,maxSpeed:2,health:100,maxHealth:100,level:1,currentExp:0,expNeeded:this.config.levels[0],shotDmg:10,shotSpd:8,shotSize:5,shotCd:50,cooldown:50,skillLvl:this.config.skills.map(()=>0),magic:freshMagic(),equipment:freshEquipment(),gearState:Object.fromEntries(['staff','robe','boots','relic'].map(slot=>[slot,{readyAt:0,activeUntil:0,count:0}]))}}
  start(school){this.reset();if(!Object.hasOwn(this.player.magic.ranks,school))return false;this.player.magic.ranks[school]=1;this.player.magic.primary=school;this.player.cooldown=0;return true}
  emit(type,object,value=0,school=null,extra={}){if(this.events.length<128)this.events.push({type,x:object.x+object.width/2,y:object.y+object.height/2,value,school,...extra})}
  emitVisual(type,object,value=0,school=null,extra={}){if(this.visualEvents.length<128)this.visualEvents.push({type,x:object.x+object.width/2,y:object.y+object.height/2,value,school,...extra})}
@@ -117,7 +118,7 @@ export class Game{
   for(const e of this.enemies)if(e.health<=0)this.deathQueue.push(e);
   for(const e of this.deathQueue){
    if(processed.has(e))continue;processed.add(e);
-   this.kills++;p.currentExp+=e.expGiven;this.emit('kill',e,e.expGiven);
+   recordEventDeath(this,e);this.kills++;p.currentExp+=e.expGiven;this.emit('kill',e,e.expGiven);
    if(e.miniboss&&this.config.equipmentEnabled!==false)this.dropChest(e.x+e.width/2,e.y+e.height/2,e.lootTier??1,'Guardian reward');
    if(hasGear(p,'fang'))this.healPlayer(.5);
    if(hasGear(p,'lantern')&&++p.gearState.relic.count%12===0)this.pulse(hash,p,90,p.shotDmg,'necro');
@@ -133,7 +134,7 @@ export class Game{
    if(m.synergies.includes('soulfire')&&e.burnUntil>=this.tick){this.emit('burst',e,80,'fire',{visualSchool:'soulfire'});for(const other of nearby(hash,e,80,new Set([e])))this.damage(other,p.shotDmg*.6,'fire')}
   }
   this.deathQueue=[];
-  this.enemies=this.enemies.filter(e=>e.health>0&&(e.boss||e.miniboss||this.visible(e)));
+  this.enemies=this.enemies.filter(e=>e.health>0&&(e.boss||e.miniboss||e.eventGuardian||this.visible(e)));
  }
  spawnAtEdge(template,elite=false){
   const c=this.camera,side=Math.floor(this.rng()*4),v=this.rng();let x=c.x+v*this.width,y=c.y+v*this.height;
@@ -257,6 +258,6 @@ export class Game{
   if(p.health<=0){this.phase='over';return false}
   if(this.deathQueue.length){this.resolveDeaths(hash);if(this.bossDefeated&&!this.endless){this.phase='victory';return false}}
   this.potions=this.potions.filter(o=>{if(++o.age>=o.fade||!this.visible(o))return false;if(p.health<p.maxHealth&&overlaps(o,p)){const previous=p.health;p.health=Math.min(p.maxHealth,p.health+o.recovery*p.maxHealth*(hasGear(p,'tonic')?1.35:1));this.emit('heal',p,p.health-previous);return false}return true});
-  this.spawnEnemies();this.spawnPotions();this.stepLoot();if(this.phase==='playing')this.levelUp();return this.phase==='playing';
+  this.spawnEnemies();this.spawnPotions();stepDungeon(this);this.stepLoot();if(this.phase==='playing')this.levelUp();return this.phase==='playing';
  }
 }
