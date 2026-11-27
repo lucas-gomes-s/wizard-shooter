@@ -9,8 +9,9 @@ const game=new Game(config), clock=new FixedClock();
 const keys=new Set(), arrows=['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'];
 const aimVectors={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]};
 const allowed=new Set(['KeyW','KeyA','KeyS','KeyD','KeyQ','Escape','Enter',...arrows]);
-const panels={home:$('homePanel'),pause:$('pausePanel'),confirm:$('confirmPanel'),upgrade:$('upgradePanel'),over:$('resultPanel')};
+const panels={home:$('homePanel'),pause:$('pausePanel'),confirm:$('confirmPanel'),upgrade:$('upgradePanel'),over:$('resultPanel'),victory:$('victoryPanel')};
 let screen='home',ready=false,aimOrder=[],confirmAction=null,dirty=true,particles=[],lastHud='',lastUpgrade=-1,lastBuild='';
+let lastBoss='';
 let effects=!matchMedia('(prefers-reduced-motion: reduce)').matches;
 $('effectsToggle').checked=effects;
 $('effectsToggle').addEventListener('change',()=>{effects=$('effectsToggle').checked;particles=[];dirty=true;});
@@ -44,6 +45,7 @@ function setScreen(next){
   else if(next==='confirm')focus($('cancelButton'));
   else if(next==='upgrade'){lastUpgrade=-1;buildUpgrades();}
   else if(next==='over'){showResults();focus($('retryButton'));}
+  else if(next==='victory'){$('victoryTime').textContent=formatTime(game.seconds);$('victoryKills').textContent=game.kills;focus($('endlessButton'));}
 }
 function startRun(){
   if(!ready)return;
@@ -63,6 +65,8 @@ $('confirmButton').addEventListener('click',()=>{const action=confirmAction;conf
 $('cancelButton').addEventListener('click',()=>{confirmAction=null;setScreen('pause')});
 $('retryButton').addEventListener('click',startRun);
 $('titleButton').addEventListener('click',home);
+$('victoryTitleButton').addEventListener('click',home);
+$('endlessButton').addEventListener('click',()=>{if(game.continueEndless()){particles=[];setScreen(game.phase==='upgrade'?'upgrade':'play')}});
 if(document.fullscreenEnabled&&$('gameShell').requestFullscreen){
   $('fullscreenButton').hidden=false;
   $('fullscreenButton').addEventListener('click',async()=>{
@@ -83,7 +87,7 @@ function choose(index=game.selected){
 }
 document.addEventListener('keydown',e=>{
   if(!allowed.has(e.code)||e.altKey||e.ctrlKey||e.metaKey)return;
-  if(screen==='home'||screen==='over')return;
+  if(screen==='home'||screen==='over'||screen==='victory')return;
   if(e.code==='Escape'&&!e.repeat){
     if(screen==='play'){e.preventDefault();pause();}
     else if(screen==='pause'){e.preventDefault();resume();}
@@ -131,6 +135,7 @@ function updateSelection(moveFocus){
 }
 function showResults(){
   $('resultTime').textContent=formatTime(game.seconds);$('resultLevel').textContent=game.player.level;$('resultKills').textContent=game.kills;
+  $('resultTitle').textContent=game.bossDefeated?'Endless run complete.':'The dungeon wins.';
   $('deathPhrase').textContent=config.gameOverPhrases[Math.floor(Math.random()*config.gameOverPhrases.length)];
   const root=$('resultSkills');root.replaceChildren();
   config.skills.forEach((s,i)=>{const rank=game.player.skillLvl[i];if(!rank)return;const chip=document.createElement('div');chip.className='result-skill';const image=document.createElement('img');image.src=s.img;image.alt='';chip.append(image,document.createTextNode(s.name+' × '+rank));root.append(chip)});
@@ -141,7 +146,9 @@ function showResults(){
 function spellChip(s,rank){const chip=document.createElement('span');chip.className='spell-chip';chip.style.setProperty('--school',s.color);chip.textContent=s.glyph+' '+s.name+(rank?' '+rank:'');return chip}
 function updateBuild(){const m=game.player.magic,signature=JSON.stringify([m.ranks,m.synergies,m.shieldReady]);if(signature===lastBuild)return;lastBuild=signature;const root=$('spellBuild');root.replaceChildren();for(const s of schools)if(m.ranks[s.id])root.append(spellChip(s,m.ranks[s.id]));for(const s of synergies)if(m.synergies.includes(s.id))root.append(spellChip(s));if(!root.children.length)root.textContent='Untrained · choose a school at level 2';if(m.ranks.arcane>=2){const shield=document.createElement('span');shield.className='spell-chip';shield.textContent=m.shieldReady?'Shield ready':'Shield recharging';root.append(shield)}}
 function meter(id,value){const percent=Math.round(Math.max(0,Math.min(1,value))*100),node=$(id);node.firstElementChild.style.width=percent+'%';node.setAttribute('aria-valuenow',percent);}
+function updateBoss(){const boss=game.boss,signature=boss?[Math.ceil(boss.health),boss.bossPhase].join('|'):String(game.endless);if(signature===lastBoss)return;lastBoss=signature;const node=$('bossHud');node.hidden=!boss&&!game.endless;if(boss){$('bossName').textContent='Ancient Dragon · Phase '+boss.bossPhase+' / 3';$('bossHealth').textContent=Math.ceil(boss.health)+' / '+boss.maxHealth;meter('bossMeter',boss.health/boss.maxHealth);$('bossMeter').hidden=false}else{$('bossName').textContent='Endless survival';$('bossHealth').textContent='Dragon defeated';$('bossMeter').hidden=true}}
 function updateHud(){
+  updateBoss();
   updateBuild();const p=game.player,health=Math.ceil(p.health),max=p.maxHealth,maxed=p.level>=config.maxLevel;
   const xp=maxed?'MAX':p.currentExp+' / '+p.expNeeded+' XP';
   const signature=[health,max,p.level,xp,game.seconds,game.kills].join('|');if(signature===lastHud)return;lastHud=signature;
@@ -179,13 +186,21 @@ function background(){
 }
 function shadow(x,y,w,h){ctx.fillStyle='rgba(6,5,11,.43)';ctx.beginPath();ctx.ellipse(x+w/2,y+h*.88,w*.44,h*.18,0,0,Math.PI*2);ctx.fill();}
 function bar(x,y,w,h,fraction,color){const f=Math.max(0,Math.min(1,fraction));ctx.fillStyle='#1c1723';ctx.fillRect(x,y,w,h);ctx.fillStyle=color;ctx.fillRect(x,y,w*f,h);}
+function drawHazards(c){
+  for(const h of game.hazards){const x=h.x-c.x,y=h.y-c.y,active=game.tick>=h.activeAt,color=h.type==='web'?'#d5d0e2':'#ff9b58';ctx.beginPath();ctx.arc(x,y,h.radius,0,Math.PI*2);ctx.fillStyle=color+(active?'33':'12');ctx.fill();ctx.strokeStyle=color;ctx.lineWidth=active?2:1.5;ctx.setLineDash(active?[]:[5,5]);ctx.stroke();ctx.setLineDash([]);if(!active){const ratio=Math.max(0,Math.min(1,(h.activeAt-game.tick)/35));ctx.beginPath();ctx.arc(x,y,h.radius*ratio,0,Math.PI*2);ctx.stroke();}}
+}
+function drawEnemyWarning(e,c){const a=e.action;if(!a)return;const x=e.x+e.width/2-c.x,y=e.y+e.height/2-c.y;ctx.lineWidth=2;ctx.strokeStyle='#ffb17b';ctx.fillStyle='#ff8c5530';if(a.kind==='orc-windup'||a.kind==='charge'){const dx=Math.cos(a.angle),dy=Math.sin(a.angle);ctx.beginPath();ctx.moveTo(x-dy*18,y+dx*18);ctx.lineTo(x+dx*200-dy*18,y+dy*200+dx*18);ctx.lineTo(x+dx*200+dy*18,y+dy*200-dx*18);ctx.lineTo(x+dy*18,y-dx*18);ctx.closePath();ctx.fill();ctx.stroke();}
+ else if(a.kind==='reaper-windup'){ctx.beginPath();ctx.arc(a.x-c.x,a.y-c.y,e.width/2+8,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.setLineDash([5,5]);ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(a.x-c.x,a.y-c.y);ctx.stroke();ctx.setLineDash([])}
+ else if(a.kind==='demon-windup'||a.kind==='dragon-windup'){ctx.beginPath();ctx.arc(x,y,e.width*.7,0,Math.PI*2);ctx.stroke();if(a.kind==='dragon-windup'&&e.bossPhase>=2){for(let i=0;i<(e.bossPhase===3?12:8);i++){const angle=a.angle+i*Math.PI*2/(e.bossPhase===3?12:8);ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+Math.cos(angle)*150,y+Math.sin(angle)*150);ctx.stroke()}}else{ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+Math.cos(a.angle-.24)*240,y+Math.sin(a.angle-.24)*240);ctx.arc(x,y,240,a.angle-.24,a.angle+.24);ctx.closePath();ctx.fill();ctx.stroke()}}
+}
 function render(){
   const {width,height,dpr}=surface,{scale,x,y}=fitViewport(width,height,game.width,game.height);
   ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#14121b';ctx.fillRect(0,0,width,height);
   ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);ctx.beginPath();ctx.rect(0,0,game.width,game.height);ctx.clip();
-  background();const c=game.camera,p=game.player;
+  background();const c=game.camera,p=game.player;drawHazards(c);
+  for(const e of game.enemies)if(e.action)drawEnemyWarning(e,c);
   for(const o of game.potions)if(game.visible(o,0)){const px=o.x-c.x,py=o.y-c.y;shadow(px,py,o.width,o.height);ctx.strokeStyle='#8ae1ae99';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(px+o.width/2,py+o.height/2,17,0,Math.PI*2);ctx.stroke();sprite(o.imageSrc,px,py,o.width,o.height,'#82dba5');}
-  for(const e of game.enemies)if(game.visible(e,0)){const px=e.x-c.x,py=e.y-c.y;shadow(px,py,e.width,e.height);sprite(e.imageSrc,px,py,e.width,e.height,'#799653');const statuses=[e.burnUntil>=game.tick?'#ff9560':null,e.slowUntil>game.tick?'#80dcff':null,e.curseUntil>game.tick?'#86e3ab':null].filter(Boolean);statuses.forEach((color,i)=>{ctx.fillStyle=color;ctx.fillRect(px+i*7,py+e.height+2,5,4)});if(keys.has('KeyQ'))bar(px,py-8,e.width,4,e.health/e.maxHealth,'#e27279');}
+  for(const e of game.enemies)if(game.visible(e,0)){const px=e.x-c.x,py=e.y-c.y;shadow(px,py,e.width,e.height);sprite(e.imageSrc,px,py,e.width,e.height,'#799653');if(e.elite){ctx.strokeStyle='#e5c48b';ctx.lineWidth=2;ctx.strokeRect(px-3,py-3,e.width+6,e.height+6);ctx.fillStyle='#e5c48b';ctx.font='bold 11px system-ui';ctx.textAlign='center';ctx.fillText('ELITE',px+e.width/2,py-13)}if(e.name==='Knight'){ctx.strokeStyle='#a7c7e4';ctx.lineWidth=3;ctx.beginPath();ctx.arc(px+e.width/2,py+e.height/2,e.width*.62,e.facing-Math.PI/3,e.facing+Math.PI/3);ctx.stroke()}const statuses=[e.burnUntil>=game.tick?'#ff9560':null,e.slowUntil>game.tick?'#80dcff':null,e.curseUntil>game.tick?'#86e3ab':null].filter(Boolean);statuses.forEach((color,i)=>{ctx.fillStyle=color;ctx.fillRect(px+i*7,py+e.height+2,5,4)});if(keys.has('KeyQ'))bar(px,py-8,e.width,4,e.health/e.maxHealth,'#e27279');}
   const px=p.x-c.x,py=p.y-c.y;
   ctx.strokeStyle='#d6b8ff80';ctx.lineWidth=1.5;ctx.beginPath();ctx.ellipse(px+p.width/2,py+p.height*.82,22,12,0,0,Math.PI*2);ctx.stroke();
   shadow(px,py,p.width,p.height);sprite('./images/wizard-hat.png',px,py,p.width,p.height,'#bda0ed');
@@ -196,6 +211,8 @@ function render(){
     if(effects){ctx.strokeStyle=color+'99';ctx.lineWidth=3;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(sx-s.vx*1.6,sy-s.vy*1.6);ctx.lineTo(sx,sy);ctx.stroke();}
     ctx.fillStyle=color;ctx.beginPath();ctx.arc(sx,sy,Math.max(2.5,s.width/2),0,Math.PI*2);ctx.fill();
   }
+  for(const s of game.hostiles){const x=s.x-c.x,y=s.y-c.y;ctx.fillStyle='#ff9b58';ctx.strokeStyle='#fff0b0';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(x,y,s.radius,0,Math.PI*2);ctx.fill();ctx.stroke()}
+  if(p.webUntil>game.tick){ctx.strokeStyle='#d5d0e2';ctx.lineWidth=2;ctx.beginPath();ctx.arc(px+p.width/2,py+p.height/2,24,0,Math.PI*2);ctx.stroke()}
   if(effects){for(const q of particles){
     ctx.globalAlpha=q.life/q.max;ctx.fillStyle=q.color;
     if(q.type==='burst'){ctx.strokeStyle=q.color;ctx.lineWidth=2;ctx.beginPath();ctx.arc(q.x-c.x,q.y-c.y,Math.max(1,q.value*(1-q.life/q.max)),0,Math.PI*2);ctx.stroke()}
@@ -210,7 +227,7 @@ function render(){
 function frame(now){
   if(screen==='play'&&!document.hidden){
     clock.advance(now,step);dirty=true;
-    if(game.phase==='upgrade')setScreen('upgrade');else if(game.phase==='over')setScreen('over');
+    if(game.phase==='upgrade')setScreen('upgrade');else if(game.phase==='over')setScreen('over');else if(game.phase==='victory')setScreen('victory');
   }
   if(dirty){render();updateHud();dirty=false;}
   requestAnimationFrame(frame);
