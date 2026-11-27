@@ -39,7 +39,7 @@ func _initialize() -> void:
 						rows.append(simulate(p,difficulty,strategy,seed_start+i*7919))
 	var groups := summarize(rows)
 	var elapsed_ms := Time.get_ticks_msec()-started
-	var result := {"schema":1,"seeds_per_cell":seed_count,"horizon_seconds":seconds,"physics_hz":60,profile":"controlled bodies/power 100/no mutation or talents; hybrids and steam tier II","parameters":RunModel.Balance.validated(parameters),"seed_start":seed_start,"runs":rows,"groups":groups,"wall_ms":elapsed_ms}
+	var result := {"schema":1,"seeds_per_cell":seed_count,"horizon_seconds":seconds,"physics_hz":60,"profile":"controlled bodies/power 100/no mutation or talents; hybrids and steam tier II","parameters":RunModel.Balance.validated(parameters),"seed_start":seed_start,"runs":rows,"groups":groups,"wall_ms":elapsed_ms}
 	var file := FileAccess.open(output,FileAccess.WRITE)
 	if file == null:
 		push_error("Cannot write benchmark output: "+output)

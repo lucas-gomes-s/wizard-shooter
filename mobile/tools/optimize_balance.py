@@ -107,6 +107,11 @@ def main():
     args=parser.parse_args()
     if not (args.trials>=1 and 1<=args.train_seeds<=100 and 1<=args.validation_seeds<=100 and 120<=args.seconds<=900 and args.jobs>=1):
         parser.error("Invalid trial/seed/time/job settings")
+    # Fail before launching any parallel trial if Godot cannot parse the benchmark.
+    check = subprocess.run([args.godot,"--headless","--path",str(args.project),"--check-only","--script","tools/balance_benchmark.gd"],capture_output=True,text=True,timeout=60)
+    logs = check.stdout + check.stderr
+    if check.returncode or "SCRIPT ERROR" in logs or "Parse Error" in logs or "Failed to load script" in logs:
+        parser.exit(2, "Godot benchmark preflight failed:\n" + logs + "\n")
     # Disjoint ranges; common random numbers within a split.
     train_start, validation_start = 7001, 200000003
     study=optuna.create_study(direction="minimize",sampler=optuna.samplers.TPESampler(seed=42))
@@ -121,6 +126,8 @@ def main():
         return result["score"]
     study.optimize(objective,n_trials=args.trials,n_jobs=args.jobs)
     # Select on training only. Holdout is examined once for baseline and selected candidate.
+    if not any(t.state == optuna.trial.TrialState.COMPLETE for t in study.trials):
+        parser.exit(2, "No successful optimization trials; inspect the Godot error logs above.\n")
     best=dict(study.best_params)
     baseline=run_matrix(args.godot,args.project,DEFAULTS,args.validation_seeds,validation_start,args.seconds,args.all_bodies)
     candidate=run_matrix(args.godot,args.project,best,args.validation_seeds,validation_start,args.seconds,args.all_bodies)

@@ -3,6 +3,8 @@ on:
   push:
     paths:
       - 'mobile/tools/optimize_balance.py'
+      - 'mobile/tools/balance_benchmark.gd'
+      - 'mobile/gameplay/balance_config.gd'
       - 'mobile/tools/test_optimize_balance.py'
       - '.github/workflows/mobile-optimize.yml'
   workflow_dispatch:
