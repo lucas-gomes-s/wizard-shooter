@@ -14,7 +14,7 @@ try{
     const source=await response.text();
     const marker='const game=new Game(config), clock=new FixedClock();';
     assert.ok(source.includes(marker));
-    await route.fulfill({response,body:source.replace(marker,marker+'\nwindow.__wizardTestGame=game;')});
+    await route.fulfill({response,body:source.replace(marker,marker+'\nwindow.__wizardTestGame=game;').replace('audioControls();\nconst loaded=','audioControls();\nwindow.__wizardTestAudio=audio;\nconst loaded=')});
   });
   await page.goto('http://127.0.0.1:8000/');
   const start=page.locator('#startButton');
@@ -36,6 +36,17 @@ try{
   await page.locator('[data-school="ice"]').click();
   await start.click();
   await page.locator('#overlay').waitFor({state:'hidden'});
+  await page.waitForFunction(()=>window.__wizardTestAudio?.ready);
+  await page.waitForFunction(()=>window.__wizardTestAudio?.mode==='crypt');
+  await page.locator('.audio-menu summary').click();
+  await page.locator('#muteAudio').click();
+  assert.equal(await page.locator('#muteAudio').getAttribute('aria-pressed'),'true');
+  assert.equal(await page.evaluate(()=>window.__wizardTestAudio.voices.size),0);
+  await page.locator('#sfxVolume').fill('35');
+  await page.locator('#musicVolume').fill('15');
+  await page.locator('#muteAudio').click();
+  await page.locator('.audio-menu summary').click();
+  await page.locator('#gameArea').focus();
   await page.waitForFunction(()=>document.getElementById('spellBuild').textContent.includes('Cryomancy 1'));
   const canvas=page.locator('#gameArea');
   const size=await canvas.boundingBox();assert.ok(size.width>1000&&size.height>500);
@@ -108,6 +119,7 @@ try{
   await page.waitForFunction(()=>document.getElementById('eventTitle').textContent.includes('ACTIVE'));
   await page.screenshot({path:'web-smoke-artifacts/event-active.png'});
   await page.keyboard.press('Escape');await page.locator('#pausePanel').waitFor({state:'visible'});
+  assert.equal(await page.evaluate(()=>window.__wizardTestAudio.voices.size),0);
   const time=await page.locator('#timer').textContent();await page.waitForTimeout(1200);assert.equal(await page.locator('#timer').textContent(),time);
   await page.screenshot({path:'web-smoke-artifacts/pause.png'});
   await page.locator('#restartButton').click();await page.locator('#confirmPanel').waitFor({state:'visible'});
@@ -143,6 +155,8 @@ try{
   await page.waitForFunction(()=>!document.getElementById('startButton').disabled);
   assert.equal(await page.locator('#contractSelect option[value="dry"]').isDisabled(),false);
   assert.equal(await page.locator('#sigilSelect option[value="gold"]').isDisabled(),false);
+  assert.equal(await page.locator('#sfxVolume').inputValue(),'35');
+  assert.equal(await page.locator('#musicVolume').inputValue(),'15');
   assert.deepEqual(errors,[]);
   console.log('Browser smoke passed: assets, start, movement input, pause, confirmation, effects, resizing, restart, return to title.');
 }finally{await browser.close();}

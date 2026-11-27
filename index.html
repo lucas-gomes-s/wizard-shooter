@@ -12,6 +12,7 @@
     <header class="topbar">
       <div class="brand"><span class="brand-mark" aria-hidden="true">✦</span><div><h1>Wizard Shooter</h1><span class="eyebrow edition" id="biomeName">The Forgotten Crypt</span></div></div>
       <div class="header-actions">
+        <details class="audio-menu"><summary class="quiet">Audio</summary><div class="audio-controls"><button id="muteAudio" type="button" class="quiet" aria-pressed="false">Sound on</button><label>Effects <input id="sfxVolume" type="range" min="0" max="100" value="55" aria-label="Sound effects volume"></label><label>Music <input id="musicVolume" type="range" min="0" max="100" value="25" aria-label="Music volume"></label><small id="audioStatus"></small></div></details>
         <label class="toggle">Effects <select id="effectsMode" aria-label="Combat effects intensity"><option value="off">Off</option><option value="reduced">Reduced</option><option value="full" selected>Full</option></select></label>
         <button id="pauseButton" class="quiet" type="button" disabled>Pause <kbd>Esc</kbd></button>
         <button id="fullscreenButton" class="quiet" type="button" hidden>Full screen</button>
