@@ -90,7 +90,8 @@ document.addEventListener('keydown',e=>{
     return;
   }
   if(screen==='upgrade'){
-    if(!['ArrowLeft','ArrowRight','KeyQ','Enter'].includes(e.code)||e.repeat)return;
+    if(!['ArrowLeft','ArrowRight','KeyQ','Enter'].includes(e.code))return;
+    if(e.repeat){e.preventDefault();return;}
     if(e.code==='Enter'&&e.target instanceof HTMLButtonElement&&!e.target.classList.contains('upgrade-card'))return;
     e.preventDefault();
     if(e.code==='ArrowLeft'||e.code==='ArrowRight'){game.navigate(e.code==='ArrowLeft'?-1:1);updateSelection(true);}
