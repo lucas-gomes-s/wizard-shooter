@@ -27,7 +27,7 @@ static func valid_record(c: Variant) -> bool:
 	var p: Dictionary = c.phenotype
 	for k in ["version", "tier", "seed", "species", "core", "ancestry", "hat", "robe", "staff", "mutation", "power"]:
 		if not g.has(k): return false
-	if not integer(g.seed) or g.version != 1 or not g.tier in [1, 2]: return false
+	if not integer(g.seed) or not integer(g.version, 1) or int(g.version) != 1 or not integer(g.tier, 1) or not int(g.tier) in [1, 2]: return false
 	if c.id != "W%06d" % int(g.seed): return false
 	if not g.species is Array or g.species.size() != 2 or not g.core is Array or g.core.size() != 2: return false
 	for v in g.species:
@@ -41,16 +41,16 @@ static func valid_record(c: Variant) -> bool:
 	if not g.mutation in ["none", "crystal_wings", "living_flame"] or not integer(g.power, 85) or int(g.power) > 115: return false
 	for k in ["body", "affinity", "tier", "mutation", "hat", "robe", "staff", "health", "speed", "damage", "interval", "special"]:
 		if not p.has(k): return false
-	if p.tier != g.tier or not p.body in ["stoneborn", "fae", "hybrid"] or not p.affinity in ["fire", "ice", "steam"]: return false
+	if not integer(p.tier, 1) or int(p.tier) != int(g.tier) or not p.body in ["stoneborn", "fae", "hybrid"] or not p.affinity in ["fire", "ice", "steam"]: return false
 	if not p.mutation in ["none", "crystal_wings", "living_flame"] or not p.special is String: return false
 	for k in ["hat", "robe", "staff"]:
 		if not integer(p[k]) or int(p[k]) > 2: return false
 	for k in ["health", "speed", "damage", "interval"]:
 		if not (p[k] is int or p[k] is float) or not is_finite(float(p[k])) or float(p[k]) <= 0: return false
-	if p.tier == 1 and (p.body == "hybrid" or p.affinity == "steam" or p.mutation != "none"): return false
+	if int(p.tier) == 1 and (p.body == "hybrid" or p.affinity == "steam" or p.mutation != "none"): return false
 	if p.mutation == "crystal_wings" and p.body == "fae": return false
 	if p.mutation == "living_flame" and p.affinity == "ice": return false
-	if c.parents.size() != (0 if g.tier == 1 else 2): return false
+	if c.parents.size() != (0 if int(g.tier) == 1 else 2): return false
 	return true
 
 static func valid_profile(p: Variant) -> bool:
@@ -127,7 +127,7 @@ func commit(profile: Dictionary) -> bool:
 		error = "Invalid profile; save refused."
 		return false
 	var next_slot := 0 if current_slot == -1 else 1 - current_slot
-	var payload := JSON.stringify({"schema": SCHEMA, "revision": revision + 1, "profile": profile})
+	var payload := JSON.stringify({"schema": SCHEMA, "revision": revision + 1, "profile": profile}, "", true, true)
 	var envelope := JSON.stringify({"payload": payload, "checksum": payload.sha256_text()})
 	var file := FileAccess.open(slot_path(next_slot), FileAccess.WRITE)
 	if file == null:
@@ -139,7 +139,7 @@ func commit(profile: Dictionary) -> bool:
 	# Verify exact bytes and invariants before acknowledging a transaction.
 	var verified := _read(next_slot)
 	if verified.status != "ok" or int(verified.get("revision", -1)) != revision + 1 or FileAccess.get_file_as_string(slot_path(next_slot)) != envelope:
-		error = "Save verification failed. Last valid copy was preserved."
+		error = "Save verification failed (%s). Last valid copy was preserved." % verified.status
 		return false
 	current_slot = next_slot
 	revision += 1

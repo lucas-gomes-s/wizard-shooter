@@ -12,11 +12,18 @@ func _initialize() -> void:
 	var prefix := "user://persistence_test_%d" % Time.get_ticks_usec()
 	var store := Store.new(prefix)
 	var a := Academy.new(42, store)
-	check(not a.blocked and store.revision == 1, "Initial profile saved")
+	check(not a.blocked and store.revision == 1, "Initial profile saved: " + a.error)
+	if a.blocked:
+		quit(1)
+		return
 	var id := a.allocate_run()
 	check(id == 1, "Allocated durable run ID")
 	check(a.reward(id, a.roster[0], a.roster[1], 160, false), "Reward saved")
 	var reopened := Academy.new(999, Store.new(prefix))
+	if reopened.blocked or reopened.roster.size() < 2:
+		check(false, "Reload failed: " + reopened.error)
+		quit(1)
+		return
 	check(reopened.roster[0].xp == 160 and reopened.roster[1].xp == 40, "XP survived reload")
 	check(not reopened.reward(id, reopened.roster[0], reopened.roster[1], 160, false), "Duplicate reward rejected after reload")
 	var next_id := reopened.allocate_run()
@@ -38,7 +45,10 @@ func _initialize() -> void:
 	var child: Dictionary = reopened.fuse(reopened.roster[0], reopened.roster[1])
 	check(not child.is_empty(), "Fusion saved")
 	var final := Academy.new(999, Store.new(prefix))
-	check(final.roster.size() == 1 and final.archive.size() == 2, "Fusion and retirement survive restart")
+	check(final.roster.size() == 1 and final.archive.size() == 2, "Fusion and retirement survive restart: " + final.error)
+	if final.roster.is_empty():
+		quit(1)
+		return
 	check(final.roster[0].id == child.id and final.roster[0].parents == [first_id, second_id], "Lineage survives restart")
 	check(final.find_active(first_id).is_empty(), "Retired wizard absent from active roster")
 	check(final.summon(), "Summon saved")

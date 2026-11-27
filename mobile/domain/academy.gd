@@ -42,16 +42,26 @@ func _restore(p: Dictionary) -> void:
 	archive.clear()
 	for c in p.roster:
 		var record: Dictionary = c.duplicate(true)
-		record.xp = int(record.xp)
+		_normalize_record(record)
 		roster.append(record)
 	for c in p.archive:
 		var record: Dictionary = c.duplicate(true)
-		record.xp = int(record.xp)
+		_normalize_record(record)
 		archive.append(record)
 	essence = int(p.essence)
 	next_seed = int(p.next_seed)
 	next_run_id = int(p.next_run_id)
 	settled_runs = p.settled_runs.duplicate(true)
+
+func _normalize_record(record: Dictionary) -> void:
+	record.xp = int(record.xp)
+	var g: Dictionary = record.genome
+	for k in ["version", "tier", "seed", "hat", "robe", "staff", "power"]:
+		g[k] = int(g[k])
+	for k in ["stoneborn", "fae"]:
+		g.ancestry[k] = int(g.ancestry[k])
+	for k in ["tier", "hat", "robe", "staff"]:
+		record.phenotype[k] = int(record.phenotype[k])
 
 func _commit(before: Dictionary) -> bool:
 	if store == null or store.commit(snapshot()):
