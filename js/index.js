@@ -228,7 +228,7 @@ function drawDungeon(c){
  }
  if(e.stage==='offered')marker(e.x,e.y,e.radius,def.glyph,'OPTIONAL CHALLENGE');
  else if(e.id==='shrine')marker(e.x,e.y,e.radius,def.glyph,'RITUAL CIRCLE');
- else if(e.id==='anomaly')for(const rune of e.runes)if(!rune.collected)marker(rune.x,rune.y,21,'✧','RUNE');
+ else if(e.id==='anomaly'){for(const rune of e.runes)if(!rune.collected)marker(rune.x,rune.y,21,'✧','RUNE');}
  else if(e.id==='guardian'&&e.target?.health>0)marker(e.target.x+e.target.width/2,e.target.y+e.target.height/2,e.target.width/2+11,'','GUARDIAN');
 }
 function drawTreasure(c){
