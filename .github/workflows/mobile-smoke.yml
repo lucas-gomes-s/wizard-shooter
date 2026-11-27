@@ -1,0 +1,40 @@
+name: Mobile Godot smoke
+on:
+  push:
+    paths:
+      - 'mobile/**'
+      - '.github/workflows/mobile-smoke.yml'
+  pull_request:
+    paths:
+      - 'mobile/**'
+      - '.github/workflows/mobile-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Godot
+        run: |
+          curl -fL --retry 3 https://github.com/godotengine/godot-builds/releases/download/4.5.1-stable/Godot_v4.5.1-stable_linux.x86_64.zip -o /tmp/godot.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          chmod +x /tmp/godot/Godot_v4.5.1-stable_linux.x86_64
+          echo "/tmp/godot" >> "$GITHUB_PATH"
+      - name: Import project
+        run: |
+          set -o pipefail
+          timeout 90 Godot_v4.5.1-stable_linux.x86_64 --headless --path mobile --import 2>&1 | tee /tmp/import.log
+          if grep -E 'SCRIPT ERROR|Parse Error|Failed to load script' /tmp/import.log; then exit 1; fi
+      - name: Domain and atlas tests
+        run: |
+          set -o pipefail
+          timeout 90 Godot_v4.5.1-stable_linux.x86_64 --headless --path mobile --script tests/smoke.gd 2>&1 | tee /tmp/smoke.log
+          if grep -E 'SCRIPT ERROR|Parse Error|Failed to load script' /tmp/smoke.log; then exit 1; fi
+      - name: Launch main scene
+        run: |
+          set -o pipefail
+          timeout 45 Godot_v4.5.1-stable_linux.x86_64 --headless --path mobile --quit-after 20 2>&1 | tee /tmp/launch.log
+          if grep -E 'SCRIPT ERROR|Parse Error|Failed to load script' /tmp/launch.log; then exit 1; fi

@@ -6,7 +6,7 @@ const SpriteLibrary = preload("res://presentation/sprite_library.gd")
 const FIRE := Color("#ef8052")
 const ICE := Color("#84d7e8")
 const STEAM := Color("#c7b7d8")
-var academy := Academy.new()
+var academy := Academy.new(int(Time.get_unix_time_from_system()))
 var sprites := SpriteLibrary.new()
 var run: Variant
 var selected := 0
@@ -157,6 +157,7 @@ func _ask_fuse() -> void:
 	if academy.eligible(academy.roster[selected], academy.roster[partner_index]):
 		confirm_fusion.popup_centered(Vector2i(300, 160))
 	else:
+		_refresh_academy()
 		info.text += "\nBoth parents must be mature Tier I."
 
 func _fuse() -> void:
@@ -230,18 +231,25 @@ func _notification(what: int) -> void:
 		_clear_input()
 		_sync_visibility()
 
-func _unhandled_input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
 	if screen != "run" or paused or run.pending_upgrades > 0: return
 	if event is InputEventScreenTouch:
+		if event.pressed and Rect2(248, 552, 100, 60).has_point(event.position):
+			special_requested = true
+			get_viewport().set_input_as_handled()
+			return
 		if event.pressed and touch_id == -1 and event.position.x < 220 and event.position.y > 525:
 			touch_id = event.index
 			touch_origin = event.position
 			touch_current = touch_origin
+			get_viewport().set_input_as_handled()
 		elif not event.pressed and event.index == touch_id:
 			touch_id = -1
 			touch_current = touch_origin
+			get_viewport().set_input_as_handled()
 	elif event is InputEventScreenDrag and event.index == touch_id:
 		touch_current = event.position
+		get_viewport().set_input_as_handled()
 
 func _physics_process(dt: float) -> void:
 	if screen != "run":
