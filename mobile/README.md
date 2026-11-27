@@ -20,7 +20,11 @@ An offline portrait-oriented action survival roguelite in which the character is
 
 ## Status
 
-Design specification v0.1, 2026-11-27. No Godot implementation or generated art exists yet. Numeric parameters are hypotheses, not validated balance. Decisions labeled established reflect the agreed design; defaults and open questions can change. Work in this directory only; do not import legacy assets until their licenses are verified. No ads, paid random acquisition, backend, multiplayer or functional equipment in initial scope.
+Design specification v0.1, 2026-11-27. The first Python/Pillow procedural sprite prototype and generated assets are implemented; no Godot game exists yet. Numeric parameters are hypotheses, not validated balance. Decisions labeled established reflect the agreed design; defaults and open questions can change. Work in this directory only; do not import legacy assets until their licenses are verified. No ads, paid random acquisition, backend, multiplayer or functional equipment in initial scope.
+
+## Sprite prototype
+
+[Art tool and instructions](tools/art/README.md) · [Generated population and reusable layers](assets/characters/prototype/). Run the generator and tests with Python 3.10+ and Pillow. The visual sample is not the full genetics engine.
 
 ## Development
 
