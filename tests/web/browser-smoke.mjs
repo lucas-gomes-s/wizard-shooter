@@ -7,6 +7,15 @@ const browser=await chromium.launch({headless:true});
 try{
   const page=await browser.newPage({viewport:{width:1440,height:900},deviceScaleFactor:1});
   const errors=[];page.on('pageerror',e=>errors.push(String(e)));
+  // Test-only interception: grant XP to exercise UI without waiting for random encounters.
+  // The production module does not expose its game state.
+  await page.route('**/js/index.js',async route=>{
+    const response=await route.fetch();
+    const source=await response.text();
+    const marker='const game=new Game(config), clock=new FixedClock();';
+    assert.ok(source.includes(marker));
+    await route.fulfill({response,body:source.replace(marker,marker+'\nwindow.__wizardTestGame=game;')});
+  });
   await page.goto('http://127.0.0.1:8000/');
   const start=page.locator('#startButton');
   await start.waitFor({state:'visible'});await page.waitForFunction(()=>!document.getElementById('startButton').disabled);
@@ -19,6 +28,14 @@ try{
   await page.waitForFunction(()=>document.getElementById('timer').textContent!=='00:00');
   await page.keyboard.up('KeyD');await page.keyboard.up('ArrowRight');
   await page.screenshot({path:'web-smoke-artifacts/gameplay.png'});
+  await page.evaluate(()=>{const game=window.__wizardTestGame;game.player.currentExp=game.player.expNeeded;});
+  await page.locator('#upgradePanel').waitFor({state:'visible'});
+  assert.equal(await page.locator('#upgradeCards .upgrade-card').count(),3);
+  await page.screenshot({path:'web-smoke-artifacts/spell-upgrades.png'});
+  await page.keyboard.press('ArrowRight');
+  await page.keyboard.press('KeyQ');
+  await page.locator('#overlay').waitFor({state:'hidden'});
+  assert.equal(await page.locator('#spellBuild .spell-chip').count(),1);
   await page.keyboard.press('Escape');await page.locator('#pausePanel').waitFor({state:'visible'});
   const time=await page.locator('#timer').textContent();await page.waitForTimeout(1200);assert.equal(await page.locator('#timer').textContent(),time);
   await page.screenshot({path:'web-smoke-artifacts/pause.png'});
