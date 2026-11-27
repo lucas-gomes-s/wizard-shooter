@@ -40,10 +40,11 @@
           <p>After a wild night out, you wake up somewhere unfamiliar. The monsters do not look friendly.</p>
           <p class="eyebrow accent">Choose your starting school</p><p class="small">Your primary school defines your build. A second school unlocks at level 10. Maximum two schools per run, or exclusive mastery at level 15 and rank V.</p>
           <div id="starterCards" class="starter-cards" role="group" aria-label="Starting magic school"></div>
-          <button id="startButton" class="primary" type="button" disabled>Loading assets…</button>
-          <p id="assetStatus" class="small">Prepare your spells.</p>
+          <div class="profile-options"><label>Expedition <select id="contractSelect" aria-label="Expedition contract"></select></label><label>Wizard sigil <select id="sigilSelect" aria-label="Wizard sigil"></select></label><p id="contractDescription" class="small"></p></div><button id="startButton" class="primary" type="button" disabled>Loading assets…</button>
+          <button id="profileButton" class="quiet" type="button">Profile &amp; codex</button><p id="profileSummary" class="small"></p><p id="assetStatus" class="small">Prepare your spells.</p>
           <div class="control-hint"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Move</span><span><kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd> Cast</span></div>
         </section>
+        <section id="profilePanel" class="panel profile-panel" aria-labelledby="profileTitle" hidden><p class="eyebrow accent">The wizard chronicles</p><h2 id="profileTitle">Profile &amp; codex</h2><p id="profileStats"></p><p id="profileStorage" class="small"></p><div id="codexEntries" class="codex-grid"></div><button id="profileBack" type="button" class="primary">Return to title</button></section>
         <section id="pausePanel" class="panel" aria-labelledby="pauseTitle" hidden>
           <p class="eyebrow accent">Run suspended</p><h2 id="pauseTitle">Paused</h2><p>Time stands still in the dungeon.</p>
           <div class="menu-buttons"><button id="resumeButton" class="primary" type="button">Resume run</button><button id="restartButton" class="quiet" type="button">Start a new run</button><button id="quitButton" class="quiet" type="button">Return to title</button></div>
@@ -66,12 +67,12 @@
         <section id="victoryPanel" class="panel" aria-labelledby="victoryTitle" hidden>
           <p class="eyebrow accent">Dungeon conquered</p><h2 id="victoryTitle">The dragon falls.</h2><p>You defeated the Ancient Dragon. Leave victorious or test your build against an endless dungeon.</p>
           <div class="result-stats"><div><span>Victory time</span><strong id="victoryTime">00:00</strong></div><div><span>Monsters slain</span><strong id="victoryKills">0</strong></div></div>
-          <div class="menu-buttons"><button id="endlessButton" class="primary" type="button">Continue endless</button><button id="victoryTitleButton" class="quiet" type="button">Return to title</button></div>
+          <p id="victoryUnlocks" class="unlock-notice"></p><div class="menu-buttons"><button id="endlessButton" class="primary" type="button">Continue endless</button><button id="victoryTitleButton" class="quiet" type="button">Return to title</button></div>
         </section>
         <section id="resultPanel" class="panel result-panel" aria-labelledby="resultTitle" hidden>
           <p class="eyebrow accent">Run ended</p><h2 id="resultTitle">The dungeon wins.</h2>
           <div class="result-stats"><div><span>Survived</span><strong id="resultTime">00:00</strong></div><div><span>Level</span><strong id="resultLevel">1</strong></div><div><span>Monsters slain</span><strong id="resultKills">0</strong></div></div>
-          <p id="combatReport" class="small combat-report"></p><div id="resultSkills" class="result-skills"></div>
+          <p id="resultUnlocks" class="unlock-notice"></p><p id="combatReport" class="small combat-report"></p><div id="resultSkills" class="result-skills"></div>
           <blockquote id="deathPhrase"></blockquote>
           <div class="menu-buttons"><button id="retryButton" class="primary" type="button">Try again</button><button id="titleButton" class="quiet" type="button">Return to title</button></div>
         </section>
