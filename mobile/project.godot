@@ -1,0 +1,23 @@
+; Wizard Shooter mobile prototype. Target Godot 4.5.1.
+config_version=5
+
+[application]
+config/name="Wizard Shooter"
+run/main_scene="res://presentation/main.tscn"
+config/features=PackedStringArray("4.5", "GL Compatibility")
+
+[display]
+window/size/viewport_width=360
+window/size/viewport_height=640
+window/size/window_width_override=450
+window/size/window_height_override=800
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep"
+window/handheld/orientation=1
+
+[rendering]
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/default_filters/use_nearest_mipmap_filter=false
+textures/canvas_textures/default_texture_filter=0
+environment/defaults/default_clear_color=Color(0.075,0.07,0.1,1)

@@ -1,0 +1,10 @@
+.godot/
+.venv/
+__pycache__/
+*.pyc
+export/
+*.apk
+*.aab
+*.ipa
+*.keystore
+*.p12
