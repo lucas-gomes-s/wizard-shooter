@@ -34,15 +34,32 @@ export function botInput(g){
   else if(event.id==='guardian'&&event.target){const [gx,gy]=center(event.target);if(Math.hypot(gx-px,gy-py)>130)objective={x:gx,y:gy};}
   if(objective&&(!target||target.d>65)){const dx=objective.x-px,dy=objective.y-py,d=Math.hypot(dx,dy);if(d>15){x+=dx/d*2.5;y+=dy/d*2.5;}}
  }
- return {x,y,aim};
+ const merchant=g.market?.merchant;
+ if(merchant&&p.gold>=35&&(!target||target.d>85)){
+  const dx=merchant.x-px,dy=merchant.y-py,d=Math.hypot(dx,dy);if(d>10){x+=dx/d*2.4;y+=dy/d*2.4;}
+ }
+ const boots=!!target&&target.d<65&&(x*x+y*y)>0;
+ const relic=p.equipment.relic==='tonic'?p.health<p.maxHealth*.65:p.equipment.relic==='crown'?p.health>p.maxHealth*.7&&targets.length>=5:targets.filter(t=>t.d<130).length>=3;
+ return {x,y,aim,boots,relic};
 }
+const gearValues={quickwand:6,longshot:4,echo:7,bloodwood:7,prism:8,meteor:9,linen:6,wardrobe:4,thorns:7,phantom:7,mending:5,aegis:9,swift:6,silk:3,runner:5,escape:5,trail:7,phaseboots:9,tonic:4,fang:7,gambler:6,hourglass:6,lantern:8,crown:7};
 export function botLoot(g){
- const values={quickwand:6,longshot:4,echo:7,bloodwood:7,prism:8,meteor:9,linen:6,wardrobe:4,thorns:7,phantom:7,mending:5,aegis:9,swift:6,silk:3,runner:5,escape:5,trail:7,phaseboots:9,tonic:4,fang:7,gambler:6,hourglass:6,lantern:8,crown:7};
+ const values=gearValues;
  let best=-1,score=0;
  for(const [i,item] of g.loot.entries()){
   const old=itemById[g.player.equipment[item.slot]];
   const value=(values[item.id]||0)-(values[old?.id]||0);
   if(value>score){score=value;best=i;}
+ }
+ return best;
+}
+export function botPurchase(g){
+ const p=g.player;let best=-1,score=0;
+ for(const [i,o] of g.market.offers.entries()){
+  if(o.price>p.gold)continue;
+  const value=o.kind==='heal'?(p.health<p.maxHealth*.55?8:0):((gearValues[o.id]||0)-(gearValues[p.equipment[o.slot]]||0));
+  const v=value-o.price/100;
+  if(v>score){score=v;best=i;}
  }
  return best;
 }
@@ -59,13 +76,13 @@ export function botChoose(g){
 export function simulate(config,{school='fire',seed=1,seconds=180,decisionTicks=5}={}){
  const g=new Game(config,seededRng(seed));g.start(school);let input={},firstUpgrade=null,maxEnemies=0,earnedXP=0,lastLevel=1,spentXP=0;
  for(let n=0;n<seconds*50&&g.phase!=='over'&&g.phase!=='victory';n++){
-  while(g.phase==='upgrade'||g.phase==='loot'){if(g.phase==='loot'){g.chooseLoot(botLoot(g));continue;}if(firstUpgrade===null)firstUpgrade=g.tick/50;g.choose(botChoose(g));}
+  while(g.phase==='upgrade'||g.phase==='loot'||g.phase==='shop'){if(g.phase==='shop'){g.choosePurchase(botPurchase(g));continue;}if(g.phase==='loot'){g.chooseLoot(botLoot(g));continue;}if(firstUpgrade===null)firstUpgrade=g.tick/50;g.choose(botChoose(g));}
   if(g.tick%decisionTicks===0)input=botInput(g);
   g.step(input);maxEnemies=Math.max(maxEnemies,g.enemies.length);
   while(lastLevel<g.player.level){spentXP+=config.levels[lastLevel-1];lastLevel++}
   earnedXP=spentXP+g.player.currentExp;
  }
- return {school,seed,seconds:g.tick/50,phase:g.phase,level:g.player.level,firstUpgrade,kills:g.kills,xp:earnedXP,health:Math.round(g.player.health),maxEnemies,build:g.player.magic.ranks,equipment:{...g.player.equipment},chestsOpened:g.chestsOpened,lootHistory:g.lootHistory,eventHistory:g.dungeon.history};
+ return {school,seed,seconds:g.tick/50,phase:g.phase,level:g.player.level,firstUpgrade,kills:g.kills,xp:earnedXP,health:Math.round(g.player.health),maxEnemies,build:g.player.magic.ranks,equipment:{...g.player.equipment},chestsOpened:g.chestsOpened,lootHistory:g.lootHistory,eventHistory:g.dungeon.history,gold:g.player.gold,marketHistory:g.market.history,goldEarned:g.market.earned,goldSpent:g.market.spent,activeHistory:g.activeHistory};
 }
 export function benchmark(config,{seconds=180,seeds=[1,2,3],decisionTicks=5}={}){
  return schools.flatMap(s=>seeds.map(seed=>simulate(config,{school:s.id,seed,seconds,decisionTicks})));

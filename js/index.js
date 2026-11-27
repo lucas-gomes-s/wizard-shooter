@@ -1,3 +1,4 @@
+import {activeGear,activeInfo} from './active-gear.js';
 import {eventById,eventObjective} from './dungeon-events.js';
 import {equipmentSlots,itemById,rarityColors} from './equipment.js';
 import * as config from './data.js';
@@ -11,8 +12,9 @@ const canvas=$('gameArea'), ctx=canvas.getContext('2d'), arena=$('arena');
 const game=new Game(config), clock=new FixedClock();
 const keys=new Set(), arrows=['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'];
 const aimVectors={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]};
-const allowed=new Set(['KeyW','KeyA','KeyS','KeyD','KeyQ','Escape','Enter',...arrows]);
-const panels={home:$('homePanel'),pause:$('pausePanel'),confirm:$('confirmPanel'),upgrade:$('upgradePanel'),loot:$('lootPanel'),over:$('resultPanel'),victory:$('victoryPanel')};
+const allowed=new Set(['KeyW','KeyA','KeyS','KeyD','KeyQ','Space','KeyE','Escape','Enter',...arrows]);
+const panels={home:$('homePanel'),pause:$('pausePanel'),confirm:$('confirmPanel'),upgrade:$('upgradePanel'),loot:$('lootPanel'),shop:$('shopPanel'),over:$('resultPanel'),victory:$('victoryPanel')};
+let activeKeys=new Set();
 let screen='home',ready=false,aimOrder=[],confirmAction=null,dirty=true,lastHud='',lastUpgrade=-1,lastBuild='';
 let lastBoss='',startingSchool='fire',lastGear='';
 const fx=new CombatFX(matchMedia('(prefers-reduced-motion: reduce)').matches?'off':'full');
@@ -34,7 +36,7 @@ function resize(){
   dirty=true;
 }
 new ResizeObserver(resize).observe(arena);window.addEventListener('resize',resize);resize();
-function clearInput(){keys.clear();aimOrder=[];clock.reset();}
+function clearInput(){activeKeys.clear();keys.clear();aimOrder=[];clock.reset();}
 function focus(el){el.focus({preventScroll:true});}
 function setScreen(next){
   screen=next;clearInput();dirty=true;
@@ -48,6 +50,7 @@ function setScreen(next){
   else if(next==='confirm')focus($('cancelButton'));
   else if(next==='upgrade'){lastUpgrade=-1;buildUpgrades();}
   else if(next==='loot')buildLoot();
+  else if(next==='shop')buildShop();
   else if(next==='over'){showResults();focus($('retryButton'));}
   else if(next==='victory'){$('victoryTime').textContent=formatTime(game.seconds);$('victoryKills').textContent=game.kills;focus($('endlessButton'));}
 }
@@ -87,6 +90,24 @@ Promise.all([...urls].map(preload)).then(results=>{
   $('assetStatus').textContent=missing?missing+' asset(s) unavailable; fallback graphics enabled.':'Choose a school. Battle the guardians and face the Ancient Dragon at minute 25.';
   dirty=true;
 });
+function buy(index){
+ if(screen!=='shop'||!game.choosePurchase(index))return;
+ setScreen(game.phase==='upgrade'?'upgrade':'play');
+}
+$('skipShop').addEventListener('click',()=>buy(-1));
+function buildShop(){
+ const root=$('shopCards');root.replaceChildren();$('shopGold').textContent=game.player.gold+' gold available';
+ for(const [i,item] of game.market.offers.entries()){
+  const button=document.createElement('button');button.type='button';button.className='upgrade-card shop-card';button.style.setProperty('--school',rarityColors[item.rarity]||'#8ae1ae');
+  const old=itemById[game.player.equipment[item.slot]],active=activeGear[item.id];
+  const fields=[['spell-glyph',item.glyph],['skill-flavor',item.kind==='heal'?'CONSUMABLE':item.rarity.toUpperCase()+' · '+item.slot],['skill-title',item.name],['skill-effect',item.description],['skill-value',item.price+' gold'],['skill-rank',old?'Replaces '+old.name:item.kind==='heal'?'Immediate recovery':'Empty slot']];
+  if(active)fields.push(['synergy-preview',active.name+' · '+active.description+' ('+active.cooldown/50+'s cooldown)']);
+  for(const [cls,value] of fields){const span=document.createElement('span');span.className=cls;span.textContent=value;button.append(span);}
+  button.disabled=game.player.gold<item.price||(item.kind==='heal'&&game.player.health>=game.player.maxHealth);
+  button.addEventListener('click',()=>buy(i));root.append(button);
+ }
+ focus([...root.children].find(b=>!b.disabled)||$('skipShop'));
+}
 function chooseLoot(index){
  if(screen!=='loot'||!game.chooseLoot(index))return;
  setScreen(game.phase==='upgrade'?'upgrade':'play');
@@ -100,6 +121,7 @@ function buildLoot(){
   for(const [cls,value] of [['spell-glyph',item.glyph],['skill-flavor',item.rarity.toUpperCase()+' · '+item.slot],['skill-title',item.name],['skill-effect',item.description],['skill-rank',current?'Replaces '+current.name+': '+current.description:'Empty slot']]){
    const span=document.createElement('span');span.className=cls;span.textContent=value;button.append(span);
   }
+  const active=activeGear[item.id];if(active){const span=document.createElement('span');span.className='synergy-preview';span.textContent=active.name+' · '+active.description+' ('+active.cooldown/50+'s cooldown)';button.append(span)}
   button.addEventListener('click',()=>chooseLoot(i));root.append(button);
  }
  focus(root.firstElementChild||$('skipLoot'));
@@ -124,7 +146,7 @@ document.addEventListener('keydown',e=>{
     else if(screen==='confirm'){e.preventDefault();confirmAction=null;setScreen('pause');}
     return;
   }
-  if(screen==='loot'){return;}
+  if(screen==='loot'||screen==='shop'){return;}
   if(screen==='upgrade'){
     if(!['ArrowLeft','ArrowRight','KeyQ','Enter'].includes(e.code))return;
     if(e.repeat){e.preventDefault();return;}
@@ -139,12 +161,13 @@ document.addEventListener('keydown',e=>{
   if(e.target instanceof HTMLInputElement||e.target instanceof HTMLSelectElement)return;
   e.preventDefault();
   if(!keys.has(e.code)&&arrows.includes(e.code))aimOrder.push(e.code);
+  if((e.code==='Space'||e.code==='KeyE')&&!e.repeat)activeKeys.add(e.code);
   keys.add(e.code);
 });
 document.addEventListener('keyup',e=>{keys.delete(e.code);aimOrder=aimOrder.filter(k=>k!==e.code)});
 window.addEventListener('blur',()=>{clearInput();pause()});
 document.addEventListener('visibilitychange',()=>{clearInput();if(document.hidden)pause()});
-function input(){return{x:Number(keys.has('KeyD'))-Number(keys.has('KeyA')),y:Number(keys.has('KeyS'))-Number(keys.has('KeyW')),aim:aimVectors[aimOrder[aimOrder.length-1]]}}
+function input(){const result={x:Number(keys.has('KeyD'))-Number(keys.has('KeyA')),y:Number(keys.has('KeyS'))-Number(keys.has('KeyW')),aim:aimVectors[aimOrder[aimOrder.length-1]],boots:activeKeys.has('Space'),relic:activeKeys.has('KeyE')};activeKeys.clear();return result}
 function buildUpgrades(){
   const root=$('upgradeCards');root.replaceChildren();$('upgradeLevel').textContent='Level '+game.player.level+' reached';
   const m=game.player.magic,count=learnedSchools(m).length;
@@ -183,7 +206,7 @@ function updateBuild(){const m=game.player.magic,signature=JSON.stringify([m.ran
 function meter(id,value){const percent=Math.round(Math.max(0,Math.min(1,value))*100),node=$(id);node.firstElementChild.style.width=percent+'%';node.setAttribute('aria-valuenow',percent);}
 function updateBoss(){const boss=game.boss||game.miniboss,signature=boss?[boss.title||boss.name,Math.ceil(boss.health),boss.bossPhase].join('|'):String(game.endless);if(signature===lastBoss)return;lastBoss=signature;const node=$('bossHud');node.hidden=!boss&&!game.endless;if(boss){$('bossName').textContent=boss.boss?'Ancient Dragon · Phase '+boss.bossPhase+' / 3':boss.title;$('bossHealth').textContent=Math.ceil(boss.health)+' / '+boss.maxHealth;meter('bossMeter',boss.health/boss.maxHealth);$('bossMeter').hidden=false}else{$('bossName').textContent='Endless survival';$('bossHealth').textContent='Dragon defeated';$('bossMeter').hidden=true}}
 function updateHud(){
-  updateBoss();updateGear();updateDungeon();
+  updateBoss();updateGear();updateDungeon();updateMarket();
   updateBuild();const p=game.player,health=Math.ceil(p.health),max=p.maxHealth,maxed=p.level>=config.maxLevel;
   const xp=maxed?'MAX':p.currentExp+' / '+p.expNeeded+' XP';
   const signature=[health,max,p.level,xp,game.seconds,game.kills].join('|');if(signature===lastHud)return;lastHud=signature;
@@ -231,6 +254,27 @@ function drawDungeon(c){
  else if(e.id==='anomaly'){for(const rune of e.runes)if(!rune.collected)marker(rune.x,rune.y,21,'✧','RUNE');}
  else if(e.id==='guardian'&&e.target?.health>0)marker(e.target.x+e.target.width/2,e.target.y+e.target.height/2,e.target.width/2+11,'','GUARDIAN');
 }
+function updateMarket(){
+ const p=game.player;
+ const text=p.gold+' gold';if($('goldText').textContent!==text)$('goldText').textContent=text;
+ for(const [slot,key] of [['boots','Space'],['relic','E']]){
+  const a=activeInfo(p,slot,game.tick),el=$(slot+'Active');
+  const label=key+' · '+(a?a.name+(a.remaining?' '+Math.ceil(a.remaining/50)+'s':' READY'):'No active skill');
+  if(el.textContent!==label)el.textContent=label;
+  el.classList.toggle('active-ready',!!a&&!a.remaining);
+  el.title=a?a.description:'Equip an item with an active skill';
+ }
+ const m=game.market.merchant;const hint=m?'Merchant nearby · '+Math.ceil((m.until-game.tick)/50)+'s':'';
+ if($('merchantHint').textContent!==hint)$('merchantHint').textContent=hint;
+}
+function drawMerchant(c){
+ const m=game.market.merchant;if(!m)return;
+ const x=m.x-c.x,y=m.y-c.y,sx=Math.max(24,Math.min(game.width-24,x)),sy=Math.max(38,Math.min(game.height-24,y));
+ ctx.save();ctx.strokeStyle='#ffd277';ctx.fillStyle='#ffd277';ctx.lineWidth=2;
+ if(x!==sx||y!==sy){ctx.translate(sx,sy);ctx.rotate(Math.atan2(y-sy,x-sx));ctx.beginPath();ctx.moveTo(13,0);ctx.lineTo(-7,-8);ctx.lineTo(-7,8);ctx.closePath();ctx.fill();}
+ else{ctx.beginPath();ctx.arc(x,y,30,0,Math.PI*2);ctx.fillStyle='#78533544';ctx.fill();ctx.stroke();ctx.fillStyle='#ffd277';ctx.textAlign='center';ctx.font='bold 24px system-ui';ctx.fillText('¤',x,y+8);ctx.font='bold 11px system-ui';ctx.fillText('MERCHANT',x,y-39);}
+ ctx.restore();
+}
 function drawTreasure(c){
  for(const chest of game.chests){
   const x=chest.x+16-c.x,y=chest.y+16-c.y,color=rarityColors[['common','rare','epic','legendary'][chest.tier]]||'#ffd277';
@@ -246,7 +290,7 @@ function render(){
   const {width,height,dpr}=surface,{scale,x,y}=fitViewport(width,height,game.width,game.height);
   ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#14121b';ctx.fillRect(0,0,width,height);
   ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);ctx.beginPath();ctx.rect(0,0,game.width,game.height);ctx.clip();
-  background();const c=game.camera,p=game.player;drawTreasure(c);drawDungeon(c);
+  background();const c=game.camera,p=game.player;drawTreasure(c);drawDungeon(c);drawMerchant(c);
   for(const h of game.hazards)if(game.visible({x:h.x-h.radius,y:h.y-h.radius,width:h.radius*2,height:h.radius*2},30))drawHazard(ctx,h,c,game.tick,fx.mode);
   for(const e of game.enemies)if(e.action&&game.visible(e,350))drawEnemyWarning(ctx,e,c,game.tick,fx.mode);
   for(const o of game.potions)if(game.visible(o,0)){const px=o.x-c.x,py=o.y-c.y;shadow(px,py,o.width,o.height);ctx.strokeStyle='#8ae1ae99';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(px+o.width/2,py+o.height/2,17,0,Math.PI*2);ctx.stroke();sprite(o.imageSrc,px,py,o.width,o.height,'#82dba5');}
@@ -266,7 +310,7 @@ function render(){
 function frame(now){
   if(screen==='play'&&!document.hidden){
     clock.advance(now,step);dirty=true;
-    if(game.phase==='upgrade')setScreen('upgrade');else if(game.phase==='loot')setScreen('loot');else if(game.phase==='over')setScreen('over');else if(game.phase==='victory')setScreen('victory');
+    if(game.phase==='upgrade')setScreen('upgrade');else if(game.phase==='loot')setScreen('loot');else if(game.phase==='shop')setScreen('shop');else if(game.phase==='over')setScreen('over');else if(game.phase==='victory')setScreen('victory');
   }
   if(dirty){render();updateHud();dirty=false;}
   requestAnimationFrame(frame);

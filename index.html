@@ -24,12 +24,13 @@
       <div class="meter experience"><div class="meter-label"><span>Level <strong id="level">1</strong></span><strong id="xpText">0 / 5 XP</strong></div><div id="xpMeter" class="track" role="progressbar" aria-label="Experience" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div></div>
     </section>
     <div id="spellBuild" class="spell-build" aria-label="Current spell build"></div>
-    <div id="equipmentBuild" class="equipment-build" aria-label="Current equipment"></div>
+    <div class="gear-row"><div id="equipmentBuild" class="equipment-build" aria-label="Current equipment"></div><div class="active-bar"><strong id="goldText">0 gold</strong><span id="bootsActive"></span><span id="relicActive"></span></div></div>
     <section id="arena" class="arena" aria-label="Dungeon arena">
       <canvas id="gameArea" tabindex="0" aria-label="Game arena. WASD to move, arrow keys to shoot."></canvas>
       <div class="vignette" aria-hidden="true"></div>
       <div id="bossHud" class="boss-hud" hidden><div class="meter-label"><strong id="bossName"></strong><strong id="bossHealth"></strong></div><div id="bossMeter" class="track" role="progressbar" aria-label="Dragon health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><i></i></div></div>
       <div id="eventHud" class="event-hud" hidden><strong id="eventTitle"></strong><span id="eventObjective"></span></div>
+      <div id="merchantHint" class="merchant-hint"></div>
       <div id="treasureHint" class="treasure-hint" aria-live="polite"></div>
       <div id="overlay" class="overlay">
         <section id="homePanel" class="panel home" aria-labelledby="homeTitle">
@@ -61,6 +62,7 @@
           <p class="eyebrow accent">Equipment recovered</p><h2 id="lootTitle">Treasure recovered</h2><p>Choose one item. A new item replaces equipment in the same slot. You can also leave the treasure.</p>
           <div id="lootCards" class="upgrade-cards"></div><button id="skipLoot" type="button" class="quiet">Keep current equipment</button>
         </section>
+        <section id="shopPanel" class="panel upgrade-panel" aria-labelledby="shopTitle" hidden><p class="eyebrow accent">Traveling merchant</p><h2 id="shopTitle">Choose your bargain</h2><p id="shopGold"></p><p>Buy one item or healing draught, or save your gold.</p><div id="shopCards" class="upgrade-cards shop-cards"></div><button id="skipShop" class="quiet" type="button">Leave merchant</button></section>
         <section id="victoryPanel" class="panel" aria-labelledby="victoryTitle" hidden>
           <p class="eyebrow accent">Dungeon conquered</p><h2 id="victoryTitle">The dragon falls.</h2><p>You defeated the Ancient Dragon. Leave victorious or test your build against an endless dungeon.</p>
           <div class="result-stats"><div><span>Victory time</span><strong id="victoryTime">00:00</strong></div><div><span>Monsters slain</span><strong id="victoryKills">0</strong></div></div>
@@ -75,7 +77,7 @@
         </section>
       </div>
     </section>
-    <footer class="footer"><span><kbd>WASD</kbd> Move</span><span><kbd>↑ ↓ ← →</kbd> Hold to cast</span><span><kbd>Q</kbd> Hold for HP bars</span><span><kbd>Esc</kbd> Pause</span><span class="footer-note">Original sprites · Desktop keyboard game</span></footer>
+    <footer class="footer"><span><kbd>WASD</kbd> Move</span><span><kbd>↑ ↓ ← →</kbd> Hold to cast</span><span><kbd>Q</kbd> Hold for HP bars</span><span><kbd>Space</kbd> Boots</span><span><kbd>E</kbd> Relic</span><span><kbd>Esc</kbd> Pause</span><span class="footer-note">Original sprites · Desktop keyboard game</span></footer>
     <noscript>Enable JavaScript to play Wizard Shooter.</noscript>
   </main>
   <script type="module" src="./js/index.js"></script>

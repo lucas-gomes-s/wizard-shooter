@@ -35,6 +35,8 @@ export function hasGear(p,id){return p.equipment?.[itemById[id]?.slot]===id}
 export function equipItem(p,id,tick=0){
  const item=Object.hasOwn(itemById,id)?itemById[id]:null;if(!item||!p.equipment||hasGear(p,id))return false;
  p.equipment[item.slot]=id;
+ if(item.slot==='relic')p.crownUntil=0;
+ if(item.slot==='boots'){p.contactImmuneUntil=0;p.phaseImmuneUntil=0;}
  p.gearState[item.slot]={readyAt:tick,activeUntil:0,count:0};
  if(id==='hourglass'||id==='mending')p.gearState[item.slot].readyAt=tick+(id==='hourglass'?400:100);
  return true;
@@ -56,9 +58,10 @@ export function gearMovement(p,tick){
  let v=1;if(hasGear(p,'swift'))v*=1.12;if(hasGear(p,'runner')&&p.health<p.maxHealth*.5)v*=1.25;
  if(hasGear(p,'escape')&&p.gearState.boots.activeUntil>tick)v*=1.35;if(hasGear(p,'phaseboots'))v*=1.18;return v;
 }
-export function gearCast(p,bolts,dx,dy,rng){
+export function gearCast(p,bolts,dx,dy,rng,tick=0){
  const staff=p.gearState.staff;staff.count++;
  let scale=hasGear(p,'crown')?1.25:1;
+ if(hasGear(p,'crown')&&p.crownUntil>tick)scale*=1.5;
  if(hasGear(p,'gambler')){const v=rng();scale*=v<.25?2:v<.5?.5:1}
  if(hasGear(p,'bloodwood')&&staff.count%4===0&&p.health>2){p.health-=2;scale*=1.5}
  const meteor=hasGear(p,'meteor')&&staff.count%3===0?{used:false}:null;
