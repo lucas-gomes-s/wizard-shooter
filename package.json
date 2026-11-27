@@ -1,11 +1,11 @@
 {
   "name": "wizard-shooter-web",
-  "version": "1.11.0",
+  "version": "1.12.0",
   "private": true,
   "type": "module",
   "scripts": {
     "test": "node --test tests/web/*.test.js",
-    "check": "node --check js/index.js && node --check js/simulation.js && node --check js/data.js && node --check js/presentation.js && node --check js/magic.js && node --check js/enemies.js && node --check js/balance.js && node --check js/balance-bot.js && node --check scripts/balance.mjs && node --check js/combat-fx.js && node --check js/build-benchmark.js && node --check scripts/benchmark-builds.mjs && node --check js/equipment.js && node --check js/dungeon-events.js",
+    "check": "node --check js/index.js && node --check js/simulation.js && node --check js/data.js && node --check js/presentation.js && node --check js/magic.js && node --check js/enemies.js && node --check js/balance.js && node --check js/balance-bot.js && node --check scripts/balance.mjs && node --check js/combat-fx.js && node --check js/build-benchmark.js && node --check scripts/benchmark-builds.mjs && node --check js/equipment.js && node --check js/dungeon-events.js && node --check js/active-gear.js && node --check js/merchant.js",
     "balance": "node scripts/balance.mjs",
     "balance:builds": "node scripts/benchmark-builds.mjs"
   },
