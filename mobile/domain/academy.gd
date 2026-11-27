@@ -62,6 +62,9 @@ func _normalize_record(record: Dictionary) -> void:
 		g.ancestry[k] = int(g.ancestry[k])
 	for k in ["tier", "hat", "robe", "staff"]:
 		record.phenotype[k] = int(record.phenotype[k])
+	# Old saves receive stable, seed-derived talent alleles; existing base stats stay unchanged.
+	g.talents = Genetics.talents_for(g)
+	record.phenotype.passives = Genetics.expressed_talents(g)
 
 func _commit(before: Dictionary) -> bool:
 	if store == null or store.commit(snapshot()):

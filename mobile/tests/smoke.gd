@@ -7,6 +7,7 @@ const Sprites = preload("res://presentation/sprite_library.gd")
 const ArenaArt = preload("res://presentation/arena_art.gd")
 const World = preload("res://gameplay/dungeon_world.gd")
 const DungeonArt = preload("res://presentation/dungeon_art.gd")
+const Abilities = preload("res://gameplay/ability_catalog.gd")
 var failures := 0
 
 func check(condition: bool, message: String) -> void:
@@ -70,6 +71,7 @@ func _initialize() -> void:
 	check(run.outcome == "Defeated", "Death ends run")
 	_test_world(p)
 	_test_sites(p)
+	_test_abilities(p)
 	print("Wizard Shooter smoke: %d failures; 1000 founder/fusion samples" % failures)
 	quit(0 if failures == 0 else 1)
 
@@ -157,8 +159,9 @@ func _test_sites(p: Dictionary) -> void:
 	check(absf(run.hp - run.max_hp * 0.85) < 0.001, "Healing shrine restores 35 percent")
 	var arcane: Dictionary = samples.arcane
 	run.player = arcane.pos
+	var baseline_damage := run.effective_damage()
 	run._update_sites()
-	check(run.blessing == 20.0 and absf(run.effective_damage() - run.damage * 1.25) < 0.001, "Arcane buff applies")
+	check(run.blessing == 20.0 and absf(run.effective_damage() - baseline_damage * 1.25) < 0.001, "Arcane buff applies")
 	run.blessing = 0.0
 	run._update_sites()
 	check(run.blessing == 0.0, "Arcane shrine cannot refresh by revisiting")
@@ -187,3 +190,59 @@ func _test_sites(p: Dictionary) -> void:
 	check(academy.essence == before + floori(earned / 8.0) + 6, "Exploration essence granted exactly once")
 	check(not academy.reward(1, active, partner, earned, false, 6), "Duplicate exploration settlement rejected")
 	print("Exploration checks complete")
+
+func _test_abilities(base: Dictionary) -> void:
+	var p := base.duplicate(true)
+	p.mutation = "none"
+	p.passives = []
+	for affinity in ["fire","ice","steam"]:
+		p.affinity = affinity
+		var run := RunModel.new(p, true, 1, 7)
+		run._spawn(0)
+		run.enemies[0].pos = Vector2(15,0)
+		check(run._cast_basic(), "Basic spell targets")
+		var shot: Dictionary = run.shots[0]
+		shot.pos = run.enemies[0].pos
+		shot.vel = Vector2.ZERO
+		run._update_shots(0.01)
+		var e: Dictionary = run.enemies[0]
+		if affinity == "fire":
+			check(e.burn > 0 and e.burn_dps > 0, "Fire burn")
+		elif affinity == "ice":
+			check(e.chill > 0 and e.slow > 0 and run.shots.size() == 1, "Ice lance pierces and chills")
+			var hp_before: float = e.hp
+			run._update_shots(0.01)
+			check(e.hp == hp_before, "Piercing shot cannot hit same target twice")
+			run._cast_special()
+			check(e.chill == 0 and e.freeze > 0, "Frost shatters chill and freezes")
+		else:
+			check(run.clouds.size() == 1, "Steam orb creates cloud")
+			run._cast_special()
+			check(run.clouds.size() == 2, "Steam special creates persistent cloud")
+			for i in range(20): run._add_cloud(Vector2.ZERO, 42, 2, 0.3, "steam")
+			check(run.clouds.size() == Abilities.MAX_CLOUDS, "Cloud cap")
+			var before: float = e.hp
+			run._update_clouds(0.1)
+			check(before > e.hp and absf(before - float(e.hp) - run.effective_damage() * 0.3 * 0.1) < 0.001, "Clouds do not stack")
+	p.affinity = "fire"
+	p.passives = ["focused"]
+	var focused := RunModel.new(p, true, 1, 7)
+	check(absf(focused.effective_damage() - float(p.damage) * 1.12) < 0.001, "Focused passive damage")
+	p.passives = ["resilient"]
+	check(float(Abilities.compile(p).modifiers.incoming) < 1.0, "Resilient passive")
+	p.passives = ["quickcast"]
+	check(float(Abilities.compile(p).modifiers.interval) < 1.0, "Quickcast passive")
+	p.passives = ["flow"]
+	check(float(Abilities.compile(p).special.cooldown) < 7.0, "Flow passive")
+	p.mutation = "crystal_wings"
+	check(Abilities.compile(p).special.has("ward"), "Wing mutation ward")
+	p.mutation = "living_flame"
+	check(Abilities.compile(p).special.has("trail"), "Flame mutation trail")
+	var a := Genetics.founder(42)
+	var b := Genetics.founder(43)
+	var child := Genetics.fuse(a,b,44)
+	check(child.talents.size() == 2, "Inherited talent pair")
+	check(child == Genetics.fuse(b,a,44), "Talent inheritance symmetric")
+	a.erase("talents")
+	check(Genetics.talents_for(a) == Genetics.talents_for(a), "Legacy talents deterministic")
+	print("Ability checks complete")

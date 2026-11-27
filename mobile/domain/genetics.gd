@@ -3,6 +3,7 @@ extends RefCounted
 ## No Godot scene or persistence dependencies. Explicit seeds, stable integer RNG.
 const SPECIES := ["stoneborn", "fae"]
 const CORES := ["fire", "ice"]
+const PASSIVES := ["resilient", "quickcast", "focused", "flow"]
 const MODULUS := 2147483647
 const VERSION := 1
 
@@ -26,7 +27,7 @@ static func founder(seed: int) -> Dictionary:
 		"species": [species, species], "core": [core, other],
 		"ancestry": {"stoneborn": 10000 if species == "stoneborn" else 0, "fae": 10000 if species == "fae" else 0},
 		"hat": rng.next_int(3), "robe": rng.next_int(3), "staff": rng.next_int(3),
-		"mutation": "none", "power": 90 + rng.next_int(21)}
+		"mutation": "none", "power": 90 + rng.next_int(21), "talents": legacy_talents(seed)}
 
 static func fuse(a: Dictionary, b: Dictionary, seed: int) -> Dictionary:
 	if int(a.tier) != 1 or int(b.tier) != 1:
@@ -47,6 +48,11 @@ static func fuse(a: Dictionary, b: Dictionary, seed: int) -> Dictionary:
 			body_alleles[rng.next_int(2)] = SPECIES[rng.next_int(2)]
 		else:
 			core_alleles[rng.next_int(2)] = CORES[rng.next_int(2)]
+	var talent_rng := SeededRandom.new(seed + 456789)
+	var t1 := talents_for(first)
+	var t2 := talents_for(second)
+	var inherited: Array = [t1[talent_rng.next_int(2)], t2[talent_rng.next_int(2)]]
+	if talent_rng.chance(5): inherited[talent_rng.next_int(2)] = PASSIVES[talent_rng.next_int(4)]
 	var mutation := "none"
 	if rng.chance(30):
 		mutation = "crystal_wings" if rng.chance(50) else "living_flame"
@@ -56,7 +62,7 @@ static func fuse(a: Dictionary, b: Dictionary, seed: int) -> Dictionary:
 		"hat": first.hat if rng.chance(50) else second.hat,
 		"robe": first.robe if rng.chance(50) else second.robe,
 		"staff": first.staff if rng.chance(50) else second.staff,
-		"mutation": mutation, "power": clampi(roundi((float(first.power) + float(second.power)) / 2.0) + rng.next_int(11) - 5, 85, 115)}
+		"mutation": mutation, "talents": inherited, "power": clampi(roundi((float(first.power) + float(second.power)) / 2.0) + rng.next_int(11) - 5, 85, 115)}
 
 static func express(g: Dictionary) -> Dictionary:
 	var tier := int(g.tier)
@@ -86,5 +92,19 @@ static func express(g: Dictionary) -> Dictionary:
 		health -= 8.0
 	return {"body": body, "affinity": affinity, "tier": tier, "mutation": mutation,
 		"hat": int(g.hat), "robe": int(g.robe), "staff": int(g.staff),
-		"health": health, "speed": speed, "damage": damage, "interval": interval,
+		"health": health, "speed": speed, "damage": damage, "interval": interval, "passives": expressed_talents(g),
 		"special": "Crystal burst" if mutation == "crystal_wings" else ("Flame burst" if affinity == "fire" else ("Frost pulse" if affinity == "ice" else "Steam shock"))}
+
+static func legacy_talents(seed: int) -> Array:
+	# Separate substream preserves the existing species, appearance and power RNG.
+	var rng := SeededRandom.new(seed + 456789)
+	return [PASSIVES[rng.next_int(4)], PASSIVES[rng.next_int(4)]]
+
+static func talents_for(g: Dictionary) -> Array:
+	return g.get("talents", legacy_talents(int(g.seed)))
+
+static func expressed_talents(g: Dictionary) -> Array:
+	var alleles := talents_for(g)
+	var expressed: Array = [alleles[0]]
+	if int(g.tier) >= 2 and alleles[1] != alleles[0]: expressed.append(alleles[1])
+	return expressed

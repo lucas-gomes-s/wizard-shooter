@@ -6,6 +6,7 @@ const RunModel = preload("res://gameplay/run.gd")
 const SpriteLibrary = preload("res://presentation/sprite_library.gd")
 const ArenaArt = preload("res://presentation/arena_art.gd")
 const DungeonArt = preload("res://presentation/dungeon_art.gd")
+const Abilities = preload("res://gameplay/ability_catalog.gd")
 const PLAYFIELD := Rect2(0, 88, 360, 448)
 const CAMERA_CENTER := Vector2(180, 312)
 const FIRE := Color("#ef8052")
@@ -293,7 +294,8 @@ func _refresh_academy() -> void:
 	for i in range(1, partner_picker.item_count):
 		if partner_picker.get_item_id(i) == partner_index: partner_picker.select(i)
 	var p2: Dictionary = academy.roster[partner_index] if partner_index >= 0 else {}
-	info.text = "HP %d  •  Speed %d  •  Power %.1f\n%s  |  %.2fs cast interval\n%s" % [int(p.health), int(p.speed), p.damage, p.special, p.interval, str(p.mutation).replace("_", " ").capitalize() if p.mutation != "none" else "No expressed mutation"]
+	var kit := Abilities.compile(p)
+	info.text = "HP %d  •  Speed %d  •  Power %.1f\n%s / %s\nPassive: %s\n%s" % [int(p.health), int(p.speed), float(p.damage) * float(kit.modifiers.damage), kit.basic.name, kit.special.name, Abilities.passive_names(p), str(p.mutation).replace("_", " ").capitalize() if p.mutation != "none" else "No expressed mutation"]
 	difficulty_button.text = "Difficulty: %s" % ["I", "II", "III"][difficulty - 1]
 	lock_button.text = "Unlock wizard" if c.locked else "Lock wizard"
 	summon_button.disabled = academy.essence < 10
@@ -340,7 +342,7 @@ func _fuse() -> void:
 		selected = academy.roster.size() - 1
 		partner_index = -1
 		revealed = child
-		reveal_info.text = "%s • Tier %d\n%s / %s\n%s\nBoth parents have been archived." % [child.id, child.phenotype.tier, child.phenotype.body.capitalize(), child.phenotype.affinity.capitalize(), child.phenotype.special]
+		reveal_info.text = "%s • Tier %d\n%s / %s\n%s\nBoth parents have been archived." % [child.id, child.phenotype.tier, child.phenotype.body.capitalize(), child.phenotype.affinity.capitalize(), Abilities.compile(child.phenotype).special.name]
 		screen = "reveal"
 		_sync_visibility()
 		queue_redraw()
@@ -471,8 +473,8 @@ func _physics_process(dt: float) -> void:
 	special_requested = false
 	if screen == "run":
 		run_hud.text = "HP %d/%d    Lv %d\nXP %d/%d    %ds    Kills %d%s" % [int(run.hp), int(run.max_hp), run.run_level, run.xp, run.next_xp, int(run.elapsed), run.kills, "  PAUSED" if paused else ""]
-		special_button.text = str(run.phenotype.special) if run.special_cd <= 0 else "%.1fs" % run.special_cd
-		special_button.add_theme_font_size_override("font_size", 12)
+		special_button.text = str(run.kit.special.name) if run.special_cd <= 0 else "%.1fs" % run.special_cd
+		special_button.add_theme_font_size_override("font_size", 10)
 		special_button.disabled = paused or run.special_cd > 0 or run.pending_upgrades > 0
 		extract_button.disabled = paused or run.elapsed < 30 or run.pending_upgrades > 0
 	queue_redraw()
@@ -524,15 +526,24 @@ func _draw() -> void:
 	dungeon_art.draw_world(self, view)
 	dungeon_art.draw_sites(self, run.claimed_sites, run.active_encounter, run._guards_remaining(), float(run.elapsed))
 	var color: Color = FIRE if run.phenotype.affinity == "fire" else (ICE if run.phenotype.affinity == "ice" else STEAM)
+	for cloud in run.clouds:
+		if visible_margin.has_point(cloud.pos):
+			var cloud_color := FIRE if cloud.affinity == "fire" else STEAM
+			draw_circle(cloud.pos, float(cloud.radius), Color(cloud_color, 0.18))
+			draw_arc(cloud.pos, float(cloud.radius), 0, TAU, 24, Color(cloud_color, 0.5), 1.0)
+	for flash in run.flashes:
+		if visible_margin.has_point(flash.pos):
+			var flash_color := FIRE if flash.affinity == "fire" else ICE
+			draw_arc(flash.pos, float(flash.radius), 0, TAU, 24, Color(flash_color, float(flash.life) / 0.24), 2.0)
 	for e in run.enemies:
 		if visible_margin.has_point(e.pos):
 			arena_art.draw_enemy(self, e, float(run.elapsed))
 	for shot in run.shots:
 		if visible_margin.has_point(shot.pos):
-			var projectile: Texture2D = arena_art.projectiles[run.phenotype.affinity]
+			var projectile: Texture2D = arena_art.projectiles[shot.affinity]
 			draw_texture(projectile, shot.pos - Vector2(4, 4))
 	if run.special_fx > 0:
-		var radius := 82.0 if run.phenotype.mutation == "crystal_wings" else 66.0
+		var radius: float = float(run.kit.special.radius)
 		var fraction := 1.0 - float(run.special_fx) / 0.35
 		var ring := radius * (0.45 + 0.55 * fraction)
 		var fade := Color(color, 1.0 - fraction)
@@ -542,6 +553,7 @@ func _draw() -> void:
 			draw_rect(Rect2(run.player + offset - Vector2(2, 2), Vector2(4, 4)), fade)
 	var frame: int = int(run.elapsed * 6) % 2 if movement.length_squared() > 0 else 0
 	sprites.draw_wizard(self, run.phenotype, run.player, frame, 1.2)
+	if run.ward > 0: draw_arc(run.player, 22, 0, TAU, 24, Color("#c6e6ed"), 2.0)
 	draw_set_transform(Vector2.ZERO)
 	# Mask the world outside the playfield, leaving all touch/HUD controls screen-fixed.
 	draw_rect(Rect2(0, 0, 360, 88), Color("#1b1924"))

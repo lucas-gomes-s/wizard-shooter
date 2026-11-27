@@ -34,6 +34,10 @@ static func valid_record(c: Variant) -> bool:
 		if not v in ["stoneborn", "fae"]: return false
 	for v in g.core:
 		if not v in ["fire", "ice"]: return false
+	if g.has("talents"):
+		if not g.talents is Array or g.talents.size() != 2: return false
+		for talent in g.talents:
+			if not talent in ["resilient", "quickcast", "focused", "flow"]: return false
 	if not g.ancestry is Dictionary or not integer(g.ancestry.get("stoneborn", -1)) or not integer(g.ancestry.get("fae", -1)): return false
 	if int(g.ancestry.stoneborn) + int(g.ancestry.fae) != 10000: return false
 	for k in ["hat", "robe", "staff"]:

@@ -1,6 +1,7 @@
 extends RefCounted
 ## Fixed-step unbounded world simulation. Camera and terrain rendering are presentation-only.
 const World = preload("res://gameplay/dungeon_world.gd")
+const Abilities = preload("res://gameplay/ability_catalog.gd")
 const DESPAWN_DISTANCE := 740.0
 const BOSS_RELOCATE_DISTANCE := 950.0
 const TARGET_RANGE := 350.0
@@ -56,9 +57,17 @@ var difficulty: int
 var outcome := ""
 var enemies: Array[Dictionary] = []
 var shots: Array[Dictionary] = []
+var clouds: Array[Dictionary] = []
+var flashes: Array[Dictionary] = []
+var kit: Dictionary
+var ward := 0.0
+var trail := 0.0
+var trail_cd := 0.0
+var next_enemy_id := 1
 
 func _init(p: Dictionary, is_endless: bool, level: int, seed: int) -> void:
 	phenotype = p.duplicate(true)
+	kit = Abilities.compile(phenotype)
 	rng = Genetics.SeededRandom.new(seed)
 	world_seed = seed
 	endless = is_endless
@@ -67,7 +76,7 @@ func _init(p: Dictionary, is_endless: bool, level: int, seed: int) -> void:
 	hp = max_hp
 	speed = float(p.speed)
 	damage = float(p.damage)
-	interval = float(p.interval)
+	interval = float(p.interval) * float(kit.modifiers.interval)
 
 func step(dt: float, movement: Vector2, special: bool) -> void:
 	if outcome != "" or pending_upgrades > 0:
@@ -83,6 +92,12 @@ func step(dt: float, movement: Vector2, special: bool) -> void:
 	special_cd = maxf(0, special_cd - dt)
 	hurt_cd = maxf(0, hurt_cd - dt)
 	special_fx = maxf(0, special_fx - dt)
+	ward = maxf(0, ward - dt)
+	trail = maxf(0, trail - dt)
+	trail_cd = maxf(0, trail_cd - dt)
+	if trail > 0 and trail_cd <= 0 and travel_direction.length_squared() > 0.1:
+		_add_cloud(player, 23.0, 1.3, 0.30, "fire")
+		trail_cd = 0.32
 	spawn_cd -= dt
 	var normal_limit := MAX_ENEMIES - GUARD_COUNT - (1 if not endless and not boss_spawned else 0)
 	if spawn_cd <= 0 and enemies.size() < normal_limit:
@@ -94,57 +109,32 @@ func step(dt: float, movement: Vector2, special: bool) -> void:
 	if not endless and elapsed >= FINITE_SECONDS and not boss_spawned:
 		boss_spawned = true
 		_spawn(3)
-	if auto_cd <= 0 and not enemies.is_empty():
-		var nearest: Dictionary = enemies[0]
-		for enemy in enemies:
-			if player.distance_squared_to(enemy.pos) < player.distance_squared_to(nearest.pos):
-				nearest = enemy
-		if player.distance_squared_to(nearest.pos) <= TARGET_RANGE * TARGET_RANGE:
-			var direction: Vector2 = player.direction_to(nearest.pos)
-			if direction == Vector2.ZERO: direction = Vector2.UP
-			shots.append({"pos": player, "vel": direction * 245.0, "life": 1.6})
-			auto_cd = interval
+	if auto_cd <= 0:
+		if _cast_basic(): auto_cd = interval
 	if special and special_cd <= 0:
-		special_cd = 7.0
-		special_fx = 0.35
-		for enemy in enemies:
-			var radius: float = 82.0 if phenotype.mutation == "crystal_wings" else 66.0
-			if player.distance_to(enemy.pos) <= radius:
-				enemy.hp -= effective_damage() * 2.5
-				if phenotype.affinity != "fire":
-					enemy.slow = 2.5
-				else:
-					enemy.burn = 2.0
-	for shot in shots:
-		shot.pos += shot.vel * dt
-		shot.life -= dt
-		if not World.clear_at(world_seed, shot.pos, 2.0):
-			shot.life = 0.0
-			continue
-		for enemy in enemies:
-			if enemy.hp > 0 and shot.pos.distance_to(enemy.pos) <= float(enemy.radius) + 3.0:
-				enemy.hp -= effective_damage()
-				if phenotype.affinity == "fire" or phenotype.affinity == "steam":
-					enemy.burn = 1.8
-				if phenotype.affinity == "ice" or phenotype.affinity == "steam":
-					enemy.slow = 1.4
-				shot.life = 0.0
-				break
-	for i in range(shots.size() - 1, -1, -1):
-		if shots[i].life <= 0: shots.remove_at(i)
+		_cast_special()
+	_update_shots(dt)
+	_update_clouds(dt)
+	for i in range(flashes.size() - 1, -1, -1):
+		flashes[i].life -= dt
+		if flashes[i].life <= 0: flashes.remove_at(i)
 	for enemy in enemies:
 		if enemy.hp <= 0: continue
 		if enemy.burn > 0:
-			enemy.hp -= effective_damage() * 0.20 * dt
+			enemy.hp -= float(enemy.get("burn_dps", effective_damage() * 0.20)) * dt
 			enemy.burn = maxf(0, enemy.burn - dt)
 		if enemy.hp <= 0: continue
-		var slow_factor: float = 0.55 if enemy.slow > 0 else 1.0
+		var frozen: bool = float(enemy.get("freeze", 0.0)) > 0
+		var slow_factor: float = 0.0 if frozen else (0.55 if enemy.slow > 0 else 1.0)
 		enemy.slow = maxf(0, enemy.slow - dt)
+		enemy.freeze = maxf(0, float(enemy.get("freeze", 0.0)) - dt)
+		enemy.chill = maxf(0, float(enemy.get("chill", 0.0)) - dt)
 		var delta: Vector2 = enemy.pos.direction_to(player) * float(enemy.speed) * slow_factor * dt
 		enemy.pos = World.enemy_move(world_seed, enemy.pos, delta, float(enemy.radius), float(enemy.steer))
-		if player.distance_to(enemy.pos) <= float(enemy.radius) + 7.0 and hurt_cd <= 0:
-			hp = maxf(0, hp - float(enemy.damage))
+		if not frozen and player.distance_to(enemy.pos) <= float(enemy.radius) + 7.0 and hurt_cd <= 0:
+			hp = maxf(0, hp - float(enemy.damage) * float(kit.modifiers.incoming) * (0.45 if ward > 0 else 1.0))
 			hurt_cd = 0.45
+	if phenotype.affinity == "fire": _burn_death_bursts()
 	for i in range(enemies.size() - 1, -1, -1):
 		if enemies[i].hp <= 0:
 			var dead: Dictionary = enemies[i]
@@ -235,10 +225,14 @@ func _spawn(kind: int) -> void:
 	d.damage *= 1.0 + (difficulty - 1) * 0.18
 	d.slow = 0.0
 	d.burn = 0.0
+	d.chill = 0.0
+	d.freeze = 0.0
+	d.uid = next_enemy_id
+	next_enemy_id += 1
 	enemies.append(d)
 
 func effective_damage() -> float:
-	return damage * (1.25 if blessing > 0 else 1.0)
+	return damage * float(kit.modifiers.damage) * (1.25 if blessing > 0 else 1.0)
 
 func _announce(message: String) -> void:
 	site_notice = message
@@ -317,6 +311,10 @@ func _start_encounter(site: Dictionary) -> void:
 		d.xp = 0
 		d.slow = 0.0
 		d.burn = 0.0
+		d.chill = 0.0
+		d.freeze = 0.0
+		d.uid = next_enemy_id
+		next_enemy_id += 1
 		d.encounter = site.id
 		enemies.append(d)
 	_announce("Ambush! Defeat the three guardians.")
@@ -334,3 +332,120 @@ func _update_sites() -> void:
 
 func training_reward() -> int:
 	return floori(elapsed / 4.0) + kills * 2 + exploration_xp
+
+func _cast_basic() -> bool:
+	var spec: Dictionary = kit.basic
+	if shots.size() >= Abilities.MAX_SHOTS: return false
+	var target: Dictionary = {}
+	var best := float(spec.range) * float(spec.range)
+	for e in enemies:
+		if e.hp <= 0: continue
+		var d := player.distance_squared_to(e.pos)
+		if d <= best:
+			best = d
+			target = e
+	if target.is_empty(): return false
+	var direction := player.direction_to(target.pos)
+	if direction == Vector2.ZERO: direction = Vector2.UP
+	shots.append({"pos":player,"vel":direction * float(spec.speed),"life":float(spec.life),
+		"damage":effective_damage() * float(spec.power),"pierce":int(spec.pierce),"hit":{},
+		"effects":spec.effects,"affinity":phenotype.affinity})
+	return true
+
+func _cast_special() -> void:
+	var spec: Dictionary = kit.special
+	special_cd = float(spec.cooldown)
+	special_fx = 0.35
+	ward = float(spec.get("ward", 0.0))
+	trail = float(spec.get("trail", 0.0))
+	trail_cd = 0.0
+	if spec.delivery == "cloud":
+		_add_cloud(player, float(spec.radius), float(spec.duration), float(spec.rate), "steam")
+	else:
+		for enemy in enemies:
+			if enemy.hp <= 0 or player.distance_to(enemy.pos) > float(spec.radius): continue
+			enemy.hp -= effective_damage() * float(spec.power)
+			_apply_effects(enemy, spec.effects, effective_damage())
+
+func _apply_effects(enemy: Dictionary, effects: Array, source_damage: float) -> void:
+	for effect in effects:
+		match str(effect.kind):
+			"burn":
+				# Refresh strongest active burn; no multiplicative stacking.
+				var rate := source_damage * float(effect.rate)
+				enemy.burn_dps = maxf(rate, float(enemy.get("burn_dps", 0.0)) if enemy.burn > 0 else 0.0)
+				enemy.burn = maxf(float(enemy.burn), float(effect.duration))
+			"slow":
+				enemy.slow = maxf(float(enemy.slow), float(effect.duration))
+			"chill":
+				enemy.chill = maxf(float(enemy.get("chill", 0.0)), float(effect.duration))
+			"freeze":
+				# Boss control resistance prevents permanent stun.
+				var duration := float(effect.duration) * (0.25 if int(enemy.kind) == 3 else 1.0)
+				enemy.freeze = maxf(float(enemy.get("freeze", 0.0)), duration)
+			"shatter":
+				if float(enemy.get("chill", 0.0)) > 0:
+					enemy.hp -= source_damage * float(effect.power)
+					enemy.chill = 0.0
+					_flash(enemy.pos, 19.0, "ice")
+			"cloud":
+				_add_cloud(enemy.pos, float(effect.radius), float(effect.duration), float(effect.rate), "steam")
+
+func _update_shots(dt: float) -> void:
+	for shot in shots:
+		shot.pos += shot.vel * dt
+		shot.life -= dt
+		if shot.life <= 0 or not World.clear_at(world_seed, shot.pos, 2.0):
+			shot.life = 0.0
+			continue
+		for enemy in enemies:
+			if enemy.hp <= 0 or shot.hit.has(enemy.uid): continue
+			if shot.pos.distance_to(enemy.pos) > float(enemy.radius) + 3.0: continue
+			shot.hit[enemy.uid] = true
+			enemy.hp -= float(shot.damage)
+			_apply_effects(enemy, shot.effects, float(shot.damage))
+			if int(shot.pierce) <= 0:
+				shot.life = 0.0
+				break
+			shot.pierce -= 1
+	for i in range(shots.size() - 1, -1, -1):
+		if shots[i].life <= 0: shots.remove_at(i)
+
+func _add_cloud(point: Vector2, radius: float, duration: float, rate: float, affinity: String) -> void:
+	if clouds.size() >= Abilities.MAX_CLOUDS: clouds.pop_front()
+	clouds.append({"pos":point,"radius":radius,"life":duration,"dps":effective_damage() * rate,"affinity":affinity})
+
+func _update_clouds(dt: float) -> void:
+	# Overlapping clouds of the same element use the strongest DPS, not the sum.
+	for enemy in enemies:
+		if enemy.hp <= 0: continue
+		var fire := 0.0
+		var steam := 0.0
+		for cloud in clouds:
+			if cloud.life <= 0 or enemy.pos.distance_to(cloud.pos) > float(cloud.radius): continue
+			if cloud.affinity == "fire": fire = maxf(fire, float(cloud.dps))
+			else: steam = maxf(steam, float(cloud.dps))
+		if steam > 0:
+			enemy.slow = maxf(float(enemy.slow), 0.4)
+			# Existing burning targets take additional steam pressure.
+			if enemy.burn > 0: steam *= 1.25
+		enemy.hp -= (fire + steam) * dt
+	for i in range(clouds.size() - 1, -1, -1):
+		clouds[i].life -= dt
+		if clouds[i].life <= 0: clouds.remove_at(i)
+
+func _flash(point: Vector2, radius: float, affinity: String) -> void:
+	if flashes.size() >= Abilities.MAX_FLASHES: flashes.pop_front()
+	flashes.append({"pos":point,"radius":radius,"life":0.24,"affinity":affinity})
+
+func _burn_death_bursts() -> void:
+	var centers: Array[Vector2] = []
+	for enemy in enemies:
+		if enemy.hp <= 0 and enemy.burn > 0:
+			centers.append(enemy.pos)
+			if centers.size() >= 8: break
+	for center in centers:
+		_flash(center, 36.0, "fire")
+		for enemy in enemies:
+			if enemy.hp > 0 and center.distance_to(enemy.pos) <= 36.0:
+				enemy.hp -= effective_damage() * 0.55
