@@ -107,15 +107,15 @@ export const gameOverPhrases  = [
 export const monsters = [
     {name : "Spider",
     imageSrc : "./images/enemies/spider.png",   
-    maxSpeed: 2.7,
+    maxSpeed: 2.3,
     width: 20,
     height: 20,
-    health:12,
-    maxHealth: 12,
+    health:10,
+    maxHealth: 10,
     damage:5,
     expGiven: 2,
     startMinute: 0.33,
-    spawn: 160,
+    spawn: 180,
     cooldown: 0
     },
 
