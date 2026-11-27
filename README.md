@@ -108,3 +108,24 @@ Verification: all 63 regression cases passed in a direct JS harness; all 15 seed
 The starting school is a permanent primary identity for the run, including the main projectile color. Levels 2–9 offer only mastery of that school and basic stat upgrades. At level 10, a second school becomes eligible. Until chosen, at least one eligible secondary school is offered on subsequent level-ups; learning it is optional. Existing eligible school mastery receives a reserved offer slot. Each school still caps at rank V. The permanent two-school limit is enforced both in card generation and when applying upgrades. Compatible rank II pairs can still unlock the three existing synergies; other pairs combine their normal effects without an additional synergy. No new spell damage, enemy stats or spawn changes.
 
 The starting screen explains the restriction and the build strip shows the secondary unlock countdown. The secondary choice is permanent until restarting. Five new regression cases passed, 68 total in the direct harness. In three-minute benchmarks (3 seeds per school), all 15 bots survived, reaching levels 11–12. In the five exploratory full-run benchmarks (seed 1, 1800s cap), fire died at 540.74s, ice at 819.82s, lightning at 535.66s, arcane at 476.20s, and necromancy won at 1501.24s. Earlier unrestricted builds won three of five runs on the same seeds, although changing offer pools also changes RNG consumption. These samples are too small to infer win rates. Late difficulty and upgrade incentives need retesting, especially after restricting combinations. Browser smoke includes the new level-ten choice; actual CI pending.
+
+## Complete school fusions (v1.8)
+
+All ten unordered school pairs now have exactly one unique combination ability. Secondary-school offers preview the corresponding fusion before committing. Both schools must reach rank II, after which the fusion is guaranteed to appear in the eligible upgrade pool until selected. Primary/secondary order does not change the combination; the two-school cap and level-10 secondary unlock remain.
+
+| Pair | Fusion | Mechanic |
+| --- | --- | --- |
+| Fire + Ice | Steam eruption | Existing 70-unit damage and slow pulse |
+| Fire + Lightning | Plasma surge | Chain hits ignite targets, refreshing a nonstacking burn |
+| Fire + Necro | Soulfire | Existing burning-death explosion |
+| Fire + Arcane | Starfire | Every fourth cast becomes five explosive bolts |
+| Ice + Lightning | Thunderfrost | Chain chills and freezes previously chilled targets, per-target freeze cooldown |
+| Ice + Necro | Gravefrost | Chilled deaths pulse damage and slow |
+| Ice + Arcane | Glacial mirror | One extra pierce; shield block freezes nearby enemies |
+| Lightning + Necro | Soul conductor | Chain-marked kills heal and fire a single soul bolt |
+| Lightning + Arcane | Storm prism | Existing extra chain jump and range |
+| Necro + Arcane | Soul ward | Kills shorten shield recharge; shield blocks heal and pulse damage |
+
+Secondary damage never calls directHit recursively. Death effects use the existing deduplicated death queue, so cascading kills pay XP once. Starfire uses the run's cast counter and the base damage at impact for its splash. Shield effects trigger only on blocked contact attacks, not hazards or hostile bolts. Seven new effects use distinct color palettes; no new assets. Existing three fusions and enemy stats remain unchanged.
+
+Verification: 76 regression cases passed in a direct JS harness, including all 20 ordered combinations, eligibility, offer guarantees and the seven new mechanics. Browser smoke checks secondary fusion previews. Three-minute sample: 15/15 survivors. Five long seed-1 runs (1800s cap): Fire 540.74s, Ice 840.22s, Lightning 573.46s, Necro victory 1501.86s, Arcane 476.2s. The default bot chooses opportunistically and does not exercise every pair in full runs. These exploratory results are not win-rate estimates; pair-specific balance and actual browser verification are outstanding. 

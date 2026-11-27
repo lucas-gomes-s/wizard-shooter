@@ -13,8 +13,8 @@ test('first level-up offers three distinct schools, rejects unavailable indices'
  assert.equal(g.choose(-1),false);assert.equal(g.choose(3),false);
  const id=g.offers[0].id;assert.ok(g.choose());assert.equal(g.player.magic.ranks[id],1);
 });
-test('subsequent offers prioritize eligible synergy and exclude maxed schools',()=>{
- const g=game(),p=g.player;p.level=8;p.magic.ranks.fire=2;p.magic.ranks.ice=2;p.magic.ranks.arcane=5;
+test('subsequent offers prioritize eligible synergy and exclude unlearned third schools',()=>{
+ const g=game(),p=g.player;p.level=8;p.magic.ranks.fire=2;p.magic.ranks.ice=2;
  const offers=upgradeOffers(p,config.skills,()=>.5);
  assert.equal(offers[0].id,'steam');assert.ok(offers.every(o=>o.id!=='arcane'));
  assert.ok(applyUpgrade(p,offers[0],config.skills,0));

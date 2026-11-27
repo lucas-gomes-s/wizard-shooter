@@ -33,6 +33,7 @@ export class Game{
   const p=this.player;if(!aim||p.cooldown>0)return;
   const [dx,dy]=normalize(...aim);if(!dx&&!dy)return;
   const school=dominantSchool(p.magic)?.id||null;
+  p.magic.casts=(p.magic.casts||0)+1;
   for(const bolt of boltPattern(p,dx,dy)){
    if(this.shots.length>=720)break;
    this.shots.push({x:p.x+p.width/2-p.shotSize/2,y:p.y+p.height/2-p.shotSize/2,width:p.shotSize,height:p.shotSize,...bolt,school,remaining:pierceCount(p),hit:new Set(),age:0});
@@ -44,6 +45,26 @@ export class Game{
   const dealt=amount*(enemy.curseUntil>this.tick?1.15:1);
   enemy.health-=dealt;this.emit('hit',enemy,Math.min(dealt,enemy.health+dealt),school);
   if(enemy.health<=0)this.deathQueue.push(enemy);
+ }
+ ignite(enemy,damage){
+  if(enemy.health<=0)return;
+  const active=enemy.burnUntil>=this.tick;
+  enemy.burnDamage=active?Math.max(enemy.burnDamage||0,damage):damage;
+  enemy.burnUntil=this.tick+100;
+  if(!(enemy.burnNext>this.tick))enemy.burnNext=this.tick+25;
+ }
+ chill(enemy,factor){
+  if(enemy.health<=0)return;
+  enemy.slowFactor=enemy.slowUntil>this.tick?Math.min(enemy.slowFactor||1,factor):factor;
+  enemy.slowUntil=Math.max(enemy.slowUntil||0,this.tick+100);
+ }
+ pulse(hash,origin,radius,damage,school,slow=null){
+  this.emit('burst',origin,radius,school);
+  for(const target of nearby(hash,origin,radius,new Set([origin]))){this.damage(target,damage,school);if(slow!==null)this.chill(target,slow);}
+ }
+ healPlayer(amount,school='necro'){
+  const p=this.player,before=p.health;p.health=Math.min(p.maxHealth,p.health+amount);
+  if(p.health>before)this.emit('heal',p,p.health-before,school);
  }
  directHit(enemy,shot,hash){
   const p=this.player,m=p.magic,r=m.ranks,combos=m.synergies;
@@ -67,9 +88,18 @@ export class Game{
    for(let i=0;i<1+Math.floor((r.lightning-1)/2)+Number(storm);i++){
     const target=nearby(hash,origin,100+10*r.lightning+(storm?30:0),visited)[0];if(!target)break;
     this.emit('chain',target,0,'lightning',{fromX:origin.x+origin.width/2,fromY:origin.y+origin.height/2});
-    this.damage(target,shot.damage*(.35+.05*r.lightning),'lightning');visited.add(target);origin=target;
+    if(combos.includes('reaping'))target.conductorUntil=this.tick+100;
+    if(combos.includes('thunderfrost')){
+     const chilled=target.slowUntil>this.tick;
+     this.chill(target,.55);
+     if(chilled&&!(target.thunderfreezeReady>this.tick)){target.freezeUntil=Math.max(target.freezeUntil||0,this.tick+20);target.thunderfreezeReady=this.tick+100;this.emitVisual('freeze',target,0,'thunderfrost');}
+    }
+    this.damage(target,shot.damage*(.35+.05*r.lightning),'lightning');
+    if(combos.includes('plasma')){this.ignite(target,shot.damage*.2);this.emitVisual('burst',target,18,'plasma');}
+    visited.add(target);origin=target;
    }
   }
+  if(combos.includes('starfall')&&shot.star)this.pulse(hash,enemy,45,p.shotDmg*.25,'starfall');
   if(combos.includes('steam')){
    this.emit('burst',enemy,70,'ice',{visualSchool:'steam'});
    for(const target of nearby(hash,enemy,70,new Set([enemy]))){
@@ -89,6 +119,12 @@ export class Game{
    if(e.boss&&!this.bossDefeated){this.bossDefeated=true;this.victoryTick=this.tick;this.emit('victory',e)}
    if(r.necro&&p.health<p.maxHealth){const before=p.health;p.health=Math.min(p.maxHealth,p.health+.5+.5*r.necro);this.emit('heal',p,p.health-before,'necro');this.emitVisual('soul',e,p.health-before,'necro')}
    if(r.necro>=5){this.emit('burst',e,65,'necro');for(const other of nearby(hash,e,65,new Set([e])))this.damage(other,p.shotDmg*.4,'necro')}
+   if(m.synergies.includes('gravefrost')&&e.slowUntil>this.tick)this.pulse(hash,e,60,p.shotDmg*.35,'gravefrost',.5);
+   if(m.synergies.includes('reaping')&&e.conductorUntil>this.tick){
+    this.healPlayer(3,'reaping');const target=nearby(hash,e,120,new Set([e]))[0];
+    if(target){this.emit('chain',target,0,'reaping',{fromX:e.x+e.width/2,fromY:e.y+e.height/2});this.damage(target,p.shotDmg*.4,'reaping');}
+   }
+   if(m.synergies.includes('soulward')&&!m.shieldReady)m.shieldUntil=Math.max(this.tick,m.shieldUntil-25);
    if(m.synergies.includes('soulfire')&&e.burnUntil>=this.tick){this.emit('burst',e,60,'fire',{visualSchool:'soulfire'});for(const other of nearby(hash,e,60,new Set([e])))this.damage(other,p.shotDmg*.6,'fire')}
   }
   this.deathQueue=[];
@@ -127,9 +163,12 @@ export class Game{
   if(this.phase!=='victory')return false;
   this.endless=true;this.phase='playing';this.hostiles=[];this.hazards=[];this.player.webUntil=0;this.levelUp();return true;
  }
- hurtPlayer(amount,source='contact'){
+ hurtPlayer(amount,source='contact',hash=null){
   const p=this.player,m=p.magic;if(p.health<=0)return 0;
-  if(source==='contact'&&m.ranks.arcane>=2&&m.shieldReady){m.shieldReady=false;m.shieldUntil=this.tick+(m.ranks.arcane>=4?500:750);this.emit('shield',p,0,'arcane');return 0;}
+  if(source==='contact'&&m.ranks.arcane>=2&&m.shieldReady){m.shieldReady=false;m.shieldUntil=this.tick+(m.ranks.arcane>=4?500:750);this.emit('shield',p,0,'arcane');
+   if(hash&&m.synergies.includes('mirror')){this.emit('burst',p,90,'mirror');for(const target of nearby(hash,p,90)){target.freezeUntil=Math.max(target.freezeUntil||0,this.tick+40);this.emitVisual('freeze',target,0,'mirror');}}
+   if(m.synergies.includes('soulward')){this.healPlayer(8,'soulward');if(hash)this.pulse(hash,p,70,p.shotDmg*.5,'soulward');}
+   return 0;}
   const previous=p.health;p.health=Math.max(0,p.health-amount);this.emit('hurt',p,previous-p.health);this.flash=4;return previous-p.health;
  }
  spawnPotions(){const c=this.camera;this.config.potionInfo.forEach((p,i)=>{if(this.seconds<p.startMinute*60)return;if(++this.potionTimers[i]<p.currentSpawn)return;this.potionTimers[i]=0;this.potions.push({x:c.x+this.rng()*(this.width-30),y:c.y+this.rng()*(this.height-30),width:30,height:30,imageSrc:p.imageSrc,recovery:p.recovery,fade:p.fade,age:0})})}
@@ -171,12 +210,14 @@ export class Game{
   this.resolveDeaths(hash);
   if(this.bossDefeated&&!this.endless){this.phase='victory';return false}
   for(const e of this.enemies){
+   if(e.health<=0)continue;
    if(e.cd>0)e.cd--;
    else if(overlaps(e,p)){
-    e.cd=50;const dealt=this.hurtPlayer(e.damage);
+    e.cd=50;const dealt=this.hurtPlayer(e.damage,'contact',hash);
     if(e.name==='Vampire'&&dealt>0){e.health=Math.min(e.maxHealth,e.health+dealt*2);this.emitVisual('drain',e,dealt,null,{fromX:p.x+p.width/2,fromY:p.y+p.height/2})}
    }
   }
+  if(this.deathQueue.length){this.resolveDeaths(hash);if(this.bossDefeated&&!this.endless){this.phase='victory';return false}}
   stepHazards(this);
   if(p.health<=0){this.phase='over';return false}
   this.potions=this.potions.filter(o=>{if(++o.age>=o.fade||!this.visible(o))return false;if(p.health<p.maxHealth&&overlaps(o,p)){const previous=p.health;p.health=Math.min(p.maxHealth,p.health+o.recovery*p.maxHealth);this.emit('heal',p,p.health-previous);return false}return true});

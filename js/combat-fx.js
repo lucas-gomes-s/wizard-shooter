@@ -1,6 +1,6 @@
 // Presentation only. Geometry is in world units; visual randomness never uses game.rng.
 const TAU=Math.PI*2;
-export const PALETTE={fire:'#ff7537',ice:'#76ddff',lightning:'#ffe86c',necro:'#69f3a2',arcane:'#c49aff',neutral:'#f3e8ff',steam:'#d8f6ff',soulfire:'#a8ff92',hostile:'#ff6544'};
+export const PALETTE={fire:'#ff7537',ice:'#76ddff',lightning:'#ffe86c',necro:'#69f3a2',arcane:'#c49aff',neutral:'#f3e8ff',steam:'#d8f6ff',soulfire:'#a8ff92',plasma:'#ffb34f',starfall:'#ff8fc8',thunderfrost:'#a2e7ff',gravefrost:'#8df2d8',mirror:'#c4e9ff',reaping:'#a2ff8b',soulward:'#b4f6c7',hostile:'#ff6544'};
 export const FX_LIMITS={off:0,reduced:100,full:320};
 const clamp=x=>Math.min(1,Math.max(0,x));
 const polar=(x,y,r,a)=>[x+Math.cos(a)*r,y+Math.sin(a)*r];
@@ -86,7 +86,7 @@ export function drawShield(ctx,x,y,tick,mode){
  ctx.restore();
 }
 export function drawProjectile(ctx,s,c,tick,mode,hostile=false){
- const x=s.x-c.x+(hostile?0:s.width/2),y=s.y-c.y+(hostile?0:s.height/2),r=hostile?s.radius:Math.max(2.5,s.width/2),color=hostile?PALETTE.hostile:(PALETTE[s.school]||PALETTE.neutral);
+ const x=s.x-c.x+(hostile?0:s.width/2),y=s.y-c.y+(hostile?0:s.height/2),r=hostile?s.radius:Math.max(2.5,s.width/2),color=hostile?PALETTE.hostile:(PALETTE[s.star?'starfall':s.school]||PALETTE.neutral);
  const speed=Math.hypot(s.vx,s.vy)||1,dx=s.vx/speed,dy=s.vy/speed;
  ctx.save();ctx.lineCap='round';
  if(mode!=='off'){
