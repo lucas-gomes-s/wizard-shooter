@@ -27,10 +27,11 @@
     <section id="arena" class="arena" aria-label="Dungeon arena">
       <canvas id="gameArea" tabindex="0" aria-label="Game arena. WASD to move, arrow keys to shoot."></canvas>
       <div class="vignette" aria-hidden="true"></div>
+      <div id="bossHud" class="boss-hud" hidden><div class="meter-label"><strong id="bossName"></strong><strong id="bossHealth"></strong></div><div id="bossMeter" class="track" role="progressbar" aria-label="Dragon health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><i></i></div></div>
       <div id="overlay" class="overlay">
         <section id="homePanel" class="panel home" aria-labelledby="homeTitle">
           <div class="sigil" aria-hidden="true"><img src="./images/wizard-hat.png" alt=""></div>
-          <p class="eyebrow accent">An endless dungeon survival game</p>
+          <p class="eyebrow accent">A dungeon survival roguelite</p>
           <h2 id="homeTitle">The dungeon awaits.</h2>
           <p>After a wild night out, you wake up somewhere unfamiliar. The monsters do not look friendly.</p>
           <button id="startButton" class="primary" type="button" disabled>Loading assets…</button>
@@ -50,6 +51,11 @@
           <p class="eyebrow accent" id="upgradeLevel">Level 2 reached</p><h2 id="upgradeTitle">Choose your power.</h2><p>Choose one of three powers. Combine schools to discover synergies.</p>
           <div id="upgradeCards" class="upgrade-cards" role="group" aria-label="Available upgrades"></div>
           <p class="small">← / → to select · Q or Enter to confirm · Click a card to choose</p>
+        </section>
+        <section id="victoryPanel" class="panel" aria-labelledby="victoryTitle" hidden>
+          <p class="eyebrow accent">Dungeon conquered</p><h2 id="victoryTitle">The dragon falls.</h2><p>You defeated the Ancient Dragon. Leave victorious or test your build against an endless dungeon.</p>
+          <div class="result-stats"><div><span>Victory time</span><strong id="victoryTime">00:00</strong></div><div><span>Monsters slain</span><strong id="victoryKills">0</strong></div></div>
+          <div class="menu-buttons"><button id="endlessButton" class="primary" type="button">Continue endless</button><button id="victoryTitleButton" class="quiet" type="button">Return to title</button></div>
         </section>
         <section id="resultPanel" class="panel result-panel" aria-labelledby="resultTitle" hidden>
           <p class="eyebrow accent">Run ended</p><h2 id="resultTitle">The dungeon wins.</h2>

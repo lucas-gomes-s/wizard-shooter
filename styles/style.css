@@ -78,3 +78,5 @@ blockquote{margin:0;color:var(--gold);font-family:Georgia,serif;font-style:itali
 .upgrade-card .skill-title,.upgrade-card .skill-effect{color:var(--school,var(--gold))}
 @media(max-width:700px){.spell-build{max-height:62px;overflow:auto}.spell-glyph{width:38px;height:38px;font-size:25px}.upgrade-cards{grid-template-columns:repeat(3,minmax(0,1fr))}.upgrade-card{overflow-wrap:anywhere}}
 @media(max-width:480px){.upgrade-cards{grid-template-columns:1fr}.upgrade-card{display:grid;grid-template-columns:38px 1fr;align-items:center}.upgrade-card span:not(.spell-glyph){grid-column:2}.upgrade-card img,.spell-glyph{grid-row:1/4}}
+
+.boss-hud{position:absolute;z-index:1;top:10px;left:50%;transform:translateX(-50%);width:min(480px,88%);background:#1c1723dd;border:1px solid #975a50;border-radius:8px;padding:8px 12px;pointer-events:none}.boss-hud .track i{background:#e27279}#victoryPanel .result-stats{grid-template-columns:repeat(2,1fr)}

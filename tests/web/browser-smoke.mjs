@@ -53,6 +53,17 @@ try{
   await page.locator('#quitButton').click();await page.locator('#confirmButton').click();
   await page.locator('#homePanel').waitFor({state:'visible'});
   await page.screenshot({path:'web-smoke-artifacts/compact-title.png'});
+  await start.click();await page.locator('#overlay').waitFor({state:'hidden'});
+  await page.evaluate(()=>{const g=window.__wizardTestGame;g.tick=25*60*50;g.spawnEnemies();});
+  await page.locator('#bossHud').waitFor({state:'visible'});
+  assert.ok((await page.locator('#bossName').textContent()).includes('Ancient Dragon'));
+  await page.screenshot({path:'web-smoke-artifacts/boss.png'});
+  await page.evaluate(()=>{const g=window.__wizardTestGame;g.boss.expGiven=0;g.damage(g.boss,g.boss.health);});
+  await page.locator('#victoryPanel').waitFor({state:'visible'});
+  await page.screenshot({path:'web-smoke-artifacts/victory.png'});
+  await page.locator('#endlessButton').click();
+  await page.locator('#overlay').waitFor({state:'hidden'});
+  assert.equal(await page.locator('#bossName').textContent(),'Endless survival');
   assert.deepEqual(errors,[]);
   console.log('Browser smoke passed: assets, start, movement input, pause, confirmation, effects, resizing, restart, return to title.');
 }finally{await browser.close();}
