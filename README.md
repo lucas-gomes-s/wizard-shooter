@@ -203,3 +203,26 @@ Boots: Runner's Greaves (85-unit dash, 7s cooldown); Escape Boots (110-unit dash
 Gold is earned automatically: one per four kills, two extra for elite kills, twenty extra per miniboss, and 15/30/45 for successful rare/epic/legendary challenges. Merchants appear at minutes 6, 11, 16 and 21, remain for 60 seconds, and open a paused shop when approached. Choose one of three items or a restorative draught (35% max HP), or leave without spending. Prices: common 45, rare 90, epic 170, legendary 300, draught 35. Stock rarity follows run progression. No real money, persistent currency or monetization. Economy can be disabled with economyEnabled:false.
 
 Initial ten-minute sample, 25 ordered build targets, seed 1: 24 survived, 22 purchases, 483 active uses, 8,457 gold earned and 1,770 spent after reducing initial excessive payouts. All 123 direct regression cases passed in two groups (76 existing core, 47 recent/new); 11 new active/economy tests. Controller syntax parsed. Full browser CI and full-duration balance not verified. Gold still accumulates faster than spending in this sample; later pricing, stock and sinks need calibration. Raw results in benchmarks/v1.12/. Bots use proximity-based active and purchase heuristics, not optimized policies.
+
+## Equipment attunements and combat telemetry (v1.13.0)
+
+Ten equipment-specific bonuses, two for each magic school, activate automatically when the corresponding item is equipped and either learned school reaches rank II. Equipment replacements remove the bonus; this does not bypass the two-school limit or require a separate upgrade. Loot and merchant cards show the requirements and whether the attunement is active; equipped attuned items are marked in the HUD.
+
+| School | Item | Attunement |
+| --- | --- | --- |
+| Fire | Meteor Scepter | Meteor impact burst 45% → 65% |
+| Fire | Trailblazer Boots | Passive movement pulse 35% → 50% |
+| Ice | Prismatic Rod | One additional piercing target |
+| Ice | Hourglass of Eternity | Active freeze 1.2s → 1.6s |
+| Lightning | Farshot Staff | Chain range +30 |
+| Lightning | Gambler's Ring | Double damage 25% → 35%; half damage 25% → 15% |
+| Necromancy | Vampire Fang | Healing per kill 0.5 → 0.8 HP |
+| Necromancy | Soul Lantern | Passive pulse every 9 kills instead of 12 |
+| Arcane | Staff of Echoes | Extra bolt every fourth instead of fifth cast |
+| Arcane | Aegis of Dawn | Recharge 12s → 9s |
+
+Combat counters are independent of the presentation event queue. Reports include actual enemy HP removed, excess (overkill) damage, damage by attack mechanism, actual incoming damage and mitigation by enemy/attack type, healing by source, explicit equipment health costs, casts, projectiles, distinct projectiles hitting at least once, direct hits, and five-minute windows. Accuracy counts emitted projectiles, including those still in flight at the end of the run; a piercing projectile counts as one successful projectile. Direct damage includes all modifiers to a bolt and is classified by its primary school, not a causal attribution of individual upgrades. Control effects, movement and avoidance are not measured as damage; no causal effectiveness claims from source totals. The report appears on the defeat/results screen and is exported in benchmark JSON. No network telemetry or account tracking.
+
+A full-duration exploratory sample of all 25 ordered build targets (seed 1, 1800s cap, decisions every five ticks) produced 5 victories and 9 dragon arrivals; 22 reached minute 10, 18 minute 15 and 9 minute 20. Total simulated time 27,455.62s, effective damage 3,117,766 HP, overkill 3,046,829 HP, actual incoming 19,976 HP, healing 19,878 HP, prevented incoming damage 8,735 HP. 43,566 of 145,263 emitted projectiles hit a target (30.0%); overkill accounts for 49.4% of computed outgoing damage. Demon projectiles accounted for 7,322 HP (36.7% of incoming), Reaper contact 3,951 HP (19.8%). Necromancy kill healing accounted for 11,789 HP (59.3% of actual healing). Observed primary-school victories (five runs each): fire 1, ice 0, lightning 0, necromancy 3, arcane 1. These are aggregate observations from unequal run durations, not proof that a particular mechanic is overpowered. Bot item preferences now account for attunement; no enemy stats or base gear stats were otherwise retuned. Raw data: benchmarks/v1.13/full-seed-1.json.
+
+132 direct JavaScript regression checks passed across three batches (56 + 55 + 21); controller syntax parsed. Full browser CI and human playtesting remain unverified. Next balance pass should compare at matched time windows, account for enemy exposure, and test targeted changes with multiple seeds and holdout seeds. 
