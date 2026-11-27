@@ -136,6 +136,7 @@ export class Game{
    if(hasGear(p,'fang'))this.healPlayer(attuned(p,'fang','necro')?.8:.5,'necro','gear:fang');
    if(hasGear(p,'lantern')&&++p.gearState.relic.count%(attuned(p,'lantern','necro')?9:12)===0)this.pulse(hash,p,90,p.shotDmg,'necro',null,'gear:lantern:passive');
    if(e.boss&&!this.bossDefeated){this.bossDefeated=true;this.victoryTick=this.tick;this.emit('victory',e)}
+   if(!r.necro&&p.level>=10&&this.config.combatBalance?.nonNecroHeal>0)this.healPlayer(this.config.combatBalance.nonNecroHeal,'necro','balance:recovery');
    if(r.necro&&p.health<p.maxHealth){const before=p.health;p.health=Math.min(p.maxHealth,p.health+.5+.5*r.necro+Number(m.mastery==='lich'));trackHeal(this.telemetry,this.tick,'necro:kill',p.health-before);this.emit('heal',p,p.health-before,'necro');this.emitVisual('soul',e,p.health-before,'necro')}
    if(r.necro>=5){const radius=m.mastery==='lich'?85:65;this.emit('burst',e,radius,'necro');for(const other of nearby(hash,e,radius,new Set([e])))this.damage(other,p.shotDmg*(m.mastery==='lich'?.6:.4),'necro','necro:burst')}
    if(m.synergies.includes('gravefrost')&&e.slowUntil>this.tick)this.pulse(hash,e,60,p.shotDmg*.35,'gravefrost',.5,'fusion:gravefrost');
