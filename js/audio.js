@@ -55,7 +55,7 @@ export class GameAudio{
  async unlock(){
   if(this.disposed||!this.Context||this.settings.muted)return false;
   try{
-   if(!this.ctx){this.ctx=new this.Context();this.master=this.ctx.createGain();this.sfx=this.ctx.createGain();this.music=this.ctx.createGain();this.sfx.connect(this.master);this.music.connect(this.master);this.master.connect(this.ctx.destination);this.update(this.settings);}
+   if(!this.ctx){this.ctx=new this.Context();this.master=this.ctx.createGain();this.sfx=this.ctx.createGain();this.music=this.ctx.createGain();this.sfx.connect(this.master);this.music.connect(this.master);if(this.ctx.createDynamicsCompressor){const limiter=this.ctx.createDynamicsCompressor();limiter.threshold.value=-12;limiter.knee.value=12;limiter.ratio.value=12;limiter.attack.value=.003;limiter.release.value=.15;this.master.connect(limiter);limiter.connect(this.ctx.destination);}else this.master.connect(this.ctx.destination);this.update(this.settings);}
    if(this.ctx.state!=='running')await this.ctx.resume();
    return this.ctx.state==='running';
   }catch{return false}
@@ -96,8 +96,9 @@ export class GameAudio{
  }
  collect(events){for(const e of events)this.cue(e.type,e.visualSchool||e.school)}
  observe(g){
-  for(const e of g.enemies){const a=e.action;if(a?.kind.endsWith('windup')&&this.actions.get(e)!==a){this.actions.set(e,a);this.cue('warning')}}
-  for(const h of g.hazards)if(!this.hazards.has(h)){this.hazards.add(h);if(h.activeAt>g.tick)this.cue('hazard')}
+  if(!this.ready||!this.settings.sfx)return;
+  for(const e of g.enemies){const a=e.action;if(a?.kind.endsWith('windup')&&g.visible(e,80)&&this.actions.get(e)!==a){this.actions.set(e,a);this.cue('warning')}}
+  for(const h of g.hazards)if(!this.hazards.has(h)){this.hazards.add(h);if(h.activeAt>g.tick&&g.visible({x:h.x-h.radius,y:h.y-h.radius,width:h.radius*2,height:h.radius*2},50))this.cue('hazard')}
   const boss=g.boss||g.miniboss,key=boss?(boss.title||boss.name):'';
   if(key&&key!==this.bossKey)this.cue('boss');this.bossKey=key;
   const e=g.dungeon?.active,eventKey=e?e.id+':'+e.stage+':'+e.serial:'';
