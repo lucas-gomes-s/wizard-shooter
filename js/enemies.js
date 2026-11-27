@@ -85,20 +85,20 @@ export function inCircle(p,x,y,radius){
  const nx=Math.max(p.x,Math.min(x,p.x+p.width)),ny=Math.max(p.y,Math.min(y,p.y+p.height));
  return (nx-x)**2+(ny-y)**2<=radius**2;
 }
-export function stepHazards(game){
+export function stepHazards(game,hash=null){
  const p=game.player,t=game.tick;
  game.hazards=game.hazards.filter(h=>{
   if(t>=h.until)return false;
   if(t>=h.activeAt&&inCircle(p,h.x,h.y,h.radius)){
    if(h.type==='web')p.webUntil=Math.max(p.webUntil||0,t+12);
-   else if(!h.hit){h.hit=true;game.hurtPlayer(h.damage,'hazard');}
+   else if(!h.hit){h.hit=true;game.hurtPlayer(h.damage,'hazard',hash);}
   }
   return true;
  });
  game.hostiles=game.hostiles.filter(s=>{
   s.x+=s.vx;s.y+=s.vy;s.age++;
   if(s.age>200||!game.visible({x:s.x-s.radius,y:s.y-s.radius,width:s.radius*2,height:s.radius*2},150))return false;
-  if(inCircle(p,s.x,s.y,s.radius)){game.hurtPlayer(s.damage,'projectile');return false;}
+  if(inCircle(p,s.x,s.y,s.radius)){game.hurtPlayer(s.damage,'projectile',hash);return false;}
   return true;
  });
 }
