@@ -10,20 +10,20 @@ export const dungeonEvents=[
  {id:'anomaly',name:'Magical anomaly',glyph:'✧',color:'#78e9de',duration:40,description:'Collect all three unstable runes before they disappear.'}
 ];
 export const eventById=Object.fromEntries(dungeonEvents.map(e=>[e.id,e]));
-const center=o=>({x:o.x+o.width/2,y:o.y+o.height/2});
-const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
-const at=(x,y,r,a)=>({x:x+Math.cos(a)*r,y:y+Math.sin(a)*r});
+const eventCenter=o=>({x:o.x+o.width/2,y:o.y+o.height/2});
+const eventDistance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+const eventPosition=(x,y,r,a)=>({x:x+Math.cos(a)*r,y:y+Math.sin(a)*r});
 export function freshEvents(){return {cursor:0,deck:[],active:null,history:[],notice:null}}
 export function announceEvent(g,id){
  const state=g.dungeon,def=eventById[id];if(!def||state.active||g.bossSpawned)return false;
- const p=center(g.player),angle=g.rng()*Math.PI*2,r=Math.min(150,Math.min(g.width,g.height)*.28);
- const pos=at(p.x,p.y,r,angle);
+ const p=eventCenter(g.player),angle=g.rng()*Math.PI*2,r=Math.min(150,Math.min(g.width,g.height)*.28);
+ const pos=eventPosition(p.x,p.y,r,angle);
  state.active={id,serial:state.cursor,stage:'offered',...pos,radius:36,until:g.tick+35*50,progress:0,goal:1,hits:0,runes:[],target:null};
  return true;
 }
 function finish(g,outcome){
  const s=g.dungeon,e=s.active;if(!e)return;
- const def=eventById[e.id],p=center(g.player);
+ const def=eventById[e.id],p=eventCenter(g.player);
  if(outcome==='completed'){
   const tier=g.seconds>=1200?3:g.seconds>=600?2:1;
   // Drop close to the wizard, but never stack on the player's collision box.
@@ -57,7 +57,7 @@ function start(g,e){
  case 'collapse':e.goal=3;break;
  case 'anomaly':{
   e.goal=3;const offset=g.rng()*Math.PI*2;
-  e.runes=Array.from({length:3},(_,i)=>({...at(e.x,e.y,130,offset+i*Math.PI*2/3),collected:false}));break;
+  e.runes=Array.from({length:3},(_,i)=>({...eventPosition(e.x,e.y,130,offset+i*Math.PI*2/3),collected:false}));break;
  }
  case 'altar':e.goal=def.duration*50;break;
  }
@@ -72,7 +72,8 @@ export function recordEventHazard(g,h,damage){
 }
 export function stepDungeon(g){
  if(g.config.eventsEnabled===false||g.config.equipmentEnabled===false)return;
- const s=g.dungeon,t=g.tick,p=center(g.player);
+ const s=g.dungeon,t=g.tick,p=eventCenter(g.player);
+ if(g.player.health<=0){if(s.active)finish(g,s.active.stage==='offered'?'ignored':'failed');return;}
  if(g.bossSpawned){if(s.active)finish(g,s.active.stage==='offered'?'ignored':'failed');return;}
  if(!s.active&&s.cursor<eventWindows.length&&g.seconds>=eventWindows[s.cursor]){
   // Consume missed windows rather than starting a backlog of simultaneous events.
@@ -85,7 +86,7 @@ export function stepDungeon(g){
  const e=s.active;if(!e)return;
  if(e.stage==='offered'){
   if(t>=e.until){finish(g,'ignored');return;}
-  if(dist(p,e)<=e.radius)start(g,e);
+  if(eventDistance(p,e)<=e.radius)start(g,e);
   return;
  }
  switch(e.id){
@@ -94,7 +95,7 @@ export function stepDungeon(g){
   if(t>=e.nextPulse&&t<e.until){e.nextPulse=t+200;for(let i=0;i<2;i++)eventEnemy(g,e);}
   if(t>=e.until){finish(g,'completed');return;}break;
  case 'shrine':
-  if(dist(p,e)<=e.radius)e.progress++;
+  if(eventDistance(p,e)<=e.radius)e.progress++;
   if(e.progress>=e.goal){finish(g,'completed');return;}break;
  case 'guardian':
   if(e.progress>=1){finish(g,'completed');return;}
@@ -109,12 +110,12 @@ export function stepDungeon(g){
   if(t>=e.nextPulse){
    e.nextPulse=t+150;
    for(let i=0;i<3&&g.hazards.length<HAZARD_CAP;i++){
-    const pos=i===0?p:at(p.x,p.y,65+g.rng()*90,g.rng()*Math.PI*2);
+    const pos=i===0?p:eventPosition(p.x,p.y,65+g.rng()*90,g.rng()*Math.PI*2);
     g.hazards.push({type:'rubble',...pos,radius:34,activeAt:t+55,until:t+85,damage:Math.min(28,10+Math.floor(g.seconds/60)),hit:false,eventSerial:e.serial});
    }
   }break;
  case 'anomaly':
-  for(const rune of e.runes)if(!rune.collected&&dist(p,rune)<=30){rune.collected=true;e.progress++;}
+  for(const rune of e.runes)if(!rune.collected&&eventDistance(p,rune)<=30){rune.collected=true;e.progress++;}
   if(e.progress>=e.goal){finish(g,'completed');return;}break;
  }
  if(t>=e.until)finish(g,'failed');
