@@ -27,7 +27,7 @@ function finish(g,outcome){
  const def=eventById[e.id],p=eventCenter(g.player);
  if(outcome==='completed'){
   const tier=g.seconds>=1200?3:g.seconds>=600?2:1;
-  addGold(g,30*tier);
+  addGold(g,15*tier);
   // Drop close to the wizard, but never stack on the player's collision box.
   if(g.config.equipmentEnabled!==false)g.dropChest(p.x+55,p.y,tier,def.name+' reward');
  }
