@@ -47,6 +47,8 @@ export function upgradeOffers(player,skills,rng=Math.random){
  if(mastered.length&&offers.length<3){const offer=sample(mastered,rng);offers.push(offer);magic.splice(magic.indexOf(offer),1);}
  if(newSchools.length&&offers.length<3){const offer=sample(newSchools,rng);offers.push(offer);magic.splice(magic.indexOf(offer),1);}
  if(!offers.some(o=>o.kind==='school')&&magic.length&&offers.length<3)offers.push(sample(magic,rng));
+ // Optional specialization must remain a real choice when secondary schools are offered.
+ if(learnedSchools(m).length===1&&player.level>=SECOND_SCHOOL_LEVEL&&basic.length&&offers.length<3&&!offers.some(o=>o.kind==='basic'))offers.push(sample(basic,rng));
  const pool=[...basic,...magic,...combos];
  while(offers.length<3&&pool.length)offers.push(sample(pool,rng));
  return offers;
