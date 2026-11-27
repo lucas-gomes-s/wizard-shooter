@@ -28,8 +28,8 @@ test('all ten distinct pairs have one unique fusion independent of school order'
 test('plasma chains burn without recursively chaining or stacking',()=>{
  const g=build('plasma'),a=enemy(350),b=enemy(390),c=enemy(550);
  g.enemies.push(a,b,c);g.shots.push(bolt(350));g.step();
- close(b.health,95.5);assert.equal(b.burnDamage,2);assert.ok(b.burnUntil>g.tick);assert.equal(c.burnUntil,undefined);
- const first=b.burnNext;g.shots.push(bolt(350));g.step();assert.equal(b.burnDamage,2);assert.equal(b.burnNext,first);close(b.health,91);
+ close(b.health,95.5);assert.equal(b.burnDamage,4);assert.ok(b.burnUntil>g.tick);assert.equal(c.burnUntil,undefined);
+ const first=b.burnNext;g.shots.push(bolt(350));g.step();assert.equal(b.burnDamage,4);assert.equal(b.burnNext,first);close(b.health,91);
 });
 test('starfire replaces every fourth cast with five wide explosive bolts',()=>{
  const g=build('starfall'),p=g.player;
@@ -39,7 +39,7 @@ test('starfire replaces every fourth cast with five wide explosive bolts',()=>{
 test('thunderfrost chills, then freezes with per-target cooldown',()=>{
  const g=build('thunderfrost'),a=enemy(350),b=enemy(390);g.enemies=[a,b];
  g.shots.push(bolt(350));g.step();close(b.slowFactor,.55);assert.equal(b.freezeUntil,undefined);
- g.shots.push(bolt(350));g.step();assert.equal(b.freezeUntil,g.tick+20);const deadline=b.freezeUntil;
+ g.shots.push(bolt(350));g.step();assert.equal(b.freezeUntil,g.tick+40);const deadline=b.freezeUntil;
  g.shots.push(bolt(350));g.step();assert.equal(b.freezeUntil,deadline);
 });
 test('gravefrost triggers on chilled death and does not double-award kills',()=>{
@@ -55,11 +55,11 @@ test('glacial mirror adds piercing and freezes on shield block only',()=>{
 test('soul conductor marks chain targets and pays a bounded kill bonus',()=>{
  const g=build('reaping'),a=enemy(350),b=enemy(390,280,4),c=enemy(460);
  g.player.health=50;g.enemies=[a,b,c];g.shots.push(bolt(350));g.step();
- assert.equal(g.kills,1);close(g.player.health,54.5);close(a.health,86);close(c.health,100);assert.equal(g.events.filter(e=>e.type==='chain'&&e.school==='reaping').length,1);
+ assert.equal(g.kills,1);close(g.player.health,53);close(a.health,86);close(c.health,100);assert.equal(g.events.filter(e=>e.type==='chain'&&e.school==='reaping').length,1);
 });
 test('soul ward reduces recharge and shield block heals and damages nearby targets',()=>{
  const g=build('soulward'),a=enemy(280),b=enemy(350),c=enemy(500);
  g.player.health=50;g.enemies=[a,b,c];g.step();close(g.player.health,58);close(a.health,95);close(b.health,95);close(c.health,100);
  const deadline=g.player.magic.shieldUntil;g.enemies=[];g.enemies.push(enemy(350,280,1));g.shots.push(bolt(350));g.step();
- assert.equal(g.player.magic.shieldUntil,deadline-25);assert.equal(g.kills,1);
+ assert.equal(g.player.magic.shieldUntil,deadline-15);assert.equal(g.kills,1);
 });

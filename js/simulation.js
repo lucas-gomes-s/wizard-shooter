@@ -46,11 +46,11 @@ export class Game{
   enemy.health-=dealt;this.emit('hit',enemy,Math.min(dealt,enemy.health+dealt),school);
   if(enemy.health<=0)this.deathQueue.push(enemy);
  }
- ignite(enemy,damage){
+ ignite(enemy,damage,duration=100){
   if(enemy.health<=0)return;
   const active=enemy.burnUntil>=this.tick;
   enemy.burnDamage=active?Math.max(enemy.burnDamage||0,damage):damage;
-  enemy.burnUntil=this.tick+100;
+  enemy.burnUntil=Math.max(enemy.burnUntil||0,this.tick+duration);
   if(!(enemy.burnNext>this.tick))enemy.burnNext=this.tick+25;
  }
  chill(enemy,factor){
@@ -68,13 +68,13 @@ export class Game{
  }
  directHit(enemy,shot,hash){
   const p=this.player,m=p.magic,r=m.ranks,combos=m.synergies;
-  const critical=r.lightning&&this.rng()<.05*r.lightning;const armor=frontalMultiplier(enemy,shot);const damage=shot.damage*(critical?2:1)*armor;
+  const critical=r.lightning&&this.rng()<.05*r.lightning+(m.mastery==='tempest'?.2:0);const armor=frontalMultiplier(enemy,shot);const damage=shot.damage*(critical?2:1)*armor*(m.mastery==='absolute-zero'&&enemy.slowUntil>this.tick?1.4:1);
   if(critical)this.emitVisual('crit',enemy,damage,'lightning');if(armor<1)this.emitVisual('block',enemy,damage);
   this.damage(enemy,damage,shot.school);
   if(r.fire){
-   enemy.burnUntil=this.tick+100;enemy.burnDamage=shot.damage*(.15+.05*r.fire);
+   enemy.burnUntil=Math.max(enemy.burnUntil||0,this.tick+100);enemy.burnDamage=Math.max(enemy.burnUntil>this.tick+100?enemy.burnDamage||0:0,shot.damage*([0,.2,.35,.45,.55,.65][r.fire])*(m.mastery==='inferno'?1.4:1));
    if(!(enemy.burnNext>this.tick))enemy.burnNext=this.tick+25;
-   if(r.fire>=3){const radius=r.fire>=5?65:45;this.emit('burst',enemy,radius,'fire');for(const other of nearby(hash,enemy,radius,new Set([enemy])))this.damage(other,shot.damage*.3,'fire')}
+   if(r.fire>=3){const radius=m.mastery==='inferno'?95:r.fire>=5?75:55;this.emit('burst',enemy,radius,'fire');for(const other of nearby(hash,enemy,radius,new Set([enemy])))this.damage(other,shot.damage*(m.mastery==='inferno'?.65:.45),'fire')}
   }
   if(r.ice){
    enemy.slowUntil=this.tick+100;enemy.slowFactor=1-(.15+.1*r.ice);
@@ -85,25 +85,25 @@ export class Game{
   if(r.lightning){
    const storm=combos.includes('storm'),visited=new Set([enemy]);
    let origin=enemy;
-   for(let i=0;i<1+Math.floor((r.lightning-1)/2)+Number(storm);i++){
-    const target=nearby(hash,origin,100+10*r.lightning+(storm?30:0),visited)[0];if(!target)break;
+   for(let i=0;i<1+Math.floor((r.lightning-1)/2)+Number(storm)+2*Number(m.mastery==='tempest');i++){
+    const target=nearby(hash,origin,100+10*r.lightning+(storm?30:0)+(m.mastery==='tempest'?40:0),visited)[0];if(!target)break;
     this.emit('chain',target,0,'lightning',{fromX:origin.x+origin.width/2,fromY:origin.y+origin.height/2});
     if(combos.includes('reaping'))target.conductorUntil=this.tick+100;
     if(combos.includes('thunderfrost')){
      const chilled=target.slowUntil>this.tick;
      this.chill(target,.55);
-     if(chilled&&!(target.thunderfreezeReady>this.tick)){target.freezeUntil=Math.max(target.freezeUntil||0,this.tick+20);target.thunderfreezeReady=this.tick+100;this.emitVisual('freeze',target,0,'thunderfrost');}
+     if(chilled&&!(target.thunderfreezeReady>this.tick)){target.freezeUntil=Math.max(target.freezeUntil||0,this.tick+40);target.thunderfreezeReady=this.tick+100;this.emitVisual('freeze',target,0,'thunderfrost');}
     }
     this.damage(target,shot.damage*(.35+.05*r.lightning),'lightning');
-    if(combos.includes('plasma')){this.ignite(target,shot.damage*.2);this.emitVisual('burst',target,18,'plasma');}
+    if(combos.includes('plasma')){this.ignite(target,shot.damage*.4,150);this.emitVisual('burst',target,18,'plasma');}
     visited.add(target);origin=target;
    }
   }
   if(combos.includes('starfall')&&shot.star)this.pulse(hash,enemy,45,p.shotDmg*.25,'starfall');
   if(combos.includes('steam')){
-   this.emit('burst',enemy,70,'ice',{visualSchool:'steam'});
-   for(const target of nearby(hash,enemy,70,new Set([enemy]))){
-    this.damage(target,shot.damage*.35,'ice');
+   this.emit('burst',enemy,85,'ice',{visualSchool:'steam'});
+   for(const target of nearby(hash,enemy,85,new Set([enemy]))){
+    this.damage(target,shot.damage*.55,'ice');
     target.slowUntil=Math.max(target.slowUntil||0,this.tick+100);
     target.slowFactor=Math.min(target.slowFactor||1,.5);
    }
@@ -117,15 +117,15 @@ export class Game{
    if(processed.has(e))continue;processed.add(e);
    this.kills++;p.currentExp+=e.expGiven;this.emit('kill',e,e.expGiven);
    if(e.boss&&!this.bossDefeated){this.bossDefeated=true;this.victoryTick=this.tick;this.emit('victory',e)}
-   if(r.necro&&p.health<p.maxHealth){const before=p.health;p.health=Math.min(p.maxHealth,p.health+.5+.5*r.necro);this.emit('heal',p,p.health-before,'necro');this.emitVisual('soul',e,p.health-before,'necro')}
-   if(r.necro>=5){this.emit('burst',e,65,'necro');for(const other of nearby(hash,e,65,new Set([e])))this.damage(other,p.shotDmg*.4,'necro')}
+   if(r.necro&&p.health<p.maxHealth){const before=p.health;p.health=Math.min(p.maxHealth,p.health+.5+.5*r.necro+Number(m.mastery==='lich'));this.emit('heal',p,p.health-before,'necro');this.emitVisual('soul',e,p.health-before,'necro')}
+   if(r.necro>=5){const radius=m.mastery==='lich'?85:65;this.emit('burst',e,radius,'necro');for(const other of nearby(hash,e,radius,new Set([e])))this.damage(other,p.shotDmg*(m.mastery==='lich'?.6:.4),'necro')}
    if(m.synergies.includes('gravefrost')&&e.slowUntil>this.tick)this.pulse(hash,e,60,p.shotDmg*.35,'gravefrost',.5);
    if(m.synergies.includes('reaping')&&e.conductorUntil>this.tick){
-    this.healPlayer(3,'reaping');const target=nearby(hash,e,120,new Set([e]))[0];
+    this.healPlayer(1.5,'reaping');const target=nearby(hash,e,120,new Set([e]))[0];
     if(target){this.emit('chain',target,0,'reaping',{fromX:e.x+e.width/2,fromY:e.y+e.height/2});this.damage(target,p.shotDmg*.4,'reaping');}
    }
-   if(m.synergies.includes('soulward')&&!m.shieldReady)m.shieldUntil=Math.max(this.tick,m.shieldUntil-25);
-   if(m.synergies.includes('soulfire')&&e.burnUntil>=this.tick){this.emit('burst',e,60,'fire',{visualSchool:'soulfire'});for(const other of nearby(hash,e,60,new Set([e])))this.damage(other,p.shotDmg*.6,'fire')}
+   if(m.synergies.includes('soulward')&&!m.shieldReady)m.shieldUntil=Math.max(this.tick,m.shieldUntil-15);
+   if(m.synergies.includes('soulfire')&&e.burnUntil>=this.tick){this.emit('burst',e,80,'fire',{visualSchool:'soulfire'});for(const other of nearby(hash,e,80,new Set([e])))this.damage(other,p.shotDmg*.6,'fire')}
   }
   this.deathQueue=[];
   this.enemies=this.enemies.filter(e=>e.health>0&&(e.boss||e.miniboss||this.visible(e)));
@@ -165,7 +165,7 @@ export class Game{
  }
  hurtPlayer(amount,source='contact',hash=null){
   const p=this.player,m=p.magic;if(p.health<=0)return 0;
-  if(source==='contact'&&m.ranks.arcane>=2&&m.shieldReady){m.shieldReady=false;m.shieldUntil=this.tick+(m.ranks.arcane>=4?500:750);this.emit('shield',p,0,'arcane');
+  if(source==='contact'&&m.ranks.arcane>=2&&m.shieldReady){m.shieldReady=false;m.shieldUntil=this.tick+(m.mastery==='archmage'?350:m.ranks.arcane>=4?500:750);this.emit('shield',p,0,'arcane');
    if(hash&&m.synergies.includes('mirror')){this.emit('burst',p,90,'mirror');for(const target of nearby(hash,p,90)){target.freezeUntil=Math.max(target.freezeUntil||0,this.tick+40);this.emitVisual('freeze',target,0,'mirror');}}
    if(m.synergies.includes('soulward')){this.healPlayer(8,'soulward');if(hash)this.pulse(hash,p,70,p.shotDmg*.5,'soulward');}
    return 0;}

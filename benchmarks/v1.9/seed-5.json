@@ -1,0 +1,1370 @@
+{
+  "seconds": 1800,
+  "decisionTicks": 5,
+  "results": [
+    {
+      "primary": "fire",
+      "secondary": null,
+      "seed": 5,
+      "seconds": 594.98,
+      "phase": "over",
+      "level": 23,
+      "kills": 777,
+      "xp": 4261,
+      "health": 0,
+      "maxEnemies": 32,
+      "firstUpgrade": 6.98,
+      "secondaryOfferedAt": null,
+      "secondaryAt": null,
+      "secondaryLevel": null,
+      "fusion": null,
+      "fusionAt": null,
+      "fusionLevel": null,
+      "mastery": "inferno",
+      "masteryAt": 242.98,
+      "masteryLevel": 15,
+      "reachedDragon": false,
+      "build": {
+        "fire": 5,
+        "ice": 0,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 0
+      },
+      "stats": {
+        "damage": 100,
+        "castTicks": 20,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 320,
+          "health": 75,
+          "enemies": 10
+        }
+      }
+    },
+    {
+      "primary": "fire",
+      "secondary": "ice",
+      "seed": 5,
+      "seconds": 533.56,
+      "phase": "over",
+      "level": 22,
+      "kills": 669,
+      "xp": 3348,
+      "health": 0,
+      "maxEnemies": 32,
+      "firstUpgrade": 6.98,
+      "secondaryOfferedAt": 191.58,
+      "secondaryAt": 191.58,
+      "secondaryLevel": 13,
+      "fusion": "steam",
+      "fusionAt": 242.72,
+      "fusionLevel": 15,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 5,
+        "ice": 4,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 0
+      },
+      "stats": {
+        "damage": 90,
+        "castTicks": 40,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 325,
+          "health": 100,
+          "enemies": 5
+        }
+      }
+    },
+    {
+      "primary": "fire",
+      "secondary": "lightning",
+      "seed": 5,
+      "seconds": 501.2,
+      "phase": "over",
+      "level": 21,
+      "kills": 614,
+      "xp": 2902,
+      "health": 0,
+      "maxEnemies": 32,
+      "firstUpgrade": 6.98,
+      "secondaryOfferedAt": 164.62,
+      "secondaryAt": 164.62,
+      "secondaryLevel": 12,
+      "fusion": "plasma",
+      "fusionAt": 210.6,
+      "fusionLevel": 14,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 5,
+        "ice": 0,
+        "lightning": 2,
+        "necro": 0,
+        "arcane": 0
+      },
+      "stats": {
+        "damage": 80,
+        "castTicks": 30,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 322,
+          "health": 96,
+          "enemies": 8
+        }
+      }
+    },
+    {
+      "primary": "fire",
+      "secondary": "necro",
+      "seed": 5,
+      "seconds": 1506.58,
+      "phase": "victory",
+      "level": 38,
+      "kills": 2824,
+      "xp": 36645,
+      "health": 34,
+      "maxEnemies": 32,
+      "firstUpgrade": 6.98,
+      "secondaryOfferedAt": 210.62,
+      "secondaryAt": 210.62,
+      "secondaryLevel": 14,
+      "fusion": "soulfire",
+      "fusionAt": 279.06,
+      "fusionLevel": 16,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": true,
+      "build": {
+        "fire": 5,
+        "ice": 0,
+        "lightning": 0,
+        "necro": 4,
+        "arcane": 0
+      },
+      "stats": {
+        "damage": 170,
+        "castTicks": 1,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 325,
+          "health": 100,
+          "enemies": 5
+        },
+        "600": {
+          "level": 23,
+          "kills": 783,
+          "health": 100,
+          "enemies": 12
+        },
+        "900": {
+          "level": 28,
+          "kills": 1359,
+          "health": 100,
+          "enemies": 8
+        },
+        "1200": {
+          "level": 34,
+          "kills": 2064,
+          "health": 100,
+          "enemies": 7
+        },
+        "1500": {
+          "level": 38,
+          "kills": 2815,
+          "health": 100,
+          "enemies": 6
+        }
+      }
+    },
+    {
+      "primary": "fire",
+      "secondary": "arcane",
+      "seed": 5,
+      "seconds": 1079.26,
+      "phase": "over",
+      "level": 32,
+      "kills": 1761,
+      "xp": 16643,
+      "health": 0,
+      "maxEnemies": 33,
+      "firstUpgrade": 6.98,
+      "secondaryOfferedAt": 128.58,
+      "secondaryAt": 128.58,
+      "secondaryLevel": 10,
+      "fusion": "starfall",
+      "fusionAt": 177.58,
+      "fusionLevel": 12,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 3,
+        "ice": 0,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 5
+      },
+      "stats": {
+        "damage": 160,
+        "castTicks": 20,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 322,
+          "health": 100,
+          "enemies": 8
+        },
+        "600": {
+          "level": 23,
+          "kills": 787,
+          "health": 54,
+          "enemies": 8
+        },
+        "900": {
+          "level": 28,
+          "kills": 1359,
+          "health": 91,
+          "enemies": 8
+        }
+      }
+    },
+    {
+      "primary": "ice",
+      "secondary": null,
+      "seed": 5,
+      "seconds": 832.74,
+      "phase": "over",
+      "level": 27,
+      "kills": 1214,
+      "xp": 8729,
+      "health": 0,
+      "maxEnemies": 75,
+      "firstUpgrade": 6.98,
+      "secondaryOfferedAt": null,
+      "secondaryAt": null,
+      "secondaryLevel": null,
+      "fusion": null,
+      "fusionAt": null,
+      "fusionLevel": null,
+      "mastery": "absolute-zero",
+      "masteryAt": 269.2,
+      "masteryLevel": 15,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 5,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 0
+      },
+      "stats": {
+        "damage": 150,
+        "castTicks": 30,
+        "speed": 5,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 287,
+          "health": 100,
+          "enemies": 43
+        },
+        "600": {
+          "level": 23,
+          "kills": 777,
+          "health": 25,
+          "enemies": 18
+        }
+      }
+    },
+    {
+      "primary": "ice",
+      "secondary": "fire",
+      "seed": 5,
+      "seconds": 410.24,
+      "phase": "over",
+      "level": 19,
+      "kills": 479,
+      "xp": 2063,
+      "health": 0,
+      "maxEnemies": 68,
+      "firstUpgrade": 6.98,
+      "secondaryOfferedAt": 204.62,
+      "secondaryAt": 204.62,
+      "secondaryLevel": 12,
+      "fusion": "steam",
+      "fusionAt": 236.84,
+      "fusionLevel": 14,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 3,
+        "ice": 5,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 0
+      },
+      "stats": {
+        "damage": 80,
+        "castTicks": 45,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 321,
+          "health": 85,
+          "enemies": 9
+        }
+      }
+    },
+    {
+      "primary": "ice",
+      "secondary": "lightning",
+      "seed": 5,
+      "seconds": 542.68,
+      "phase": "over",
+      "level": 22,
+      "kills": 684,
+      "xp": 3458,
+      "health": 0,
+      "maxEnemies": 73,
+      "firstUpgrade": 6.98,
+      "secondaryOfferedAt": 245.68,
+      "secondaryAt": 245.68,
+      "secondaryLevel": 14,
+      "fusion": "thunderfrost",
+      "fusionAt": 280.64,
+      "fusionLevel": 16,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 5,
+        "lightning": 5,
+        "necro": 0,
+        "arcane": 0
+      },
+      "stats": {
+        "damage": 100,
+        "castTicks": 50,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 320,
+          "health": 100,
+          "enemies": 10
+        }
+      }
+    },
+    {
+      "primary": "ice",
+      "secondary": "necro",
+      "seed": 5,
+      "seconds": 431.06,
+      "phase": "over",
+      "level": 19,
+      "kills": 497,
+      "xp": 2146,
+      "health": 0,
+      "maxEnemies": 113,
+      "firstUpgrade": 6.98,
+      "secondaryOfferedAt": 177.58,
+      "secondaryAt": 177.58,
+      "secondaryLevel": 11,
+      "fusion": "gravefrost",
+      "fusionAt": 264.18,
+      "fusionLevel": 13,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 2,
+        "lightning": 0,
+        "necro": 4,
+        "arcane": 0
+      },
+      "stats": {
+        "damage": 80,
+        "castTicks": 35,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 320,
+          "health": 92,
+          "enemies": 10
+        }
+      }
+    },
+    {
+      "primary": "ice",
+      "secondary": "arcane",
+      "seed": 5,
+      "seconds": 767.04,
+      "phase": "over",
+      "level": 26,
+      "kills": 1090,
+      "xp": 7195,
+      "health": 0,
+      "maxEnemies": 48,
+      "firstUpgrade": 6.98,
+      "secondaryOfferedAt": 140.64,
+      "secondaryAt": 140.64,
+      "secondaryLevel": 10,
+      "fusion": "mirror",
+      "fusionAt": 228.7,
+      "fusionLevel": 14,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 4,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 2
+      },
+      "stats": {
+        "damage": 140,
+        "castTicks": 30,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 321,
+          "health": 100,
+          "enemies": 9
+        },
+        "600": {
+          "level": 23,
+          "kills": 787,
+          "health": 49,
+          "enemies": 8
+        }
+      }
+    },
+    {
+      "primary": "lightning",
+      "secondary": null,
+      "seed": 5,
+      "seconds": 603.28,
+      "phase": "over",
+      "level": 23,
+      "kills": 793,
+      "xp": 4393,
+      "health": 0,
+      "maxEnemies": 13,
+      "firstUpgrade": 7.1,
+      "secondaryOfferedAt": null,
+      "secondaryAt": null,
+      "secondaryLevel": null,
+      "fusion": null,
+      "fusionAt": null,
+      "fusionLevel": null,
+      "mastery": "tempest",
+      "masteryAt": 240.98,
+      "masteryLevel": 15,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 0,
+        "lightning": 5,
+        "necro": 0,
+        "arcane": 0
+      },
+      "stats": {
+        "damage": 140,
+        "castTicks": 45,
+        "speed": 5,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 327,
+          "health": 100,
+          "enemies": 3
+        },
+        "600": {
+          "level": 23,
+          "kills": 785,
+          "health": 63,
+          "enemies": 10
+        }
+      }
+    },
+    {
+      "primary": "lightning",
+      "secondary": "fire",
+      "seed": 5,
+      "seconds": 1111.08,
+      "phase": "over",
+      "level": 32,
+      "kills": 1840,
+      "xp": 17989,
+      "health": 0,
+      "maxEnemies": 13,
+      "firstUpgrade": 7.1,
+      "secondaryOfferedAt": 185.02,
+      "secondaryAt": 185.02,
+      "secondaryLevel": 13,
+      "fusion": "plasma",
+      "fusionAt": 373.8,
+      "fusionLevel": 19,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 5,
+        "ice": 0,
+        "lightning": 5,
+        "necro": 0,
+        "arcane": 0
+      },
+      "stats": {
+        "damage": 110,
+        "castTicks": 5,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 326,
+          "health": 100,
+          "enemies": 4
+        },
+        "600": {
+          "level": 23,
+          "kills": 788,
+          "health": 100,
+          "enemies": 7
+        },
+        "900": {
+          "level": 28,
+          "kills": 1363,
+          "health": 92,
+          "enemies": 4
+        }
+      }
+    },
+    {
+      "primary": "lightning",
+      "secondary": "ice",
+      "seed": 5,
+      "seconds": 410.46,
+      "phase": "over",
+      "level": 19,
+      "kills": 481,
+      "xp": 2072,
+      "health": 0,
+      "maxEnemies": 13,
+      "firstUpgrade": 7.1,
+      "secondaryOfferedAt": 277.7,
+      "secondaryAt": 277.7,
+      "secondaryLevel": 16,
+      "fusion": "thunderfrost",
+      "fusionAt": 343.36,
+      "fusionLevel": 18,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 3,
+        "lightning": 5,
+        "necro": 0,
+        "arcane": 0
+      },
+      "stats": {
+        "damage": 80,
+        "castTicks": 45,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 324,
+          "health": 80,
+          "enemies": 6
+        }
+      }
+    },
+    {
+      "primary": "lightning",
+      "secondary": "necro",
+      "seed": 5,
+      "seconds": 1510.82,
+      "phase": "over",
+      "level": 38,
+      "kills": 2832,
+      "xp": 34852,
+      "health": 0,
+      "maxEnemies": 17,
+      "firstUpgrade": 7.1,
+      "secondaryOfferedAt": 110.84,
+      "secondaryAt": 110.84,
+      "secondaryLevel": 10,
+      "fusion": "reaping",
+      "fusionAt": 168.86,
+      "fusionLevel": 12,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": true,
+      "build": {
+        "fire": 0,
+        "ice": 0,
+        "lightning": 5,
+        "necro": 5,
+        "arcane": 0
+      },
+      "stats": {
+        "damage": 170,
+        "castTicks": 5,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 325,
+          "health": 100,
+          "enemies": 5
+        },
+        "600": {
+          "level": 23,
+          "kills": 785,
+          "health": 100,
+          "enemies": 10
+        },
+        "900": {
+          "level": 28,
+          "kills": 1357,
+          "health": 100,
+          "enemies": 10
+        },
+        "1200": {
+          "level": 34,
+          "kills": 2065,
+          "health": 100,
+          "enemies": 6
+        },
+        "1500": {
+          "level": 38,
+          "kills": 2816,
+          "health": 100,
+          "enemies": 5
+        }
+      }
+    },
+    {
+      "primary": "lightning",
+      "secondary": "arcane",
+      "seed": 5,
+      "seconds": 1103.48,
+      "phase": "over",
+      "level": 32,
+      "kills": 1825,
+      "xp": 17678,
+      "health": 0,
+      "maxEnemies": 13,
+      "firstUpgrade": 7.1,
+      "secondaryOfferedAt": 166.88,
+      "secondaryAt": 166.88,
+      "secondaryLevel": 12,
+      "fusion": "storm",
+      "fusionAt": 208.88,
+      "fusionLevel": 14,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 0,
+        "lightning": 5,
+        "necro": 0,
+        "arcane": 4
+      },
+      "stats": {
+        "damage": 150,
+        "castTicks": 20,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 328,
+          "health": 100,
+          "enemies": 2
+        },
+        "600": {
+          "level": 23,
+          "kills": 790,
+          "health": 100,
+          "enemies": 5
+        },
+        "900": {
+          "level": 28,
+          "kills": 1361,
+          "health": 100,
+          "enemies": 6
+        }
+      }
+    },
+    {
+      "primary": "necro",
+      "secondary": null,
+      "seed": 5,
+      "seconds": 819.76,
+      "phase": "over",
+      "level": 27,
+      "kills": 1193,
+      "xp": 8531,
+      "health": 0,
+      "maxEnemies": 62,
+      "firstUpgrade": 6.98,
+      "secondaryOfferedAt": null,
+      "secondaryAt": null,
+      "secondaryLevel": null,
+      "fusion": null,
+      "fusionAt": null,
+      "fusionLevel": null,
+      "mastery": "lich",
+      "masteryAt": 243.88,
+      "masteryLevel": 15,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 0,
+        "lightning": 0,
+        "necro": 5,
+        "arcane": 0
+      },
+      "stats": {
+        "damage": 160,
+        "castTicks": 30,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 324,
+          "health": 100,
+          "enemies": 6
+        },
+        "600": {
+          "level": 23,
+          "kills": 783,
+          "health": 100,
+          "enemies": 12
+        }
+      }
+    },
+    {
+      "primary": "necro",
+      "secondary": "fire",
+      "seed": 5,
+      "seconds": 361.4,
+      "phase": "over",
+      "level": 16,
+      "kills": 277,
+      "xp": 1104,
+      "health": 0,
+      "maxEnemies": 142,
+      "firstUpgrade": 6.98,
+      "secondaryOfferedAt": null,
+      "secondaryAt": null,
+      "secondaryLevel": null,
+      "fusion": "soulfire",
+      "fusionAt": null,
+      "fusionLevel": null,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 0,
+        "lightning": 0,
+        "necro": 4,
+        "arcane": 0
+      },
+      "stats": {
+        "damage": 80,
+        "castTicks": 35,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 15,
+          "kills": 238,
+          "health": 100,
+          "enemies": 92
+        }
+      }
+    },
+    {
+      "primary": "necro",
+      "secondary": "ice",
+      "seed": 5,
+      "seconds": 1042,
+      "phase": "over",
+      "level": 31,
+      "kills": 1659,
+      "xp": 14734,
+      "health": 0,
+      "maxEnemies": 60,
+      "firstUpgrade": 6.98,
+      "secondaryOfferedAt": 126.66,
+      "secondaryAt": 126.66,
+      "secondaryLevel": 10,
+      "fusion": "gravefrost",
+      "fusionAt": 194.84,
+      "fusionLevel": 12,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 3,
+        "lightning": 0,
+        "necro": 4,
+        "arcane": 0
+      },
+      "stats": {
+        "damage": 160,
+        "castTicks": 20,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 318,
+          "health": 100,
+          "enemies": 12
+        },
+        "600": {
+          "level": 23,
+          "kills": 774,
+          "health": 100,
+          "enemies": 21
+        },
+        "900": {
+          "level": 28,
+          "kills": 1352,
+          "health": 29,
+          "enemies": 15
+        }
+      }
+    },
+    {
+      "primary": "necro",
+      "secondary": "lightning",
+      "seed": 5,
+      "seconds": 1511.08,
+      "phase": "over",
+      "level": 38,
+      "kills": 2830,
+      "xp": 34722,
+      "health": 0,
+      "maxEnemies": 46,
+      "firstUpgrade": 6.98,
+      "secondaryOfferedAt": 161.88,
+      "secondaryAt": 161.88,
+      "secondaryLevel": 11,
+      "fusion": "reaping",
+      "fusionAt": 201.46,
+      "fusionLevel": 13,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": true,
+      "build": {
+        "fire": 0,
+        "ice": 0,
+        "lightning": 5,
+        "necro": 5,
+        "arcane": 0
+      },
+      "stats": {
+        "damage": 170,
+        "castTicks": 5,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 324,
+          "health": 100,
+          "enemies": 6
+        },
+        "600": {
+          "level": 23,
+          "kills": 789,
+          "health": 100,
+          "enemies": 6
+        },
+        "900": {
+          "level": 28,
+          "kills": 1360,
+          "health": 94,
+          "enemies": 7
+        },
+        "1200": {
+          "level": 34,
+          "kills": 2060,
+          "health": 51,
+          "enemies": 11
+        },
+        "1500": {
+          "level": 38,
+          "kills": 2816,
+          "health": 93,
+          "enemies": 5
+        }
+      }
+    },
+    {
+      "primary": "necro",
+      "secondary": "arcane",
+      "seed": 5,
+      "seconds": 1031.94,
+      "phase": "over",
+      "level": 30,
+      "kills": 1543,
+      "xp": 14027,
+      "health": 0,
+      "maxEnemies": 171,
+      "firstUpgrade": 6.98,
+      "secondaryOfferedAt": 331.38,
+      "secondaryAt": 331.38,
+      "secondaryLevel": 16,
+      "fusion": "soulward",
+      "fusionAt": 407.68,
+      "fusionLevel": 18,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 0,
+        "lightning": 0,
+        "necro": 3,
+        "arcane": 5
+      },
+      "stats": {
+        "damage": 160,
+        "castTicks": 30,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 15,
+          "kills": 238,
+          "health": 100,
+          "enemies": 92
+        },
+        "600": {
+          "level": 23,
+          "kills": 637,
+          "health": 100,
+          "enemies": 158
+        },
+        "900": {
+          "level": 28,
+          "kills": 1263,
+          "health": 87,
+          "enemies": 104
+        }
+      }
+    },
+    {
+      "primary": "arcane",
+      "secondary": null,
+      "seed": 5,
+      "seconds": 1075.54,
+      "phase": "over",
+      "level": 31,
+      "kills": 1754,
+      "xp": 16453,
+      "health": 0,
+      "maxEnemies": 18,
+      "firstUpgrade": 6.98,
+      "secondaryOfferedAt": null,
+      "secondaryAt": null,
+      "secondaryLevel": null,
+      "fusion": null,
+      "fusionAt": null,
+      "fusionLevel": null,
+      "mastery": "archmage",
+      "masteryAt": 241.9,
+      "masteryLevel": 15,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 0,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 5
+      },
+      "stats": {
+        "damage": 170,
+        "castTicks": 25,
+        "speed": 5,
+        "maxHealth": 120
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 327,
+          "health": 120,
+          "enemies": 3
+        },
+        "600": {
+          "level": 23,
+          "kills": 787,
+          "health": 120,
+          "enemies": 8
+        },
+        "900": {
+          "level": 28,
+          "kills": 1358,
+          "health": 120,
+          "enemies": 9
+        }
+      }
+    },
+    {
+      "primary": "arcane",
+      "secondary": "fire",
+      "seed": 5,
+      "seconds": 1502.5,
+      "phase": "victory",
+      "level": 38,
+      "kills": 2794,
+      "xp": 36569,
+      "health": 280,
+      "maxEnemies": 77,
+      "firstUpgrade": 6.98,
+      "secondaryOfferedAt": 1238.46,
+      "secondaryAt": 1238.46,
+      "secondaryLevel": 35,
+      "fusion": "starfall",
+      "fusionAt": 1392.58,
+      "fusionLevel": 37,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": true,
+      "build": {
+        "fire": 2,
+        "ice": 0,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 5
+      },
+      "stats": {
+        "damage": 70,
+        "castTicks": 1,
+        "speed": 7,
+        "maxHealth": 280
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 324,
+          "health": 120,
+          "enemies": 6
+        },
+        "600": {
+          "level": 23,
+          "kills": 771,
+          "health": 159,
+          "enemies": 24
+        },
+        "900": {
+          "level": 28,
+          "kills": 1319,
+          "health": 220,
+          "enemies": 23
+        },
+        "1200": {
+          "level": 34,
+          "kills": 2040,
+          "health": 280,
+          "enemies": 6
+        },
+        "1500": {
+          "level": 38,
+          "kills": 2792,
+          "health": 280,
+          "enemies": 2
+        }
+      }
+    },
+    {
+      "primary": "arcane",
+      "secondary": "ice",
+      "seed": 5,
+      "seconds": 1501.62,
+      "phase": "victory",
+      "level": 38,
+      "kills": 2819,
+      "xp": 36633,
+      "health": 102,
+      "maxEnemies": 15,
+      "firstUpgrade": 6.98,
+      "secondaryOfferedAt": 185.78,
+      "secondaryAt": 185.78,
+      "secondaryLevel": 13,
+      "fusion": "mirror",
+      "fusionAt": 240.5,
+      "fusionLevel": 15,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": true,
+      "build": {
+        "fire": 0,
+        "ice": 5,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 5
+      },
+      "stats": {
+        "damage": 150,
+        "castTicks": 1,
+        "speed": 4,
+        "maxHealth": 120
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 325,
+          "health": 120,
+          "enemies": 5
+        },
+        "600": {
+          "level": 23,
+          "kills": 788,
+          "health": 120,
+          "enemies": 7
+        },
+        "900": {
+          "level": 28,
+          "kills": 1358,
+          "health": 118,
+          "enemies": 9
+        },
+        "1200": {
+          "level": 34,
+          "kills": 2064,
+          "health": 120,
+          "enemies": 7
+        },
+        "1500": {
+          "level": 38,
+          "kills": 2817,
+          "health": 102,
+          "enemies": 4
+        }
+      }
+    },
+    {
+      "primary": "arcane",
+      "secondary": "lightning",
+      "seed": 5,
+      "seconds": 1501.68,
+      "phase": "victory",
+      "level": 38,
+      "kills": 2821,
+      "xp": 36637,
+      "health": 100,
+      "maxEnemies": 14,
+      "firstUpgrade": 6.98,
+      "secondaryOfferedAt": 133.9,
+      "secondaryAt": 133.9,
+      "secondaryLevel": 11,
+      "fusion": "storm",
+      "fusionAt": 270.44,
+      "fusionLevel": 16,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": true,
+      "build": {
+        "fire": 0,
+        "ice": 0,
+        "lightning": 5,
+        "necro": 0,
+        "arcane": 5
+      },
+      "stats": {
+        "damage": 160,
+        "castTicks": 1,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 326,
+          "health": 100,
+          "enemies": 4
+        },
+        "600": {
+          "level": 23,
+          "kills": 790,
+          "health": 100,
+          "enemies": 5
+        },
+        "900": {
+          "level": 28,
+          "kills": 1360,
+          "health": 100,
+          "enemies": 7
+        },
+        "1200": {
+          "level": 34,
+          "kills": 2065,
+          "health": 82,
+          "enemies": 6
+        },
+        "1500": {
+          "level": 38,
+          "kills": 2820,
+          "health": 100,
+          "enemies": 1
+        }
+      }
+    },
+    {
+      "primary": "arcane",
+      "secondary": "necro",
+      "seed": 5,
+      "seconds": 1501.54,
+      "phase": "victory",
+      "level": 38,
+      "kills": 2820,
+      "xp": 36635,
+      "health": 100,
+      "maxEnemies": 14,
+      "firstUpgrade": 6.98,
+      "secondaryOfferedAt": 106.66,
+      "secondaryAt": 106.66,
+      "secondaryLevel": 10,
+      "fusion": "soulward",
+      "fusionAt": 164.3,
+      "fusionLevel": 12,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": true,
+      "build": {
+        "fire": 0,
+        "ice": 0,
+        "lightning": 0,
+        "necro": 5,
+        "arcane": 5
+      },
+      "stats": {
+        "damage": 160,
+        "castTicks": 1,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 326,
+          "health": 100,
+          "enemies": 4
+        },
+        "600": {
+          "level": 23,
+          "kills": 788,
+          "health": 100,
+          "enemies": 7
+        },
+        "900": {
+          "level": 28,
+          "kills": 1360,
+          "health": 81,
+          "enemies": 7
+        },
+        "1200": {
+          "level": 34,
+          "kills": 2063,
+          "health": 100,
+          "enemies": 8
+        },
+        "1500": {
+          "level": 38,
+          "kills": 2817,
+          "health": 100,
+          "enemies": 4
+        }
+      }
+    }
+  ]
+}
