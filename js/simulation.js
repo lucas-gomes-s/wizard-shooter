@@ -1,3 +1,4 @@
+import {spawnInterval} from './balance.js';
 import {ENEMY_CAP,BOSS_MINUTE,initEnemy,stepEnemy,stepHazards,frontalMultiplier} from './enemies.js';
 import {freshMagic,upgradeOffers,applyUpgrade,boltPattern,pierceCount,nearby,dominantSchool} from './magic.js';
 // Pure simulation. Legacy balance uses 50 fixed ticks per second.
@@ -21,7 +22,8 @@ export class FixedClock{
 
 export class Game{
  constructor(config,rng=Math.random){this.config=config;this.rng=rng;this.width=600;this.height=600;this.reset()}
- reset(){this.phase='playing';this.tick=0;this.kills=0;this.enemies=[];this.shots=[];this.potions=[];this.flash=0;this.events=[];this.offers=[];this.selected=0;this.deathQueue=[];this.hostiles=[];this.hazards=[];this.spawnCount=0;this.bossSpawned=false;this.bossDefeated=false;this.victoryTick=null;this.endless=false;this.enemyTimers=this.config.monsters.map(()=>0);this.potionTimers=this.config.potionInfo.map(()=>0);this.player={x:280,y:280,width:40,height:40,maxSpeed:2,health:100,maxHealth:100,level:1,currentExp:0,expNeeded:this.config.levels[0],shotDmg:10,shotSpd:8,shotSize:5,shotCd:50,cooldown:50,skillLvl:this.config.skills.map(()=>0),magic:freshMagic()}}
+ reset(){this.phase='playing';this.tick=0;this.kills=0;this.enemies=[];this.shots=[];this.potions=[];this.flash=0;this.events=[];this.offers=[];this.selected=0;this.deathQueue=[];this.hostiles=[];this.hazards=[];this.spawnCount=0;this.minibossSpawned=new Set();this.bossSpawned=false;this.bossDefeated=false;this.victoryTick=null;this.endless=false;this.enemyTimers=this.config.monsters.map(()=>0);this.potionTimers=this.config.potionInfo.map(()=>0);this.player={x:280,y:280,width:40,height:40,maxSpeed:2,health:100,maxHealth:100,level:1,currentExp:0,expNeeded:this.config.levels[0],shotDmg:10,shotSpd:8,shotSize:5,shotCd:50,cooldown:50,skillLvl:this.config.skills.map(()=>0),magic:freshMagic()}}
+ start(school){this.reset();if(!Object.hasOwn(this.player.magic.ranks,school))return false;this.player.magic.ranks[school]=1;this.player.cooldown=0;return true}
  emit(type,object,value=0,school=null,extra={}){if(this.events.length<128)this.events.push({type,x:object.x+object.width/2,y:object.y+object.height/2,value,school,...extra})}
  get camera(){return {x:this.player.x+this.player.width/2-this.width/2,y:this.player.y+this.player.height/2-this.height/2}}
  get seconds(){return Math.floor(this.tick/50)}
@@ -88,7 +90,7 @@ export class Game{
    if(m.synergies.includes('soulfire')&&e.burnUntil>=this.tick){this.emit('burst',e,60,'fire');for(const other of nearby(hash,e,60,new Set([e])))this.damage(other,p.shotDmg*.6,'fire')}
   }
   this.deathQueue=[];
-  this.enemies=this.enemies.filter(e=>e.health>0&&(e.boss||this.visible(e)));
+  this.enemies=this.enemies.filter(e=>e.health>0&&(e.boss||e.miniboss||this.visible(e)));
  }
  spawnAtEdge(template,elite=false){
   const c=this.camera,side=Math.floor(this.rng()*4),v=this.rng();let x=c.x+v*this.width,y=c.y+v*this.height;
@@ -100,17 +102,24 @@ export class Game{
    const template=this.config.monsters.find(m=>m.name==='Dragon');
    if(template){this.bossSpawned=true;this.enemies.push(this.spawnAtEdge(template));}
   }
+  for(const encounter of this.config.minibosses||[]){
+   if(this.seconds<encounter.minute*60||this.minibossSpawned.has(encounter.minute))continue;
+   const template=this.config.monsters.find(m=>m.name===encounter.name);if(!template)continue;
+   const enemy=this.spawnAtEdge(template);Object.assign(enemy,{miniboss:true,title:encounter.title,health:encounter.health,maxHealth:encounter.health,damage:encounter.damage,expGiven:encounter.xp});
+   this.enemies.push(enemy);this.minibossSpawned.add(encounter.minute);
+  }
   this.config.monsters.forEach((m,i)=>{
    if(m.name==='Dragon'||this.seconds<m.startMinute*60)return;
-   const interval=m.spawn*(this.bossSpawned&&!this.bossDefeated?2:1);
+   const interval=spawnInterval(m,this.seconds,this.config.balanceSettings)*(this.bossSpawned&&!this.bossDefeated?2:1);
    if(++this.enemyTimers[i]<interval)return;this.enemyTimers[i]=0;
    if(this.enemies.length>=ENEMY_CAP)return;
-   const elite=this.seconds>=180&&++this.spawnCount%12===0;
+   const settings=this.config.balanceSettings||{};const elite=this.seconds>=(settings.eliteStart??180)&&++this.spawnCount%(settings.eliteEvery??12)===0;
    const enemy=this.spawnAtEdge(m,elite);
    if(this.endless){const scale=1+Math.max(0,this.seconds-Math.floor(this.victoryTick/50))/600;enemy.health=enemy.maxHealth=Math.round(enemy.maxHealth*scale);enemy.damage=Math.round(enemy.damage*Math.min(2,scale));}
    this.enemies.push(enemy);
   });
  }
+ get miniboss(){return this.enemies.find(e=>e.miniboss&&e.health>0)||null}
  get boss(){return this.enemies.find(e=>e.boss&&e.health>0)||null}
  continueEndless(){
   if(this.phase!=='victory')return false;
