@@ -121,7 +121,7 @@ export class Game{
   for(const e of this.enemies)if(e.health<=0)this.deathQueue.push(e);
   for(const e of this.deathQueue){
    if(processed.has(e))continue;processed.add(e);
-   recordEventDeath(this,e);addGold(this,1+Math.min(10,Math.floor(e.expGiven/10))+(e.miniboss?30:0));this.kills++;p.currentExp+=e.expGiven;this.emit('kill',e,e.expGiven);
+   recordEventDeath(this,e);addGold(this,(this.kills%4===3?1:0)+(e.elite?2:0)+(e.miniboss?20:0));this.kills++;p.currentExp+=e.expGiven;this.emit('kill',e,e.expGiven);
    if(e.miniboss&&this.config.equipmentEnabled!==false)this.dropChest(e.x+e.width/2,e.y+e.height/2,e.lootTier??1,'Guardian reward');
    if(hasGear(p,'fang'))this.healPlayer(.5);
    if(hasGear(p,'lantern')&&++p.gearState.relic.count%12===0)this.pulse(hash,p,90,p.shotDmg,'necro');
