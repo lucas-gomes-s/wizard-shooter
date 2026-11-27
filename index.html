@@ -10,7 +10,7 @@
 <body>
   <main class="game-shell" id="gameShell">
     <header class="topbar">
-      <div class="brand"><span class="brand-mark" aria-hidden="true">✦</span><div><h1>Wizard Shooter</h1><span class="eyebrow edition">Reforged · Browser edition</span></div></div>
+      <div class="brand"><span class="brand-mark" aria-hidden="true">✦</span><div><h1>Wizard Shooter</h1><span class="eyebrow edition" id="biomeName">The Forgotten Crypt</span></div></div>
       <div class="header-actions">
         <label class="toggle">Effects <select id="effectsMode" aria-label="Combat effects intensity"><option value="off">Off</option><option value="reduced">Reduced</option><option value="full" selected>Full</option></select></label>
         <button id="pauseButton" class="quiet" type="button" disabled>Pause <kbd>Esc</kbd></button>
@@ -40,7 +40,7 @@
           <p>After a wild night out, you wake up somewhere unfamiliar. The monsters do not look friendly.</p>
           <p class="eyebrow accent">Choose your starting school</p><p class="small">Your primary school defines your build. A second school unlocks at level 10. Maximum two schools per run, or exclusive mastery at level 15 and rank V.</p>
           <div id="starterCards" class="starter-cards" role="group" aria-label="Starting magic school"></div>
-          <div class="profile-options"><label>Expedition <select id="contractSelect" aria-label="Expedition contract"></select></label><label>Wizard sigil <select id="sigilSelect" aria-label="Wizard sigil"></select></label><p id="contractDescription" class="small"></p></div><button id="startButton" class="primary" type="button" disabled>Loading assets…</button>
+          <div class="profile-options"><label>Dungeon <select id="environmentSelect" aria-label="Dungeon environment"></select></label><p id="environmentDescription" class="small"></p><label>Expedition <select id="contractSelect" aria-label="Expedition contract"></select></label><label>Wizard sigil <select id="sigilSelect" aria-label="Wizard sigil"></select></label><p id="contractDescription" class="small"></p></div><button id="startButton" class="primary" type="button" disabled>Loading assets…</button>
           <button id="profileButton" class="quiet" type="button">Profile &amp; codex</button><p id="profileSummary" class="small"></p><p id="assetStatus" class="small">Prepare your spells.</p>
           <div class="control-hint"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Move</span><span><kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd> Cast</span></div>
         </section>
@@ -65,7 +65,7 @@
         </section>
         <section id="shopPanel" class="panel upgrade-panel" aria-labelledby="shopTitle" hidden><p class="eyebrow accent">Traveling merchant</p><h2 id="shopTitle">Choose your bargain</h2><p id="shopGold"></p><p>Buy one item or healing draught, or save your gold.</p><div id="shopCards" class="upgrade-cards shop-cards"></div><button id="skipShop" class="quiet" type="button">Leave merchant</button></section>
         <section id="victoryPanel" class="panel" aria-labelledby="victoryTitle" hidden>
-          <p class="eyebrow accent">Dungeon conquered</p><h2 id="victoryTitle">The dragon falls.</h2><p>You defeated the Ancient Dragon. Leave victorious or test your build against an endless dungeon.</p>
+          <p class="eyebrow accent">Dungeon conquered</p><h2 id="victoryTitle">The dragon falls.</h2><p>You defeated the dungeon's dragon. Leave victorious or test your build against an endless dungeon.</p>
           <div class="result-stats"><div><span>Victory time</span><strong id="victoryTime">00:00</strong></div><div><span>Monsters slain</span><strong id="victoryKills">0</strong></div></div>
           <p id="victoryUnlocks" class="unlock-notice"></p><div class="menu-buttons"><button id="endlessButton" class="primary" type="button">Continue endless</button><button id="victoryTitleButton" class="quiet" type="button">Return to title</button></div>
         </section>
