@@ -15,6 +15,7 @@ const UpgradeCard = preload("res://presentation/upgrade_card.gd")
 const CastButton = preload("res://presentation/cast_button.gd")
 const GameAudio = preload("res://presentation/game_audio.gd")
 const Collection = preload("res://presentation/collection_art.gd")
+const ElementFX = preload("res://presentation/element_fx.gd")
 const PLAYFIELD := Rect2(0, 88, 360, 448)
 const CAMERA_CENTER := Vector2(180, 312)
 const FIRE := Color("#ef8052")
@@ -24,6 +25,7 @@ var academy := Academy.new(int(Time.get_unix_time_from_system()), ProfileStore.n
 var sprites := SpriteLibrary.new()
 var arena_art := ArenaArt.new()
 var dungeon_art := DungeonArt.new()
+var elemental_fx := ElementFX.new()
 var camera_position := Vector2.ZERO
 var run: Variant
 var selected := 0
@@ -537,6 +539,7 @@ func _start(endless: bool) -> void:
 	camera_position = run.player
 	dungeon_art.reset(run.world_seed)
 	arena_art.reset_motion()
+	elemental_fx.reset()
 	audio.reset_run()
 	player_stride = 0.0
 	player_moving = false
@@ -671,6 +674,7 @@ func _physics_process(dt: float) -> void:
 		var previous: Vector2 = run.player
 		var audio_before := GameAudio.snapshot(run)
 		run.step(dt, movement, special_requested or (space and not prev_space))
+		if run.special_casts>audio_before.special: elemental_fx.capture(run)
 		audio.after_step(audio_before,run)
 		_update_motion_art(previous,dt)
 		var target: Vector2 = run.player
@@ -763,35 +767,22 @@ func _draw() -> void:
 	dungeon_art.draw_world(self, view)
 	dungeon_art.draw_sites(self, run.claimed_sites, run.active_encounter, run._guards_remaining(), float(run.elapsed))
 	var color: Color = FIRE if run.phenotype.affinity == "fire" else (ICE if run.phenotype.affinity == "ice" else STEAM)
+	# Ground effects below creatures and hostile telegraphs preserve combat readability.
 	for cloud in run.clouds:
-		if visible_margin.has_point(cloud.pos):
-			var cloud_color := FIRE if cloud.affinity == "fire" else STEAM
-			draw_circle(cloud.pos, float(cloud.radius), Color(cloud_color, 0.18))
-			draw_arc(cloud.pos, float(cloud.radius), 0, TAU, 24, Color(cloud_color, 0.5), 1.0)
+		if ElementFX.intersects(view,cloud.pos,float(cloud.radius)):
+			ElementFX.cloud(self,cloud,float(run.elapsed))
 	for flash in run.flashes:
-		if visible_margin.has_point(flash.pos):
-			var flash_color := FIRE if flash.affinity == "fire" else ICE
-			draw_arc(flash.pos, float(flash.radius), 0, TAU, 24, Color(flash_color, float(flash.life) / 0.24), 2.0)
+		if ElementFX.intersects(view,flash.pos,float(flash.radius)):
+			ElementFX.burst(self,flash.pos,float(flash.radius),str(flash.affinity),1.0-clampf(float(flash.life)/0.24,0,1),false)
+	elemental_fx.draw_cast(self,view,float(run.elapsed))
 	_draw_enemy_hazards(visible_margin)
 	for e in run.enemies:
 		if visible_margin.has_point(e.pos):
-			arena_art.draw_enemy(self, e, float(run.elapsed))
+			arena_art.draw_enemy(self,e,float(run.elapsed))
+			ElementFX.enemy_status(self,e,float(run.elapsed))
 	for shot in run.shots:
 		if visible_margin.has_point(shot.pos):
-			var projectile: Texture2D = arena_art.projectiles[shot.affinity]
-			var heading: Vector2 = shot.vel.normalized()
-			var shot_color := FIRE if shot.affinity == "fire" else (ICE if shot.affinity == "ice" else STEAM)
-			draw_line(shot.pos - heading * (13.0 if shot.affinity == "ice" else 8.0), shot.pos, Color(shot_color, 0.65), 3.0)
-			draw_texture(projectile, shot.pos - Vector2(4, 4))
-	if run.special_fx > 0:
-		var radius: float = float(run.kit.special.radius)
-		var fraction := 1.0 - float(run.special_fx) / 0.35
-		var ring := radius * (0.45 + 0.55 * fraction)
-		var fade := Color(color, 1.0 - fraction)
-		draw_arc(run.player, ring, 0, TAU, 32, fade, 3.0)
-		for i in range(12):
-			var offset := Vector2.from_angle(i * TAU / 12.0) * ring
-			draw_rect(Rect2(run.player + offset - Vector2(2, 2), Vector2(4, 4)), fade)
+			ElementFX.projectile(self,shot,float(run.elapsed))
 	_draw_player_art(color)
 	if run.ward > 0: draw_arc(run.player, 22, 0, TAU, 24, Color("#c6e6ed"), 2.0)
 	if run.webbed: draw_arc(run.player, 18, 0, TAU, 24, Color("#efcfa1"), 2.0)
@@ -920,15 +911,8 @@ func _draw_combat_feedback(view: Rect2) -> void:
 		if fx.kind == "hurt": color = Color("#ff9c87")
 		var progress := 1.0 - float(fx.life) / 0.55
 		var alpha := 1.0 - progress
-		if fx.kind == "defeat":
-			for i in range(5):
-				var offset := Vector2.from_angle(i * TAU / 5.0) * (5.0 + progress * 17.0)
-				draw_rect(Rect2(p + offset - Vector2.ONE, Vector2(3,3)), Color(color, alpha))
-			continue
-		if progress < 0.40:
-			for i in range(4):
-				var offset := Vector2.from_angle(i * TAU / 4.0 + 0.7) * (5.0 + progress * 15.0)
-				draw_rect(Rect2(p + offset, Vector2(2,2)), Color(color, alpha))
+		ElementFX.impact(self,fx,progress)
+		if fx.kind=="defeat": continue
 		var label_text := "%s%d" % ["-" if fx.kind == "hurt" else "", maxi(1, roundi(float(fx.amount)))]
 		var point := p + Vector2(-6, -13 - progress * 14)
 		draw_string(font, point + Vector2(1,1), label_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color(0.06,0.04,0.08,alpha))

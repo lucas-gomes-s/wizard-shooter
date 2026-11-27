@@ -5,6 +5,7 @@ const Fantasy = preload("res://presentation/fantasy_ui.gd")
 const Art = preload("res://presentation/pixel_ui_art.gd")
 const Upgrades = preload("res://gameplay/upgrade_catalog.gd")
 const Audio = preload("res://presentation/game_audio.gd")
+const FX = preload("res://presentation/element_fx.gd")
 var failures := 0
 
 func _initialize() -> void:
@@ -54,6 +55,34 @@ func _test() -> void:
 	app._start(false)
 	await process_frame
 	check(app.screen=="run" and not app.title_panel.visible and app.special_button.visible,"Quick expedition navigation")
+	var cast_count: int = app.run.special_casts
+	app.special_requested=true
+	await physics_frame
+	await process_frame
+	check(app.run.special_casts==cast_count+1 and not app.elemental_fx.cast.is_empty(),"Real cast triggers visual snapshot")
+	var origin: Vector2=app.elemental_fx.cast.pos
+	app.run.player+=Vector2(25,0)
+	check(app.elemental_fx.cast.pos==origin,"Cast effect remains at cast origin")
+	check(float(app.elemental_fx.cast.radius)==float(app.run.kit.special.radius),"Cast radius matches compiled spell")
+	check(FX.intersects(Rect2(0,0,100,100),Vector2(120,50),25),"Area culling includes overlapping effects")
+	check(not FX.intersects(Rect2(0,0,100,100),Vector2(140,50),25),"Distant areas culled")
+	# Exercise all effect drawing branches independently of founder affinity.
+	var probe := Node2D.new()
+	probe.draw.connect(func() -> void:
+		for element in ["fire","ice","steam"]:
+			FX.projectile(probe,{"pos":Vector2(20,20),"vel":Vector2.RIGHT*100,"affinity":element,"life":0.5},0.2)
+			FX.cloud(probe,{"pos":Vector2(60,60),"radius":42.0,"affinity":element,"life":1.0},0.2)
+			FX.burst(probe,Vector2(80,80),76.0,element,0.4,true)
+			FX.burst(probe,Vector2(80,80),19.0,element,0.4,false)
+			FX.impact(probe,{"pos":Vector2(60,60),"affinity":element,"kind":"hit"},0.2)
+			FX.impact(probe,{"pos":Vector2(60,60),"affinity":element,"kind":"defeat"},0.7)
+		FX.enemy_status(probe,{"pos":Vector2(50,50),"radius":7.0,"freeze":1.0,"burn":1.0},0.4)
+		FX.enemy_status(probe,{"pos":Vector2(50,50),"radius":7.0,"chill":1.0},0.4))
+	root.add_child(probe)
+	probe.queue_redraw()
+	await process_frame
+	await process_frame
+	probe.queue_free()
 	app.run.hp = app.run.max_hp*0.15
 	app.run.xp = 3
 	app.run.run_level = 2
