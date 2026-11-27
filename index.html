@@ -23,6 +23,7 @@
       <div class="kill-count"><span class="eyebrow">Kills</span><strong id="kills">0</strong></div>
       <div class="meter experience"><div class="meter-label"><span>Level <strong id="level">1</strong></span><strong id="xpText">0 / 5 XP</strong></div><div id="xpMeter" class="track" role="progressbar" aria-label="Experience" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div></div>
     </section>
+    <div id="spellBuild" class="spell-build" aria-label="Current spell build"></div>
     <section id="arena" class="arena" aria-label="Dungeon arena">
       <canvas id="gameArea" tabindex="0" aria-label="Game arena. WASD to move, arrow keys to shoot."></canvas>
       <div class="vignette" aria-hidden="true"></div>
@@ -46,7 +47,7 @@
           <div class="menu-buttons"><button id="confirmButton" class="primary" type="button">Confirm</button><button id="cancelButton" class="quiet" type="button">Keep playing</button></div>
         </section>
         <section id="upgradePanel" class="panel upgrade-panel" aria-labelledby="upgradeTitle" hidden>
-          <p class="eyebrow accent" id="upgradeLevel">Level 2 reached</p><h2 id="upgradeTitle">Choose your power.</h2><p>One upgrade per level. Choose carefully.</p>
+          <p class="eyebrow accent" id="upgradeLevel">Level 2 reached</p><h2 id="upgradeTitle">Choose your power.</h2><p>Choose one of three powers. Combine schools to discover synergies.</p>
           <div id="upgradeCards" class="upgrade-cards" role="group" aria-label="Available upgrades"></div>
           <p class="small">← / → to select · Q or Enter to confirm · Click a card to choose</p>
         </section>
