@@ -24,10 +24,12 @@
       <div class="meter experience"><div class="meter-label"><span>Level <strong id="level">1</strong></span><strong id="xpText">0 / 5 XP</strong></div><div id="xpMeter" class="track" role="progressbar" aria-label="Experience" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div></div>
     </section>
     <div id="spellBuild" class="spell-build" aria-label="Current spell build"></div>
+    <div id="equipmentBuild" class="equipment-build" aria-label="Current equipment"></div>
     <section id="arena" class="arena" aria-label="Dungeon arena">
       <canvas id="gameArea" tabindex="0" aria-label="Game arena. WASD to move, arrow keys to shoot."></canvas>
       <div class="vignette" aria-hidden="true"></div>
       <div id="bossHud" class="boss-hud" hidden><div class="meter-label"><strong id="bossName"></strong><strong id="bossHealth"></strong></div><div id="bossMeter" class="track" role="progressbar" aria-label="Dragon health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><i></i></div></div>
+      <div id="treasureHint" class="treasure-hint" aria-live="polite"></div>
       <div id="overlay" class="overlay">
         <section id="homePanel" class="panel home" aria-labelledby="homeTitle">
           <div class="sigil" aria-hidden="true"><img src="./images/wizard-hat.png" alt=""></div>
@@ -53,6 +55,10 @@
           <p class="eyebrow accent" id="upgradeLevel">Level 2 reached</p><h2 id="upgradeTitle">Choose your power.</h2><p id="upgradeHint">Master your primary school. Secondary school unlocks at level 10.</p>
           <div id="upgradeCards" class="upgrade-cards" role="group" aria-label="Available upgrades"></div>
           <p class="small">← / → to select · Q or Enter to confirm · Click a card to choose</p>
+        </section>
+        <section id="lootPanel" class="panel upgrade-panel" aria-labelledby="lootTitle" hidden>
+          <p class="eyebrow accent">Equipment recovered</p><h2 id="lootTitle">Treasure recovered</h2><p>Choose one item. A new item replaces equipment in the same slot. You can also leave the treasure.</p>
+          <div id="lootCards" class="upgrade-cards"></div><button id="skipLoot" type="button" class="quiet">Keep current equipment</button>
         </section>
         <section id="victoryPanel" class="panel" aria-labelledby="victoryTitle" hidden>
           <p class="eyebrow accent">Dungeon conquered</p><h2 id="victoryTitle">The dragon falls.</h2><p>You defeated the Ancient Dragon. Leave victorious or test your build against an endless dungeon.</p>

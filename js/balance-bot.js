@@ -1,4 +1,5 @@
 import {Game} from './simulation.js';
+import {itemById} from './equipment.js';
 import {schools} from './magic.js';
 export function seededRng(seed){let s=seed>>>0;return ()=>{s=(Math.imul(1664525,s)+1013904223)>>>0;return s/4294967296}}
 function center(o){return [o.x+o.width/2,o.y+o.height/2]}
@@ -22,7 +23,19 @@ export function botInput(g){
   const pot=g.potions.map(o=>{const [x,y]=center(o);return {dx:x-px,dy:y-py,d:Math.hypot(x-px,y-py)}}).sort((a,b)=>a.d-b.d)[0];
   if(pot&&pot.d<250){x+=pot.dx/Math.max(1,pot.d)*1.5;y+=pot.dy/Math.max(1,pot.d)*1.5;}
  }
+ const chest=(g.chests||[]).map(o=>{const [cx,cy]=center(o);return {dx:cx-px,dy:cy-py,d:Math.hypot(cx-px,cy-py)}}).sort((a,b)=>a.d-b.d)[0];
+ if(chest&&chest.d<500&&(!target||target.d>85)){x+=chest.dx/Math.max(1,chest.d)*2;y+=chest.dy/Math.max(1,chest.d)*2;}
  return {x,y,aim};
+}
+export function botLoot(g){
+ const values={quickwand:6,longshot:4,echo:7,bloodwood:7,prism:8,meteor:9,linen:6,wardrobe:4,thorns:7,phantom:7,mending:5,aegis:9,swift:6,silk:3,runner:5,escape:5,trail:7,phaseboots:9,tonic:4,fang:7,gambler:6,hourglass:6,lantern:8,crown:7};
+ let best=-1,score=0;
+ for(const [i,item] of g.loot.entries()){
+  const old=itemById[g.player.equipment[item.slot]];
+  const value=(values[item.id]||0)-(values[old?.id]||0);
+  if(value>score){score=value;best=i;}
+ }
+ return best;
 }
 export function botChoose(g){
  const p=g.player;
@@ -37,13 +50,13 @@ export function botChoose(g){
 export function simulate(config,{school='fire',seed=1,seconds=180,decisionTicks=5}={}){
  const g=new Game(config,seededRng(seed));g.start(school);let input={},firstUpgrade=null,maxEnemies=0,earnedXP=0,lastLevel=1,spentXP=0;
  for(let n=0;n<seconds*50&&g.phase!=='over'&&g.phase!=='victory';n++){
-  while(g.phase==='upgrade'){if(firstUpgrade===null)firstUpgrade=g.tick/50;g.choose(botChoose(g));}
+  while(g.phase==='upgrade'||g.phase==='loot'){if(g.phase==='loot'){g.chooseLoot(botLoot(g));continue;}if(firstUpgrade===null)firstUpgrade=g.tick/50;g.choose(botChoose(g));}
   if(g.tick%decisionTicks===0)input=botInput(g);
   g.step(input);maxEnemies=Math.max(maxEnemies,g.enemies.length);
   while(lastLevel<g.player.level){spentXP+=config.levels[lastLevel-1];lastLevel++}
   earnedXP=spentXP+g.player.currentExp;
  }
- return {school,seed,seconds:g.tick/50,phase:g.phase,level:g.player.level,firstUpgrade,kills:g.kills,xp:earnedXP,health:Math.round(g.player.health),maxEnemies,build:g.player.magic.ranks};
+ return {school,seed,seconds:g.tick/50,phase:g.phase,level:g.player.level,firstUpgrade,kills:g.kills,xp:earnedXP,health:Math.round(g.player.health),maxEnemies,build:g.player.magic.ranks,equipment:{...g.player.equipment},chestsOpened:g.chestsOpened,lootHistory:g.lootHistory};
 }
 export function benchmark(config,{seconds=180,seeds=[1,2,3],decisionTicks=5}={}){
  return schools.flatMap(s=>seeds.map(seed=>simulate(config,{school:s.id,seed,seconds,decisionTicks})));

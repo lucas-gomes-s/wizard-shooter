@@ -10,7 +10,7 @@ button:focus-visible,input:focus-visible,canvas:focus-visible{outline:2px solid 
 button.primary{background:var(--gold);color:#241c19;border-color:#f3dba9;font-weight:750}
 button.primary:hover:not(:disabled){background:#f5d7a3;color:#171218}
 button.quiet{background:#211e2b}
-.game-shell{width:100%;min-height:100vh;min-height:100dvh;height:100vh;height:100dvh;display:grid;grid-template-rows:auto auto auto minmax(0,1fr) auto;gap:10px;padding:14px clamp(12px,2.3vw,36px);max-width:1920px;margin:auto}
+.game-shell{width:100%;min-height:100vh;min-height:100dvh;height:100vh;height:100dvh;display:grid;grid-template-rows:auto auto auto auto minmax(0,1fr) auto;gap:10px;padding:14px clamp(12px,2.3vw,36px);max-width:1920px;margin:auto}
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .brand{display:flex;gap:12px;align-items:center}
 .brand-mark{color:var(--gold);font-size:34px;line-height:1;border:1px solid #6c5a48;border-radius:10px;width:48px;height:48px;display:grid;place-items:center;background:#292330}
@@ -93,3 +93,5 @@ blockquote{margin:0;color:var(--gold);font-family:Georgia,serif;font-style:itali
 .school-lock{font-size:11px;color:#b3a4c4;padding:2px 6px}.primary-school{box-shadow:inset 0 0 0 1px var(--school)}
 
 .synergy-preview{display:block;font-size:11px;line-height:1.35;color:#f2d5a0;border-top:1px solid #66516b;padding-top:6px;text-align:left}
+
+.equipment-build{display:flex;gap:6px;flex-wrap:wrap;min-height:24px}.gear-chip{font-size:11px;border:1px solid var(--rarity);color:var(--rarity);border-radius:5px;padding:3px 7px}.loot-card{border-color:var(--school)}.loot-card .skill-rank{border-top:1px solid #55475c;padding-top:8px}.treasure-hint{position:absolute;z-index:1;bottom:8px;left:50%;transform:translateX(-50%);color:#ffe1a3;background:#231c28db;border-radius:5px;padding:4px 10px;font-size:12px;pointer-events:none;white-space:nowrap}.treasure-hint:empty{display:none}
