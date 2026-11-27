@@ -108,7 +108,7 @@ function updateGear(){
  if(signature!==lastGear){lastGear=signature;const root=$('equipmentBuild');root.replaceChildren();
   for(const slot of equipmentSlots){const item=itemById[p.equipment[slot]],chip=document.createElement('span');chip.className='gear-chip';chip.style.setProperty('--rarity',item?rarityColors[item.rarity]:'#777080');chip.textContent=slot.toUpperCase()+': '+(item?item.glyph+' '+item.name:'Empty');chip.title=item?item.description:'No '+slot+' equipped';root.append(chip);}
  }
- const chest=game.chests[0];$('treasureHint').textContent=chest?game.chests.length+' treasure chest'+(game.chests.length===1?'':'s')+' · '+Math.ceil(Math.max(0,chest.until-game.tick)/50)+'s remaining':'';
+ const chest=game.chests[0],hint=chest?game.chests.length+' treasure chest'+(game.chests.length===1?'':'s')+' · '+Math.ceil(Math.max(0,chest.until-game.tick)/50)+'s remaining':'';if($('treasureHint').textContent!==hint)$('treasureHint').textContent=hint;
 }
 function choose(index=game.selected){
   if(screen!=='upgrade'||!game.choose(index))return;
