@@ -17,6 +17,7 @@ const GameAudio = preload("res://presentation/game_audio.gd")
 const Collection = preload("res://presentation/collection_art.gd")
 const ElementFX = preload("res://presentation/element_fx.gd")
 const Rig = preload("res://presentation/directional_rig.gd")
+const Results = preload("res://presentation/result_art.gd")
 const PLAYFIELD := Rect2(0, 88, 360, 448)
 const CAMERA_CENTER := Vector2(180, 312)
 const FIRE := Color("#ef8052")
@@ -108,6 +109,10 @@ var archive_text: RichTextLabel
 var lock_button: Button
 var result_retry: Button
 var result_return: Button
+var result_replay: Button
+var result_error: Label
+var result_before: Dictionary = {}
+var result_reward: Dictionary = {}
 
 func _ready() -> void:
 	get_viewport().gui_embed_subwindows = true
@@ -254,10 +259,17 @@ func _build_ui() -> void:
 		card.pressed.connect(_upgrade.bind(i))
 		upgrade_panel.add_child(card)
 		upgrade_buttons.append(card)
-	result_panel = _box_at(Vector2(28, 220), Vector2(304, 160))
-	_label(result_panel, "")
-	result_return = _button(result_panel, "Return to academy", _show_academy)
+	result_panel = _box_at(Vector2(16, 548), Vector2(328, 84))
+	result_panel.add_theme_constant_override("separation",6)
+	result_error = _label(result_panel,"",11)
+	result_error.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	result_error.add_theme_color_override("font_color",Color("#e08b87"))
+	result_return = _button(result_panel, "Return to Academy", _show_academy)
+	result_return.custom_minimum_size.y=38
+	Fantasy.primary(result_return)
+	result_replay = _button(result_panel,"Run again",_replay_result)
 	result_retry = _button(result_panel, "Retry saving rewards", _finish)
+	Fantasy.primary(result_retry)
 	archive_dialog = AcceptDialog.new()
 	archive_dialog.title = "Ancestry archive"
 	archive_text = RichTextLabel.new()
@@ -537,6 +549,8 @@ func _start(endless: bool) -> void:
 		_show_academy()
 		return
 	run = RunModel.new(active.phenotype, endless, difficulty, 1000 + run_id)
+	result_before.clear()
+	result_reward.clear()
 	displayed_hp = 1.0
 	previous_level = 1
 	level_flash = 0.0
@@ -574,19 +588,29 @@ func _upgrade(choice: int) -> void:
 		_clear_input()
 		_sync_visibility()
 
+func _replay_result() -> void:
+	if screen!="result" or result_reward.is_empty(): return
+	_start(bool(run.endless))
+
 func _finish() -> void:
+	if run==null or run.outcome=="" or not result_reward.is_empty(): return
 	var earned: int = run.training_reward()
 	var active_now := academy.find_active(str(active.id))
 	var apprentice_now := academy.find_active(str(apprentice.get("id", "")))
+	if result_before.is_empty():
+		result_before=Results.before_reward(academy,active_now if not active_now.is_empty() else active,apprentice_now)
 	var saved := academy.reward(run_id, active_now, apprentice_now, earned, run.outcome == "Victory", int(run.exploration_essence))
+	if saved: result_reward=Results.committed(result_before,academy)
 	if screen!="result": audio.play_sound("victory" if run.outcome=="Victory" else ("fallen" if run.outcome=="Defeated" else "reward"),5,-10.0)
-	screen = "result"
+	screen="result"
 	_clear_input()
-	var summary := result_panel.get_child(0) as Label
-	summary.text = "%s\nTime %.0fs  |  Kills %d\nCharacter XP +%d\nShared XP +%d\nCaches %d  |  Shrines %d\nExploration essence +%d" % [run.outcome, run.elapsed, run.kills, earned, floori(earned * 0.25) if not apprentice.is_empty() else 0, run.treasure_count, run.shrine_count, run.exploration_essence] if saved else "Reward not saved.\n" + academy.error + "\nRetry before leaving."
-	result_retry.visible = not saved
-	result_return.visible = saved
+	result_error.visible=not saved
+	result_error.text=academy.error if not saved else ""
+	result_retry.visible=not saved
+	result_return.visible=saved
+	result_replay.visible=saved
 	_sync_visibility()
+	queue_redraw()
 
 func _sync_visibility() -> void:
 	var in_run := screen == "run"
@@ -771,6 +795,9 @@ func _draw() -> void:
 				draw_line(Vector2(96, 186), Vector2(180, 214), Color("#927e9e"), 2)
 				draw_line(Vector2(264, 186), Vector2(180, 214), Color("#927e9e"), 2)
 			_draw_card(c, Rect2(100, 214, 160, 138), "DESCENDANT")
+		return
+	if screen=="result" and run!=null and not result_before.is_empty():
+		Results.draw(self,sprites,run,result_before,result_reward)
 		return
 	if screen != "run" or run == null: return
 	var camera := camera_position.round()

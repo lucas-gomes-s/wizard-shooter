@@ -120,6 +120,26 @@ func _test() -> void:
 	await process_frame
 	check(app.special_button.disabled and app.special_button.remaining>0,"Cast cooldown shown")
 	check(Fantasy.fraction(-2,10)==0 and Fantasy.fraction(15,10)==1 and Fantasy.fraction(5,0)==0,"Bar fraction bounded")
+	app.run.elapsed=40.0
+	app.run.kills=5
+	app.run.exploration_xp=0
+	app.run.exploration_essence=3
+	app.run.outcome="Defeated"
+	app.academy.roster[app.selected].xp=25
+	app.academy.roster[app.partner_index].xp=38
+	var old_essence: int=app.academy.essence
+	app.academy.blocked=true
+	app._finish()
+	check(app.screen=="result" and app.result_reward.is_empty() and app.result_retry.visible and not app.result_return.visible,"Failed reward offers retry only")
+	check(app.academy.essence==old_essence,"Failed reward does not credit essence")
+	app.academy.blocked=false
+	app._finish()
+	check(app.result_reward.active_gain==20 and app.result_reward.apprentice_gain==5,"Actual training deltas")
+	check(app.result_reward.essence_gain==5 and app.result_reward.essence_total==old_essence+5,"Actual total essence delta")
+	check(app.result_reward.fusion_ready and app.result_return.visible and not app.result_retry.visible,"Successful retry reveals fusion readiness")
+	app._finish()
+	check(app.academy.essence==old_essence+5,"Results cannot settle rewards twice")
+	await process_frame
 	app._show_academy()
 	await process_frame
 	check(not app.special_button.visible and app.run==null,"Return removes run HUD")
@@ -147,6 +167,21 @@ func _test() -> void:
 	check(app.roster_page==1 and app.roster_buttons[1].visible and not app.roster_buttons[2].visible,"Pagination after roster expansion")
 	app._change_page(1)
 	check(app.roster_page==1 and app.roster_next.disabled,"Last page bounded")
+	app._show_academy()
+	app._start(false)
+	var prior_count: int=app.academy.roster.size()
+	app.run.outcome="Victory"
+	app.run.elapsed=90.0
+	app.run.kills=0
+	app._finish()
+	check(app.academy.roster.size()==prior_count+1 and not app.result_reward.newcomer.is_empty(),"Victory shows actual awarded founder")
+	check(app.result_reward.essence_gain==12,"Victory bonus included")
+	app._replay_result()
+	check(app.screen=="run" and app.result_reward.is_empty() and app.result_before.is_empty(),"Replay resets result state")
+	app.run.endless=true
+	app.run.elapsed=30.0
+	app._extract()
+	check(app.screen=="result" and app.run.outcome=="Extracted" and app.result_reward.newcomer.is_empty(),"Extraction rewards without victory founder")
 	app.queue_free()
 	await process_frame
 	print("Fantasy UI navigation: %d failures" % failures)
