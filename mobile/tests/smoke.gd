@@ -23,6 +23,9 @@ func _initialize() -> void:
 		var image := ArenaArt.enemy_image(kind)
 		check(image.get_size() == Vector2i(16, 16), "Enemy sprite dimensions")
 		check(image.get_used_rect().get_area() > 0, "Enemy sprite nonempty")
+		var animated := ArenaArt.enemy_image(kind,1)
+		check(animated.get_size()==Vector2i(16,16) and animated.get_used_rect().get_area()>0,"Walk frame dimensions")
+		check(animated.get_data()!=image.get_data(),"Distinct enemy walk frame")
 	for affinity in ["fire", "ice", "steam"]:
 		check(ArenaArt.projectile_image(affinity).get_used_rect().get_area() > 0, "Spell sprite nonempty")
 	check(ArenaArt.floor_image().get_size() == Vector2i(360, 448), "Floor dimensions")
@@ -90,6 +93,21 @@ func _test_world(p: Dictionary) -> void:
 	var second := DungeonArt.chunk_image(7, chunk)
 	check(first.get_data() == second.get_data(), "Chunk regeneration deterministic")
 	check(first.get_data() != DungeonArt.chunk_image(8, chunk).get_data(), "World seed varies terrain")
+	var districts: Dictionary = {}
+	for x in range(-9,10):
+		for y in range(-9,10): districts[DungeonArt.district(7,Vector2i(x,y))]=true
+	check(districts.size()==3,"All decorative floor palettes sampled")
+	var animation := ArenaArt.new()
+	var sample: Array[Dictionary] = [{"uid":1,"pos":Vector2.ZERO}]
+	animation.update_motion(sample)
+	sample[0].pos=Vector2(9,0)
+	animation.update_motion(sample)
+	check(animation.poses[1].moving and animation.poses[1].distance==9.0,"Walk phase follows displacement")
+	animation.update_motion(sample)
+	check(not animation.poses[1].moving,"Blocked or stationary motion stays idle")
+	sample.clear()
+	animation.update_motion(sample)
+	check(animation.poses.is_empty(),"Animation state evicts removed enemies")
 	var art := DungeonArt.new()
 	art.reset(7)
 	for i in range(16):

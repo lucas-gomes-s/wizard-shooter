@@ -9,17 +9,20 @@ const PALETTES := [
 	{"o":"#211821","r":"#a84c4c","h":"#d67857","e":"#ffdf85","t":"#f1d49e"}
 ]
 var enemies: Array[Texture2D] = []
+var walk_frames: Array[Texture2D] = []
+var poses: Dictionary = {}
 var floor_texture: Texture2D
 var projectiles: Dictionary = {}
 
 func _init() -> void:
 	for i in range(PATTERNS.size() + 1):
 		enemies.append(ImageTexture.create_from_image(enemy_image(i)))
+		walk_frames.append(ImageTexture.create_from_image(enemy_image(i,1)))
 	floor_texture = ImageTexture.create_from_image(floor_image())
 	for affinity in ["fire", "ice", "steam"]:
 		projectiles[affinity] = ImageTexture.create_from_image(projectile_image(affinity))
 
-static func enemy_image(kind: int) -> Image:
+static func enemy_image(kind: int,frame: int = 0) -> Image:
 	var image := Image.create_empty(16, 16, false, Image.FORMAT_RGBA8)
 	image.fill(Color.TRANSPARENT)
 	var rows: Array = WARLOCK if kind == 4 else PATTERNS[kind]
@@ -33,7 +36,44 @@ static func enemy_image(kind: int) -> Image:
 			if token == ".": continue
 			assert(palette.has(token))
 			image.set_pixel(x, y, Color(palette[token]))
-	return image
+	if frame==0: return image
+	# Move separate limb/wing/robe regions one pixel, preserving the body silhouette.
+	var animated := Image.create_empty(16,16,false,Image.FORMAT_RGBA8)
+	animated.fill(Color.TRANSPARENT)
+	for y in range(16):
+		for x in range(16):
+			var pixel := image.get_pixel(x,y)
+			if pixel.a==0: continue
+			var dy := 0
+			match kind:
+				0,2:
+					if y>=13: dy=-1 if x<8 else 1
+				1:
+					if x<5 or x>10: dy=-1 if x<8 else 1
+				3:
+					if x<5 or x>10: dy=-1
+					elif y>=13: dy=1
+				4:
+					if y>=12 and x<13: dy=-1 if x<8 else 1
+			animated.set_pixel(x,clampi(y+dy,0,15),pixel)
+	return animated
+
+## Motion state belongs only to presentation. Track actual traveled distance.
+func reset_motion() -> void:
+	poses.clear()
+
+func update_motion(current: Array[Dictionary]) -> void:
+	var next: Dictionary = {}
+	for e in current:
+		var uid: int = int(e.uid)
+		var pos: Vector2 = e.pos
+		var old: Dictionary = poses.get(uid,{"pos":pos,"distance":0.0})
+		var previous: Vector2 = old.pos
+		var distance := previous.distance_to(pos)
+		# A relocated enemy restarts its walk cycle instead of appearing to sprint.
+		var phase := fposmod(float(old.distance)+distance,16.0) if distance<32.0 else 0.0
+		next[uid]={"pos":pos,"distance":phase,"moving":distance>0.05 and distance<32.0}
+	poses=next
 
 static func floor_image() -> Image:
 	# A single cached arena-sized image, built from repeating 16px stone tiles.
@@ -80,14 +120,24 @@ func draw_enemy(canvas: CanvasItem, enemy: Dictionary, elapsed: float) -> void:
 	var size := radius * 2.7
 	var shadow := Rect2(pos + Vector2(-radius, radius * 0.35), Vector2(radius * 2, radius * 0.65))
 	canvas.draw_rect(shadow, Color(0.06, 0.05, 0.09, 0.5))
-	var bob := -1.0 if int(elapsed * 8.0 + pos.x * 0.1) % 2 == 0 else 0.0
+	var pose: Dictionary = poses.get(int(enemy.uid),{})
+	var moving: bool = bool(pose.get("moving",false)) and float(enemy.get("freeze",0.0))<=0
+	var alternate := moving and float(pose.get("distance",0.0))>=8.0
+	var bob := -1.0 if alternate else 0.0
 	var tint := Color.WHITE
 	if enemy.slow > 0: tint = Color("#a8ddff")
 	if float(enemy.get("freeze", 0.0)) > 0: tint = Color("#c4f5ff")
 	if enemy.burn > 0: tint = tint.lerp(Color("#ffaf83"), 0.4)
 	if enemy.attack == "charge": tint = tint.lerp(Color("#f9bd86"), 0.45)
 	if elapsed < float(enemy.get("hit_until", 0.0)): tint = tint.lerp(Color("#fff3cb"), 0.75)
-	canvas.draw_texture_rect(enemies[kind], Rect2(pos - Vector2(size, size) / 2.0 + Vector2(0, bob), Vector2(size, size)), false, tint)
+	var texture := walk_frames[kind] if alternate else enemies[kind]
+	canvas.draw_texture_rect(texture, Rect2(pos - Vector2(size, size) / 2.0 + Vector2(0, bob), Vector2(size, size)), false, tint)
+	if enemy.attack in ["web","bolt","breath","charge_windup"]:
+		var glow := Color("#f3a35f")
+		canvas.draw_arc(pos,radius+3,0,TAU,20,Color(glow,0.55),1.0)
+	if enemy.burn > 0:
+		var ember := pos+Vector2(radius*0.65,-radius*0.7-2*sin(elapsed*8.0))
+		canvas.draw_rect(Rect2(ember,Vector2(2,3)),Color("#f7aa63"))
 	if float(enemy.get("freeze", 0.0)) > 0:
 		canvas.draw_arc(pos, radius + 4, 0, TAU, 12, Color("#bcecfb"), 1.5)
 	if kind == 3:

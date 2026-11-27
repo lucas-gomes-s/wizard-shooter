@@ -58,6 +58,10 @@ var title_note: Label
 var displayed_hp := 1.0
 var previous_level := 1
 var level_flash := 0.0
+var player_stride := 0.0
+var player_moving := false
+var dust: Array[Dictionary] = []
+var dust_distance := 0.0
 var difficulty_button: Button
 var fusion_panel: VBoxContainer
 var fusion_hint: Label
@@ -402,6 +406,11 @@ func _start(endless: bool) -> void:
 	level_flash = 0.0
 	camera_position = run.player
 	dungeon_art.reset(run.world_seed)
+	arena_art.reset_motion()
+	player_stride = 0.0
+	player_moving = false
+	dust_distance = 0.0
+	dust.clear()
 	screen = "run"
 	paused = false
 	_clear_input()
@@ -512,7 +521,9 @@ func _physics_process(dt: float) -> void:
 		if touch_id != -1:
 			movement = ((touch_current - touch_origin) / 35.0).limit_length()
 			if movement.length() < 0.12: movement = Vector2.ZERO
+		var previous: Vector2 = run.player
 		run.step(dt, movement, special_requested or (space and not prev_space))
+		_update_motion_art(previous,dt)
 		var target: Vector2 = run.player
 		camera_position = camera_position.lerp(target, 1.0 - exp(-dt * 12.0))
 		camera_position = target + (camera_position - target).limit_length(24.0)
@@ -623,8 +634,7 @@ func _draw() -> void:
 		for i in range(12):
 			var offset := Vector2.from_angle(i * TAU / 12.0) * ring
 			draw_rect(Rect2(run.player + offset - Vector2(2, 2), Vector2(4, 4)), fade)
-	var frame: int = int(run.elapsed * 6) % 2 if movement.length_squared() > 0 else 0
-	sprites.draw_wizard(self, run.phenotype, run.player, frame, 1.2)
+	_draw_player_art(color)
 	if run.ward > 0: draw_arc(run.player, 22, 0, TAU, 24, Color("#c6e6ed"), 2.0)
 	if run.webbed: draw_arc(run.player, 18, 0, TAU, 24, Color("#efcfa1"), 2.0)
 	_draw_combat_feedback(visible_margin)
@@ -655,6 +665,39 @@ func _draw() -> void:
 		if paused: Fantasy.text_at(self,"PAUSED",Vector2(180,305),24,Fantasy.GOLD,true)
 		else: Fantasy.frame(self,Rect2(10,151,340,376),Color("#977ab5"))
 
+
+func _update_motion_art(previous: Vector2,dt: float) -> void:
+	arena_art.update_motion(run.enemies)
+	var current: Vector2 = run.player
+	var distance := previous.distance_to(current)
+	player_moving = distance>0.05
+	player_stride = fposmod(player_stride+distance,16.0)
+	dust_distance += distance
+	if dust_distance>=12.0:
+		dust_distance = fposmod(dust_distance,12.0)
+		if dust.size()>=12: dust.pop_front()
+		dust.append({"pos":previous,"life":0.36})
+	for i in range(dust.size()-1,-1,-1):
+		dust[i].life-=dt
+		if dust[i].life<=0: dust.remove_at(i)
+
+func _draw_player_art(color: Color) -> void:
+	for puff in dust:
+		var alpha := float(puff.life)/0.36
+		var point: Vector2 = puff.pos
+		draw_rect(Rect2(point+Vector2(-4,1),Vector2(3,2)),Color(0.61,0.54,0.63,alpha*0.45))
+		draw_rect(Rect2(point+Vector2(3,3),Vector2(2,2)),Color(0.61,0.54,0.63,alpha*0.3))
+	var feet: Vector2 = run.player
+	draw_circle(feet+Vector2(0,-1),10,Color(0.05,0.04,0.08,0.35))
+	var frame := 1 if player_moving and player_stride>=8.0 else 0
+	var bob := -1.0 if frame==1 else 0.0
+	if not player_moving: bob = -1.0 if sin(float(run.elapsed)*2.6)>0.65 else 0.0
+	sprites.draw_wizard(self,run.phenotype,feet+Vector2(0,bob),frame,1.2)
+	if run.special_fx>0:
+		var pulse := float(run.special_fx)/0.35
+		var spark := feet+Vector2(10,-18)
+		draw_circle(spark,5,Color(color,pulse*0.35))
+		draw_rect(Rect2(spark-Vector2(1,1),Vector2(3,3)),color.lightened(0.55))
 
 func _draw_hud() -> void:
 	var seconds := int(run.elapsed)
