@@ -256,7 +256,7 @@ export class Game{
   }
   if(this.deathQueue.length){this.resolveDeaths(hash);if(this.bossDefeated&&!this.endless){this.phase='victory';return false}}
   stepHazards(this,hash);
-  if(p.health<=0){this.phase='over';return false}
+  if(p.health<=0){stepDungeon(this);this.phase='over';return false}
   if(this.deathQueue.length){this.resolveDeaths(hash);if(this.bossDefeated&&!this.endless){this.phase='victory';return false}}
   this.potions=this.potions.filter(o=>{if(++o.age>=o.fade||!this.visible(o))return false;if(p.health<p.maxHealth&&overlaps(o,p)){const previous=p.health;p.health=Math.min(p.maxHealth,p.health+o.recovery*p.maxHealth*(hasGear(p,'tonic')?1.35:1));this.emit('heal',p,p.health-previous);return false}return true});
   this.spawnEnemies();this.spawnPotions();stepDungeon(this);this.stepLoot();if(this.phase==='playing')this.levelUp();return this.phase==='playing';
