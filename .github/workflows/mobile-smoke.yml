@@ -42,6 +42,11 @@ jobs:
           set -o pipefail
           timeout 90 Godot_v4.5.1-stable_linux.x86_64 --headless --path mobile --script tests/persistence.gd 2>&1 | tee /tmp/persistence.log
           if grep -E 'SCRIPT ERROR|Parse Error|Failed to load script' /tmp/persistence.log; then exit 1; fi
+      - name: UI navigation smoke
+        run: |
+          set -o pipefail
+          timeout 45 Godot_v4.5.1-stable_linux.x86_64 --headless --path mobile --script tests/ui_smoke.gd 2>&1 | tee /tmp/ui.log
+          if grep -E 'SCRIPT ERROR|Parse Error|Failed to load script' /tmp/ui.log; then exit 1; fi
       - name: Launch main scene
         run: |
           set -o pipefail

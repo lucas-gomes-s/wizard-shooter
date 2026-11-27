@@ -9,6 +9,7 @@ const DungeonArt = preload("res://presentation/dungeon_art.gd")
 const Abilities = preload("res://gameplay/ability_catalog.gd")
 const Upgrades = preload("res://gameplay/upgrade_catalog.gd")
 const EnemyAI = preload("res://gameplay/enemy_behavior.gd")
+const Fantasy = preload("res://presentation/fantasy_ui.gd")
 const PLAYFIELD := Rect2(0, 88, 360, 448)
 const CAMERA_CENTER := Vector2(180, 312)
 const FIRE := Color("#ef8052")
@@ -46,7 +47,14 @@ var upgrade_heading: Label
 var upgrade_buttons: Array[Button] = []
 var result_panel: VBoxContainer
 var academy_panel: VBoxContainer
-var run_hud: Label
+var title_panel: VBoxContainer
+var title_quick: Button
+var title_endless: Button
+var title_menu_button: Button
+var title_note: Label
+var displayed_hp := 1.0
+var previous_level := 1
+var level_flash := 0.0
 var difficulty_button: Button
 var fusion_panel: VBoxContainer
 var fusion_hint: Label
@@ -74,28 +82,10 @@ func _ready() -> void:
 	ui.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	ui.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(ui)
-	ui.theme = _make_theme()
+	ui.theme = Fantasy.make_theme()
 	_build_ui()
 	_show_academy()
-
-func _make_theme() -> Theme:
-	var theme := Theme.new()
-	theme.default_font_size = 14
-	for state in ["normal", "hover", "pressed", "disabled"]:
-		var style := StyleBoxFlat.new()
-		style.bg_color = Color("#383044") if state == "normal" else (Color("#52435f") if state == "hover" else (Color("#705774") if state == "pressed" else Color("#25232c")))
-		style.border_color = Color("#75627f") if state != "disabled" else Color("#393542")
-		style.set_border_width_all(1)
-		style.set_corner_radius_all(3)
-		style.content_margin_left = 8
-		style.content_margin_right = 8
-		style.content_margin_top = 5
-		style.content_margin_bottom = 5
-		theme.set_stylebox(state, "Button", style)
-		theme.set_stylebox(state, "OptionButton", style)
-	theme.set_color("font_color", "Button", Color("#e9dfd0"))
-	theme.set_color("font_disabled_color", "Button", Color("#807789"))
-	return theme
+	_show_title()
 
 func _button(parent: Node, title: String, action: Callable) -> Button:
 	var b := Button.new()
@@ -137,6 +127,22 @@ func _pair(parent: Node) -> HBoxContainer:
 	return row
 
 func _build_ui() -> void:
+	title_panel = _box_at(Vector2(42, 386), Vector2(276, 220))
+	title_panel.add_theme_constant_override("separation", 12)
+	var enter := _button(title_panel, "Enter the Academy", _show_academy)
+	enter.custom_minimum_size.y = 46
+	Fantasy.primary(enter)
+	title_quick = _button(title_panel, "Quick expedition", func() -> void: _start(false))
+	title_quick.custom_minimum_size.y = 42
+	title_endless = _button(title_panel, "Endless survival", func() -> void: _start(true))
+	title_endless.custom_minimum_size.y = 42
+	title_note = _label(title_panel, "", 12)
+	title_note.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	title_menu_button = _button(ui, "Menu", _show_title)
+	title_menu_button.position = Vector2(294, 5)
+	title_menu_button.size = Vector2(58, 30)
+	title_menu_button.add_theme_font_size_override("font_size", 11)
 	academy_panel = _box_at(Vector2(16, 205), Vector2(328, 420))
 	var pickers := _pair(academy_panel)
 	active_picker = _picker(pickers, _select_active)
@@ -155,6 +161,7 @@ func _build_ui() -> void:
 	archive_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	difficulty_button = _button(academy_panel, "Difficulty: I", _cycle_difficulty)
 	start_finite = _button(academy_panel, "Enter dungeon", func() -> void: _start(false))
+	Fantasy.primary(start_finite)
 	start_endless = _button(academy_panel, "Endless survival", func() -> void: _start(true))
 	status_label = _label(academy_panel, "", 12)
 	status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -177,8 +184,6 @@ func _build_ui() -> void:
 	next.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_button(lineage_panel, "Retired records", _show_retired_records)
 	_button(lineage_panel, "Return to academy", _show_academy)
-	run_hud = _label(ui, "", 14)
-	run_hud.position = Vector2(12, 12)
 	special_button = _button(ui, "CAST", func() -> void: special_requested = true)
 	special_button.position = Vector2(248, 552)
 	special_button.size = Vector2(100, 60)
@@ -259,6 +264,18 @@ func _show_retired_records() -> void:
 		lines.append("")
 	archive_text.text = "\n".join(lines) if not lines.is_empty() else "No retired wizards yet."
 	archive_dialog.popup_centered(Vector2i(320, 360))
+
+func _show_title() -> void:
+	screen = "title"
+	run = null
+	paused = false
+	_clear_input()
+	var unavailable := academy.blocked or academy.roster.is_empty()
+	title_quick.disabled = unavailable
+	title_endless.disabled = unavailable
+	title_note.text = "Open the Academy to review your profile." if unavailable else "%d essence  |  %d wizards" % [academy.essence,academy.roster.size()]
+	_sync_visibility()
+	queue_redraw()
 
 func _show_academy() -> void:
 	screen = "academy"
@@ -365,13 +382,17 @@ func _cycle_difficulty() -> void:
 	_refresh_academy()
 
 func _start(endless: bool) -> void:
+	if academy.blocked or academy.roster.is_empty(): return
 	active = academy.roster[selected]
 	apprentice = academy.roster[partner_index] if partner_index >= 0 else {}
 	run_id = academy.allocate_run()
 	if run_id < 0:
-		_refresh_academy()
+		_show_academy()
 		return
 	run = RunModel.new(active.phenotype, endless, difficulty, 1000 + run_id)
+	displayed_hp = 1.0
+	previous_level = 1
+	level_flash = 0.0
 	camera_position = run.player
 	dungeon_art.reset(run.world_seed)
 	screen = "run"
@@ -411,12 +432,13 @@ func _finish() -> void:
 
 func _sync_visibility() -> void:
 	var in_run := screen == "run"
+	title_panel.visible = screen == "title"
+	title_menu_button.visible = screen == "academy"
 	academy_panel.visible = screen == "academy"
 	fusion_panel.visible = screen == "fusion"
 	reveal_panel.visible = screen == "reveal"
 	lineage_panel.visible = screen == "lineage"
 	result_panel.visible = screen == "result"
-	run_hud.visible = in_run
 	special_button.visible = in_run
 	pause_button.visible = in_run
 	extract_button.visible = in_run and run != null and run.endless
@@ -473,7 +495,7 @@ func _input(event: InputEvent) -> void:
 
 func _physics_process(dt: float) -> void:
 	if screen != "run":
-		if screen == "reveal": queue_redraw()
+		if screen in ["reveal","title"]: queue_redraw()
 		return
 	var space := Input.is_physical_key_pressed(KEY_SPACE)
 	if not paused and run.pending_upgrades == 0:
@@ -499,7 +521,12 @@ func _physics_process(dt: float) -> void:
 	prev_space = space
 	special_requested = false
 	if screen == "run":
-		run_hud.text = "HP %d/%d    Lv %d\nXP %d/%d    %ds    Kills %d%s" % [int(run.hp), int(run.max_hp), run.run_level, run.xp, run.next_xp, int(run.elapsed), run.kills, "  PAUSED" if paused else ""]
+		var actual := Fantasy.fraction(float(run.hp),float(run.max_hp))
+		displayed_hp = maxf(actual,move_toward(displayed_hp,actual,dt*0.7))
+		if int(run.run_level) != previous_level:
+			previous_level = int(run.run_level)
+			level_flash = 0.9
+		level_flash = maxf(0.0,level_flash-dt)
 		special_button.text = str(run.kit.special.name) if run.special_cd <= 0 else "%.1fs" % run.special_cd
 		special_button.add_theme_font_size_override("font_size", 10)
 		special_button.disabled = paused or run.special_cd > 0 or run.pending_upgrades > 0
@@ -508,6 +535,16 @@ func _physics_process(dt: float) -> void:
 
 func _draw() -> void:
 	draw_rect(Rect2(0, 0, 360, 640), Color("#1b1924"))
+	if screen == "title":
+		Fantasy.hall(self,float(Time.get_ticks_msec())/1000.0)
+		Fantasy.text_at(self,"WIZARD",Vector2(180,104),39,Fantasy.GOLD,true)
+		Fantasy.text_at(self,"SHOOTER",Vector2(180,144),35,Fantasy.IVORY,true)
+		Fantasy.text_at(self,"FORGE YOUR BLOODLINE",Vector2(180,170),11,Fantasy.MUTED,true)
+		if not academy.blocked and not academy.roster.is_empty():
+			sprites.draw_wizard(self,academy.roster[selected].phenotype,Vector2(180,324),0,4.0)
+		Fantasy.frame(self,Rect2(30,374,300,224))
+		Fantasy.text_at(self,"OFFLINE ALPHA",Vector2(180,625),10,Fantasy.MUTED,true)
+		return
 	if screen == "academy":
 		_draw_title("THE ACADEMY", "%d essence   •   %d active   •   %d retired" % [academy.essence, academy.roster.size(), academy.archive.size()])
 		if academy.blocked or academy.roster.is_empty(): return
@@ -594,10 +631,7 @@ func _draw() -> void:
 	draw_rect(PLAYFIELD, Color("#48404e"), false, 2.0)
 	if run.player_hit_fx > 0:
 		draw_rect(PLAYFIELD.grow(-3), Color(1.0, 0.34, 0.29, float(run.player_hit_fx) * 2.5), false, 3.0)
-	draw_rect(Rect2(12, 73, 220, 8), Color("#502e40"))
-	draw_rect(Rect2(12, 73, 220 * run.hp / run.max_hp, 8), Color("#c66c73"))
-	if run.blessing > 0:
-		_center_text("Blessed %.0fs" % run.blessing, Vector2(292, 79), 11, Color("#c9b4ef"))
+	_draw_hud()
 	if run.site_notice_time > 0:
 		draw_rect(Rect2(8, 94, 344, 23), Color(0.09, 0.07, 0.13, 0.90))
 		_center_text(run.site_notice, Vector2(180, 110), 12, Color("#e6d2ac"))
@@ -613,7 +647,25 @@ func _draw() -> void:
 	draw_circle(thumb, 12, Color("#89819c"))
 	if paused or run.pending_upgrades > 0:
 		draw_rect(Rect2(0, 90, 360, 446), Color(0.04, 0.03, 0.06, 0.76))
+		if paused: Fantasy.text_at(self,"PAUSED",Vector2(180,305),24,Fantasy.GOLD,true)
+		else: Fantasy.frame(self,Rect2(10,151,340,370),Color("#977ab5"))
 
+
+func _draw_hud() -> void:
+	var seconds := int(run.elapsed)
+	Fantasy.text_at(self,"%02d:%02d" % [seconds/60,seconds%60],Vector2(12,18),15,Fantasy.GOLD)
+	Fantasy.text_at(self,"KILLS %d" % run.kills,Vector2(82,18),11,Fantasy.MUTED)
+	Fantasy.text_at(self,"LV %d" % run.run_level,Vector2(193,18),13,Fantasy.GOLD)
+	var low := Fantasy.fraction(float(run.hp),float(run.max_hp)) < 0.25
+	var warning := 0.3+0.2*sin(float(run.elapsed)*5.0) if low else 0.0
+	Fantasy.bar(self,Rect2(12,25,230,22),float(run.hp),float(run.max_hp),Fantasy.HP,displayed_hp,maxf(warning,float(run.player_hit_fx)*3.0))
+	Fantasy.text_at(self,"HP   %d / %d" % [ceili(run.hp),roundi(run.max_hp)],Vector2(127,40),12,Fantasy.IVORY,true)
+	Fantasy.bar(self,Rect2(12,52,230,18),float(run.xp),float(run.next_xp),Fantasy.XP,-1.0,level_flash)
+	Fantasy.text_at(self,"XP   %d / %d" % [run.xp,run.next_xp],Vector2(127,65),11,Fantasy.IVORY,true)
+	var state := "BLESSED %.0fs" % run.blessing if run.blessing > 0 else ("BOSS ACTIVE" if run.boss_spawned else ("ENDLESS" if run.endless else "DUNGEON"))
+	Fantasy.text_at(self,state,Vector2(12,83),10,Fantasy.MUTED)
+	if not run.endless:
+		Fantasy.text_at(self,"DIFFICULTY "+["I","II","III"][difficulty-1],Vector2(300,65),10,Fantasy.MUTED,true)
 
 func _draw_combat_feedback(view: Rect2) -> void:
 	var font := ThemeDB.fallback_font
@@ -694,8 +746,7 @@ func _draw_title(value: String, subtitle: String) -> void:
 	_center_text(subtitle, Vector2(180, 44), 12, Color("#b5a5bc"))
 
 func _draw_card(c: Dictionary, rect: Rect2, role: String) -> void:
-	draw_rect(rect, Color("#2c2635"))
-	draw_rect(rect, Color("#62516d"), false, 1)
+	Fantasy.frame(self,rect,Color("#796384"))
 	var center := rect.get_center().x
 	_center_text(role, Vector2(center, rect.position.y + 15), 10, Color("#cdb891"))
 	if c.is_empty():
@@ -708,7 +759,7 @@ func _draw_card(c: Dictionary, rect: Rect2, role: String) -> void:
 	_center_text("%s · Tier %d" % [p.affinity.capitalize(), p.tier], Vector2(center, rect.position.y + 97), 13, hue)
 	_center_text("%s%s" % [p.body.capitalize(), " / Locked" if c.locked else ""], Vector2(center, rect.position.y + 112), 11, Color("#d1c5d5"))
 	var bar := Rect2(rect.position.x + 13, rect.end.y - 15, rect.size.x - 26, 4)
-	draw_rect(bar, Color("#49404e"))
-	var fraction := clampf(float(c.xp) / Academy.MATURE_XP, 0.0, 1.0)
+	draw_rect(bar.grow(1),Fantasy.INK)
+	var fraction := Fantasy.fraction(float(c.xp),Academy.MATURE_XP)
 	draw_rect(Rect2(bar.position, Vector2(bar.size.x * fraction, bar.size.y)), hue)
 	_center_text("Mature" if int(c.xp) >= Academy.MATURE_XP else "%d / %d XP" % [c.xp, Academy.MATURE_XP], Vector2(center, rect.end.y - 3), 9, Color("#d1c5d5"))
