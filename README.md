@@ -266,3 +266,27 @@ Audio is presentation-only: the game simulation and RNG are untouched. The heade
 Repeated cues are throttled, warnings deduplicated by action/hazard identity, simultaneous voices capped at 32 with important cues able to evict ordinary voices, and a compressor reduces peak levels. Music scheduling uses short look-ahead on the animation loop rather than persistent timers, avoiding backlogs when the page pauses.
 
 Seven new audio tests passed in a direct JavaScript harness using a mock AudioContext (settings, autoplay fallback, school signatures, throttling, voice cap, theme switching, pause, mute and cue deduplication). Controller syntax parsed. Browser smoke coverage extended for actual Web Audio unlock, mute, pause and reload persistence. Actual Chromium execution and subjective sound quality/mix remain unverified. No combat balance changes, no new runtime dependencies, Android untouched.
+
+## Balance calibration (v1.17.0)
+
+Selected a provisional, telemetry-informed combat patch: Demon projectile multiplier 0.65→0.50 (normal projectile damage 18→14), windup 45→55 ticks; Reaper pauses for 25 ticks after teleport before pursuit resumes; builds without any Necromancy rank recover 0.35 HP per kill from player level 10. Recovery is capped at max health and recorded as balance:recovery. Existing Necromancy and mastery effects, dragon statistics, spawn rates, equipment and economy are unchanged. Configurable in combatBalance in js/data.js; an empty object reproduces the prior values. An additional 25% direct damage bonus against already-chilled targets for rank III+ Cryomancy was explored on 10 Ice-primary runs: 2 wins versus 1 with the selected candidate, but fewer ten-minute survivors (8 versus 9) and slightly lower mean survival (1012.81 versus 1023.33 s). Not enabled by default; the optional chilledDamageBonus parameter remains available for controlled experiments.
+
+### Matched-seed evaluation
+
+All 25 ordered targets, three seeds per target per variant, 1800s cap, identical five-tick bot decision policy and standard crypt. Seeds 1–2 used for selection; seed 3 held out until the candidate was selected. Total 150 full-run simulations, plus 10 targeted Ice experiments.
+
+| Metric | Baseline | Candidate |
+| --- | --- | --- |
+| Victories | 16/75 | 30/75 |
+| Dragon arrivals | 29/75 | 49/75 |
+| Survived ten minutes | 70/75 | 73/75 |
+| Survived fifteen minutes | 60/75 | 66/75 |
+| Survived twenty minutes | 31/75 | 49/75 |
+| Mean duration (s) | 1143.42 | 1313.28 |
+| Pure wins | 4/15 | 8/15 |
+| Hybrid wins | 12/60 | 22/60 |
+| Blocked runs | 0 | 0 |
+
+Selection seeds: 9→18 victories /50, 18→31 dragon arrivals. Holdout seed: 7→12 victories /25, 11→18 arrivals. Primary victories out of 15: Fire 1→5, Ice 0→5, Lightning 3→7, Necro 9→5, Arcane 3→8. All ten unordered hybrid targets produced at least one victory after calibration. This does not guarantee that every ordered target is viable. Storm prism won 5/6; Steam, Thunderfrost, Soulfire and Glacial mirror each won 1/6. Small samples, shared bot strategy, changing RNG trajectories and unequal exposure limit interpretation; no causal attribution of combined changes, human win-rate prediction or full biome/contract calibration. No further balance patch chosen based on the holdout.
+
+Reproduce with `npm run balance:compare -- 1800 3 1 comparison.json`. Run independent seed range with `npm run balance:compare -- 1800 20 4 holdout.json`. Raw data, ice experiment, selection summary and final summary in benchmarks/v1.17/. Three new calibration tests and 35 related regression cases passed using direct JS harness. The preceding v1.16 actual Node CI passed but browser smoke failed at native option isDisabled assertion; updated smoke test checks the native disabled property directly. New CI and actual human playtesting remain pending. Android unchanged.

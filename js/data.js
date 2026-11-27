@@ -272,3 +272,7 @@ export const minibosses=[
  {minute:20,name:'Demon',title:'The Ash Tyrant',health:2000,damage:42,xp:650}
 ];
 export const balanceSettings={eliteStart:180,eliteEvery:12,spawnRampPerMinute:.018,minSpawnFactor:.65};
+
+// v1.17 candidate selected from matched-seed full-build experiments.
+// Override with {} to reproduce the v1.16 combat rules.
+export const combatBalance=Object.freeze({demonShotMultiplier:.50,demonWindup:55,reaperRecovery:25,nonNecroHeal:.35});

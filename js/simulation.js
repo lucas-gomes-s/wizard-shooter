@@ -81,7 +81,7 @@ export class Game{
  }
  directHit(enemy,shot,hash){
   const p=this.player,m=p.magic,r=m.ranks,combos=m.synergies;
-  const critical=r.lightning&&this.rng()<.05*r.lightning+(m.mastery==='tempest'?.2:0);const armor=frontalMultiplier(enemy,shot);const damage=shot.damage*(critical?2:1)*armor*(m.mastery==='absolute-zero'&&enemy.slowUntil>this.tick?1.4:1);
+  const critical=r.lightning&&this.rng()<.05*r.lightning+(m.mastery==='tempest'?.2:0);const armor=frontalMultiplier(enemy,shot);const damage=shot.damage*(critical?2:1)*armor*(enemy.slowUntil>this.tick?(m.mastery==='absolute-zero'?1.4:r.ice>=3?1+(this.config.combatBalance?.chilledDamageBonus??0):1):1);
   if(critical)this.emitVisual('crit',enemy,damage,'lightning');if(armor<1)this.emitVisual('block',enemy,damage);
   trackHit(this.telemetry,this.tick,shot);this.damage(enemy,damage,shot.school,'direct:'+String(shot.school||'untrained'));
   if(shot.meteor&&!shot.meteor.used){shot.meteor.used=true;this.pulse(hash,enemy,65,p.shotDmg*(attuned(p,'meteor','fire')?.65:.45),'fire',null,'gear:meteor');}
@@ -136,6 +136,7 @@ export class Game{
    if(hasGear(p,'fang'))this.healPlayer(attuned(p,'fang','necro')?.8:.5,'necro','gear:fang');
    if(hasGear(p,'lantern')&&++p.gearState.relic.count%(attuned(p,'lantern','necro')?9:12)===0)this.pulse(hash,p,90,p.shotDmg,'necro',null,'gear:lantern:passive');
    if(e.boss&&!this.bossDefeated){this.bossDefeated=true;this.victoryTick=this.tick;this.emit('victory',e)}
+   if(!r.necro&&p.level>=10&&this.config.combatBalance?.nonNecroHeal>0)this.healPlayer(this.config.combatBalance.nonNecroHeal,'necro','balance:recovery');
    if(r.necro&&p.health<p.maxHealth){const before=p.health;p.health=Math.min(p.maxHealth,p.health+.5+.5*r.necro+Number(m.mastery==='lich'));trackHeal(this.telemetry,this.tick,'necro:kill',p.health-before);this.emit('heal',p,p.health-before,'necro');this.emitVisual('soul',e,p.health-before,'necro')}
    if(r.necro>=5){const radius=m.mastery==='lich'?85:65;this.emit('burst',e,radius,'necro');for(const other of nearby(hash,e,radius,new Set([e])))this.damage(other,p.shotDmg*(m.mastery==='lich'?.6:.4),'necro','necro:burst')}
    if(m.synergies.includes('gravefrost')&&e.slowUntil>this.tick)this.pulse(hash,e,60,p.shotDmg*.35,'gravefrost',.5,'fusion:gravefrost');
