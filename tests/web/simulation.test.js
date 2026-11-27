@@ -12,8 +12,8 @@ test('diagonal speed equals cardinal speed; opposing inputs cancel',()=>{
 });
 test('held aim fires on simulation cooldown, not keyboard repeat',()=>{
   const g=create();
-  for(let i=0;i<100;i++)g.step({aim:[1,0]});
-  assert.equal(g.shots.length,2);
+  let casts=0;for(let i=0;i<100;i++){g.step({aim:[1,0]});casts+=g.events.filter(e=>e.type==='cast').length;}
+  assert.equal(casts,2);
 });
 test('restart clears runtime state and leaves config unchanged',()=>{
   const g=create();const before=JSON.stringify(config.monsters);
@@ -24,8 +24,8 @@ test('restart clears runtime state and leaves config unchanged',()=>{
   assert.equal(g.player.level,1);assert.equal(g.phase,'playing');
   assert.equal(JSON.stringify(config.monsters),before);
 });
-test('spawns retain original two-second goblin interval',()=>{
-  const g=create();for(let i=0;i<99;i++)g.step();
+test('goblins enter after the configured opening interval',()=>{
+  const g=create(),interval=config.monsters.find(m=>m.name==='Goblin').spawn;for(let i=0;i<interval-1;i++)g.step();
   assert.equal(g.enemies.length,0);g.step();assert.equal(g.enemies.length,1);
   assert.equal(g.enemies[0].name,'Goblin');
 });
