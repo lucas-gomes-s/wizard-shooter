@@ -20,6 +20,11 @@ try{
   const start=page.locator('#startButton');
   await start.waitFor({state:'visible'});await page.waitForFunction(()=>!document.getElementById('startButton').disabled);
   await page.screenshot({path:'web-smoke-artifacts/title.png'});
+  await page.locator('#profileButton').click();await page.locator('#profilePanel').waitFor({state:'visible'});
+  assert.equal(await page.locator('#codexEntries .codex-group').count(),8);
+  await page.screenshot({path:'web-smoke-artifacts/profile.png'});
+  await page.locator('#profileBack').click();
+  assert.equal(await page.locator('#contractSelect option[value="dry"]').isDisabled(),true);
   assert.equal(await page.locator('#starterCards .starter-card').count(),5);
   await page.locator('[data-school="ice"]').click();
   await start.click();
@@ -125,6 +130,12 @@ try{
   await page.locator('#endlessButton').click();
   await page.locator('#overlay').waitFor({state:'hidden'});
   await page.waitForFunction(()=>document.getElementById('bossName').textContent==='Endless survival');
+  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('wizard-shooter.profile.v1')));
+  assert.equal(saved.wins,1);assert.ok(saved.achievements.includes('dragon'));
+  await page.reload();await page.locator('#homePanel').waitFor({state:'visible'});
+  await page.waitForFunction(()=>!document.getElementById('startButton').disabled);
+  assert.equal(await page.locator('#contractSelect option[value="dry"]').isDisabled(),false);
+  assert.equal(await page.locator('#sigilSelect option[value="gold"]').isDisabled(),false);
   assert.deepEqual(errors,[]);
   console.log('Browser smoke passed: assets, start, movement input, pause, confirmation, effects, resizing, restart, return to title.');
 }finally{await browser.close();}
