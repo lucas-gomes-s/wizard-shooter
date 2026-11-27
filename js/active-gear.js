@@ -1,3 +1,4 @@
+import {attuned} from './attunements.js';
 // Active skills are additive to existing passive gear. Cooldown belongs to the slot.
 import {hasGear} from './equipment.js';
 export const activeGear={
@@ -34,9 +35,9 @@ export function useRelic(g,input,hash,nearby){
  if(id==='tonic'&&p.health>=p.maxHealth)return false;
  if(id==='crown'&&p.health<=p.maxHealth*.1)return false;
  p.activeReady.relic=g.tick+a.cooldown;
- if(id==='hourglass'){g.emit('burst',p,140,'ice');for(const e of nearby(hash,p,140)){e.freezeUntil=Math.max(e.freezeUntil||0,g.tick+60);g.emitVisual('freeze',e,0,'ice');}}
- if(id==='lantern')g.pulse(hash,p,120,p.shotDmg*1.8,'necro');
- if(id==='crown'){p.health-=p.maxHealth*.1;p.crownUntil=g.tick+200;g.emit('burst',p,50,'fire');}
- if(id==='tonic')g.healPlayer(p.maxHealth*.12);
+ if(id==='hourglass'){g.emit('burst',p,140,'ice');for(const e of nearby(hash,p,140)){e.freezeUntil=Math.max(e.freezeUntil||0,g.tick+(attuned(p,'hourglass','ice')?80:60));g.emitVisual('freeze',e,0,'ice');}}
+ if(id==='lantern')g.pulse(hash,p,120,p.shotDmg*1.8,'necro',null,'gear:lantern:active');
+ if(id==='crown'){p.health-=p.maxHealth*.1;g.recordCost('gear:crown',p.maxHealth*.1);p.crownUntil=g.tick+200;g.emit('burst',p,50,'fire');}
+ if(id==='tonic')g.healPlayer(p.maxHealth*.12,'necro','gear:tonic:active');
  g.activeHistory.push({id,tick:g.tick});return true;
 }

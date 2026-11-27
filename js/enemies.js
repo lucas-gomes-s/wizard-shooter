@@ -91,14 +91,14 @@ export function stepHazards(game,hash=null){
   if(t>=h.until)return false;
   if(t>=h.activeAt&&inCircle(p,h.x,h.y,h.radius)){
    if(h.type==='web')p.webUntil=Math.max(p.webUntil||0,t+12);
-   else if(!h.hit){h.hit=true;const dealt=game.hurtPlayer(h.damage,'hazard',hash);game.recordDungeonHazard?.(h,dealt);}
+   else if(!h.hit){h.hit=true;const dealt=game.hurtPlayer(h.damage,'hazard',hash,h.type);game.recordDungeonHazard?.(h,dealt);}
   }
   return true;
  });
  game.hostiles=game.hostiles.filter(s=>{
   s.x+=s.vx;s.y+=s.vy;s.age++;
   if(s.age>200||!game.visible({x:s.x-s.radius,y:s.y-s.radius,width:s.radius*2,height:s.radius*2},150))return false;
-  if(inCircle(p,s.x,s.y,s.radius)){game.hurtPlayer(s.damage,'projectile',hash);return false;}
+  if(inCircle(p,s.x,s.y,s.radius)){game.hurtPlayer(s.damage,'projectile',hash,s.source||'unknown');return false;}
   return true;
  });
 }

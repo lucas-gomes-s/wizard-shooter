@@ -23,7 +23,7 @@ export function choosePurchase(g,index=-1){
  const s=g.market,p=g.player;
  if(g.phase!=='shop'||!Number.isInteger(index)||index< -1||index>=s.offers.length)return false;
  if(index>=0){const o=s.offers[index];if(p.gold<o.price)return false;
-  if(o.kind==='heal'){if(p.health>=p.maxHealth)return false;g.healPlayer(p.maxHealth*.35);}
+  if(o.kind==='heal'){if(p.health>=p.maxHealth)return false;g.healPlayer(p.maxHealth*.35,'necro','merchant');}
   else if(!equipItem(p,o.id,g.tick))return false;
   p.gold-=o.price;s.spent+=o.price;s.history.push({id:o.id,price:o.price,tick:g.tick});
  }
