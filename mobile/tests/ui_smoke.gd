@@ -9,6 +9,7 @@ const FX = preload("res://presentation/element_fx.gd")
 const Settings = preload("res://presentation/visual_settings.gd")
 const Monitor = preload("res://presentation/performance_monitor.gd")
 const Guide = preload("res://presentation/onboarding.gd")
+const Playtest = preload("res://persistence/playtest_journal.gd")
 var failures := 0
 
 func _initialize() -> void:
@@ -24,6 +25,7 @@ func _test() -> void:
 	app.academy = Academy.new(42)
 	app.settings.persist=false
 	app.guide.persist=false
+	app.playtest.persist=false
 	app.audio.persist_settings=false
 	app.audio.effects_enabled=false
 	app.audio.music_enabled=false
@@ -70,7 +72,19 @@ func _test() -> void:
 	app._restore_backup()
 	check(app.academy.roster.size()==2 and app.pending_backup.is_empty(),"Confirmed restore")
 	app._close_backup()
+	app._open_playtest()
+	check(app.screen=="playtest" and not app.playtest.enabled and app.playtest.events.is_empty(),"Journal disabled by default")
+	app._toggle_playtest()
+	check(app.playtest.enabled and app.playtest.events.size()==1,"Explicit opt-in starts local session")
+	app._preview_playtest()
+	check(app.playtest_text.text.contains("wizard-shooter-playtest"),"Preview report")
+	app._clear_playtest()
+	check(app.playtest.events.size()==1 and app.clear_armed,"Clear needs confirmation")
+	app._clear_playtest()
+	check(app.playtest.events.is_empty(),"Confirmed clear")
+	app._close_playtest()
 	app._close_settings()
+	_test_journal()
 	check(app.screen=="title","Settings return to title")
 	var preferences := Settings.new()
 	preferences.path="user://test_visual_settings.cfg"
@@ -189,6 +203,7 @@ func _test() -> void:
 	app._upgrade(0)
 	check(int(app.run.upgrade_ranks.get(offered,0))==1 and not app.upgrade_panel.visible,"Card selection applies original upgrade")
 	check(app.guide.knows(Guide.UPGRADE),"Applied upgrade completes lesson")
+	check(int(app.playtest.report().counts.get("upgrade",0))==1,"Actual upgrade choice logged once")
 	app.run.special_cd=3.0
 	await physics_frame
 	await process_frame
@@ -214,6 +229,8 @@ func _test() -> void:
 	check(Guide.fusion_tip(app.academy,app.academy.roster[app.selected],app.academy.roster[app.partner_index]).contains("ready"),"First fusion guidance reflects committed training")
 	app._finish()
 	check(app.academy.essence==old_essence+5,"Results cannot settle rewards twice")
+	var logged: Dictionary=app.playtest.report().counts
+	check(logged.get("run_end",0)==1 and logged.get("reward_saved",0)==1,"Retry does not duplicate outcome or reward log")
 	await process_frame
 	app._show_academy()
 	await process_frame
@@ -235,6 +252,7 @@ func _test() -> void:
 	check(app.reveal_panel.visible and not app.reveal_skip.visible,"Skip reveals committed child")
 	app._fuse()
 	check(app.academy.roster.size()==1 and app.academy.archive.size()==2,"Reveal cannot fuse again")
+	check(app.playtest.report().counts.get("fusion",0)==1,"Committed fusion logged once")
 	app._show_academy()
 	app.academy.essence=100
 	for i in range(7): app.academy.summon()
@@ -262,3 +280,27 @@ func _test() -> void:
 	await process_frame
 	print("Fantasy UI navigation: %d failures" % failures)
 	quit(0 if failures==0 else 1)
+
+func _test_journal() -> void:
+	var journal := Playtest.new()
+	journal.path="user://test_playtest_%d.json" % Time.get_ticks_usec()
+	check(journal.record("session")==0 and not FileAccess.file_exists(journal.path),"No logging or files before opt-in")
+	check(journal.set_enabled(true),"Journal opt-in saved")
+	journal.record("session",{"build":"test"})
+	var reopened := Playtest.new()
+	reopened.path=journal.path
+	reopened.load_journal()
+	check(reopened.enabled and reopened.events.size()==1,"Journal survives restart")
+	check(reopened.set_enabled(false) and reopened.record("session")==0,"Opt-out stops recording")
+	check(reopened.events.size()==1,"Opt-out retains inspectable history")
+	check(reopened.clear() and reopened.events.is_empty(),"Clear persisted")
+	var fresh := Playtest.new()
+	fresh.path=journal.path
+	fresh.load_journal()
+	check(not fresh.enabled and fresh.events.is_empty(),"Clear and opt-out survive restart")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(journal.path))
+	var memory := Playtest.new()
+	memory.persist=false
+	memory.enabled=true
+	for i in range(Playtest.LIMIT+3): memory.record("session")
+	check(memory.events.size()==Playtest.LIMIT and memory.dropped==3 and int(memory.events[0].seq)==4,"Journal retention bounded with dropped count")

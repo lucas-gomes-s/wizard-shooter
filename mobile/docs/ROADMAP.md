@@ -127,3 +127,5 @@ Definition of done for every increment: documented design and acceptance tests, 
 
 ## Closed beta readiness update
 Initial presentation overhaul and optional action-driven onboarding are implemented on the mobile branch of the product. Keep the content freeze for 0.2.0-beta.1: next gates are calibrated expedition timing/balance, first-fusion economy, stable selection and backup, signing/AAB/versioning, physical Android and fresh-player playtests, and Play Console preparation. Tutorial checklist completion is not evidence of usability; observe first-time testers. Do not introduce ads or payments for this test.
+
+Local opt-in playtest journal implemented with preview/copy and delete controls; no server, device/user ID, dates or remote SDK. Closed test analysis must report denominators and missing data: voluntary local logs alone cannot establish day retention, unique testers or crash-free session percentages. Use consenting tester feedback and observed sessions alongside the journal.

@@ -22,6 +22,7 @@ const VisualSettings = preload("res://presentation/visual_settings.gd")
 const Profiler = preload("res://presentation/performance_monitor.gd")
 const Onboarding = preload("res://presentation/onboarding.gd")
 const Backup = preload("res://persistence/profile_backup.gd")
+const Playtest = preload("res://persistence/playtest_journal.gd")
 const PLAYFIELD := Rect2(0, 88, 360, 448)
 const CAMERA_CENTER := Vector2(180, 312)
 const FIRE := Color("#ef8052")
@@ -91,6 +92,13 @@ var backup_notice: Label
 var backup_confirm: Button
 var backup_export: Button
 var pending_backup: Dictionary = {}
+var playtest := Playtest.new()
+var playtest_panel: VBoxContainer
+var playtest_status: Label
+var playtest_toggle: Button
+var playtest_text: TextEdit
+var playtest_clear: Button
+var clear_armed := false
 var reveal_skip: Button
 var reveal_time := 0.0
 const REVEAL_DURATION := 1.65
@@ -147,6 +155,8 @@ func _ready() -> void:
 	settings.load_settings()
 	settings.apply()
 	guide.load_settings(not academy.settled_runs.is_empty() or not academy.archive.is_empty())
+	playtest.load_journal()
+	playtest.session()
 	ui = Control.new()
 	ui.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	ui.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -206,6 +216,7 @@ func _build_ui() -> void:
 	_build_settings()
 	_build_guide()
 	_build_backup()
+	_build_playtest()
 	title_menu_button = _button(ui, "Menu", _show_title)
 	title_menu_button.position = Vector2(294, 5)
 	title_menu_button.size = Vector2(58, 30)
@@ -528,7 +539,8 @@ func _refresh_academy() -> void:
 	status_label.text=academy.error if not academy.error.is_empty() else academy.notice
 
 func _summon() -> void:
-	academy.summon()
+	if academy.summon():
+		playtest.record("summon",{"wizard":Playtest.phenotype(academy.roster.back().phenotype),"roster_size":academy.roster.size()})
 	_sync_assignments()
 	_refresh_academy()
 	queue_redraw()
@@ -552,6 +564,8 @@ func _fuse() -> void:
 	ritual_parents=[academy.roster[selected].duplicate(true),academy.roster[partner_index].duplicate(true)]
 	var child: Dictionary = academy.fuse(academy.roster[selected], academy.roster[partner_index])
 	if not child.is_empty():
+		playtest.record("fusion",{"first":academy.archive.size()==2,"child":Playtest.phenotype(child.phenotype),
+			"parents":[Playtest.phenotype(ritual_parents[0].phenotype),Playtest.phenotype(ritual_parents[1].phenotype)]})
 		_sync_assignments()
 		revealed = child
 		reveal_time=0.0
@@ -718,6 +732,7 @@ func _restore_backup() -> void:
 	if not academy.restore_backup(pending_backup):
 		backup_notice.text=academy.error
 		return
+	playtest.record("profile_restored",{"roster_size":academy.roster.size(),"retired":academy.archive.size()})
 	_sync_assignments()
 	roster_page=0
 	# Academy controls may have been disabled while a damaged save blocked play.
@@ -732,9 +747,82 @@ func _enable_controls(root: Node) -> void:
 		if node is BaseButton: node.disabled=false
 		_enable_controls(node)
 
+func _build_playtest() -> void:
+	playtest_panel=_box_at(Vector2(20,74),Vector2(320,550))
+	playtest_panel.add_theme_constant_override("separation",7)
+	_label(playtest_panel,"Optional local playtest data: run outcomes, upgrades, lessons, rewards and performance. Nothing is sent automatically. No names, account IDs or dates.",12).autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	playtest_toggle=_button(playtest_panel,"Enable local logging",_toggle_playtest)
+	playtest_status=_label(playtest_panel,"",11)
+	playtest_status.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	playtest_status.custom_minimum_size.y=48
+	_button(playtest_panel,"Preview report",_preview_playtest)
+	playtest_text=TextEdit.new()
+	playtest_text.editable=false
+	playtest_text.wrap_mode=TextEdit.LINE_WRAPPING_BOUNDARY
+	playtest_text.custom_minimum_size=Vector2(320,150)
+	playtest_panel.add_child(playtest_text)
+	_button(playtest_panel,"Copy report for sharing",_copy_playtest)
+	playtest_clear=_button(playtest_panel,"Clear local report",_clear_playtest)
+	_button(playtest_panel,"Back",_close_playtest)
+
+func _open_playtest() -> void:
+	if screen!="settings" or settings_origin!="title" or run!=null: return
+	screen="playtest"
+	clear_armed=false
+	playtest_text.text=""
+	_refresh_playtest()
+	_sync_visibility()
+	queue_redraw()
+
+func _refresh_playtest() -> void:
+	playtest_toggle.text="Disable local logging" if playtest.enabled else "Enable local logging"
+	playtest_toggle.disabled=playtest.unreadable
+	playtest_clear.text="Confirm delete report" if clear_armed else "Clear local report"
+	playtest_status.text="%d retained events | %d dropped. %s" % [playtest.events.size(),playtest.dropped,"Logging ON" if playtest.enabled else "Logging OFF"]
+	if not playtest.error.is_empty(): playtest_status.text+="\n"+playtest.error
+
+func _toggle_playtest() -> void:
+	if screen!="playtest": return
+	clear_armed=false
+	if playtest.set_enabled(not playtest.enabled) and playtest.enabled: playtest.session()
+	_refresh_playtest()
+
+func _preview_playtest() -> void:
+	if screen!="playtest": return
+	clear_armed=false
+	playtest_text.text=JSON.stringify(playtest.report(),"  ")
+	_refresh_playtest()
+
+func _copy_playtest() -> void:
+	if screen!="playtest": return
+	_preview_playtest()
+	DisplayServer.clipboard_set(playtest_text.text)
+	playtest_status.text+="\nCopy requested. Review before sharing."
+
+func _clear_playtest() -> void:
+	if screen!="playtest": return
+	if not clear_armed:
+		clear_armed=true
+		_refresh_playtest()
+		return
+	clear_armed=false
+	if playtest.clear(): playtest_text.text=""
+	_refresh_playtest()
+
+func _close_playtest() -> void:
+	if screen!="playtest": return
+	clear_armed=false
+	playtest_text.text=""
+	screen="settings"
+	_sync_visibility()
+	queue_redraw()
+
+func _visual_snapshot() -> Dictionary:
+	return {"fps":settings.fps,"simple_effects":settings.simple_effects,"reduced_motion":settings.reduced_motion,"damage_numbers":settings.damage_numbers}
+
 func _build_settings() -> void:
 	settings_panel=_box_at(Vector2(24,92),Vector2(312,500))
-	settings_panel.add_theme_constant_override("separation",8)
+	settings_panel.add_theme_constant_override("separation",5)
 	sound_toggle=_button(settings_panel,"SFX ON",_toggle_sfx)
 	music_toggle=_button(settings_panel,"Music ON",_toggle_music)
 	for key in ["fps","reduced_motion","simple_effects","damage_numbers","monitor"]:
@@ -743,6 +831,7 @@ func _build_settings() -> void:
 	_button(settings_panel,"Export performance report",_export_performance)
 	var backup_link := _button(settings_panel,"Save backup / restore",_open_backup)
 	settings_options["backup"]=backup_link
+	settings_options["playtest"]=_button(settings_panel,"Playtest report",_open_playtest)
 	settings_notice=_label(settings_panel,"",11)
 	settings_notice.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	var back := _button(settings_panel,"Back",_close_settings)
@@ -775,6 +864,7 @@ func _refresh_settings() -> void:
 	settings_options.damage_numbers.text="Damage numbers: "+("ON" if settings.damage_numbers else "OFF")
 	settings_options.monitor.text="Performance overlay: "+("ON" if settings.monitor else "OFF")
 	settings_options.backup.disabled=settings_origin=="run"
+	settings_options.playtest.disabled=settings_origin=="run"
 
 func _toggle_visual(key: String) -> void:
 	match key:
@@ -830,6 +920,7 @@ func _start(endless: bool) -> void:
 	result_reward.clear()
 	profiler.reset()
 	guide.begin_run()
+	playtest.start_run(run,not apprentice.is_empty(),guide.lesson_count(),_visual_snapshot())
 	monitor_text=""
 	monitor_timer=0.0
 	displayed_hp = 1.0
@@ -866,8 +957,14 @@ func _extract() -> void:
 func _upgrade(choice: int) -> void:
 	if screen == "run":
 		var previous: int=run.pending_upgrades
+		var offer: Array=run.upgrade_offer.duplicate()
+		var learned_before := guide.learned
 		run.upgrade(choice)
-		if guide.enabled and run.pending_upgrades<previous: guide.mark(Onboarding.UPGRADE)
+		if run.pending_upgrades<previous:
+			if choice>=0 and choice<offer.size():
+				playtest.run_event("upgrade",{"seconds":run.elapsed,"level":run.run_level,"offered":offer,"chosen":offer[choice],"rank":run.upgrade_ranks.get(offer[choice],0)})
+			if guide.enabled: guide.mark(Onboarding.UPGRADE)
+			if guide.learned!=learned_before: playtest.run_event("lesson",{"seconds":run.elapsed,"learned_mask":guide.learned,"count":guide.lesson_count()})
 		_clear_input()
 		_sync_visibility()
 
@@ -877,13 +974,16 @@ func _replay_result() -> void:
 
 func _finish() -> void:
 	if run==null or run.outcome=="" or not result_reward.is_empty(): return
+	if screen!="result" and playtest.current_run>0: playtest.end_run(run,profiler.report())
 	var earned: int = run.training_reward()
 	var active_now := academy.find_active(str(active.id))
 	var apprentice_now := academy.find_active(str(apprentice.get("id", "")))
 	if result_before.is_empty():
 		result_before=Results.before_reward(academy,active_now if not active_now.is_empty() else active,apprentice_now)
 	var saved := academy.reward(run_id, active_now, apprentice_now, earned, run.outcome == "Victory", int(run.exploration_essence))
-	if saved: result_reward=Results.committed(result_before,academy)
+	if saved:
+		result_reward=Results.committed(result_before,academy)
+		playtest.reward_saved(result_reward)
 	if screen!="result": audio.play_sound("victory" if run.outcome=="Victory" else ("fallen" if run.outcome=="Defeated" else "reward"),5,-10.0)
 	screen="result"
 	_clear_input()
@@ -917,6 +1017,7 @@ func _sync_visibility() -> void:
 	guide_button.visible=screen in ["title","academy"]
 	settings_panel.visible=screen=="settings"
 	backup_panel.visible=screen=="backup"
+	playtest_panel.visible=screen=="playtest"
 	settings_button.visible=screen=="title" or (in_run and paused)
 	settings_button.position=Vector2(115,604) if screen=="title" else Vector2(115,340)
 	sound_toggle.text="SFX ON" if audio.effects_enabled else "SFX OFF"
@@ -991,7 +1092,9 @@ func _physics_process(dt: float) -> void:
 		var audio_before := GameAudio.snapshot(run)
 		var sim_start := Time.get_ticks_usec()
 		run.step(dt, movement, special_requested or (space and not prev_space))
+		var learned_before := guide.learned
 		guide.observe_step(run,previous,int(audio_before.basic),int(audio_before.special))
+		if guide.learned!=learned_before: playtest.run_event("lesson",{"seconds":run.elapsed,"learned_mask":guide.learned,"count":guide.lesson_count()})
 		profiler.record_step(Time.get_ticks_usec()-sim_start,run,dungeon_art.cache.size(),sprites.pose_cache.size())
 		if run.special_casts>audio_before.special: elemental_fx.capture(run)
 		audio.after_step(audio_before,run)
@@ -1028,6 +1131,10 @@ func _physics_process(dt: float) -> void:
 
 func _draw() -> void:
 	draw_rect(Rect2(0, 0, 360, 640), Color("#1b1924"))
+	if screen=="playtest":
+		_draw_title("PLAYTEST REPORT","Local and voluntary")
+		Fantasy.frame(self,Rect2(12,62,336,566))
+		return
 	if screen=="backup":
 		_draw_title("SAVE BACKUP","Local collection transfer")
 		Fantasy.frame(self,Rect2(12,62,336,566))
