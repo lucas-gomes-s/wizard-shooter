@@ -24,7 +24,7 @@ try{
   assert.equal(await page.locator('#codexEntries .codex-group').count(),10);
   await page.screenshot({path:'web-smoke-artifacts/profile.png'});
   await page.locator('#profileBack').click();
-  assert.equal(await page.locator('#contractSelect option[value="dry"]').isDisabled(),true);
+  assert.equal(await page.locator('#contractSelect option[value="dry"]').evaluate(el=>el.disabled),true);
   assert.equal(await page.locator('#starterCards .starter-card').count(),5);
   await page.locator('#environmentSelect').selectOption('frost');
   await page.waitForFunction(()=>document.getElementById('biomeName').textContent.includes('Frozen Hollow'));
@@ -153,8 +153,8 @@ try{
   assert.equal(saved.wins,1);assert.ok(saved.winningEnvironments.includes('crypt'));assert.ok(saved.achievements.includes('dragon'));
   await page.reload();await page.locator('#homePanel').waitFor({state:'visible'});
   await page.waitForFunction(()=>!document.getElementById('startButton').disabled);
-  assert.equal(await page.locator('#contractSelect option[value="dry"]').isDisabled(),false);
-  assert.equal(await page.locator('#sigilSelect option[value="gold"]').isDisabled(),false);
+  assert.equal(await page.locator('#contractSelect option[value="dry"]').evaluate(el=>el.disabled),false);
+  assert.equal(await page.locator('#sigilSelect option[value="gold"]').evaluate(el=>el.disabled),false);
   assert.equal(await page.locator('#sfxVolume').inputValue(),'35');
   assert.equal(await page.locator('#musicVolume').inputValue(),'15');
   assert.deepEqual(errors,[]);
