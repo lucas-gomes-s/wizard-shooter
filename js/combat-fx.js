@@ -37,6 +37,7 @@ export function drawWeb(ctx,x,y,radius,active,tick=0,mode='full'){
 export function drawHazard(ctx,h,c,tick,mode){
  const x=h.x-c.x,y=h.y-c.y,active=tick>=h.activeAt,r=h.radius;
  if(h.type==='web'){drawWeb(ctx,x,y,r,active,tick,mode);return}
+ if(h.type==='frost-fissure'||h.type==='lava-vent'){const ice=h.type==='frost-fissure',color=ice?'#93d9ff':'#ff9860';ctx.save();ring(ctx,x,y,r,color,2.5,active?color+'55':color+'18');if(!active){ring(ctx,x,y,r*clamp(1-(h.activeAt-tick)/h.warning),color,2);label(ctx,ice?'ICE FISSURE':'LAVA VENT',x,y,color)}else{for(let i=0;i<7;i++){const [px,py]=polar(x,y,r*.65,i*2.4);path(ctx,[[px-7,py+4],[px,py-10],[px+7,py+4]],true);ctx.fillStyle=color;ctx.fill()}}ctx.restore();return}
  if(h.type==='rubble'){ctx.save();ring(ctx,x,y,r,active?'#e7a26c':'#ffdb9a',2.5,active?'#a873514f':'#ffbd3222');if(!active){ring(ctx,x,y,r*clamp(1-(h.activeAt-tick)/55),'#ffe3b0',2);label(ctx,'RUBBLE',x,y,'#ffdfae')}else{for(let i=0;i<5;i++){const a=i*2.4,[px,py]=polar(x,y,r*.55,a);path(ctx,[[px-5,py+4],[px-2,py-5],[px+5,py-3],[px+7,py+4]],true);ctx.fillStyle='#d5aa83';ctx.fill();ctx.strokeStyle='#76503f';ctx.stroke()}}ctx.restore();return}
  ctx.save();const color=active?'#ff7042':'#ffca73';
  if(active&&mode==='full')glow(ctx,x,y,r,color);
