@@ -20,8 +20,11 @@ try{
   const start=page.locator('#startButton');
   await start.waitFor({state:'visible'});await page.waitForFunction(()=>!document.getElementById('startButton').disabled);
   await page.screenshot({path:'web-smoke-artifacts/title.png'});
+  assert.equal(await page.locator('#starterCards .starter-card').count(),5);
+  await page.locator('[data-school="ice"]').click();
   await start.click();
   await page.locator('#overlay').waitFor({state:'hidden'});
+  assert.ok((await page.locator('#spellBuild').textContent()).includes('Cryomancy 1'));
   const canvas=page.locator('#gameArea');
   const size=await canvas.boundingBox();assert.ok(size.width>1000&&size.height>500);
   await page.keyboard.down('KeyD');await page.keyboard.down('ArrowRight');
@@ -35,7 +38,8 @@ try{
   await page.keyboard.press('ArrowRight');
   await page.keyboard.press('KeyQ');
   await page.locator('#overlay').waitFor({state:'hidden'});
-  assert.equal(await page.locator('#spellBuild .spell-chip').count(),1);
+  assert.ok((await page.locator('#spellBuild').textContent()).includes('Cryomancy'));
+  assert.ok(await page.evaluate(()=>window.__wizardTestGame.player.level>=2));
   await page.keyboard.press('Escape');await page.locator('#pausePanel').waitFor({state:'visible'});
   const time=await page.locator('#timer').textContent();await page.waitForTimeout(1200);assert.equal(await page.locator('#timer').textContent(),time);
   await page.screenshot({path:'web-smoke-artifacts/pause.png'});
