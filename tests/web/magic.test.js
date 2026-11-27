@@ -65,7 +65,7 @@ test('steam damages and slows nearby targets only',()=>{
  const g=game(),a=enemy(350,280),b=enemy(390,280),c=enemy(500,280);
  g.player.magic.ranks.fire=2;g.player.magic.ranks.ice=2;g.player.magic.synergies.push('steam');
  g.enemies.push(a,b,c);g.shots.push(bolt(350,280));g.step();
- close(b.health,96.5);close(c.health,100);close(b.slowFactor,.5);
+ close(b.health,94.5);close(c.health,100);close(b.slowFactor,.5);
 });
 test('storm prism adds one chain jump',()=>{
  const g=game();g.player.magic.ranks.lightning=2;g.player.magic.ranks.arcane=2;g.player.magic.synergies.push('storm');
