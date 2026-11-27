@@ -51,3 +51,26 @@ test('meteor impact uses shared per-cast token and no recursive hits',()=>{
 test('reactive thorns resolves killed enemies once even from a projectile',()=>{
  const g=make(),p=g.player;equipItem(p,'thorns');g.enemies=[enemy(350,280,4)];g.hostiles=[{x:300,y:300,vx:0,vy:0,radius:6,damage:10,age:0}];g.step();assert.equal(g.kills,1);assert.equal(g.enemies.length,0);assert.equal(p.currentExp,1);
 });
+
+test('remaining staff and relic modifiers use actual cast and damage values',()=>{
+ const g=make(),p=g.player;equipItem(p,'longshot');p.cooldown=0;g.shoot([1,0]);close(g.shots[0].vx,10.4);
+ equipItem(p,'crown');g.shots=[];p.cooldown=0;g.shoot([1,0]);close(g.shots[0].damage,12.5);close(g.hurtPlayer(10),11.5);
+ equipItem(p,'gambler');const bolts=[{vx:8,vy:0,damage:10}];for(const [roll,dmg] of [[.1,20],[.3,5],[.8,10]])close(gearCast(p,bolts,1,0,()=>roll)[0].damage,dmg);
+});
+test('mobility gear handles health threshold, damage trigger and contact reduction',()=>{
+ const g=make(),p=g.player;equipItem(p,'runner');p.health=40;close(gearMovement(p,g.tick),1.25);
+ equipItem(p,'escape');g.hurtPlayer(1);close(gearMovement(p,g.tick),1.35);g.tick=75;close(gearMovement(p,g.tick),1);
+ equipItem(p,'phaseboots');close(gearMovement(p,g.tick),1.18);close(g.hurtPlayer(10),7.5);
+});
+test('timed mending, trail pulse, and hourglass function without a second school',()=>{
+ const g=make(),p=g.player;p.health=40;equipItem(p,'mending');g.tick=99;g.step();close(p.health,42);
+ equipItem(p,'trail');g.enemies=[enemy(320)];g.step({x:1});close(g.enemies[0].health,96.5);
+ equipItem(p,'hourglass',g.tick);g.tick+=399;g.step();assert.ok(g.enemies[0].slowUntil>g.tick);
+});
+test('lantern pulses after twelve kills; tonic amplifies potion recovery',()=>{
+ const g=make(),p=g.player;equipItem(p,'lantern');p.gearState.relic.count=11;g.enemies=[enemy(350,280,0),enemy(350,310)];g.step();close(g.enemies[0].health,90);
+ equipItem(p,'tonic');p.health=50;g.potions=[{x:p.x,y:p.y,width:30,height:30,recovery:.1,fade:100,age:0}];g.step();close(p.health,63.5);
+});
+test('thorns cannot revive a killed vampire via contact lifesteal',()=>{
+ const g=make(),p=g.player;equipItem(p,'thorns');const e=enemy(280,280,4);e.name='Vampire';e.maxHealth=100;g.enemies=[e];g.step();assert.equal(g.kills,1);assert.ok(e.health<=0);
+});
