@@ -20,7 +20,7 @@ An offline portrait-oriented action survival roguelite in which the character is
 
 ## Status
 
-Design specification v0.1, 2026-11-27. The first Python/Pillow procedural sprite prototype and generated assets are implemented; a first Godot source prototype now exists. It is awaiting engine execution and physical device testing. Numeric parameters are hypotheses, not validated balance. Decisions labeled established reflect the agreed design; defaults and open questions can change. Work in this directory only; do not import legacy assets until their licenses are verified. No ads, paid random acquisition, backend, multiplayer or functional equipment in initial scope.
+Design specification v0.1, 2026-11-27. The first Python/Pillow procedural sprite prototype and generated assets are implemented; a first Godot source prototype now exists. The first Godot build passed automated import, smoke tests and headless startup; physical device testing remains pending. Numeric parameters are hypotheses, not validated balance. Decisions labeled established reflect the agreed design; defaults and open questions can change. Work in this directory only; do not import legacy assets until their licenses are verified. No ads, paid random acquisition, backend, multiplayer or functional equipment in initial scope.
 
 ## Sprite prototype
 
@@ -28,7 +28,7 @@ Design specification v0.1, 2026-11-27. The first Python/Pillow procedural sprite
 
 ## First Godot prototype
 
-[Implementation and run instructions](IMPLEMENTATION.md). Open project.godot in Godot 4.5.1, press F5, and test academy selection, combat, summoning, shared XP and fusion. Progress is session-only. The headless smoke runner is tests/smoke.gd. Do not treat the unexecuted prototype as a validated build.
+[Implementation and run instructions](IMPLEMENTATION.md). Open project.godot in Godot 4.5.1, press F5, and test academy selection, combat, summoning, shared XP and fusion. Completed progression is saved locally in two checksummed snapshots; unfinished runs are not resumed yet. Headless tests: tests/smoke.gd and tests/persistence.gd. Check CI status for the current commit.
 
 ## Development
 

@@ -1,5 +1,5 @@
 # Implementation roadmap
-Status: initial source prototype implemented; M0–M3 are partially implemented but not yet verified in Godot. See [IMPLEMENTATION.md](../IMPLEMENTATION.md) for current scope and known gaps. No milestone is marked complete unless implemented and verified.
+Status: initial Godot build passed import, smoke tests and headless startup (commit 0f55096); M0–M3 remain partially complete. Durable profile snapshots, archive viewer and locks implemented in next revision; persistence CI and physical validation required. See [IMPLEMENTATION.md](../IMPLEMENTATION.md) for current scope and known gaps. No milestone is marked complete unless implemented and verified.
 
 ## M0: repository and tooling
 Create Godot project in mobile/ only; pin stable engine and templates; typed GDScript, ignore generated files, README setup. Create headless test runner, lint/style conventions and CI for mobile path. Preserve legacy root. Acceptance: clean clone imports and runs a minimal portrait scene, headless test succeeds, legacy tree unchanged. Record exact dependencies and Android export setup.

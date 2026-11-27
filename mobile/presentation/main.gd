@@ -1,12 +1,13 @@
 extends Node2D
 ## Portrait prototype. Simulation is owned by RunModel, UI only dispatches commands.
 const Academy = preload("res://domain/academy.gd")
+const ProfileStore = preload("res://persistence/profile_store.gd")
 const RunModel = preload("res://gameplay/run.gd")
 const SpriteLibrary = preload("res://presentation/sprite_library.gd")
 const FIRE := Color("#ef8052")
 const ICE := Color("#84d7e8")
 const STEAM := Color("#c7b7d8")
-var academy := Academy.new(int(Time.get_unix_time_from_system()))
+var academy := Academy.new(int(Time.get_unix_time_from_system()), ProfileStore.new())
 var sprites := SpriteLibrary.new()
 var run: Variant
 var selected := 0
@@ -36,6 +37,11 @@ var academy_panel: VBoxContainer
 var run_hud: Label
 var difficulty_button: Button
 var confirm_fusion: ConfirmationDialog
+var archive_dialog: AcceptDialog
+var archive_text: RichTextLabel
+var lock_button: Button
+var result_retry: Button
+var result_return: Button
 
 func _ready() -> void:
 	get_viewport().gui_embed_subwindows = true
@@ -49,7 +55,7 @@ func _ready() -> void:
 func _button(parent: Node, title: String, action: Callable) -> Button:
 	var b := Button.new()
 	b.text = title
-	b.custom_minimum_size = Vector2(0, 35)
+	b.custom_minimum_size = Vector2(0, 32)
 	b.focus_mode = Control.FOCUS_NONE
 	b.pressed.connect(action)
 	parent.add_child(b)
@@ -71,7 +77,7 @@ func _box_at(pos: Vector2, size: Vector2) -> VBoxContainer:
 	return v
 
 func _build_ui() -> void:
-	academy_panel = _box_at(Vector2(16, 130), Vector2(328, 490))
+	academy_panel = _box_at(Vector2(16, 118), Vector2(328, 516))
 	_label(academy_panel, "THE ACADEMY", 21)
 	info = _label(academy_panel, "")
 	_button(academy_panel, "Next wizard", _next_wizard)
@@ -81,7 +87,9 @@ func _build_ui() -> void:
 	difficulty_button = _button(academy_panel, "Difficulty: I", _cycle_difficulty)
 	start_finite = _button(academy_panel, "Enter dungeon", func() -> void: _start(false))
 	start_endless = _button(academy_panel, "Endless survival", func() -> void: _start(true))
-	_label(academy_panel, "Prototype: roster resets on app exit.", 12)
+	lock_button = _button(academy_panel, "Lock wizard", _lock_wizard)
+	_button(academy_panel, "Ancestry archive", _show_archive)
+	_label(academy_panel, "Completed progress is saved locally.", 12)
 	run_hud = _label(ui, "", 14)
 	run_hud.position = Vector2(12, 12)
 	special_button = _button(ui, "CAST", func() -> void: special_requested = true)
@@ -100,18 +108,48 @@ func _build_ui() -> void:
 	_button(upgrade_panel, "Health +15 / heal", func() -> void: _upgrade(2))
 	result_panel = _box_at(Vector2(28, 220), Vector2(304, 160))
 	_label(result_panel, "")
-	_button(result_panel, "Return to academy", _show_academy)
+	result_return = _button(result_panel, "Return to academy", _show_academy)
+	result_retry = _button(result_panel, "Retry saving rewards", _finish)
 	confirm_fusion = ConfirmationDialog.new()
 	confirm_fusion.title = "Irreversible fusion"
-	confirm_fusion.dialog_text = "Both parents will retire permanently for this session. Create a Tier II descendant?"
+	confirm_fusion.dialog_text = "Both parents will retire permanently. Create a Tier II descendant?"
 	confirm_fusion.confirmed.connect(_fuse)
 	add_child(confirm_fusion)
+	archive_dialog = AcceptDialog.new()
+	archive_dialog.title = "Ancestry archive"
+	archive_text = RichTextLabel.new()
+	archive_text.custom_minimum_size = Vector2(290, 290)
+	archive_text.scroll_active = true
+	archive_dialog.add_child(archive_text)
+	add_child(archive_dialog)
+
+func _lock_wizard() -> void:
+	if academy.blocked: return
+	var c: Dictionary = academy.roster[selected]
+	academy.toggle_lock(c.id)
+	_refresh_academy()
+
+func _show_archive() -> void:
+	var lines := PackedStringArray()
+	for c in academy.archive:
+		lines.append("%s | Tier %d | %s / %s\nXP %d" % [c.id, c.phenotype.tier, c.phenotype.body.capitalize(), c.phenotype.affinity.capitalize(), c.xp])
+		for descendant in academy.roster:
+			if c.id in descendant.parents:
+				lines.append("Descendant: " + str(descendant.id))
+		lines.append("")
+	archive_text.text = "\n".join(lines) if not lines.is_empty() else "No retired wizards yet."
+	archive_dialog.popup_centered(Vector2i(320, 360))
 
 func _show_academy() -> void:
 	screen = "academy"
 	run = null
 	paused = false
 	_clear_input()
+	if academy.blocked:
+		_refresh_academy()
+		_sync_visibility()
+		queue_redraw()
+		return
 	selected = clampi(selected, 0, academy.roster.size() - 1)
 	if partner_index == selected or partner_index >= academy.roster.size():
 		partner_index = -1
@@ -122,6 +160,12 @@ func _show_academy() -> void:
 	queue_redraw()
 
 func _refresh_academy() -> void:
+	if academy.blocked:
+		info.text = academy.error
+		info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		for node in academy_panel.get_children():
+			if node is Button: node.disabled = true
+		return
 	var c: Dictionary = academy.roster[selected]
 	var p: Dictionary = c.phenotype
 	var partner_text := "None"
@@ -131,6 +175,10 @@ func _refresh_academy() -> void:
 	info.text = "%s   Tier %d   %s / %s\nHP %d  Speed %d  Damage %.1f\n%s  |  XP %d/%d\nPartner: %s\nRoster %d  |  Archive %d  |  Essence %d" % [c.id, p.tier, p.body.capitalize(), p.affinity.capitalize(), int(p.health), int(p.speed), p.damage, p.special, c.xp, Academy.MATURE_XP, partner_text, academy.roster.size(), academy.archive.size(), academy.essence]
 	info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	difficulty_button.text = "Difficulty: %s" % ["I", "II", "III"][difficulty - 1]
+	lock_button.text = "Unlock wizard" if c.locked else "Lock wizard"
+	if not c.parents.is_empty(): info.text += "\nParents: " + ", ".join(PackedStringArray(c.parents))
+	if not academy.error.is_empty(): info.text += "\n" + academy.error
+	elif not academy.notice.is_empty(): info.text += "\n" + academy.notice
 
 func _next_wizard() -> void:
 	selected = (selected + 1) % academy.roster.size()
@@ -149,8 +197,8 @@ func _next_partner() -> void:
 func _summon() -> void:
 	if academy.summon():
 		selected = academy.roster.size() - 1
-		_refresh_academy()
-		queue_redraw()
+	_refresh_academy()
+	queue_redraw()
 
 func _ask_fuse() -> void:
 	if partner_index < 0: return
@@ -158,7 +206,7 @@ func _ask_fuse() -> void:
 		confirm_fusion.popup_centered(Vector2i(300, 160))
 	else:
 		_refresh_academy()
-		info.text += "\nBoth parents must be mature Tier I."
+		info.text += "\nBoth parents must be mature, unlocked Tier I."
 
 func _fuse() -> void:
 	if partner_index < 0: return
@@ -167,6 +215,8 @@ func _fuse() -> void:
 		selected = academy.roster.size() - 1
 		partner_index = -1
 		_show_academy()
+	else:
+		_refresh_academy()
 
 func _cycle_difficulty() -> void:
 	difficulty = difficulty % 3 + 1
@@ -175,7 +225,10 @@ func _cycle_difficulty() -> void:
 func _start(endless: bool) -> void:
 	active = academy.roster[selected]
 	apprentice = academy.roster[partner_index] if partner_index >= 0 else {}
-	run_id += 1
+	run_id = academy.allocate_run()
+	if run_id < 0:
+		_refresh_academy()
+		return
 	run = RunModel.new(active.phenotype, endless, difficulty, 1000 + run_id)
 	screen = "run"
 	paused = false
@@ -201,11 +254,15 @@ func _upgrade(choice: int) -> void:
 
 func _finish() -> void:
 	var earned: int = floori(float(run.elapsed) / 4.0) + int(run.kills) * 2
-	academy.reward(run_id, active, apprentice, earned, run.outcome == "Victory")
+	var active_now := academy.find_active(str(active.id))
+	var apprentice_now := academy.find_active(str(apprentice.get("id", "")))
+	var saved := academy.reward(run_id, active_now, apprentice_now, earned, run.outcome == "Victory")
 	screen = "result"
 	_clear_input()
 	var summary := result_panel.get_child(0) as Label
-	summary.text = "%s\nTime %.0fs  |  Kills %d\nCharacter XP +%d\nShared XP +%d" % [run.outcome, run.elapsed, run.kills, earned, floori(earned * 0.25) if not apprentice.is_empty() else 0]
+	summary.text = "%s\nTime %.0fs  |  Kills %d\nCharacter XP +%d\nShared XP +%d" % [run.outcome, run.elapsed, run.kills, earned, floori(earned * 0.25) if not apprentice.is_empty() else 0] if saved else "Reward not saved.\n" + academy.error + "\nRetry before leaving."
+	result_retry.visible = not saved
+	result_return.visible = saved
 	_sync_visibility()
 
 func _sync_visibility() -> void:
@@ -285,6 +342,7 @@ func _physics_process(dt: float) -> void:
 func _draw() -> void:
 	draw_rect(Rect2(0, 0, 360, 640), Color("#1b1924"))
 	if screen == "academy":
+		if academy.blocked or academy.roster.is_empty(): return
 		var c: Dictionary = academy.roster[selected]
 		sprites.draw_wizard(self, c.phenotype, Vector2(180, 112), 0, 3.0)
 		return
