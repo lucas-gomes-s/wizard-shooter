@@ -64,11 +64,11 @@ test('XP can queue successive upgrades without advancing game time',()=>{
   assert.equal(g.player.level,3);assert.equal(g.phase,'upgrade');
   assert.ok(g.choose());assert.equal(g.phase,'playing');assert.equal(g.player.currentExp,0);
 });
-test('maxed upgrades are skipped and cooldown is at least one tick',()=>{
-  const g=create();g.player.skillLvl[0]=config.skills[0].maxLevel;
+test('maxed upgrades are excluded and cooldown is at least one tick',()=>{
+  const g=create();g.player.level=3;g.player.skillLvl[0]=config.skills[0].maxLevel;
   g.player.currentExp=g.player.expNeeded;g.levelUp();
-  assert.notEqual(g.selected,0);assert.equal(g.choose(0),false);
-  g.player.shotCd=1;assert.ok(g.choose(3));assert.equal(g.player.shotCd,1);
+  assert.ok(g.offers.every(o=>o.id!=='basic-0'));assert.equal(g.choose(99),false);
+  g.offers=[{kind:'basic',index:3}];g.player.shotCd=1;assert.ok(g.choose(0));assert.equal(g.player.shotCd,1);
 });
 test('level cap keeps XP finite and prevents undefined thresholds',()=>{
   const g=create();g.player.level=49;g.player.expNeeded=5;g.player.currentExp=10;

@@ -1,5 +1,6 @@
 import * as config from './data.js';
 import { Game, FixedClock } from './simulation.js';
+import { schools, synergies, schoolById } from './magic.js';
 import { viewportFor, fitViewport, formatTime, skillPreview } from './presentation.js';
 
 const $=id=>document.getElementById(id);
@@ -9,7 +10,7 @@ const keys=new Set(), arrows=['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'];
 const aimVectors={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]};
 const allowed=new Set(['KeyW','KeyA','KeyS','KeyD','KeyQ','Escape','Enter',...arrows]);
 const panels={home:$('homePanel'),pause:$('pausePanel'),confirm:$('confirmPanel'),upgrade:$('upgradePanel'),over:$('resultPanel')};
-let screen='home',ready=false,aimOrder=[],confirmAction=null,dirty=true,particles=[],lastHud='',lastUpgrade=-1;
+let screen='home',ready=false,aimOrder=[],confirmAction=null,dirty=true,particles=[],lastHud='',lastUpgrade=-1,lastBuild='';
 let effects=!matchMedia('(prefers-reduced-motion: reduce)').matches;
 $('effectsToggle').checked=effects;
 $('effectsToggle').addEventListener('change',()=>{effects=$('effectsToggle').checked;particles=[];dirty=true;});
@@ -111,11 +112,12 @@ document.addEventListener('visibilitychange',()=>{clearInput();if(document.hidde
 function input(){return{x:Number(keys.has('KeyD'))-Number(keys.has('KeyA')),y:Number(keys.has('KeyS'))-Number(keys.has('KeyW')),aim:aimVectors[aimOrder[aimOrder.length-1]]}}
 function buildUpgrades(){
   const root=$('upgradeCards');root.replaceChildren();$('upgradeLevel').textContent='Level '+game.player.level+' reached';
-  config.skills.forEach((s,i)=>{
-    const rank=game.player.skillLvl[i],button=document.createElement('button');
-    button.type='button';button.className='upgrade-card';button.dataset.index=i;button.disabled=rank>=s.maxLevel;
-    const image=document.createElement('img');image.src=s.img;image.alt='';button.append(image);
-    for(const [name,value] of [['skill-title',s.name],['skill-effect',s.description2],['skill-value',button.disabled?'Maximum rank':skillPreview(game.player,s)],['skill-flavor',s.description1],['skill-rank','Rank '+rank+' / '+s.maxLevel]]){
+  game.offers.forEach((s,i)=>{
+    const button=document.createElement('button');
+    button.type='button';button.className='upgrade-card';button.dataset.index=i;button.style.setProperty('--school',s.color);
+    if(s.img){const image=document.createElement('img');image.src=s.img;image.alt='';button.append(image)}
+    else{const glyph=document.createElement('span');glyph.className='spell-glyph';glyph.textContent=s.glyph;glyph.setAttribute('aria-hidden','true');button.append(glyph)}
+    for(const [name,value] of [['skill-flavor',s.flavor],['skill-title',s.name],['skill-effect',s.description],['skill-value',s.kind==='basic'?skillPreview(game.player,config.skills[s.index]):s.kind==='synergy'?'New combined spell':'Rank '+(s.rank+1)+' / '+s.max],['skill-rank',s.kind==='synergy'?'Requires rank II in both schools':'Current rank '+s.rank+' / '+s.max]]){
       const span=document.createElement('span');span.className=name;span.textContent=value;button.append(span);
     }
     button.addEventListener('click',()=>choose(i));
@@ -132,11 +134,15 @@ function showResults(){
   $('deathPhrase').textContent=config.gameOverPhrases[Math.floor(Math.random()*config.gameOverPhrases.length)];
   const root=$('resultSkills');root.replaceChildren();
   config.skills.forEach((s,i)=>{const rank=game.player.skillLvl[i];if(!rank)return;const chip=document.createElement('div');chip.className='result-skill';const image=document.createElement('img');image.src=s.img;image.alt='';chip.append(image,document.createTextNode(s.name+' × '+rank));root.append(chip)});
+  for(const school of schools){const rank=game.player.magic.ranks[school.id];if(rank)root.append(spellChip(school,rank))}
+  for(const combo of synergies)if(game.player.magic.synergies.includes(combo.id))root.append(spellChip(combo));
   if(!root.children.length)root.textContent='No upgrades acquired';
 }
+function spellChip(s,rank){const chip=document.createElement('span');chip.className='spell-chip';chip.style.setProperty('--school',s.color);chip.textContent=s.glyph+' '+s.name+(rank?' '+rank:'');return chip}
+function updateBuild(){const m=game.player.magic,signature=JSON.stringify([m.ranks,m.synergies,m.shieldReady]);if(signature===lastBuild)return;lastBuild=signature;const root=$('spellBuild');root.replaceChildren();for(const s of schools)if(m.ranks[s.id])root.append(spellChip(s,m.ranks[s.id]));for(const s of synergies)if(m.synergies.includes(s.id))root.append(spellChip(s));if(!root.children.length)root.textContent='Untrained · choose a school at level 2';if(m.ranks.arcane>=2){const shield=document.createElement('span');shield.className='spell-chip';shield.textContent=m.shieldReady?'Shield ready':'Shield recharging';root.append(shield)}}
 function meter(id,value){const percent=Math.round(Math.max(0,Math.min(1,value))*100),node=$(id);node.firstElementChild.style.width=percent+'%';node.setAttribute('aria-valuenow',percent);}
 function updateHud(){
-  const p=game.player,health=Math.ceil(p.health),max=p.maxHealth,maxed=p.level>=config.maxLevel;
+  updateBuild();const p=game.player,health=Math.ceil(p.health),max=p.maxHealth,maxed=p.level>=config.maxLevel;
   const xp=maxed?'MAX':p.currentExp+' / '+p.expNeeded+' XP';
   const signature=[health,max,p.level,xp,game.seconds,game.kills].join('|');if(signature===lastHud)return;lastHud=signature;
   $('healthText').textContent=health+' / '+max;$('level').textContent=p.level;$('xpText').textContent=xp;
@@ -146,8 +152,9 @@ function updateHud(){
 function collectEvents(){
   if(!effects)return;
   for(const e of game.events){
-    const color={hit:'#ead8ff',kill:'#e5c48b',heal:'#85e8b3',hurt:'#ff828a',cast:'#d0a4ff'}[e.type];
+    const color=schoolById[e.school]?.color||{hit:'#ead8ff',kill:'#e5c48b',heal:'#85e8b3',hurt:'#ff828a',cast:'#d0a4ff',shield:'#c3a2ff',burst:'#ff9560',chain:'#ffe17a'}[e.type];
     if(!color)continue;
+    if(e.type==='burst'||e.type==='chain'){if(particles.length<180)particles.push({...e,color,life:10,max:10,vx:0,vy:0});continue}
     const count=e.type==='kill'?7:e.type==='hit'?3:1;
     for(let i=0;i<count&&particles.length<180;i++){
       const angle=Math.random()*Math.PI*2, speed=1+Math.random()*2;
@@ -178,19 +185,22 @@ function render(){
   ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);ctx.beginPath();ctx.rect(0,0,game.width,game.height);ctx.clip();
   background();const c=game.camera,p=game.player;
   for(const o of game.potions)if(game.visible(o,0)){const px=o.x-c.x,py=o.y-c.y;shadow(px,py,o.width,o.height);ctx.strokeStyle='#8ae1ae99';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(px+o.width/2,py+o.height/2,17,0,Math.PI*2);ctx.stroke();sprite(o.imageSrc,px,py,o.width,o.height,'#82dba5');}
-  for(const e of game.enemies)if(game.visible(e,0)){const px=e.x-c.x,py=e.y-c.y;shadow(px,py,e.width,e.height);sprite(e.imageSrc,px,py,e.width,e.height,'#799653');if(keys.has('KeyQ'))bar(px,py-8,e.width,4,e.health/e.maxHealth,'#e27279');}
+  for(const e of game.enemies)if(game.visible(e,0)){const px=e.x-c.x,py=e.y-c.y;shadow(px,py,e.width,e.height);sprite(e.imageSrc,px,py,e.width,e.height,'#799653');const statuses=[e.burnUntil>=game.tick?'#ff9560':null,e.slowUntil>game.tick?'#80dcff':null,e.curseUntil>game.tick?'#86e3ab':null].filter(Boolean);statuses.forEach((color,i)=>{ctx.fillStyle=color;ctx.fillRect(px+i*7,py+e.height+2,5,4)});if(keys.has('KeyQ'))bar(px,py-8,e.width,4,e.health/e.maxHealth,'#e27279');}
   const px=p.x-c.x,py=p.y-c.y;
   ctx.strokeStyle='#d6b8ff80';ctx.lineWidth=1.5;ctx.beginPath();ctx.ellipse(px+p.width/2,py+p.height*.82,22,12,0,0,Math.PI*2);ctx.stroke();
   shadow(px,py,p.width,p.height);sprite('./images/wizard-hat.png',px,py,p.width,p.height,'#bda0ed');
+  if(p.magic.shieldReady){ctx.strokeStyle='#c3a2ff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(px+p.width/2,py+p.height/2,27,0,Math.PI*2);ctx.stroke()}
   if(keys.has('KeyQ'))bar(px,py-8,p.width,4,p.health/p.maxHealth,'#e27279');
   for(const s of game.shots)if(game.visible(s,0)){
-    const sx=s.x-c.x+s.width/2,sy=s.y-c.y+s.height/2;
-    if(effects){ctx.strokeStyle='#bca0ed99';ctx.lineWidth=3;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(sx-s.vx*1.6,sy-s.vy*1.6);ctx.lineTo(sx,sy);ctx.stroke();}
-    ctx.fillStyle='#f3e8ff';ctx.beginPath();ctx.arc(sx,sy,Math.max(2.5,s.width/2),0,Math.PI*2);ctx.fill();
+    const sx=s.x-c.x+s.width/2,sy=s.y-c.y+s.height/2,color=schoolById[s.school]?.color||'#f3e8ff';
+    if(effects){ctx.strokeStyle=color+'99';ctx.lineWidth=3;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(sx-s.vx*1.6,sy-s.vy*1.6);ctx.lineTo(sx,sy);ctx.stroke();}
+    ctx.fillStyle=color;ctx.beginPath();ctx.arc(sx,sy,Math.max(2.5,s.width/2),0,Math.PI*2);ctx.fill();
   }
   if(effects){for(const q of particles){
     ctx.globalAlpha=q.life/q.max;ctx.fillStyle=q.color;
-    if(q.label){ctx.font='bold 13px system-ui';ctx.textAlign='center';ctx.fillText(q.label,q.x-c.x,q.y-c.y);}
+    if(q.type==='burst'){ctx.strokeStyle=q.color;ctx.lineWidth=2;ctx.beginPath();ctx.arc(q.x-c.x,q.y-c.y,Math.max(1,q.value*(1-q.life/q.max)),0,Math.PI*2);ctx.stroke()}
+    else if(q.type==='chain'){ctx.strokeStyle=q.color;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(q.fromX-c.x,q.fromY-c.y);ctx.lineTo(q.x-c.x,q.y-c.y);ctx.stroke()}
+    else if(q.label){ctx.font='bold 13px system-ui';ctx.textAlign='center';ctx.fillText(q.label,q.x-c.x,q.y-c.y);}
     else ctx.fillRect(q.x-c.x,q.y-c.y,3,3);
   }ctx.globalAlpha=1;
     if(game.flash){ctx.fillStyle='rgba(175,38,54,.13)';ctx.fillRect(0,0,game.width,game.height);}
