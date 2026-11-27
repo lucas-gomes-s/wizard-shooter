@@ -13,6 +13,7 @@ const Fantasy = preload("res://presentation/fantasy_ui.gd")
 const PixelArt = preload("res://presentation/pixel_ui_art.gd")
 const UpgradeCard = preload("res://presentation/upgrade_card.gd")
 const CastButton = preload("res://presentation/cast_button.gd")
+const GameAudio = preload("res://presentation/game_audio.gd")
 const PLAYFIELD := Rect2(0, 88, 360, 448)
 const CAMERA_CENTER := Vector2(180, 312)
 const FIRE := Color("#ef8052")
@@ -55,6 +56,13 @@ var title_quick: Button
 var title_endless: Button
 var title_menu_button: Button
 var title_note: Label
+var audio := GameAudio.new()
+var sound_toggle: Button
+var music_toggle: Button
+var reveal_skip: Button
+var reveal_time := 0.0
+const REVEAL_DURATION := 1.65
+var ritual_parents: Array[Dictionary] = []
 var displayed_hp := 1.0
 var previous_level := 1
 var level_flash := 0.0
@@ -85,6 +93,7 @@ var result_return: Button
 
 func _ready() -> void:
 	get_viewport().gui_embed_subwindows = true
+	add_child(audio)
 	ui = Control.new()
 	ui.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	ui.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -99,6 +108,7 @@ func _button(parent: Node, title: String, action: Callable) -> Button:
 	b.text = title
 	b.custom_minimum_size = Vector2(0, 32)
 	b.focus_mode = Control.FOCUS_NONE
+	b.pressed.connect(func() -> void: audio.play_sound("click",0,-22.0))
 	b.pressed.connect(action)
 	parent.add_child(b)
 	return b
@@ -146,6 +156,11 @@ func _build_ui() -> void:
 	title_note = _label(title_panel, "", 12)
 	title_note.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	sound_toggle = _button(ui,"SFX ON",_toggle_sfx)
+	music_toggle = _button(ui,"Music ON",_toggle_music)
+	for b in [sound_toggle,music_toggle]: b.add_theme_font_size_override("font_size",11)
+	sound_toggle.size=Vector2(106,32)
+	music_toggle.size=Vector2(106,32)
 	title_menu_button = _button(ui, "Menu", _show_title)
 	title_menu_button.position = Vector2(294, 5)
 	title_menu_button.size = Vector2(58, 30)
@@ -181,6 +196,9 @@ func _build_ui() -> void:
 	reveal_info = _label(reveal_panel, "", 15)
 	reveal_info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_button(reveal_panel, "Meet your new wizard", _show_academy)
+	reveal_skip = _button(ui,"Skip ritual",_complete_reveal)
+	reveal_skip.position=Vector2(110,434)
+	reveal_skip.size=Vector2(140,36)
 	lineage_panel = _box_at(Vector2(20, 362), Vector2(320, 240))
 	lineage_info = _label(lineage_panel, "", 14)
 	lineage_info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -375,18 +393,36 @@ func _refresh_fusion() -> void:
 	if not academy.error.is_empty(): fusion_hint.text += "\n" + academy.error
 
 func _fuse() -> void:
-	if partner_index < 0: return
+	if screen!="fusion" or partner_index < 0: return
+	ritual_parents=[academy.roster[selected].duplicate(true),academy.roster[partner_index].duplicate(true)]
 	var child: Dictionary = academy.fuse(academy.roster[selected], academy.roster[partner_index])
 	if not child.is_empty():
 		selected = academy.roster.size() - 1
 		partner_index = -1
 		revealed = child
+		reveal_time=0.0
+		audio.play_sound("ritual",5,-10.0)
 		reveal_info.text = "%s • Tier %d\n%s / %s\n%s\nBoth parents have been archived." % [child.id, child.phenotype.tier, child.phenotype.body.capitalize(), child.phenotype.affinity.capitalize(), Abilities.compile(child.phenotype).special.name]
 		screen = "reveal"
 		_sync_visibility()
 		queue_redraw()
 	else:
 		_refresh_fusion()
+
+func _complete_reveal() -> void:
+	if screen!="reveal" or reveal_time>=REVEAL_DURATION: return
+	reveal_time=REVEAL_DURATION
+	audio.play_sound("reveal",5,-10.0)
+	_sync_visibility()
+	queue_redraw()
+
+func _toggle_sfx() -> void:
+	audio.toggle_effects()
+	_sync_visibility()
+
+func _toggle_music() -> void:
+	audio.toggle_music()
+	_sync_visibility()
 
 func _cycle_difficulty() -> void:
 	difficulty = difficulty % 3 + 1
@@ -407,6 +443,7 @@ func _start(endless: bool) -> void:
 	camera_position = run.player
 	dungeon_art.reset(run.world_seed)
 	arena_art.reset_motion()
+	audio.reset_run()
 	player_stride = 0.0
 	player_moving = false
 	dust_distance = 0.0
@@ -438,6 +475,7 @@ func _finish() -> void:
 	var active_now := academy.find_active(str(active.id))
 	var apprentice_now := academy.find_active(str(apprentice.get("id", "")))
 	var saved := academy.reward(run_id, active_now, apprentice_now, earned, run.outcome == "Victory", int(run.exploration_essence))
+	if screen!="result": audio.play_sound("victory" if run.outcome=="Victory" else ("fallen" if run.outcome=="Defeated" else "reward"),5,-10.0)
 	screen = "result"
 	_clear_input()
 	var summary := result_panel.get_child(0) as Label
@@ -452,7 +490,8 @@ func _sync_visibility() -> void:
 	title_menu_button.visible = screen == "academy"
 	academy_panel.visible = screen == "academy"
 	fusion_panel.visible = screen == "fusion"
-	reveal_panel.visible = screen == "reveal"
+	reveal_panel.visible = screen == "reveal" and reveal_time>=REVEAL_DURATION
+	reveal_skip.visible = screen=="reveal" and reveal_time<REVEAL_DURATION
 	lineage_panel.visible = screen == "lineage"
 	result_panel.visible = screen == "result"
 	special_button.visible = in_run
@@ -461,6 +500,15 @@ func _sync_visibility() -> void:
 	upgrade_panel.visible = in_run and run != null and run.pending_upgrades > 0
 	if upgrade_panel.visible: _refresh_upgrades()
 	pause_button.text = ">" if paused else "II"
+	var audio_controls := screen=="title" or (in_run and paused)
+	sound_toggle.visible=audio_controls
+	music_toggle.visible=audio_controls
+	sound_toggle.position=Vector2(12,604) if screen=="title" else Vector2(68,340)
+	music_toggle.position=Vector2(242,604) if screen=="title" else Vector2(186,340)
+	sound_toggle.text="SFX ON" if audio.effects_enabled else "SFX OFF"
+	music_toggle.text="Music ON" if audio.music_enabled else "Music OFF"
+	audio.set_track("dungeon" if in_run else "academy")
+	audio.duck(in_run and (paused or run.pending_upgrades>0))
 
 func _refresh_upgrades() -> void:
 	run.ensure_upgrade_offer()
@@ -510,6 +558,9 @@ func _input(event: InputEvent) -> void:
 
 func _physics_process(dt: float) -> void:
 	if screen != "run":
+		if screen=="reveal" and reveal_time<REVEAL_DURATION:
+			if reveal_time+dt>=REVEAL_DURATION: _complete_reveal()
+			else: reveal_time+=dt
 		if screen in ["reveal","title"]: queue_redraw()
 		return
 	var space := Input.is_physical_key_pressed(KEY_SPACE)
@@ -522,7 +573,9 @@ func _physics_process(dt: float) -> void:
 			movement = ((touch_current - touch_origin) / 35.0).limit_length()
 			if movement.length() < 0.12: movement = Vector2.ZERO
 		var previous: Vector2 = run.player
+		var audio_before := GameAudio.snapshot(run)
 		run.step(dt, movement, special_requested or (space and not prev_space))
+		audio.after_step(audio_before,run)
 		_update_motion_art(previous,dt)
 		var target: Vector2 = run.player
 		camera_position = camera_position.lerp(target, 1.0 - exp(-dt * 12.0))
@@ -576,13 +629,7 @@ func _draw() -> void:
 		_center_text("?", Vector2(180, 288), 26, Color("#dcc8ef"))
 		return
 	if screen == "reveal":
-		_draw_title("A NEW BLOODLINE", "Fusion complete • progress saved")
-		if not revealed.is_empty():
-			var pulse := 0.5 + 0.5 * sin(float(Time.get_ticks_msec()) / 280.0)
-			draw_circle(Vector2(180, 180), 76, Color(0.55, 0.35, 0.7, 0.12 + pulse * 0.08))
-			draw_arc(Vector2(180, 180), 82, 0, TAU, 48, Color("#8f77ac"), 2)
-			sprites.draw_wizard(self, revealed.phenotype, Vector2(180, 246), 0, 5)
-			_center_text(revealed.phenotype.affinity.capitalize(), Vector2(180, 288), 18, Color("#e8d8f1"))
+		_draw_reveal()
 		return
 	if screen == "lineage":
 		_draw_title("ANCESTRY ARCHIVE", "%d retired wizards" % academy.archive.size())
@@ -665,6 +712,44 @@ func _draw() -> void:
 		if paused: Fantasy.text_at(self,"PAUSED",Vector2(180,305),24,Fantasy.GOLD,true)
 		else: Fantasy.frame(self,Rect2(10,151,340,376),Color("#977ab5"))
 
+
+func _draw_reveal() -> void:
+	Fantasy.hall(self,reveal_time)
+	var complete := reveal_time>=REVEAL_DURATION
+	_draw_title("A NEW BLOODLINE" if complete else "FUSION RITUAL","Progress saved")
+	var c := Vector2(180,210)
+	var progress := clampf(reveal_time/REVEAL_DURATION,0,1)
+	var hue := STEAM
+	if not revealed.is_empty():
+		hue=FIRE if revealed.phenotype.affinity=="fire" else (ICE if revealed.phenotype.affinity=="ice" else STEAM)
+	var radius := 72.0+10.0*sin(progress*PI)
+	draw_circle(c,radius,Color(hue,0.12))
+	draw_arc(c,radius,0,TAU,48,Color(hue,0.7),2)
+	draw_arc(c,radius-10,progress*TAU,progress*TAU+TAU*0.8,48,Color(Fantasy.GOLD,0.8),1)
+	for i in range(16):
+		var direction := Vector2.from_angle(i*TAU/16+progress*2.0)
+		var point := c+direction*(radius-5)
+		draw_rect(Rect2(point,Vector2(3,3)),hue.lightened(0.3))
+	if not complete and progress<0.66 and ritual_parents.size()==2:
+		var converge := smoothstep(0.0,0.66,progress)
+		for i in range(2):
+			var parent: Dictionary = ritual_parents[i]
+			var feet := Vector2(82 if i==0 else 278,264).lerp(Vector2(180,264),converge)
+			sprites.draw_wizard(self,parent.phenotype,feet,0,3.0)
+		for i in range(10):
+			var p := c+Vector2.from_angle(i*TAU/10+progress*4)*(95.0-75.0*converge)
+			draw_rect(Rect2(p,Vector2(3,3)),Color(hue,0.85))
+		Fantasy.text_at(self,"BLOODLINES CONVERGE",Vector2(180,339),13,Fantasy.GOLD,true)
+	elif not revealed.is_empty():
+		var scale_factor := 4.0+smoothstep(0.66,1.0,progress)
+		sprites.draw_wizard(self,revealed.phenotype,Vector2(180,286),0,scale_factor)
+		var flash := 0.32*(1.0-smoothstep(0.66,0.90,progress)) if not complete else 0.0
+		draw_circle(c,66,Color(hue,flash))
+		PixelArt.heading(self,"TIER "+str(revealed.phenotype.tier),Vector2(180,312),2,Fantasy.GOLD)
+	if complete:
+		Fantasy.frame(self,Rect2(14,320,332,200),hue.darkened(0.25))
+	else:
+		Fantasy.bar(self,Rect2(86,385,188,12),progress,1.0,hue)
 
 func _update_motion_art(previous: Vector2,dt: float) -> void:
 	arena_art.update_motion(run.enemies)
