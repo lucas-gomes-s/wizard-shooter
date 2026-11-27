@@ -1,3 +1,4 @@
+import {attuned} from './attunements.js';
 // Run-local equipment. Each item occupies exactly one slot; no stacking on replacement.
 export const equipmentSlots=['staff','robe','boots','relic'];
 export const rarityColors={common:'#d0d5df',rare:'#77c5ff',epic:'#c99aff',legendary:'#ffd277'};
@@ -62,18 +63,18 @@ export function gearCast(p,bolts,dx,dy,rng,tick=0){
  const staff=p.gearState.staff;staff.count++;
  let scale=hasGear(p,'crown')?1.25:1;
  if(hasGear(p,'crown')&&p.crownUntil>tick)scale*=1.5;
- if(hasGear(p,'gambler')){const v=rng();scale*=v<.25?2:v<.5?.5:1}
+ if(hasGear(p,'gambler')){const v=rng();scale*=v<(attuned(p,'gambler','lightning')?.35:.25)?2:v<.5?.5:1}
  if(hasGear(p,'bloodwood')&&staff.count%4===0&&p.health>2){p.health-=2;scale*=1.5}
  const meteor=hasGear(p,'meteor')&&staff.count%3===0?{used:false}:null;
  const speed=hasGear(p,'longshot')?1.3:1;
  const result=bolts.map(b=>({...b,damage:b.damage*scale,vx:b.vx*speed,vy:b.vy*speed,meteor}));
- if(hasGear(p,'echo')&&staff.count%5===0)result.push({vx:dx*p.shotSpd,vy:dy*p.shotSpd,damage:p.shotDmg*.6*scale});
+ if(hasGear(p,'echo')&&staff.count%(attuned(p,'echo','arcane')?4:5)===0)result.push({vx:dx*p.shotSpd,vy:dy*p.shotSpd,damage:p.shotDmg*.6*scale});
  return result;
 }
 export function gearDamage(p,amount,source,tick){
  const robe=p.gearState.robe;
  if(hasGear(p,'phantom')&&robe.activeUntil>tick)return 0;
- if(hasGear(p,'aegis')&&robe.readyAt<=tick){robe.readyAt=tick+600;return 0}
+ if(hasGear(p,'aegis')&&robe.readyAt<=tick){robe.readyAt=tick+(attuned(p,'aegis','arcane')?450:600);return 0}
  let value=amount;
  if(hasGear(p,'linen'))value*=.88;if(hasGear(p,'wardrobe')&&source==='projectile')value*=.75;
  if(hasGear(p,'phaseboots')&&source==='contact')value*=.75;if(hasGear(p,'crown'))value*=1.15;
