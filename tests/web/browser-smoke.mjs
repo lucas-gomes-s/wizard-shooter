@@ -35,7 +35,7 @@ try{
   await page.keyboard.press('ArrowRight');
   await page.keyboard.press('KeyQ');
   await page.locator('#overlay').waitFor({state:'hidden'});
-  assert.equal(await page.locator('#spellBuild .spell-chip').count(),1);
+  await page.waitForFunction(()=>document.querySelectorAll('#spellBuild .spell-chip').length===1);
   await page.keyboard.press('Escape');await page.locator('#pausePanel').waitFor({state:'visible'});
   const time=await page.locator('#timer').textContent();await page.waitForTimeout(1200);assert.equal(await page.locator('#timer').textContent(),time);
   await page.screenshot({path:'web-smoke-artifacts/pause.png'});
