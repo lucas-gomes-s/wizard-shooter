@@ -7,6 +7,7 @@ const SpriteLibrary = preload("res://presentation/sprite_library.gd")
 const ArenaArt = preload("res://presentation/arena_art.gd")
 const DungeonArt = preload("res://presentation/dungeon_art.gd")
 const Abilities = preload("res://gameplay/ability_catalog.gd")
+const Upgrades = preload("res://gameplay/upgrade_catalog.gd")
 const PLAYFIELD := Rect2(0, 88, 360, 448)
 const CAMERA_CENTER := Vector2(180, 312)
 const FIRE := Color("#ef8052")
@@ -40,6 +41,8 @@ var special_button: Button
 var pause_button: Button
 var extract_button: Button
 var upgrade_panel: VBoxContainer
+var upgrade_heading: Label
+var upgrade_buttons: Array[Button] = []
 var result_panel: VBoxContainer
 var academy_panel: VBoxContainer
 var run_hud: Label
@@ -184,11 +187,18 @@ func _build_ui() -> void:
 	extract_button = _button(ui, "Extract", _extract)
 	extract_button.position = Vector2(253, 51)
 	extract_button.size = Vector2(95, 34)
-	upgrade_panel = _box_at(Vector2(42, 214), Vector2(276, 160))
-	_label(upgrade_panel, "CHOOSE AN UPGRADE", 20)
-	_button(upgrade_panel, "Spell power +20%", func() -> void: _upgrade(0))
-	_button(upgrade_panel, "Faster casting", func() -> void: _upgrade(1))
-	_button(upgrade_panel, "Health +15 / heal", func() -> void: _upgrade(2))
+	upgrade_panel = _box_at(Vector2(18, 164), Vector2(324, 320))
+	upgrade_panel.add_theme_constant_override("separation", 9)
+	upgrade_heading = _label(upgrade_panel, "CHOOSE AN UPGRADE", 20)
+	upgrade_heading.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var subtitle := _label(upgrade_panel, "Your genes shape the available paths.", 12)
+	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	for i in range(3):
+		var card := _button(upgrade_panel, "", _upgrade.bind(i))
+		card.custom_minimum_size = Vector2(324, 70)
+		card.add_theme_font_size_override("font_size", 12)
+		card.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		upgrade_buttons.append(card)
 	result_panel = _box_at(Vector2(28, 220), Vector2(304, 160))
 	_label(result_panel, "")
 	result_return = _button(result_panel, "Return to academy", _show_academy)
@@ -410,7 +420,23 @@ func _sync_visibility() -> void:
 	pause_button.visible = in_run
 	extract_button.visible = in_run and run != null and run.endless
 	upgrade_panel.visible = in_run and run != null and run.pending_upgrades > 0
+	if upgrade_panel.visible: _refresh_upgrades()
 	pause_button.text = ">" if paused else "II"
+
+func _refresh_upgrades() -> void:
+	run.ensure_upgrade_offer()
+	upgrade_heading.text = "LEVEL UP • %d CHOICE%s" % [run.pending_upgrades, "S" if run.pending_upgrades > 1 else ""]
+	for i in range(upgrade_buttons.size()):
+		var button := upgrade_buttons[i]
+		button.visible = i < run.upgrade_offer.size()
+		if not button.visible: continue
+		var id: String = run.upgrade_offer[i]
+		button.text = Upgrades.description(id, int(run.upgrade_ranks.get(id, 0)))
+		var d: Dictionary = Upgrades.DEFINITIONS[id]
+		var color := Color("#e9dfd0")
+		if d.has("affinity"): color = FIRE if d.affinity == "fire" else (ICE if d.affinity == "ice" else STEAM)
+		elif d.category != "Universal": color = Color("#c6b5e6")
+		button.add_theme_color_override("font_color", color)
 
 func _clear_input() -> void:
 	touch_id = -1

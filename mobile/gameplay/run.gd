@@ -2,6 +2,7 @@ extends RefCounted
 ## Fixed-step unbounded world simulation. Camera and terrain rendering are presentation-only.
 const World = preload("res://gameplay/dungeon_world.gd")
 const Abilities = preload("res://gameplay/ability_catalog.gd")
+const Upgrades = preload("res://gameplay/upgrade_catalog.gd")
 const DESPAWN_DISTANCE := 740.0
 const BOSS_RELOCATE_DISTANCE := 950.0
 const TARGET_RANGE := 350.0
@@ -64,11 +65,18 @@ var ward := 0.0
 var trail := 0.0
 var trail_cd := 0.0
 var next_enemy_id := 1
+var upgrade_rng: Variant
+var upgrade_ranks: Dictionary = {}
+var upgrade_offer: Array[String] = []
+var burst_radius := 36.0
+var burst_power := 0.55
+var trail_rate := 0.30
 
 func _init(p: Dictionary, is_endless: bool, level: int, seed: int) -> void:
 	phenotype = p.duplicate(true)
 	kit = Abilities.compile(phenotype)
 	rng = Genetics.SeededRandom.new(seed)
+	upgrade_rng = Genetics.SeededRandom.new(seed + 937621)
 	world_seed = seed
 	endless = is_endless
 	difficulty = clampi(level, 1, 3)
@@ -96,7 +104,7 @@ func step(dt: float, movement: Vector2, special: bool) -> void:
 	trail = maxf(0, trail - dt)
 	trail_cd = maxf(0, trail_cd - dt)
 	if trail > 0 and trail_cd <= 0 and travel_direction.length_squared() > 0.1:
-		_add_cloud(player, 23.0, 1.3, 0.30, "fire")
+		_add_cloud(player, 23.0, 1.3, trail_rate, "fire")
 		trail_cd = 0.32
 	spawn_cd -= dt
 	var normal_limit := MAX_ENEMIES - GUARD_COUNT - (1 if not endless and not boss_spawned else 0)
@@ -154,17 +162,79 @@ func step(dt: float, movement: Vector2, special: bool) -> void:
 			run_level += 1
 			next_xp = roundi(next_xp * 1.25) + 2
 			pending_upgrades += 1
+		if pending_upgrades > 0: ensure_upgrade_offer()
+
+func ensure_upgrade_offer() -> void:
+	if pending_upgrades > 0 and upgrade_offer.is_empty() and outcome == "":
+		upgrade_offer = Upgrades.offer(phenotype, upgrade_ranks, upgrade_rng)
 
 func upgrade(choice: int) -> void:
 	if pending_upgrades <= 0 or outcome != "": return
-	match choice:
-		0: damage *= 1.20
-		1: interval = maxf(0.16, interval * 0.85)
-		2:
-			max_hp += 15.0
-			hp = minf(max_hp, hp + 25.0)
-		_: return
+	ensure_upgrade_offer()
+	if choice < 0 or choice >= upgrade_offer.size(): return
+	var id: String = upgrade_offer[choice]
+	if not Upgrades.eligible(id, phenotype, upgrade_ranks): return
+	_apply_upgrade(id)
+	upgrade_ranks[id] = int(upgrade_ranks.get(id, 0)) + 1
 	pending_upgrades -= 1
+	upgrade_offer.clear()
+	ensure_upgrade_offer()
+
+func _heal_upgrade(amount: float, heal: float) -> void:
+	max_hp += amount
+	hp = minf(max_hp, hp + heal)
+
+func _modify_effect(spec: Dictionary, kind: String, field: String, amount: float, multiply: bool = false) -> void:
+	for effect in spec.effects:
+		if effect.kind == kind:
+			effect[field] = float(effect[field]) * amount if multiply else float(effect[field]) + amount
+
+func _apply_upgrade(id: String) -> void:
+	match id:
+		"vitality": _heal_upgrade(12.0, 20.0)
+		"power": damage *= 1.10
+		"haste": interval = maxf(0.16, interval * 0.90)
+		"stride": speed += 6.0
+		"kindle":
+			for spec in [kit.basic, kit.special]:
+				_modify_effect(spec, "burn", "rate", 1.25, true)
+				_modify_effect(spec, "burn", "duration", 0.5)
+		"wildfire":
+			burst_radius += 10.0
+			burst_power *= 1.20
+		"inferno":
+			kit.special.radius += 12.0
+			kit.special.power *= 1.15
+		"pierce": kit.basic.pierce += 1
+		"shatter": _modify_effect(kit.special, "shatter", "power", 1.35, true)
+		"permafrost":
+			_modify_effect(kit.special, "freeze", "duration", 0.3)
+			_modify_effect(kit.basic, "chill", "duration", 0.5)
+			for spec in [kit.basic, kit.special]: _modify_effect(spec, "slow", "duration", 0.5)
+		"mist":
+			_modify_effect(kit.basic, "cloud", "radius", 8.0)
+			_modify_effect(kit.basic, "cloud", "duration", 0.5)
+		"pressure":
+			_modify_effect(kit.basic, "cloud", "rate", 1.20, true)
+			kit.special.rate *= 1.20
+		"vortex":
+			kit.special.radius += 12.0
+			kit.special.duration += 0.6
+		"wingward":
+			kit.special.ward += 0.5
+			kit.special.radius += 8.0
+		"flametrail":
+			kit.special.trail += 0.6
+			trail_rate *= 1.20
+		"fortify": kit.modifiers.incoming *= 0.92
+		"rapid": interval = maxf(0.16, interval * 0.88)
+		"focus": damage *= 1.12
+		"flow": kit.special.cooldown = maxf(2.5, float(kit.special.cooldown) * 0.88)
+		"stone": _heal_upgrade(20.0, 20.0)
+		"fae": speed += 10.0
+		"hybrid":
+			speed += 6.0
+			_heal_upgrade(10.0, 10.0)
 
 func extract() -> void:
 	if endless and elapsed >= 30 and outcome == "":
@@ -349,7 +419,7 @@ func _cast_basic() -> bool:
 	if direction == Vector2.ZERO: direction = Vector2.UP
 	shots.append({"pos":player,"vel":direction * float(spec.speed),"life":float(spec.life),
 		"damage":effective_damage() * float(spec.power),"pierce":int(spec.pierce),"hit":{},
-		"effects":spec.effects,"affinity":phenotype.affinity})
+		"effects":spec.effects.duplicate(true),"affinity":phenotype.affinity})
 	return true
 
 func _cast_special() -> void:
@@ -445,7 +515,7 @@ func _burn_death_bursts() -> void:
 			centers.append(enemy.pos)
 			if centers.size() >= 8: break
 	for center in centers:
-		_flash(center, 36.0, "fire")
+		_flash(center, burst_radius, "fire")
 		for enemy in enemies:
-			if enemy.hp > 0 and center.distance_to(enemy.pos) <= 36.0:
-				enemy.hp -= effective_damage() * 0.55
+			if enemy.hp > 0 and center.distance_to(enemy.pos) <= burst_radius:
+				enemy.hp -= effective_damage() * burst_power

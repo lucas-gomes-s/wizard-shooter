@@ -8,6 +8,7 @@ const ArenaArt = preload("res://presentation/arena_art.gd")
 const World = preload("res://gameplay/dungeon_world.gd")
 const DungeonArt = preload("res://presentation/dungeon_art.gd")
 const Abilities = preload("res://gameplay/ability_catalog.gd")
+const Upgrades = preload("res://gameplay/upgrade_catalog.gd")
 var failures := 0
 
 func check(condition: bool, message: String) -> void:
@@ -64,14 +65,17 @@ func _initialize() -> void:
 	var t: float = run.elapsed
 	run.step(1.0 / 60.0, Vector2.RIGHT, false)
 	check(run.elapsed == t, "Upgrade pauses time")
-	run.upgrade(1)
-	check(run.pending_upgrades == 0 and run.interval < float(p.interval), "Upgrade applied")
+	run.ensure_upgrade_offer()
+	var chosen: String = run.upgrade_offer[0]
+	run.upgrade(0)
+	check(run.pending_upgrades == 0 and int(run.upgrade_ranks.get(chosen, 0)) == 1, "Upgrade applied")
 	run.hp = 0
 	run.step(1.0 / 60.0, Vector2.ZERO, false)
 	check(run.outcome == "Defeated", "Death ends run")
 	_test_world(p)
 	_test_sites(p)
 	_test_abilities(p)
+	_test_upgrades(p)
 	print("Wizard Shooter smoke: %d failures; 1000 founder/fusion samples" % failures)
 	quit(0 if failures == 0 else 1)
 
@@ -246,3 +250,57 @@ func _test_abilities(base: Dictionary) -> void:
 	a.erase("talents")
 	check(Genetics.talents_for(a) == Genetics.talents_for(a), "Legacy talents deterministic")
 	print("Ability checks complete")
+
+func _test_upgrades(base: Dictionary) -> void:
+	var p := base.duplicate(true)
+	p.affinity = "fire"
+	p.mutation = "living_flame"
+	p.passives = ["focused"]
+	var a := RunModel.new(p, true, 1, 42)
+	var b := RunModel.new(p, true, 1, 42)
+	a.pending_upgrades = 2
+	b.pending_upgrades = 2
+	a.ensure_upgrade_offer()
+	b.ensure_upgrade_offer()
+	check(a.upgrade_offer == b.upgrade_offer and a.upgrade_offer.size() == 3, "Seeded upgrade offer")
+	var initial: Array[String] = a.upgrade_offer.duplicate()
+	a.ensure_upgrade_offer()
+	check(initial == a.upgrade_offer, "Offer cannot reroll on refresh")
+	check(Upgrades.DEFINITIONS[initial[0]].category == "Universal", "Guaranteed universal")
+	check(Upgrades.DEFINITIONS[initial[1]].affinity == "fire", "Guaranteed matching affinity")
+	check(Upgrades.DEFINITIONS[initial[2]].category in ["Species","Talent","Mutation"], "Guaranteed genetic option")
+	a.upgrade(-1)
+	a.upgrade(3)
+	check(a.pending_upgrades == 2 and initial == a.upgrade_offer, "Invalid choices do not spend upgrade")
+	a.upgrade(1)
+	check(a.pending_upgrades == 1 and int(a.upgrade_ranks.get(initial[1],0)) == 1 and a.upgrade_offer.size() == 3, "Queued upgrade gets fresh offer")
+	var allowed := true
+	for id in a.upgrade_offer:
+		allowed = allowed and Upgrades.eligible(id, p, a.upgrade_ranks)
+	check(allowed, "Every offered upgrade eligible")
+	check(not Upgrades.eligible("pierce", p, {}) and not Upgrades.eligible("wingward", p, {}) and not Upgrades.eligible("fortify", p, {}), "Foreign affinity and unexpressed genetics excluded")
+	check(not Upgrades.eligible("kindle", p, {"kindle":4}), "Rank cap")
+	var snapshot := p.duplicate(true)
+	a._apply_upgrade("wildfire")
+	check(a.burst_radius == 46.0 and absf(a.burst_power - 0.66) < 0.001, "Wildfire actual effect")
+	var burn_before: float = a.kit.basic.effects[0].rate
+	a._apply_upgrade("kindle")
+	check(absf(float(a.kit.basic.effects[0].rate) - burn_before * 1.25) < 0.001, "Kindle modifies effect")
+	check(p == snapshot, "No permanent phenotype changes")
+	var capped: Dictionary = {}
+	for id in Upgrades.DEFINITIONS:
+		var cap := int(Upgrades.DEFINITIONS[id].cap)
+		if cap > 0: capped[id] = cap
+	check(Upgrades.offer(p, capped, a.upgrade_rng) == ["vitality"], "Endless cap fallback")
+	p.affinity = "ice"
+	p.mutation = "none"
+	var ice := RunModel.new(p, true, 1, 42)
+	ice._apply_upgrade("pierce")
+	check(ice.kit.basic.pierce == 3, "Pierce upgrade changes projectile")
+	p.affinity = "steam"
+	var steam := RunModel.new(p, true, 1, 42)
+	steam._apply_upgrade("mist")
+	check(steam.kit.basic.effects[0].radius == 50.0, "Mist upgrade changes cloud radius")
+	steam._apply_upgrade("pressure")
+	check(absf(float(steam.kit.special.rate) - 0.78) < 0.001, "Pressure upgrade changes vortex")
+	print("Character-specific upgrade checks complete")
