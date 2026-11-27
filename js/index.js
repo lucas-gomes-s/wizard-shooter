@@ -1,6 +1,6 @@
 import * as config from './data.js';
 import { Game, FixedClock } from './simulation.js';
-import { schools, synergies } from './magic.js';
+import { schools, synergies, learnedSchools, SECOND_SCHOOL_LEVEL } from './magic.js';
 import {CombatFX,drawWeb,drawHazard,drawEnemyWarning,drawEnemyStatus,drawShield,drawProjectile} from './combat-fx.js';
 import { viewportFor, fitViewport, formatTime, skillPreview } from './presentation.js';
 
@@ -119,6 +119,8 @@ document.addEventListener('visibilitychange',()=>{clearInput();if(document.hidde
 function input(){return{x:Number(keys.has('KeyD'))-Number(keys.has('KeyA')),y:Number(keys.has('KeyS'))-Number(keys.has('KeyW')),aim:aimVectors[aimOrder[aimOrder.length-1]]}}
 function buildUpgrades(){
   const root=$('upgradeCards');root.replaceChildren();$('upgradeLevel').textContent='Level '+game.player.level+' reached';
+  const m=game.player.magic,count=learnedSchools(m).length;
+  $('upgradeHint').textContent=count<2&&game.player.level<SECOND_SCHOOL_LEVEL?'Master your primary school. Secondary school unlocks at level '+SECOND_SCHOOL_LEVEL+'.':count<2?'Choose a secondary school now or keep specializing. Your choice is permanent for this run.':'Your two schools are locked in. Master them and discover compatible synergies.';
   game.offers.forEach((s,i)=>{
     const button=document.createElement('button');
     button.type='button';button.className='upgrade-card';button.dataset.index=i;button.style.setProperty('--school',s.color);
@@ -146,8 +148,8 @@ function showResults(){
   for(const combo of synergies)if(game.player.magic.synergies.includes(combo.id))root.append(spellChip(combo));
   if(!root.children.length)root.textContent='No upgrades acquired';
 }
-function spellChip(s,rank){const chip=document.createElement('span');chip.className='spell-chip';chip.style.setProperty('--school',s.color);chip.textContent=s.glyph+' '+s.name+(rank?' '+rank:'');return chip}
-function updateBuild(){const m=game.player.magic,signature=JSON.stringify([m.ranks,m.synergies,m.shieldReady]);if(signature===lastBuild)return;lastBuild=signature;const root=$('spellBuild');root.replaceChildren();for(const s of schools)if(m.ranks[s.id])root.append(spellChip(s,m.ranks[s.id]));for(const s of synergies)if(m.synergies.includes(s.id))root.append(spellChip(s));if(!root.children.length)root.textContent='Choose your starting school';if(m.ranks.arcane>=2){const shield=document.createElement('span');shield.className='spell-chip';shield.textContent=m.shieldReady?'Shield ready':'Shield recharging';root.append(shield)}}
+function spellChip(s,rank){const chip=document.createElement('span');chip.className='spell-chip';chip.style.setProperty('--school',s.color);chip.textContent=s.glyph+' '+s.name+(rank?' '+rank:'');if(s.id===game.player.magic.primary){chip.title='Primary school';chip.classList.add('primary-school')}else if(s.id===game.player.magic.secondary)chip.title='Secondary school';return chip}
+function updateBuild(){const m=game.player.magic,signature=JSON.stringify([m.ranks,m.synergies,m.shieldReady,m.primary,m.secondary,Math.min(game.player.level,SECOND_SCHOOL_LEVEL)]);if(signature===lastBuild)return;lastBuild=signature;const root=$('spellBuild');root.replaceChildren();for(const s of schools)if(m.ranks[s.id])root.append(spellChip(s,m.ranks[s.id]));for(const s of synergies)if(m.synergies.includes(s.id))root.append(spellChip(s));if(!root.children.length)root.textContent='Choose your starting school';else if(learnedSchools(m).length<2){const lock=document.createElement('span');lock.className='school-lock';lock.textContent=game.player.level<SECOND_SCHOOL_LEVEL?'Secondary school · Lv '+SECOND_SCHOOL_LEVEL+' ('+(SECOND_SCHOOL_LEVEL-game.player.level)+' to go)':'Secondary school available';root.append(lock)}else{const lock=document.createElement('span');lock.className='school-lock';lock.textContent='Two schools learned';root.append(lock)}if(m.ranks.arcane>=2){const shield=document.createElement('span');shield.className='spell-chip';shield.textContent=m.shieldReady?'Shield ready':'Shield recharging';root.append(shield)}}
 function meter(id,value){const percent=Math.round(Math.max(0,Math.min(1,value))*100),node=$(id);node.firstElementChild.style.width=percent+'%';node.setAttribute('aria-valuenow',percent);}
 function updateBoss(){const boss=game.boss||game.miniboss,signature=boss?[boss.title||boss.name,Math.ceil(boss.health),boss.bossPhase].join('|'):String(game.endless);if(signature===lastBoss)return;lastBoss=signature;const node=$('bossHud');node.hidden=!boss&&!game.endless;if(boss){$('bossName').textContent=boss.boss?'Ancient Dragon · Phase '+boss.bossPhase+' / 3':boss.title;$('bossHealth').textContent=Math.ceil(boss.health)+' / '+boss.maxHealth;meter('bossMeter',boss.health/boss.maxHealth);$('bossMeter').hidden=false}else{$('bossName').textContent='Endless survival';$('bossHealth').textContent='Dragon defeated';$('bossMeter').hidden=true}}
 function updateHud(){
