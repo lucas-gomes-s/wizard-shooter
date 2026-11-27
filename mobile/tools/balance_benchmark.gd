@@ -10,23 +10,36 @@ const AFFINITIES := ["fire","ice","steam"]
 var seed_count := 2
 var seconds := 120
 var output := "user://balance.json"
+var seed_start := 7001
+var parameters: Dictionary = {}
+var bodies: Array[String] = ["stoneborn"]
 
 func _initialize() -> void:
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--seeds="): seed_count = clampi(int(arg.get_slice("=",1)),1,100)
 		if arg.begins_with("--seconds="): seconds = clampi(int(arg.get_slice("=",1)),10,900)
 		if arg.begins_with("--output="): output = arg.get_slice("=",1)
+		if arg.begins_with("--seed-start="): seed_start = int(arg.get_slice("=",1))
+		if arg == "--all-bodies": bodies = ["stoneborn","fae","hybrid"]
+		if arg.begins_with("--config="):
+			var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(arg.get_slice("=",1)))
+			if not parsed is Dictionary:
+				push_error("Invalid configuration JSON"); quit(2); return
+			parameters = RunModel.Balance.validated(parsed)
+			if parameters.is_empty():
+				push_error("Unknown or out-of-bounds configuration"); quit(2); return
 	var rows: Array[Dictionary] = []
 	var started := Time.get_ticks_msec()
-	for affinity in AFFINITIES:
-		var p := fixture(affinity)
-		for difficulty in range(1,4):
-			for strategy in STRATEGIES:
-				for i in range(seed_count):
-					rows.append(simulate(p,difficulty,strategy,7001+i*7919))
+	for body in bodies:
+		for affinity in AFFINITIES:
+			var p := fixture(affinity,body)
+			for difficulty in range(1,4):
+				for strategy in STRATEGIES:
+					for i in range(seed_count):
+						rows.append(simulate(p,difficulty,strategy,seed_start+i*7919))
 	var groups := summarize(rows)
 	var elapsed_ms := Time.get_ticks_msec()-started
-	var result := {"schema":1,"seeds_per_cell":seed_count,"horizon_seconds":seconds,"physics_hz":60,"profile":"stoneborn/no mutation/no expressed talents/power 100; steam tier II","runs":rows,"groups":groups,"wall_ms":elapsed_ms}
+	var result := {"schema":1,"seeds_per_cell":seed_count,"horizon_seconds":seconds,"physics_hz":60,profile":"controlled bodies/power 100/no mutation or talents; hybrids and steam tier II","parameters":RunModel.Balance.validated(parameters),"seed_start":seed_start,"runs":rows,"groups":groups,"wall_ms":elapsed_ms}
 	var file := FileAccess.open(output,FileAccess.WRITE)
 	if file == null:
 		push_error("Cannot write benchmark output: "+output)
@@ -39,13 +52,13 @@ func _initialize() -> void:
 	print("BENCHMARK COMPLETE: %d runs in %d ms; %s" % [rows.size(),elapsed_ms,output])
 	quit(0)
 
-static func fixture(affinity: String) -> Dictionary:
+static func fixture(affinity: String, body: String = "stoneborn") -> Dictionary:
 	var g := Genetics.founder(42)
-	g.species = ["stoneborn","stoneborn"]
-	g.ancestry = {"stoneborn":10000,"fae":0}
+	g.species = ["stoneborn","fae"] if body=="hybrid" else [body,body]
+	g.ancestry = {"stoneborn":5000,"fae":5000} if body=="hybrid" else {"stoneborn":10000 if body=="stoneborn" else 0,"fae":10000 if body=="fae" else 0}
 	g.power = 100
 	g.core = ["fire","ice"] if affinity=="steam" else [affinity,affinity]
-	g.tier = 2 if affinity=="steam" else 1
+	g.tier = 2 if affinity=="steam" or body=="hybrid" else 1
 	g.mutation = "none"
 	var p := Genetics.express(g)
 	# Controlled comparison deliberately removes passive effects; not a generated legal player record.
@@ -53,7 +66,7 @@ static func fixture(affinity: String) -> Dictionary:
 	return p
 
 func simulate(p: Dictionary,difficulty: int,strategy: String,seed: int) -> Dictionary:
-	var run := RunModel.new(p,false,difficulty,seed)
+	var run := RunModel.new(p,false,difficulty,seed,parameters)
 	var bot_rng := Genetics.SeededRandom.new(seed+17231)
 	var move := Vector2.ZERO
 	var chosen: Dictionary = {}
@@ -78,7 +91,7 @@ func simulate(p: Dictionary,difficulty: int,strategy: String,seed: int) -> Dicti
 					break
 		run.step(DT,move,cast)
 		ticks += 1
-	return {"seed":seed,"affinity":p.affinity,"body":p.body,"tier":p.tier,"difficulty":difficulty,"strategy":strategy,"outcome":run.outcome if run.outcome!="" else "Timeout","seconds":run.elapsed,"kills":run.kills,"level":run.run_level,"run_xp":run.total_run_xp,"training_xp":run.training_reward(),"damage":run.total_damage_dealt,"taken":run.total_damage_taken,"remaining_hp":run.hp,"basic_casts":run.basic_casts,"special_casts":run.special_casts,"caches":run.treasure_count,"shrines":run.shrine_count,"encounters":run.encounters_cleared,"despawned":run.despawned,"peak_enemies":run.peak_enemies,"last_hit":run.last_hit,"upgrades":chosen,"ticks":ticks,"cpu_us":Time.get_ticks_usec()-started}
+	return {"seed":seed,"affinity":p.affinity,"body":p.body,"tier":p.tier,"difficulty":difficulty,"strategy":strategy,"outcome":run.outcome if run.outcome!="" else "Timeout","seconds":run.elapsed,"kills":run.kills,"level":run.run_level,"run_xp":run.total_run_xp,"training_xp":run.training_reward(),"damage":run.total_damage_dealt,"taken":run.total_damage_taken,"remaining_hp":run.hp,"basic_casts":run.basic_casts,"special_casts":run.special_casts,"caches":run.treasure_count,"shrines":run.shrine_count,"encounters":run.encounters_cleared,"despawned":run.despawned,"peak_enemies":run.peak_enemies,"last_hit":run.last_hit,"upgrades":chosen,"first_upgrade":run.first_upgrade_time,"level_times":run.level_times,"boss_reached":run.boss_spawned,"boss_spawn_time":run.boss_spawn_time,"ticks":ticks,"cpu_us":Time.get_ticks_usec()-started}
 
 static func choose_upgrade(run: Variant,rng: Variant) -> int:
 	# Same deterministic policy for all strategies. Heal when necessary; otherwise favor affinity.
@@ -95,6 +108,10 @@ static func steering(run: Variant,strategy: String,previous: Vector2,rng: Varian
 	var nearest := INF
 	for e in run.enemies:
 		var dist: float = run.player.distance_squared_to(e.pos)
+		if strategy in ["aggressive","kiting"] and int(e.kind)==3:
+			nearest=dist
+			target=e
+			break
 		if dist<nearest:
 			nearest=dist
 			target=e
@@ -128,9 +145,9 @@ static func steering(run: Variant,strategy: String,previous: Vector2,rng: Varian
 static func summarize(rows: Array[Dictionary]) -> Array[Dictionary]:
 	var by_key: Dictionary = {}
 	for row in rows:
-		var key := "%s/%d/%s" % [row.affinity,row.difficulty,row.strategy]
+		var key := "%s/%s/%d/%s" % [row.body,row.affinity,row.difficulty,row.strategy]
 		if not by_key.has(key):
-			by_key[key]={"affinity":row.affinity,"difficulty":row.difficulty,"strategy":row.strategy,"n":0,"wins":0,"deaths":0,"timeouts":0,"mean_seconds":0.0,"mean_kills":0.0,"mean_level":0.0,"mean_damage":0.0,"mean_taken":0.0,"mean_training":0.0,"mean_caches":0.0}
+			by_key[key]={"body":row.body,"affinity":row.affinity,"difficulty":row.difficulty,"strategy":row.strategy,"n":0,"wins":0,"deaths":0,"timeouts":0,"mean_seconds":0.0,"mean_kills":0.0,"mean_level":0.0,"mean_damage":0.0,"mean_taken":0.0,"mean_training":0.0,"mean_caches":0.0}
 		var g: Dictionary = by_key[key]
 		g.n+=1
 		match str(row.outcome):

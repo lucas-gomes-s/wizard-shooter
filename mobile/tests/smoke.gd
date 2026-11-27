@@ -79,6 +79,7 @@ func _initialize() -> void:
 	_test_upgrades(p)
 	_test_enemies(p)
 	_test_combat_metrics(p)
+	_test_balance_config(p)
 	print("Wizard Shooter smoke: %d failures; 1000 founder/fusion samples" % failures)
 	quit(0 if failures == 0 else 1)
 
@@ -409,3 +410,17 @@ func _test_combat_metrics(p: Dictionary) -> void:
 	for i in range(100): run._add_hit_fx(Vector2.ZERO,1.0,"ice","hit")
 	check(run.hit_fx.size()==RunModel.MAX_HIT_FX,"Hit feedback bounded")
 	print("Combat telemetry checks complete")
+
+func _test_balance_config(p: Dictionary) -> void:
+	var defaults := RunModel.Balance.validated({})
+	check(defaults == RunModel.Balance.DEFAULTS, "Default tuning unchanged")
+	check(RunModel.Balance.validated({"enemy_hp":0.0}).is_empty(), "Invalid tuning rejected")
+	check(RunModel.Balance.validated({"unknown":1.0}).is_empty(), "Unknown tuning rejected")
+	var base := RunModel.new(p,false,1,7)
+	var tuned := RunModel.new(p,false,1,7,{"enemy_hp":1.2,"boss_hp":0.8,"recovery":1.0})
+	base._spawn(0)
+	tuned._spawn(0)
+	check(absf(float(tuned.enemies[0].hp)-float(base.enemies[0].hp)*1.2)<0.001,"Config changes actual enemy health")
+	check(absf(RunModel.Balance.spawn_delay(16,1,false,tuned.balance)-RunModel.Balance.spawn_delay(16,1,false,base.balance)*2)<0.001,"Recovery interval")
+	check(base.balance == defaults,"Experiment cannot mutate defaults")
+	print("Balance configuration checks complete")

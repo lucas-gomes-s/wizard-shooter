@@ -4,6 +4,7 @@ const World = preload("res://gameplay/dungeon_world.gd")
 const Abilities = preload("res://gameplay/ability_catalog.gd")
 const Upgrades = preload("res://gameplay/upgrade_catalog.gd")
 const EnemyAI = preload("res://gameplay/enemy_behavior.gd")
+const Balance = preload("res://gameplay/balance_config.gd")
 const DESPAWN_DISTANCE := 740.0
 const BOSS_RELOCATE_DISTANCE := 950.0
 const TARGET_RANGE := 350.0
@@ -87,8 +88,14 @@ var peak_enemies := 0
 var hit_fx: Array[Dictionary] = []
 const MAX_HIT_FX := 40
 var player_hit_fx := 0.0
+var balance: Dictionary
+var first_upgrade_time := -1.0
+var level_times: Array[float] = []
+var boss_spawn_time := -1.0
 
-func _init(p: Dictionary, is_endless: bool, level: int, seed: int) -> void:
+func _init(p: Dictionary, is_endless: bool, level: int, seed: int, parameters: Dictionary = {}) -> void:
+	balance = Balance.validated(parameters)
+	assert(not balance.is_empty(), "Invalid balance parameters")
 	phenotype = p.duplicate(true)
 	kit = Abilities.compile(phenotype)
 	rng = Genetics.SeededRandom.new(seed)
@@ -99,7 +106,7 @@ func _init(p: Dictionary, is_endless: bool, level: int, seed: int) -> void:
 	max_hp = float(p.health)
 	hp = max_hp
 	speed = float(p.speed)
-	damage = float(p.damage)
+	damage = float(p.damage) * float(balance[str(p.affinity) + "_damage"])
 	interval = float(p.interval) * float(kit.modifiers.interval)
 
 func step(dt: float, movement: Vector2, special: bool) -> void:
@@ -137,9 +144,10 @@ func step(dt: float, movement: Vector2, special: bool) -> void:
 		if elapsed >= 28 and rng.next_int(100) < 28: kind = 2
 		if elapsed >= 42 and rng.next_int(100) < 20: kind = 4
 		_spawn(kind)
-		spawn_cd = maxf(0.24, 1.15 - elapsed * 0.007 - (difficulty - 1) * 0.13)
+		spawn_cd = Balance.spawn_delay(elapsed, difficulty, boss_spawned, balance)
 	if not endless and elapsed >= FINITE_SECONDS and not boss_spawned:
 		boss_spawned = true
+		boss_spawn_time = elapsed
 		_spawn(3)
 	peak_enemies = maxi(peak_enemies, enemies.size())
 	if auto_cd <= 0:
@@ -185,7 +193,9 @@ func step(dt: float, movement: Vector2, special: bool) -> void:
 		while xp >= next_xp:
 			xp -= next_xp
 			run_level += 1
-			next_xp = roundi(next_xp * 1.25) + 2
+			next_xp = roundi(next_xp * float(balance.xp_growth) + float(balance.xp_increment))
+			if first_upgrade_time < 0: first_upgrade_time = elapsed
+			level_times.append(elapsed)
 			pending_upgrades += 1
 		if pending_upgrades > 0: ensure_upgrade_offer()
 
@@ -316,9 +326,9 @@ func _spawn(kind: int) -> void:
 	d.kind = kind
 	d.pos = _spawn_position(float(d.radius))
 	d.steer = -1.0 if rng.next_int(2) == 0 else 1.0
-	d.hp *= 1.0 + (difficulty - 1) * 0.25
+	d.hp *= (1.0 + (difficulty - 1) * 0.25) * float(balance.enemy_hp) * (float(balance.boss_hp) if int(d.kind) == 3 else 1.0)
 	d.max_hp = d.hp
-	d.damage *= 1.0 + (difficulty - 1) * 0.18
+	d.damage *= (1.0 + (difficulty - 1) * 0.18) * float(balance.enemy_damage) * (float(balance.boss_damage) if int(d.kind) == 3 else 1.0)
 	d.slow = 0.0
 	d.burn = 0.0
 	d.chill = 0.0
@@ -402,9 +412,9 @@ func _start_encounter(site: Dictionary) -> void:
 		d.kind = kind
 		d.pos = point
 		d.steer = 1.0 if i % 2 == 0 else -1.0
-		d.hp *= 1.0 + (difficulty - 1) * 0.25
+		d.hp *= (1.0 + (difficulty - 1) * 0.25) * float(balance.enemy_hp) * (float(balance.boss_hp) if int(d.kind) == 3 else 1.0)
 		d.max_hp = d.hp
-		d.damage *= 1.0 + (difficulty - 1) * 0.18
+		d.damage *= (1.0 + (difficulty - 1) * 0.18) * float(balance.enemy_damage) * (float(balance.boss_damage) if int(d.kind) == 3 else 1.0)
 		d.xp = 0
 		d.slow = 0.0
 		d.burn = 0.0

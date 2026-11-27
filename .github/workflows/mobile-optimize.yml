@@ -1,0 +1,52 @@
+name: Mobile balance optimization
+on:
+  workflow_dispatch:
+    inputs:
+      trials:
+        description: 'Optuna trials (including baseline)'
+        default: '6'
+      train_seeds:
+        description: 'Common seeds per training cell'
+        default: '2'
+      validation_seeds:
+        description: 'Unseen seeds per validation cell'
+        default: '5'
+      all_bodies:
+        description: 'Include Fae and hybrid fixtures (3x cost)'
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install tools
+        run: |
+          pip install optuna==4.5.0
+          curl -fL --retry 3 https://github.com/godotengine/godot-builds/releases/download/4.5.1-stable/Godot_v4.5.1-stable_linux.x86_64.zip -o /tmp/godot.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          chmod +x /tmp/godot/Godot_v4.5.1-stable_linux.x86_64
+          echo "/tmp/godot" >> "$GITHUB_PATH"
+      - name: Objective regression
+        run: python -m unittest discover -s mobile/tools -p test_optimize_balance.py
+      - name: Optimize and validate
+        env:
+          TRIALS: ${{ inputs.trials }}
+          TRAIN: ${{ inputs.train_seeds }}
+          VALID: ${{ inputs.validation_seeds }}
+          ALL_BODIES: ${{ inputs.all_bodies }}
+        run: |
+          args=()
+          if [ "$ALL_BODIES" = true ]; then args+=(--all-bodies); fi
+          python mobile/tools/optimize_balance.py --godot Godot_v4.5.1-stable_linux.x86_64 --trials "$TRIALS" --train-seeds "$TRAIN" --validation-seeds "$VALID" --output /tmp/optimization.json "${args[@]}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wizard-shooter-balance-optimization
+          path: /tmp/optimization.json
+          retention-days: 30
