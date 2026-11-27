@@ -1,0 +1,3123 @@
+{
+  "schema_version": 1,
+  "seed": 42,
+  "tile_size": 32,
+  "feet_anchor": [
+    15,
+    29
+  ],
+  "layer_order": [
+    "wings",
+    "body",
+    "robe",
+    "head",
+    "hat",
+    "staff",
+    "mutation"
+  ],
+  "layer_atlas_columns": 8,
+  "layer_count": 54,
+  "population_columns": 10,
+  "characters": [
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "fire",
+        "tier": 1,
+        "hat": 0,
+        "robe": 0,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 2,
+          "head": 3,
+          "hat": 4,
+          "staff": 5,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 2,
+          "head": 3,
+          "hat": 4,
+          "staff": 5,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 1,
+        "robe": 1,
+        "staff": 1,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 8,
+          "head": 9,
+          "hat": 10,
+          "staff": 11,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 8,
+          "head": 9,
+          "hat": 10,
+          "staff": 11,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "hybrid",
+        "affinity": "steam",
+        "tier": 2,
+        "hat": 2,
+        "robe": 2,
+        "staff": 2,
+        "mutation": "crystal_wings"
+      },
+      "frames": [
+        {
+          "wings": 13,
+          "body": 1,
+          "robe": 14,
+          "head": 15,
+          "hat": 16,
+          "staff": 17,
+          "mutation": 0
+        },
+        {
+          "wings": 13,
+          "body": 6,
+          "robe": 14,
+          "head": 15,
+          "hat": 16,
+          "staff": 17,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "fire",
+        "tier": 2,
+        "hat": 1,
+        "robe": 2,
+        "staff": 0,
+        "mutation": "living_flame"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 18,
+          "head": 3,
+          "hat": 19,
+          "staff": 5,
+          "mutation": 20
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 18,
+          "head": 3,
+          "hat": 19,
+          "staff": 5,
+          "mutation": 20
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 0,
+        "robe": 0,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 21,
+          "head": 22,
+          "hat": 23,
+          "staff": 24,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 21,
+          "head": 22,
+          "hat": 23,
+          "staff": 24,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "fire",
+        "tier": 1,
+        "hat": 0,
+        "robe": 0,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 25,
+          "head": 26,
+          "hat": 4,
+          "staff": 5,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 25,
+          "head": 26,
+          "hat": 4,
+          "staff": 5,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 0,
+        "robe": 1,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 27,
+          "head": 22,
+          "hat": 23,
+          "staff": 28,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 27,
+          "head": 22,
+          "hat": 23,
+          "staff": 28,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 1,
+        "robe": 1,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 27,
+          "head": 22,
+          "hat": 10,
+          "staff": 24,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 27,
+          "head": 22,
+          "hat": 10,
+          "staff": 24,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "fire",
+        "tier": 2,
+        "hat": 1,
+        "robe": 0,
+        "staff": 1,
+        "mutation": "crystal_wings"
+      },
+      "frames": [
+        {
+          "wings": 29,
+          "body": 1,
+          "robe": 2,
+          "head": 3,
+          "hat": 19,
+          "staff": 30,
+          "mutation": 0
+        },
+        {
+          "wings": 29,
+          "body": 6,
+          "robe": 2,
+          "head": 3,
+          "hat": 19,
+          "staff": 30,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "steam",
+        "tier": 2,
+        "hat": 1,
+        "robe": 2,
+        "staff": 0,
+        "mutation": "crystal_wings"
+      },
+      "frames": [
+        {
+          "wings": 13,
+          "body": 1,
+          "robe": 14,
+          "head": 31,
+          "hat": 32,
+          "staff": 33,
+          "mutation": 0
+        },
+        {
+          "wings": 13,
+          "body": 6,
+          "robe": 14,
+          "head": 31,
+          "hat": 32,
+          "staff": 33,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 2,
+        "robe": 0,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 34,
+          "head": 9,
+          "hat": 35,
+          "staff": 28,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 34,
+          "head": 9,
+          "hat": 35,
+          "staff": 28,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 0,
+        "robe": 0,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 21,
+          "head": 22,
+          "hat": 23,
+          "staff": 24,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 21,
+          "head": 22,
+          "hat": 23,
+          "staff": 24,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "steam",
+        "tier": 2,
+        "hat": 1,
+        "robe": 0,
+        "staff": 1,
+        "mutation": "living_flame"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 36,
+          "head": 37,
+          "hat": 32,
+          "staff": 38,
+          "mutation": 39
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 36,
+          "head": 37,
+          "hat": 32,
+          "staff": 38,
+          "mutation": 39
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "fire",
+        "tier": 1,
+        "hat": 2,
+        "robe": 2,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 40,
+          "head": 26,
+          "hat": 41,
+          "staff": 5,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 40,
+          "head": 26,
+          "hat": 41,
+          "staff": 5,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 1,
+        "robe": 2,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 42,
+          "head": 9,
+          "hat": 10,
+          "staff": 28,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 42,
+          "head": 9,
+          "hat": 10,
+          "staff": 28,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "fire",
+        "tier": 2,
+        "hat": 0,
+        "robe": 1,
+        "staff": 1,
+        "mutation": "crystal_wings"
+      },
+      "frames": [
+        {
+          "wings": 29,
+          "body": 1,
+          "robe": 43,
+          "head": 3,
+          "hat": 4,
+          "staff": 30,
+          "mutation": 0
+        },
+        {
+          "wings": 29,
+          "body": 6,
+          "robe": 43,
+          "head": 3,
+          "hat": 4,
+          "staff": 30,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 0,
+        "robe": 2,
+        "staff": 1,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 44,
+          "head": 22,
+          "hat": 23,
+          "staff": 11,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 44,
+          "head": 22,
+          "hat": 23,
+          "staff": 11,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "ice",
+        "tier": 2,
+        "hat": 0,
+        "robe": 0,
+        "staff": 2,
+        "mutation": "crystal_wings"
+      },
+      "frames": [
+        {
+          "wings": 45,
+          "body": 1,
+          "robe": 21,
+          "head": 22,
+          "hat": 23,
+          "staff": 28,
+          "mutation": 0
+        },
+        {
+          "wings": 45,
+          "body": 6,
+          "robe": 21,
+          "head": 22,
+          "hat": 23,
+          "staff": 28,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "hybrid",
+        "affinity": "ice",
+        "tier": 2,
+        "hat": 1,
+        "robe": 0,
+        "staff": 0,
+        "mutation": "crystal_wings"
+      },
+      "frames": [
+        {
+          "wings": 45,
+          "body": 1,
+          "robe": 21,
+          "head": 46,
+          "hat": 10,
+          "staff": 24,
+          "mutation": 0
+        },
+        {
+          "wings": 45,
+          "body": 6,
+          "robe": 21,
+          "head": 46,
+          "hat": 10,
+          "staff": 24,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "fire",
+        "tier": 1,
+        "hat": 0,
+        "robe": 2,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 18,
+          "head": 3,
+          "hat": 4,
+          "staff": 5,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 18,
+          "head": 3,
+          "hat": 4,
+          "staff": 5,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 2,
+        "robe": 1,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 8,
+          "head": 9,
+          "hat": 35,
+          "staff": 28,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 8,
+          "head": 9,
+          "hat": 35,
+          "staff": 28,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 2,
+        "robe": 1,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 27,
+          "head": 22,
+          "hat": 35,
+          "staff": 24,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 27,
+          "head": 22,
+          "hat": 35,
+          "staff": 24,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "ice",
+        "tier": 2,
+        "hat": 0,
+        "robe": 2,
+        "staff": 2,
+        "mutation": "crystal_wings"
+      },
+      "frames": [
+        {
+          "wings": 45,
+          "body": 1,
+          "robe": 44,
+          "head": 22,
+          "hat": 23,
+          "staff": 28,
+          "mutation": 0
+        },
+        {
+          "wings": 45,
+          "body": 6,
+          "robe": 44,
+          "head": 22,
+          "hat": 23,
+          "staff": 28,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 2,
+        "robe": 2,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 44,
+          "head": 22,
+          "hat": 35,
+          "staff": 28,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 44,
+          "head": 22,
+          "hat": 35,
+          "staff": 28,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "fire",
+        "tier": 1,
+        "hat": 2,
+        "robe": 2,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 40,
+          "head": 26,
+          "hat": 41,
+          "staff": 5,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 40,
+          "head": 26,
+          "hat": 41,
+          "staff": 5,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "fire",
+        "tier": 2,
+        "hat": 1,
+        "robe": 1,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 43,
+          "head": 3,
+          "hat": 19,
+          "staff": 5,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 43,
+          "head": 3,
+          "hat": 19,
+          "staff": 5,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "fire",
+        "tier": 1,
+        "hat": 2,
+        "robe": 1,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 43,
+          "head": 3,
+          "hat": 41,
+          "staff": 5,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 43,
+          "head": 3,
+          "hat": 41,
+          "staff": 5,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "fire",
+        "tier": 1,
+        "hat": 1,
+        "robe": 2,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 40,
+          "head": 26,
+          "hat": 19,
+          "staff": 47,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 40,
+          "head": 26,
+          "hat": 19,
+          "staff": 47,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 1,
+        "robe": 2,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 44,
+          "head": 22,
+          "hat": 10,
+          "staff": 28,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 44,
+          "head": 22,
+          "hat": 10,
+          "staff": 28,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "hybrid",
+        "affinity": "ice",
+        "tier": 2,
+        "hat": 0,
+        "robe": 0,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 21,
+          "head": 46,
+          "hat": 23,
+          "staff": 24,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 21,
+          "head": 46,
+          "hat": 23,
+          "staff": 24,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "steam",
+        "tier": 2,
+        "hat": 2,
+        "robe": 0,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 48,
+          "head": 31,
+          "hat": 16,
+          "staff": 17,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 48,
+          "head": 31,
+          "hat": 16,
+          "staff": 17,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "fire",
+        "tier": 1,
+        "hat": 0,
+        "robe": 0,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 2,
+          "head": 3,
+          "hat": 4,
+          "staff": 5,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 2,
+          "head": 3,
+          "hat": 4,
+          "staff": 5,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 2,
+        "robe": 1,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 27,
+          "head": 22,
+          "hat": 35,
+          "staff": 24,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 27,
+          "head": 22,
+          "hat": 35,
+          "staff": 24,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "ice",
+        "tier": 2,
+        "hat": 1,
+        "robe": 0,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 21,
+          "head": 22,
+          "hat": 10,
+          "staff": 24,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 21,
+          "head": 22,
+          "hat": 10,
+          "staff": 24,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "ice",
+        "tier": 2,
+        "hat": 1,
+        "robe": 1,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 8,
+          "head": 9,
+          "hat": 10,
+          "staff": 28,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 8,
+          "head": 9,
+          "hat": 10,
+          "staff": 28,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 2,
+        "robe": 1,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 27,
+          "head": 22,
+          "hat": 35,
+          "staff": 24,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 27,
+          "head": 22,
+          "hat": 35,
+          "staff": 24,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 0,
+        "robe": 1,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 27,
+          "head": 22,
+          "hat": 23,
+          "staff": 24,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 27,
+          "head": 22,
+          "hat": 23,
+          "staff": 24,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "fire",
+        "tier": 2,
+        "hat": 1,
+        "robe": 2,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 18,
+          "head": 3,
+          "hat": 19,
+          "staff": 5,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 18,
+          "head": 3,
+          "hat": 19,
+          "staff": 5,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "fire",
+        "tier": 1,
+        "hat": 0,
+        "robe": 1,
+        "staff": 1,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 43,
+          "head": 3,
+          "hat": 4,
+          "staff": 30,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 43,
+          "head": 3,
+          "hat": 4,
+          "staff": 30,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "fire",
+        "tier": 1,
+        "hat": 0,
+        "robe": 1,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 49,
+          "head": 26,
+          "hat": 4,
+          "staff": 5,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 49,
+          "head": 26,
+          "hat": 4,
+          "staff": 5,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "ice",
+        "tier": 2,
+        "hat": 1,
+        "robe": 2,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 42,
+          "head": 9,
+          "hat": 10,
+          "staff": 28,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 42,
+          "head": 9,
+          "hat": 10,
+          "staff": 28,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 0,
+        "robe": 0,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 21,
+          "head": 22,
+          "hat": 23,
+          "staff": 28,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 21,
+          "head": 22,
+          "hat": 23,
+          "staff": 28,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "fire",
+        "tier": 2,
+        "hat": 2,
+        "robe": 1,
+        "staff": 2,
+        "mutation": "living_flame"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 43,
+          "head": 3,
+          "hat": 41,
+          "staff": 47,
+          "mutation": 20
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 43,
+          "head": 3,
+          "hat": 41,
+          "staff": 47,
+          "mutation": 20
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "fire",
+        "tier": 1,
+        "hat": 0,
+        "robe": 0,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 2,
+          "head": 3,
+          "hat": 4,
+          "staff": 47,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 2,
+          "head": 3,
+          "hat": 4,
+          "staff": 47,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "fire",
+        "tier": 1,
+        "hat": 2,
+        "robe": 0,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 25,
+          "head": 26,
+          "hat": 41,
+          "staff": 47,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 25,
+          "head": 26,
+          "hat": 41,
+          "staff": 47,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 1,
+        "robe": 0,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 34,
+          "head": 9,
+          "hat": 10,
+          "staff": 28,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 34,
+          "head": 9,
+          "hat": 10,
+          "staff": 28,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 0,
+        "robe": 2,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 42,
+          "head": 9,
+          "hat": 23,
+          "staff": 28,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 42,
+          "head": 9,
+          "hat": 23,
+          "staff": 28,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "fire",
+        "tier": 2,
+        "hat": 0,
+        "robe": 1,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 49,
+          "head": 26,
+          "hat": 4,
+          "staff": 47,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 49,
+          "head": 26,
+          "hat": 4,
+          "staff": 47,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 0,
+        "robe": 1,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 27,
+          "head": 22,
+          "hat": 23,
+          "staff": 24,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 27,
+          "head": 22,
+          "hat": 23,
+          "staff": 24,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "fire",
+        "tier": 2,
+        "hat": 1,
+        "robe": 2,
+        "staff": 2,
+        "mutation": "living_flame"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 40,
+          "head": 26,
+          "hat": 19,
+          "staff": 47,
+          "mutation": 20
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 40,
+          "head": 26,
+          "hat": 19,
+          "staff": 47,
+          "mutation": 20
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "fire",
+        "tier": 1,
+        "hat": 0,
+        "robe": 1,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 49,
+          "head": 26,
+          "hat": 4,
+          "staff": 5,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 49,
+          "head": 26,
+          "hat": 4,
+          "staff": 5,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 2,
+        "robe": 0,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 34,
+          "head": 9,
+          "hat": 35,
+          "staff": 28,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 34,
+          "head": 9,
+          "hat": 35,
+          "staff": 28,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 1,
+        "robe": 0,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 34,
+          "head": 9,
+          "hat": 10,
+          "staff": 24,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 34,
+          "head": 9,
+          "hat": 10,
+          "staff": 24,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "fire",
+        "tier": 2,
+        "hat": 1,
+        "robe": 0,
+        "staff": 2,
+        "mutation": "crystal_wings"
+      },
+      "frames": [
+        {
+          "wings": 29,
+          "body": 1,
+          "robe": 2,
+          "head": 3,
+          "hat": 19,
+          "staff": 47,
+          "mutation": 0
+        },
+        {
+          "wings": 29,
+          "body": 6,
+          "robe": 2,
+          "head": 3,
+          "hat": 19,
+          "staff": 47,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 2,
+        "robe": 0,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 34,
+          "head": 9,
+          "hat": 35,
+          "staff": 24,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 34,
+          "head": 9,
+          "hat": 35,
+          "staff": 24,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 2,
+        "robe": 2,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 44,
+          "head": 22,
+          "hat": 35,
+          "staff": 24,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 44,
+          "head": 22,
+          "hat": 35,
+          "staff": 24,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 1,
+        "robe": 0,
+        "staff": 1,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 21,
+          "head": 22,
+          "hat": 10,
+          "staff": 11,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 21,
+          "head": 22,
+          "hat": 10,
+          "staff": 11,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 2,
+        "robe": 1,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 27,
+          "head": 22,
+          "hat": 35,
+          "staff": 28,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 27,
+          "head": 22,
+          "hat": 35,
+          "staff": 28,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "fire",
+        "tier": 1,
+        "hat": 1,
+        "robe": 0,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 2,
+          "head": 3,
+          "hat": 19,
+          "staff": 5,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 2,
+          "head": 3,
+          "hat": 19,
+          "staff": 5,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "hybrid",
+        "affinity": "steam",
+        "tier": 2,
+        "hat": 0,
+        "robe": 1,
+        "staff": 0,
+        "mutation": "living_flame"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 50,
+          "head": 15,
+          "hat": 51,
+          "staff": 33,
+          "mutation": 39
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 50,
+          "head": 15,
+          "hat": 51,
+          "staff": 33,
+          "mutation": 39
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "fire",
+        "tier": 1,
+        "hat": 1,
+        "robe": 0,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 25,
+          "head": 26,
+          "hat": 19,
+          "staff": 5,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 25,
+          "head": 26,
+          "hat": 19,
+          "staff": 5,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "fire",
+        "tier": 2,
+        "hat": 0,
+        "robe": 0,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 25,
+          "head": 26,
+          "hat": 4,
+          "staff": 47,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 25,
+          "head": 26,
+          "hat": 4,
+          "staff": 47,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "ice",
+        "tier": 2,
+        "hat": 0,
+        "robe": 1,
+        "staff": 1,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 8,
+          "head": 9,
+          "hat": 23,
+          "staff": 11,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 8,
+          "head": 9,
+          "hat": 23,
+          "staff": 11,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "fire",
+        "tier": 2,
+        "hat": 1,
+        "robe": 0,
+        "staff": 2,
+        "mutation": "crystal_wings"
+      },
+      "frames": [
+        {
+          "wings": 29,
+          "body": 1,
+          "robe": 2,
+          "head": 3,
+          "hat": 19,
+          "staff": 47,
+          "mutation": 0
+        },
+        {
+          "wings": 29,
+          "body": 6,
+          "robe": 2,
+          "head": 3,
+          "hat": 19,
+          "staff": 47,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 1,
+        "robe": 2,
+        "staff": 1,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 44,
+          "head": 22,
+          "hat": 10,
+          "staff": 11,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 44,
+          "head": 22,
+          "hat": 10,
+          "staff": 11,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "fire",
+        "tier": 1,
+        "hat": 1,
+        "robe": 0,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 25,
+          "head": 26,
+          "hat": 19,
+          "staff": 47,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 25,
+          "head": 26,
+          "hat": 19,
+          "staff": 47,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 1,
+        "robe": 0,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 21,
+          "head": 22,
+          "hat": 10,
+          "staff": 28,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 21,
+          "head": 22,
+          "hat": 10,
+          "staff": 28,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "hybrid",
+        "affinity": "fire",
+        "tier": 2,
+        "hat": 2,
+        "robe": 1,
+        "staff": 2,
+        "mutation": "crystal_wings"
+      },
+      "frames": [
+        {
+          "wings": 29,
+          "body": 1,
+          "robe": 43,
+          "head": 52,
+          "hat": 41,
+          "staff": 47,
+          "mutation": 0
+        },
+        {
+          "wings": 29,
+          "body": 6,
+          "robe": 43,
+          "head": 52,
+          "hat": 41,
+          "staff": 47,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "ice",
+        "tier": 2,
+        "hat": 2,
+        "robe": 1,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 8,
+          "head": 9,
+          "hat": 35,
+          "staff": 28,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 8,
+          "head": 9,
+          "hat": 35,
+          "staff": 28,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 2,
+        "robe": 2,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 42,
+          "head": 9,
+          "hat": 35,
+          "staff": 24,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 42,
+          "head": 9,
+          "hat": 35,
+          "staff": 24,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "hybrid",
+        "affinity": "fire",
+        "tier": 2,
+        "hat": 1,
+        "robe": 1,
+        "staff": 0,
+        "mutation": "crystal_wings"
+      },
+      "frames": [
+        {
+          "wings": 29,
+          "body": 1,
+          "robe": 43,
+          "head": 52,
+          "hat": 19,
+          "staff": 5,
+          "mutation": 0
+        },
+        {
+          "wings": 29,
+          "body": 6,
+          "robe": 43,
+          "head": 52,
+          "hat": 19,
+          "staff": 5,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "ice",
+        "tier": 2,
+        "hat": 1,
+        "robe": 2,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 42,
+          "head": 9,
+          "hat": 10,
+          "staff": 24,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 42,
+          "head": 9,
+          "hat": 10,
+          "staff": 24,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 2,
+        "robe": 2,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 44,
+          "head": 22,
+          "hat": 35,
+          "staff": 28,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 44,
+          "head": 22,
+          "hat": 35,
+          "staff": 28,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 0,
+        "robe": 0,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 21,
+          "head": 22,
+          "hat": 23,
+          "staff": 24,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 21,
+          "head": 22,
+          "hat": 23,
+          "staff": 24,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 2,
+        "robe": 0,
+        "staff": 1,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 21,
+          "head": 22,
+          "hat": 35,
+          "staff": 11,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 21,
+          "head": 22,
+          "hat": 35,
+          "staff": 11,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 1,
+        "robe": 0,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 34,
+          "head": 9,
+          "hat": 10,
+          "staff": 24,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 34,
+          "head": 9,
+          "hat": 10,
+          "staff": 24,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "fire",
+        "tier": 1,
+        "hat": 0,
+        "robe": 2,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 40,
+          "head": 26,
+          "hat": 4,
+          "staff": 47,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 40,
+          "head": 26,
+          "hat": 4,
+          "staff": 47,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "fire",
+        "tier": 1,
+        "hat": 1,
+        "robe": 0,
+        "staff": 1,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 2,
+          "head": 3,
+          "hat": 19,
+          "staff": 30,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 2,
+          "head": 3,
+          "hat": 19,
+          "staff": 30,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "hybrid",
+        "affinity": "steam",
+        "tier": 2,
+        "hat": 2,
+        "robe": 1,
+        "staff": 2,
+        "mutation": "crystal_wings"
+      },
+      "frames": [
+        {
+          "wings": 13,
+          "body": 1,
+          "robe": 50,
+          "head": 15,
+          "hat": 16,
+          "staff": 17,
+          "mutation": 0
+        },
+        {
+          "wings": 13,
+          "body": 6,
+          "robe": 50,
+          "head": 15,
+          "hat": 16,
+          "staff": 17,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 1,
+        "robe": 0,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 34,
+          "head": 9,
+          "hat": 10,
+          "staff": 28,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 34,
+          "head": 9,
+          "hat": 10,
+          "staff": 28,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "hybrid",
+        "affinity": "fire",
+        "tier": 2,
+        "hat": 1,
+        "robe": 1,
+        "staff": 0,
+        "mutation": "living_flame"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 43,
+          "head": 52,
+          "hat": 19,
+          "staff": 5,
+          "mutation": 20
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 43,
+          "head": 52,
+          "hat": 19,
+          "staff": 5,
+          "mutation": 20
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "ice",
+        "tier": 2,
+        "hat": 1,
+        "robe": 1,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 27,
+          "head": 22,
+          "hat": 10,
+          "staff": 28,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 27,
+          "head": 22,
+          "hat": 10,
+          "staff": 28,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "fire",
+        "tier": 1,
+        "hat": 1,
+        "robe": 2,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 18,
+          "head": 3,
+          "hat": 19,
+          "staff": 5,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 18,
+          "head": 3,
+          "hat": 19,
+          "staff": 5,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 1,
+        "robe": 2,
+        "staff": 1,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 42,
+          "head": 9,
+          "hat": 10,
+          "staff": 11,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 42,
+          "head": 9,
+          "hat": 10,
+          "staff": 11,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 1,
+        "robe": 2,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 44,
+          "head": 22,
+          "hat": 10,
+          "staff": 28,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 44,
+          "head": 22,
+          "hat": 10,
+          "staff": 28,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "fire",
+        "tier": 2,
+        "hat": 1,
+        "robe": 1,
+        "staff": 1,
+        "mutation": "living_flame"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 49,
+          "head": 26,
+          "hat": 19,
+          "staff": 30,
+          "mutation": 20
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 49,
+          "head": 26,
+          "hat": 19,
+          "staff": 30,
+          "mutation": 20
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "fire",
+        "tier": 1,
+        "hat": 1,
+        "robe": 1,
+        "staff": 1,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 49,
+          "head": 26,
+          "hat": 19,
+          "staff": 30,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 49,
+          "head": 26,
+          "hat": 19,
+          "staff": 30,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "steam",
+        "tier": 2,
+        "hat": 2,
+        "robe": 1,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 53,
+          "head": 37,
+          "hat": 16,
+          "staff": 17,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 53,
+          "head": 37,
+          "hat": 16,
+          "staff": 17,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "steam",
+        "tier": 2,
+        "hat": 2,
+        "robe": 0,
+        "staff": 1,
+        "mutation": "living_flame"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 48,
+          "head": 31,
+          "hat": 16,
+          "staff": 38,
+          "mutation": 39
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 48,
+          "head": 31,
+          "hat": 16,
+          "staff": 38,
+          "mutation": 39
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 0,
+        "robe": 1,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 27,
+          "head": 22,
+          "hat": 23,
+          "staff": 24,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 27,
+          "head": 22,
+          "hat": 23,
+          "staff": 24,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "ice",
+        "tier": 2,
+        "hat": 0,
+        "robe": 1,
+        "staff": 1,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 8,
+          "head": 9,
+          "hat": 23,
+          "staff": 11,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 8,
+          "head": 9,
+          "hat": 23,
+          "staff": 11,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "ice",
+        "tier": 2,
+        "hat": 1,
+        "robe": 0,
+        "staff": 1,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 34,
+          "head": 9,
+          "hat": 10,
+          "staff": 11,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 34,
+          "head": 9,
+          "hat": 10,
+          "staff": 11,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "fire",
+        "tier": 1,
+        "hat": 2,
+        "robe": 0,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 25,
+          "head": 26,
+          "hat": 41,
+          "staff": 47,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 25,
+          "head": 26,
+          "hat": 41,
+          "staff": 47,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "fire",
+        "tier": 1,
+        "hat": 0,
+        "robe": 2,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 18,
+          "head": 3,
+          "hat": 4,
+          "staff": 5,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 18,
+          "head": 3,
+          "hat": 4,
+          "staff": 5,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "fire",
+        "tier": 1,
+        "hat": 2,
+        "robe": 0,
+        "staff": 1,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 25,
+          "head": 26,
+          "hat": 41,
+          "staff": 30,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 25,
+          "head": 26,
+          "hat": 41,
+          "staff": 30,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "steam",
+        "tier": 2,
+        "hat": 2,
+        "robe": 2,
+        "staff": 2,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 14,
+          "head": 31,
+          "hat": 16,
+          "staff": 17,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 14,
+          "head": 31,
+          "hat": 16,
+          "staff": 17,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "fae",
+        "affinity": "fire",
+        "tier": 1,
+        "hat": 2,
+        "robe": 0,
+        "staff": 1,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 7,
+          "robe": 25,
+          "head": 26,
+          "hat": 41,
+          "staff": 30,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 12,
+          "robe": 25,
+          "head": 26,
+          "hat": 41,
+          "staff": 30,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "hybrid",
+        "affinity": "fire",
+        "tier": 2,
+        "hat": 0,
+        "robe": 2,
+        "staff": 2,
+        "mutation": "living_flame"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 18,
+          "head": 52,
+          "hat": 4,
+          "staff": 47,
+          "mutation": 20
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 18,
+          "head": 52,
+          "hat": 4,
+          "staff": 47,
+          "mutation": 20
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "stoneborn",
+        "affinity": "ice",
+        "tier": 1,
+        "hat": 2,
+        "robe": 2,
+        "staff": 0,
+        "mutation": "none"
+      },
+      "frames": [
+        {
+          "wings": 0,
+          "body": 1,
+          "robe": 44,
+          "head": 22,
+          "hat": 35,
+          "staff": 24,
+          "mutation": 0
+        },
+        {
+          "wings": 0,
+          "body": 6,
+          "robe": 44,
+          "head": 22,
+          "hat": 35,
+          "staff": 24,
+          "mutation": 0
+        }
+      ]
+    },
+    {
+      "phenotype": {
+        "body": "hybrid",
+        "affinity": "ice",
+        "tier": 2,
+        "hat": 2,
+        "robe": 1,
+        "staff": 0,
+        "mutation": "crystal_wings"
+      },
+      "frames": [
+        {
+          "wings": 45,
+          "body": 1,
+          "robe": 27,
+          "head": 46,
+          "hat": 35,
+          "staff": 24,
+          "mutation": 0
+        },
+        {
+          "wings": 45,
+          "body": 6,
+          "robe": 27,
+          "head": 46,
+          "hat": 35,
+          "staff": 24,
+          "mutation": 0
+        }
+      ]
+    }
+  ]
+}
