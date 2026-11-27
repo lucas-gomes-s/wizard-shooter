@@ -8,6 +8,7 @@ const Audio = preload("res://presentation/game_audio.gd")
 const FX = preload("res://presentation/element_fx.gd")
 const Settings = preload("res://presentation/visual_settings.gd")
 const Monitor = preload("res://presentation/performance_monitor.gd")
+const Guide = preload("res://presentation/onboarding.gd")
 var failures := 0
 
 func _initialize() -> void:
@@ -22,6 +23,7 @@ func _test() -> void:
 	var app: Variant = Main.instantiate()
 	app.academy = Academy.new(42)
 	app.settings.persist=false
+	app.guide.persist=false
 	app.audio.persist_settings=false
 	app.audio.effects_enabled=false
 	app.audio.music_enabled=false
@@ -29,6 +31,26 @@ func _test() -> void:
 	await process_frame
 	check(app.screen=="title" and app.title_panel.visible and not app.academy_panel.visible,"Title initially visible")
 	check(not app.title_quick.disabled,"Quick expedition available")
+	app._open_guide()
+	await process_frame
+	check(app.guide_panel.visible and not app.title_panel.visible,"Guide accessible from title")
+	check(app.guide_content.text.contains("40 XP"),"Guide explains first fusion")
+	app._toggle_guide()
+	check(not app.guide.enabled,"Tips can be dismissed")
+	app._reset_guide()
+	check(app.guide.enabled and app.guide.lesson_count()==0,"Guide reset does not require fresh profile")
+	app._close_guide()
+	check(app.screen=="title","Guide returns to origin")
+	var saved_guide := Guide.new()
+	saved_guide.path="user://test_onboarding.cfg"
+	saved_guide.mark(Guide.MOVE)
+	saved_guide.enabled=false
+	check(saved_guide.save_settings()==OK,"Lesson preference saved")
+	var loaded_guide := Guide.new()
+	loaded_guide.path=saved_guide.path
+	loaded_guide.load_settings(false)
+	check(loaded_guide.knows(Guide.MOVE) and not loaded_guide.enabled,"Lesson progress reloads")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(saved_guide.path))
 	app._open_settings()
 	check(app.settings_panel.visible and not app.title_panel.visible,"Title settings navigation")
 	app._toggle_visual("fps")
@@ -89,6 +111,9 @@ func _test() -> void:
 	await physics_frame
 	await process_frame
 	check(app.run.special_casts==cast_count+1 and not app.elemental_fx.cast.is_empty(),"Real cast triggers visual snapshot")
+	check(app.guide.knows(Guide.SPECIAL),"Successful cast completes lesson")
+	app.guide.observe_step(app.run,app.run.player-Vector2(25,0),app.run.basic_casts,app.run.special_casts)
+	check(app.guide.knows(Guide.MOVE),"Actual travel completes movement lesson")
 	var origin: Vector2=app.elemental_fx.cast.pos
 	app.run.player+=Vector2(25,0)
 	check(app.elemental_fx.cast.pos==origin,"Cast effect remains at cast origin")
@@ -149,6 +174,7 @@ func _test() -> void:
 	var offered: String = app.run.upgrade_offer[0]
 	app._upgrade(0)
 	check(int(app.run.upgrade_ranks.get(offered,0))==1 and not app.upgrade_panel.visible,"Card selection applies original upgrade")
+	check(app.guide.knows(Guide.UPGRADE),"Applied upgrade completes lesson")
 	app.run.special_cd=3.0
 	await physics_frame
 	await process_frame
@@ -171,6 +197,7 @@ func _test() -> void:
 	check(app.result_reward.active_gain==20 and app.result_reward.apprentice_gain==5,"Actual training deltas")
 	check(app.result_reward.essence_gain==5 and app.result_reward.essence_total==old_essence+5,"Actual total essence delta")
 	check(app.result_reward.fusion_ready and app.result_return.visible and not app.result_retry.visible,"Successful retry reveals fusion readiness")
+	check(Guide.fusion_tip(app.academy,app.academy.roster[app.selected],app.academy.roster[app.partner_index]).contains("ready"),"First fusion guidance reflects committed training")
 	app._finish()
 	check(app.academy.essence==old_essence+5,"Results cannot settle rewards twice")
 	await process_frame

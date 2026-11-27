@@ -124,3 +124,6 @@ Carry forward prior technical gates: deterministic RNG and versioned schema; 100
 6. Only after Gates A/B, free cosmetics/ownership and mock store.
 
 Definition of done for every increment: documented design and acceptance tests, deterministic regressions, compatible saves or explicit migration, CI status, device/playtest evidence where needed, no secrets/generated cache committed, no browser behavior changed, known limitations explicit. Treat the next gate as the planning horizon; estimate work only after breaking down actual tasks. Revisit roadmap after each gate rather than locking content counts or dates now.
+
+## Closed beta readiness update
+Initial presentation overhaul and optional action-driven onboarding are implemented on the mobile branch of the product. Keep the content freeze for 0.2.0-beta.1: next gates are calibrated expedition timing/balance, first-fusion economy, stable selection and backup, signing/AAB/versioning, physical Android and fresh-player playtests, and Play Console preparation. Tutorial checklist completion is not evidence of usability; observe first-time testers. Do not introduce ads or payments for this test.

@@ -20,6 +20,7 @@ const Rig = preload("res://presentation/directional_rig.gd")
 const Results = preload("res://presentation/result_art.gd")
 const VisualSettings = preload("res://presentation/visual_settings.gd")
 const Profiler = preload("res://presentation/performance_monitor.gd")
+const Onboarding = preload("res://presentation/onboarding.gd")
 const PLAYFIELD := Rect2(0, 88, 360, 448)
 const CAMERA_CENTER := Vector2(180, 312)
 const FIRE := Color("#ef8052")
@@ -75,6 +76,14 @@ var settings_notice: Label
 var settings_options: Dictionary = {}
 var monitor_text := ""
 var monitor_timer := 0.0
+var guide := Onboarding.new()
+var guide_button: Button
+var guide_panel: VBoxContainer
+var guide_content: Label
+var guide_toggle: Button
+var guide_start: Button
+var guide_notice: Label
+var guide_origin := "title"
 var reveal_skip: Button
 var reveal_time := 0.0
 const REVEAL_DURATION := 1.65
@@ -130,6 +139,7 @@ func _ready() -> void:
 	add_child(audio)
 	settings.load_settings()
 	settings.apply()
+	guide.load_settings(not academy.settled_runs.is_empty() or not academy.archive.is_empty())
 	ui = Control.new()
 	ui.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	ui.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -187,6 +197,7 @@ func _build_ui() -> void:
 	settings_button=_button(ui,"Settings",_open_settings)
 	settings_button.size=Vector2(130,34)
 	_build_settings()
+	_build_guide()
 	title_menu_button = _button(ui, "Menu", _show_title)
 	title_menu_button.position = Vector2(294, 5)
 	title_menu_button.size = Vector2(58, 30)
@@ -452,7 +463,9 @@ func _show_title() -> void:
 	var unavailable := academy.blocked or academy.roster.is_empty()
 	title_quick.disabled = unavailable
 	title_endless.disabled = unavailable
+	title_quick.text="First expedition" if guide.enabled and academy.settled_runs.is_empty() else "Quick expedition"
 	title_note.text = "Open the Academy to review your profile." if unavailable else "%d essence  |  %d wizards" % [academy.essence,academy.roster.size()]
+	if not unavailable and guide.enabled and academy.settled_runs.is_empty(): title_note.text="New? Open Guide, or learn as you play."
 	_sync_visibility()
 	queue_redraw()
 
@@ -487,6 +500,9 @@ func _refresh_academy() -> void:
 	var c: Dictionary = academy.roster[selected]
 	var p2: Dictionary = academy.roster[partner_index] if partner_index>=0 else {}
 	info.text="Fusion ready" if academy.eligible(c,p2) else "Fusion requires two mature, unlocked Tier I wizards."
+	if guide.enabled:
+		var hint := Onboarding.fusion_tip(academy,c,p2)
+		if not hint.is_empty(): info.text=hint
 	difficulty_button.text="Difficulty: %s" % ["I","II","III"][difficulty-1]
 	lock_button.text="Unlock wizard" if c.locked else "Lock wizard"
 	clear_apprentice.disabled=partner_index<0
@@ -538,6 +554,71 @@ func _complete_reveal() -> void:
 	audio.play_sound("reveal",5,-10.0)
 	_sync_visibility()
 	queue_redraw()
+
+func _build_guide() -> void:
+	guide_button=_button(ui,"Guide",_open_guide)
+	guide_button.position=Vector2(8,5)
+	guide_button.size=Vector2(62,30)
+	guide_button.add_theme_font_size_override("font_size",11)
+	guide_panel=_box_at(Vector2(24,74),Vector2(312,540))
+	guide_panel.add_theme_constant_override("separation",10)
+	guide_content=_label(guide_panel,"",13)
+	guide_content.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	guide_start=_button(guide_panel,"Start guided expedition",_start_guided)
+	Fantasy.primary(guide_start)
+	guide_toggle=_button(guide_panel,"Hide tips",_toggle_guide)
+	_button(guide_panel,"Repeat combat lessons",_reset_guide)
+	guide_notice=_label(guide_panel,"",11)
+	guide_notice.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	_button(guide_panel,"Back",_close_guide)
+
+func _open_guide() -> void:
+	if screen not in ["title","academy"]: return
+	guide_origin=screen
+	screen="guide"
+	guide_notice.text=""
+	_refresh_guide()
+	_sync_visibility()
+	queue_redraw()
+
+func _close_guide() -> void:
+	if screen!="guide": return
+	if guide_origin=="academy": _show_academy()
+	else: _show_title()
+
+func _refresh_guide() -> void:
+	var lines := PackedStringArray()
+	lines.append("COMBAT LESSONS  %d / 4" % guide.lesson_count())
+	lines.append(("✓ " if guide.knows(Onboarding.MOVE) else "□ ")+"Move: drag the lower-left pad (WASD or arrows).")
+	lines.append(("✓ " if guide.knows(Onboarding.BASIC) else "□ ")+"Basic magic attacks automatically.")
+	lines.append(("✓ " if guide.knows(Onboarding.SPECIAL) else "□ ")+"Tap CAST (Space) to use your special.")
+	lines.append(("✓ " if guide.knows(Onboarding.UPGRADE) else "□ ")+"Earn XP and select a run upgrade.")
+	lines.append("Avoid orange attack zones and charge lines. Defeat the dragon, or extract from endless mode after 30 seconds.")
+	lines.append("")
+	lines.append("BLOODLINE")
+	lines.append(("✓ " if not academy.settled_runs.is_empty() else "□ ")+"Finish a run to save training XP and essence, even on defeat.")
+	lines.append("Summon costs 10 essence; victory awards a founder. Assign an apprentice for 25% shared XP.")
+	lines.append(("✓ " if not academy.archive.is_empty() else "□ ")+"Fuse two unlocked Tier I wizards with 40 XP each. Parents retire permanently; their Tier II child inherits traits.")
+	guide_content.text="\n".join(lines)
+	guide_toggle.text="Hide combat and training tips" if guide.enabled else "Show combat and training tips"
+	guide_start.disabled=academy.blocked or academy.roster.is_empty()
+
+func _toggle_guide() -> void:
+	guide.enabled=not guide.enabled
+	var error := guide.save_settings()
+	guide_notice.text="Preference saved." if error==OK else "Could not save preference."
+	_refresh_guide()
+
+func _reset_guide() -> void:
+	guide.reset_lessons()
+	guide_notice.text="Combat lessons reset. Your wizards are unchanged."
+	_refresh_guide()
+
+func _start_guided() -> void:
+	if screen!="guide" or academy.blocked: return
+	guide.enabled=true
+	guide.save_settings()
+	_start(false)
 
 func _build_settings() -> void:
 	settings_panel=_box_at(Vector2(24,92),Vector2(312,500))
@@ -630,6 +711,7 @@ func _start(endless: bool) -> void:
 	result_before.clear()
 	result_reward.clear()
 	profiler.reset()
+	guide.begin_run()
 	monitor_text=""
 	monitor_timer=0.0
 	displayed_hp = 1.0
@@ -665,7 +747,9 @@ func _extract() -> void:
 
 func _upgrade(choice: int) -> void:
 	if screen == "run":
+		var previous: int=run.pending_upgrades
 		run.upgrade(choice)
+		if guide.enabled and run.pending_upgrades<previous: guide.mark(Onboarding.UPGRADE)
 		_clear_input()
 		_sync_visibility()
 
@@ -711,6 +795,8 @@ func _sync_visibility() -> void:
 	upgrade_panel.visible = in_run and run != null and run.pending_upgrades > 0
 	if upgrade_panel.visible: _refresh_upgrades()
 	pause_button.text = ">" if paused else "II"
+	guide_panel.visible=screen=="guide"
+	guide_button.visible=screen in ["title","academy"]
 	settings_panel.visible=screen=="settings"
 	settings_button.visible=screen=="title" or (in_run and paused)
 	settings_button.position=Vector2(115,604) if screen=="title" else Vector2(115,340)
@@ -786,6 +872,7 @@ func _physics_process(dt: float) -> void:
 		var audio_before := GameAudio.snapshot(run)
 		var sim_start := Time.get_ticks_usec()
 		run.step(dt, movement, special_requested or (space and not prev_space))
+		guide.observe_step(run,previous,int(audio_before.basic),int(audio_before.special))
 		profiler.record_step(Time.get_ticks_usec()-sim_start,run,dungeon_art.cache.size(),sprites.pose_cache.size())
 		if run.special_casts>audio_before.special: elemental_fx.capture(run)
 		audio.after_step(audio_before,run)
@@ -822,6 +909,10 @@ func _physics_process(dt: float) -> void:
 
 func _draw() -> void:
 	draw_rect(Rect2(0, 0, 360, 640), Color("#1b1924"))
+	if screen=="guide":
+		_draw_title("WIZARD GUIDE","Learn by playing")
+		Fantasy.frame(self,Rect2(12,62,336,566))
+		return
 	if screen=="settings":
 		_draw_title("SETTINGS","Audio, visuals and diagnostics")
 		Fantasy.frame(self,Rect2(12,74,336,544))
@@ -935,6 +1026,11 @@ func _draw() -> void:
 		var lines := monitor_text.split("\n")
 		for i in range(lines.size()): Fantasy.text_at(self,lines[i],Vector2(10,511+i*13),10,Fantasy.IVORY)
 	Fantasy.text_at(self,str(run.kit.special.name),Vector2(298,631),10,Fantasy.MUTED,true)
+	if not paused:
+		var hint := guide.tip(run)
+		if not hint.is_empty():
+			var lines := hint.split("\n")
+			for i in range(lines.size()): Fantasy.text_at(self,lines[i],Vector2(180,557+i*15),11,Fantasy.GOLD,true)
 	if run.site_notice_time > 0:
 		draw_rect(Rect2(8, 94, 344, 23), Color(0.09, 0.07, 0.13, 0.90))
 		_center_text(run.site_notice, Vector2(180, 110), 12, Color("#e6d2ac"))
