@@ -93,7 +93,7 @@ export function drawProjectile(ctx,s,c,tick,mode,hostile=false){
   const length=hostile?18:s.school==='fire'?25:18;
   if(s.school==='lightning'&&!hostile)line(ctx,boltGeometry(x-dx*length,y-dy*length,x,y,tick,5),color,2.5);
   else {line(ctx,[[x-dx*length,y-dy*length],[x,y]],color+'55',r*2.6);line(ctx,[[x-dx*length*.7,y-dy*length*.7],[x,y]],color,Math.max(2,r))}
-  if(mode==='full')glow(ctx,x,y,r*3+3,color);
+  if(mode==='full')ring(ctx,x,y,r+3,color+'44',2,color+'22');
  }
  if(s.school==='ice'&&!hostile)crystal(ctx,x,y,r+2,Math.atan2(dy,dx));
  else if(s.school==='arcane'&&!hostile){path(ctx,[polar(x,y,r+2,0),polar(x,y,r+2,Math.PI/2),polar(x,y,r+2,Math.PI),polar(x,y,r+2,3*Math.PI/2)],true);ctx.fillStyle=color;ctx.fill();ctx.strokeStyle='#fff0ff';ctx.lineWidth=1;ctx.stroke()}
@@ -109,14 +109,15 @@ export class CombatFX{
  collect(events){
   if(this.mode==='off')return;
   for(const e of events){
-   const color=PALETTE[e.school]||({hurt:'#ff626b',kill:'#e5c48b',heal:'#8cffae',block:'#d9eaff',teleport:'#cf90ff',phase:'#ffb065',drain:'#f06185'}[e.type])||PALETTE.neutral;
+   const visualSchool=e.visualSchool||e.school;
+   const color=PALETTE[visualSchool]||({hurt:'#ff626b',kill:'#e5c48b',heal:'#8cffae',block:'#d9eaff',teleport:'#cf90ff',phase:'#ffb065',drain:'#f06185'}[e.type])||PALETTE.neutral;
    if(['burst','chain','shield','freeze','block','teleport','phase','drain','soul','crit','cast','victory'].includes(e.type)){
-    this.add({...e,color,life:e.type==='phase'?40:e.type==='soul'?24:e.type==='burst'?22:16,priority:!['cast','crit'].includes(e.type)});
+    this.add({...e,school:visualSchool,color,life:e.type==='phase'?40:e.type==='soul'?24:e.type==='burst'?22:16,priority:!['cast','crit'].includes(e.type)});
    }
    if(['hit','heal','hurt','block','crit'].includes(e.type))this.add({...e,type:'label',color,life:28,vy:-.75,label:e.type==='block'?'BLOCK':e.type==='crit'?'CRIT':(e.type==='heal'?'+':'−')+Math.ceil(e.value)});
    if(['hit','kill','burst','freeze','cast','teleport','block'].includes(e.type)){
     const n=this.mode==='full'?(e.type==='kill'?12:e.type==='burst'?10:5):2;
-    for(let i=0;i<n;i++){const a=this.rng()*TAU,speed=1+this.rng()*2.7;this.add({type:'spark',x:e.x,y:e.y,vx:Math.cos(a)*speed,vy:Math.sin(a)*speed,color,life:12+Math.floor(this.rng()*10),school:e.school})}
+    for(let i=0;i<n;i++){const a=this.rng()*TAU,speed=1+this.rng()*2.7;this.add({type:'spark',x:e.x,y:e.y,vx:Math.cos(a)*speed,vy:Math.sin(a)*speed,color,life:12+Math.floor(this.rng()*10),school:visualSchool})}
    }
   }
  }
