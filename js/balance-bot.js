@@ -27,6 +27,7 @@ export function botInput(g){
 export function botChoose(g){
  const p=g.player;
  const score=o=>{
+  if(o.kind==='mastery')return 9.5;
   if(o.kind==='synergy')return 9;
   if(o.kind==='basic'){if(o.index===2)return 8;if(o.index===0)return p.maxSpeed<4?10:3;if(o.index===3)return 7;return 4;}
   return {fire:6.4,ice:7.2,lightning:6.6,arcane:6.8,necro:5.8}[o.id]+o.rank*.12;
