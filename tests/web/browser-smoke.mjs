@@ -24,7 +24,7 @@ try{
   await page.locator('[data-school="ice"]').click();
   await start.click();
   await page.locator('#overlay').waitFor({state:'hidden'});
-  assert.ok((await page.locator('#spellBuild').textContent()).includes('Cryomancy 1'));
+  await page.waitForFunction(()=>document.getElementById('spellBuild').textContent.includes('Cryomancy 1'));
   const canvas=page.locator('#gameArea');
   const size=await canvas.boundingBox();assert.ok(size.width>1000&&size.height>500);
   await page.keyboard.down('KeyD');await page.keyboard.down('ArrowRight');
@@ -62,12 +62,12 @@ try{
   await page.locator('#bossHud').waitFor({state:'visible'});
   assert.ok((await page.locator('#bossName').textContent()).includes('Ancient Dragon'));
   await page.screenshot({path:'web-smoke-artifacts/boss.png'});
-  await page.evaluate(()=>{const g=window.__wizardTestGame;g.boss.expGiven=0;g.damage(g.boss,g.boss.health);});
+  await page.evaluate(()=>{const g=window.__wizardTestGame;g.enemies=g.enemies.filter(e=>!e.miniboss);g.boss.expGiven=0;g.damage(g.boss,g.boss.health);});
   await page.locator('#victoryPanel').waitFor({state:'visible'});
   await page.screenshot({path:'web-smoke-artifacts/victory.png'});
   await page.locator('#endlessButton').click();
   await page.locator('#overlay').waitFor({state:'hidden'});
-  assert.equal(await page.locator('#bossName').textContent(),'Endless survival');
+  await page.waitForFunction(()=>document.getElementById('bossName').textContent==='Endless survival');
   assert.deepEqual(errors,[]);
   console.log('Browser smoke passed: assets, start, movement input, pause, confirmation, effects, resizing, restart, return to title.');
 }finally{await browser.close();}
