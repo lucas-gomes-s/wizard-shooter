@@ -21,11 +21,18 @@ try{
   await start.waitFor({state:'visible'});await page.waitForFunction(()=>!document.getElementById('startButton').disabled);
   await page.screenshot({path:'web-smoke-artifacts/title.png'});
   await page.locator('#profileButton').click();await page.locator('#profilePanel').waitFor({state:'visible'});
-  assert.equal(await page.locator('#codexEntries .codex-group').count(),8);
+  assert.equal(await page.locator('#codexEntries .codex-group').count(),10);
   await page.screenshot({path:'web-smoke-artifacts/profile.png'});
   await page.locator('#profileBack').click();
   assert.equal(await page.locator('#contractSelect option[value="dry"]').isDisabled(),true);
   assert.equal(await page.locator('#starterCards .starter-card').count(),5);
+  await page.locator('#environmentSelect').selectOption('frost');
+  await page.waitForFunction(()=>document.getElementById('biomeName').textContent.includes('Frozen Hollow'));
+  await page.screenshot({path:'web-smoke-artifacts/frost-title.png'});
+  await page.locator('#environmentSelect').selectOption('forge');
+  await page.waitForFunction(()=>document.getElementById('biomeName').textContent.includes('Ashen Forge'));
+  await page.screenshot({path:'web-smoke-artifacts/forge-title.png'});
+  await page.locator('#environmentSelect').selectOption('crypt');
   await page.locator('[data-school="ice"]').click();
   await start.click();
   await page.locator('#overlay').waitFor({state:'hidden'});
@@ -131,7 +138,7 @@ try{
   await page.locator('#overlay').waitFor({state:'hidden'});
   await page.waitForFunction(()=>document.getElementById('bossName').textContent==='Endless survival');
   const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('wizard-shooter.profile.v1')));
-  assert.equal(saved.wins,1);assert.ok(saved.achievements.includes('dragon'));
+  assert.equal(saved.wins,1);assert.ok(saved.winningEnvironments.includes('crypt'));assert.ok(saved.achievements.includes('dragon'));
   await page.reload();await page.locator('#homePanel').waitFor({state:'visible'});
   await page.waitForFunction(()=>!document.getElementById('startButton').disabled);
   assert.equal(await page.locator('#contractSelect option[value="dry"]').isDisabled(),false);
