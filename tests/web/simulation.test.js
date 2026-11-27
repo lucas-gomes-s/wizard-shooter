@@ -12,8 +12,8 @@ test('diagonal speed equals cardinal speed; opposing inputs cancel',()=>{
 });
 test('held aim fires on simulation cooldown, not keyboard repeat',()=>{
   const g=create();
-  for(let i=0;i<100;i++)g.step({aim:[1,0]});
-  assert.equal(g.shots.length,2);
+  let casts=0;for(let i=0;i<100;i++){g.step({aim:[1,0]});casts+=g.events.filter(e=>e.type==='cast').length;}
+  assert.equal(casts,2);
 });
 test('restart clears runtime state and leaves config unchanged',()=>{
   const g=create();const before=JSON.stringify(config.monsters);
