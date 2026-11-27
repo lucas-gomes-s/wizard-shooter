@@ -6,7 +6,7 @@ import {canLearnSchool,upgradeOffers,eligibleMastery} from '../../js/magic.js';
 import {PROFILE_KEY,freshProfile,normalizeProfile,loadProfile,saveProfile,recordProgress,newProgressSession,runConfig,available,contracts,sigils,achievements} from '../../js/progression.js';
 const make=()=>{const g=new Game(config,()=>.5);g.start('fire');return g};
 test('fresh profile unlocks only standard rules and default cosmetic',()=>{
- const p=freshProfile();assert.equal(achievements.length,14);
+ const p=freshProfile();assert.equal(achievements.length,15);
  assert.deepEqual(contracts.filter(c=>available(contracts,c.id,p)).map(c=>c.id),['standard']);
  assert.deepEqual(sigils.filter(c=>available(sigils,c.id,p)).map(c=>c.id),['violet']);
 });
