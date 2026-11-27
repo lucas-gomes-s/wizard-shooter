@@ -91,7 +91,7 @@ export function stepHazards(game,hash=null){
   if(t>=h.until)return false;
   if(t>=h.activeAt&&inCircle(p,h.x,h.y,h.radius)){
    if(h.type==='web')p.webUntil=Math.max(p.webUntil||0,t+12);
-   else if(!h.hit){h.hit=true;if(h.type==='frost-fissure')p.frostUntil=Math.max(p.frostUntil||0,t+75);const dealt=game.hurtPlayer(h.damage,'hazard',hash,h.type);game.recordDungeonHazard?.(h,dealt);}
+   else if(!h.hit){h.hit=true;const dealt=game.hurtPlayer(h.damage,'hazard',hash,h.type);if(dealt>0&&h.type==='frost-fissure')p.frostUntil=Math.max(p.frostUntil||0,t+75);game.recordDungeonHazard?.(h,dealt);}
   }
   return true;
  });
