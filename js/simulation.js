@@ -81,7 +81,7 @@ export class Game{
  }
  directHit(enemy,shot,hash){
   const p=this.player,m=p.magic,r=m.ranks,combos=m.synergies;
-  const critical=r.lightning&&this.rng()<.05*r.lightning+(m.mastery==='tempest'?.2:0);const armor=frontalMultiplier(enemy,shot);const damage=shot.damage*(critical?2:1)*armor*(m.mastery==='absolute-zero'&&enemy.slowUntil>this.tick?1.4:1);
+  const critical=r.lightning&&this.rng()<.05*r.lightning+(m.mastery==='tempest'?.2:0);const armor=frontalMultiplier(enemy,shot);const damage=shot.damage*(critical?2:1)*armor*(enemy.slowUntil>this.tick?(m.mastery==='absolute-zero'?1.4:r.ice>=3?1+(this.config.combatBalance?.chilledDamageBonus??0):1):1);
   if(critical)this.emitVisual('crit',enemy,damage,'lightning');if(armor<1)this.emitVisual('block',enemy,damage);
   trackHit(this.telemetry,this.tick,shot);this.damage(enemy,damage,shot.school,'direct:'+String(shot.school||'untrained'));
   if(shot.meteor&&!shot.meteor.used){shot.meteor.used=true;this.pulse(hash,enemy,65,p.shotDmg*(attuned(p,'meteor','fire')?.65:.45),'fire',null,'gear:meteor');}
