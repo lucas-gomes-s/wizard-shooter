@@ -79,6 +79,14 @@ try{
   await page.locator('#lootPanel').waitFor({state:'visible'});
   await page.locator('#skipLoot').click();await page.locator('#overlay').waitFor({state:'hidden'});
   assert.equal(await page.evaluate(()=>window.__wizardTestGame.lootHistory.length),1);
+  await page.evaluate(()=>{const g=window.__wizardTestGame;g.tick=210*50;g.nextTreasure=1;g.step();});
+  await page.locator('#eventHud').waitFor({state:'visible'});
+  assert.ok((await page.locator('#eventTitle').textContent()).includes('OPTIONAL CHALLENGE'));
+  await page.screenshot({path:'web-smoke-artifacts/event-offer.png'});
+  await page.evaluate(()=>{const g=window.__wizardTestGame,e=g.dungeon.active;g.player.x=e.x-20;g.player.y=e.y-20;});
+  await page.waitForFunction(()=>window.__wizardTestGame.dungeon.active?.stage==='active');
+  await page.waitForFunction(()=>document.getElementById('eventTitle').textContent.includes('ACTIVE'));
+  await page.screenshot({path:'web-smoke-artifacts/event-active.png'});
   await page.keyboard.press('Escape');await page.locator('#pausePanel').waitFor({state:'visible'});
   const time=await page.locator('#timer').textContent();await page.waitForTimeout(1200);assert.equal(await page.locator('#timer').textContent(),time);
   await page.screenshot({path:'web-smoke-artifacts/pause.png'});

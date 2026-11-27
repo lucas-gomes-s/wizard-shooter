@@ -1,3 +1,4 @@
+import {eventById,eventObjective} from './dungeon-events.js';
 import {equipmentSlots,itemById,rarityColors} from './equipment.js';
 import * as config from './data.js';
 import { Game, FixedClock } from './simulation.js';
@@ -182,7 +183,7 @@ function updateBuild(){const m=game.player.magic,signature=JSON.stringify([m.ran
 function meter(id,value){const percent=Math.round(Math.max(0,Math.min(1,value))*100),node=$(id);node.firstElementChild.style.width=percent+'%';node.setAttribute('aria-valuenow',percent);}
 function updateBoss(){const boss=game.boss||game.miniboss,signature=boss?[boss.title||boss.name,Math.ceil(boss.health),boss.bossPhase].join('|'):String(game.endless);if(signature===lastBoss)return;lastBoss=signature;const node=$('bossHud');node.hidden=!boss&&!game.endless;if(boss){$('bossName').textContent=boss.boss?'Ancient Dragon · Phase '+boss.bossPhase+' / 3':boss.title;$('bossHealth').textContent=Math.ceil(boss.health)+' / '+boss.maxHealth;meter('bossMeter',boss.health/boss.maxHealth);$('bossMeter').hidden=false}else{$('bossName').textContent='Endless survival';$('bossHealth').textContent='Dragon defeated';$('bossMeter').hidden=true}}
 function updateHud(){
-  updateBoss();updateGear();
+  updateBoss();updateGear();updateDungeon();
   updateBuild();const p=game.player,health=Math.ceil(p.health),max=p.maxHealth,maxed=p.level>=config.maxLevel;
   const xp=maxed?'MAX':p.currentExp+' / '+p.expNeeded+' XP';
   const signature=[health,max,p.level,xp,game.seconds,game.kills].join('|');if(signature===lastHud)return;lastHud=signature;
@@ -202,6 +203,34 @@ function background(){
 }
 function shadow(x,y,w,h){ctx.fillStyle='rgba(6,5,11,.43)';ctx.beginPath();ctx.ellipse(x+w/2,y+h*.88,w*.44,h*.18,0,0,Math.PI*2);ctx.fill();}
 function bar(x,y,w,h,fraction,color){const f=Math.max(0,Math.min(1,fraction));ctx.fillStyle='#1c1723';ctx.fillRect(x,y,w,h);ctx.fillStyle=color;ctx.fillRect(x,y,w*f,h);}
+function updateDungeon(){
+ const e=game.dungeon.active,n=game.dungeon.notice,node=$('eventHud');
+ node.hidden=!e&&!(n&&n.until>game.tick);
+ if(node.hidden)return;
+ const def=e?eventById[e.id]:null;
+ const heading=e?def.glyph+' '+def.name+' · '+(e.stage==='offered'?'OPTIONAL CHALLENGE':'ACTIVE')+' · '+Math.ceil(Math.max(0,e.until-game.tick)/50)+'s':n.text;
+ const objective=e?(e.stage==='offered'?def.description+' '+eventObjective(game):eventObjective(game)):'';
+ if($('eventTitle').textContent!==heading)$('eventTitle').textContent=heading;
+ if($('eventObjective').textContent!==objective)$('eventObjective').textContent=objective;
+ node.style.setProperty('--event-color',def?.color||(n.outcome==='completed'?'#8ae1ae':'#c5ac9b'));
+ node.classList.toggle('with-boss',!!(game.boss||game.miniboss));
+}
+function drawDungeon(c){
+ const e=game.dungeon.active;if(!e)return;const def=eventById[e.id];
+ function marker(wx,wy,r,glyph,label){
+  const x=wx-c.x,y=wy-c.y,sx=Math.max(24,Math.min(game.width-24,x)),sy=Math.max(45,Math.min(game.height-28,y));
+  ctx.save();ctx.strokeStyle=def.color;ctx.fillStyle=def.color;ctx.lineWidth=2.5;
+  if(sx!==x||sy!==y){ctx.translate(sx,sy);ctx.rotate(Math.atan2(y-sy,x-sx));ctx.beginPath();ctx.moveTo(13,0);ctx.lineTo(-6,-8);ctx.lineTo(-6,8);ctx.closePath();ctx.fill();ctx.restore();return;}
+  ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle=def.color+'22';ctx.fill();ctx.stroke();
+  ctx.beginPath();ctx.arc(x,y,Math.max(8,r-7),0,Math.PI*2);ctx.setLineDash([5,6]);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=def.color;ctx.textAlign='center';ctx.font='bold 25px system-ui';ctx.fillText(glyph,x,y+8);
+  ctx.font='bold 11px system-ui';ctx.fillText(label,x,y-r-9);ctx.restore();
+ }
+ if(e.stage==='offered')marker(e.x,e.y,e.radius,def.glyph,'OPTIONAL CHALLENGE');
+ else if(e.id==='shrine')marker(e.x,e.y,e.radius,def.glyph,'RITUAL CIRCLE');
+ else if(e.id==='anomaly'){for(const rune of e.runes)if(!rune.collected)marker(rune.x,rune.y,21,'✧','RUNE');}
+ else if(e.id==='guardian'&&e.target?.health>0)marker(e.target.x+e.target.width/2,e.target.y+e.target.height/2,e.target.width/2+11,'','GUARDIAN');
+}
 function drawTreasure(c){
  for(const chest of game.chests){
   const x=chest.x+16-c.x,y=chest.y+16-c.y,color=rarityColors[['common','rare','epic','legendary'][chest.tier]]||'#ffd277';
@@ -217,11 +246,11 @@ function render(){
   const {width,height,dpr}=surface,{scale,x,y}=fitViewport(width,height,game.width,game.height);
   ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#14121b';ctx.fillRect(0,0,width,height);
   ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);ctx.beginPath();ctx.rect(0,0,game.width,game.height);ctx.clip();
-  background();const c=game.camera,p=game.player;drawTreasure(c);
+  background();const c=game.camera,p=game.player;drawTreasure(c);drawDungeon(c);
   for(const h of game.hazards)if(game.visible({x:h.x-h.radius,y:h.y-h.radius,width:h.radius*2,height:h.radius*2},30))drawHazard(ctx,h,c,game.tick,fx.mode);
   for(const e of game.enemies)if(e.action&&game.visible(e,350))drawEnemyWarning(ctx,e,c,game.tick,fx.mode);
   for(const o of game.potions)if(game.visible(o,0)){const px=o.x-c.x,py=o.y-c.y;shadow(px,py,o.width,o.height);ctx.strokeStyle='#8ae1ae99';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(px+o.width/2,py+o.height/2,17,0,Math.PI*2);ctx.stroke();sprite(o.imageSrc,px,py,o.width,o.height,'#82dba5');}
-  for(const e of game.enemies)if(game.visible(e,0)){const px=e.x-c.x,py=e.y-c.y;shadow(px,py,e.width,e.height);sprite(e.imageSrc,px,py,e.width,e.height,'#799653');if(e.elite||e.miniboss){ctx.strokeStyle='#e5c48b';ctx.lineWidth=2;ctx.strokeRect(px-3,py-3,e.width+6,e.height+6);ctx.fillStyle='#e5c48b';ctx.font='bold 11px system-ui';ctx.textAlign='center';ctx.fillText(e.miniboss?'MINIBOSS':'ELITE',px+e.width/2,py-13)}drawEnemyStatus(ctx,e,c,game.tick,fx.mode);if(keys.has('KeyQ'))bar(px,py-8,e.width,4,e.health/e.maxHealth,'#e27279');}
+  for(const e of game.enemies)if(game.visible(e,0)){const px=e.x-c.x,py=e.y-c.y;shadow(px,py,e.width,e.height);sprite(e.imageSrc,px,py,e.width,e.height,'#799653');if(e.elite||e.miniboss){ctx.strokeStyle='#e5c48b';ctx.lineWidth=2;ctx.strokeRect(px-3,py-3,e.width+6,e.height+6);ctx.fillStyle='#e5c48b';ctx.font='bold 11px system-ui';ctx.textAlign='center';ctx.fillText(e.eventGuardian?'GUARDIAN':e.miniboss?'MINIBOSS':'ELITE',px+e.width/2,py-13)}drawEnemyStatus(ctx,e,c,game.tick,fx.mode);if(keys.has('KeyQ')||e.eventGuardian)bar(px,py-8,e.width,4,e.health/e.maxHealth,'#e27279');}
   const px=p.x-c.x,py=p.y-c.y;
   ctx.strokeStyle='#d6b8ff80';ctx.lineWidth=1.5;ctx.beginPath();ctx.ellipse(px+p.width/2,py+p.height*.82,22,12,0,0,Math.PI*2);ctx.stroke();
   shadow(px,py,p.width,p.height);sprite('./images/wizard-hat.png',px,py,p.width,p.height,'#bda0ed');

@@ -17,11 +17,11 @@ export function initEnemy(template,x,y,tick,elite=false){
 }
 function fire(game,e,angle,damage,speed=5,radius=6){
  if(game.hostiles.length>=HOSTILE_CAP)return;
- const c=centerOf(e);game.hostiles.push({x:c.x,y:c.y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,radius,damage,age:0,source:e.name});
+ const c=centerOf(e);game.hostiles.push({x:c.x,y:c.y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,radius,damage,age:0,source:e.name,eventSerial:e.eventSerial});
 }
-function hazard(game,type,x,y,radius,delay,duration,damage=0){
+function hazard(game,type,x,y,radius,delay,duration,damage=0,eventSerial=undefined){
  if(game.hazards.length>=HAZARD_CAP)return;
- game.hazards.push({type,x,y,radius,activeAt:game.tick+delay,until:game.tick+delay+duration,damage,hit:false});
+ game.hazards.push({type,x,y,radius,activeAt:game.tick+delay,until:game.tick+delay+duration,damage,hit:false,eventSerial});
 }
 function begin(e,tick,kind,duration,extra={}){e.action={kind,until:tick+duration,...extra}}
 export function stepEnemy(game,e,factor=1){
@@ -55,7 +55,7 @@ export function stepEnemy(game,e,factor=1){
  }
  switch(e.name){
   case 'Spider':
-   if(t>=e.nextAttack&&d<180){const c=centerOf(p);hazard(game,'web',c.x,c.y,46,32,170);e.nextAttack=t+190;}
+   if(t>=e.nextAttack&&d<180){const c=centerOf(p);hazard(game,'web',c.x,c.y,46,32,170,0,e.eventSerial);e.nextAttack=t+190;}
    pursuit(e,p,speed*.8);break;
   case 'Orc':
    if(t>=e.nextAttack&&d<220&&d>38){begin(e,t,'orc-windup',38,{angle:aim(e,p)});return;}
@@ -91,7 +91,7 @@ export function stepHazards(game,hash=null){
   if(t>=h.until)return false;
   if(t>=h.activeAt&&inCircle(p,h.x,h.y,h.radius)){
    if(h.type==='web')p.webUntil=Math.max(p.webUntil||0,t+12);
-   else if(!h.hit){h.hit=true;game.hurtPlayer(h.damage,'hazard',hash);}
+   else if(!h.hit){h.hit=true;const dealt=game.hurtPlayer(h.damage,'hazard',hash);game.recordDungeonHazard?.(h,dealt);}
   }
   return true;
  });

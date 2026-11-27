@@ -25,6 +25,15 @@ export function botInput(g){
  }
  const chest=(g.chests||[]).map(o=>{const [cx,cy]=center(o);return {dx:cx-px,dy:cy-py,d:Math.hypot(cx-px,cy-py)}}).sort((a,b)=>a.d-b.d)[0];
  if(chest&&chest.d<500&&(!target||target.d>85)){x+=chest.dx/Math.max(1,chest.d)*2;y+=chest.dy/Math.max(1,chest.d)*2;}
+ const event=g.dungeon?.active;
+ if(event&&p.health>p.maxHealth*.35){
+  let objective=null;
+  if(event.stage==='offered')objective=event;
+  else if(event.id==='shrine')objective=event;
+  else if(event.id==='anomaly')objective=event.runes.filter(r=>!r.collected).sort((a,b)=>Math.hypot(a.x-px,a.y-py)-Math.hypot(b.x-px,b.y-py))[0];
+  else if(event.id==='guardian'&&event.target){const [gx,gy]=center(event.target);if(Math.hypot(gx-px,gy-py)>130)objective={x:gx,y:gy};}
+  if(objective&&(!target||target.d>65)){const dx=objective.x-px,dy=objective.y-py,d=Math.hypot(dx,dy);if(d>15){x+=dx/d*2.5;y+=dy/d*2.5;}}
+ }
  return {x,y,aim};
 }
 export function botLoot(g){
@@ -56,7 +65,7 @@ export function simulate(config,{school='fire',seed=1,seconds=180,decisionTicks=
   while(lastLevel<g.player.level){spentXP+=config.levels[lastLevel-1];lastLevel++}
   earnedXP=spentXP+g.player.currentExp;
  }
- return {school,seed,seconds:g.tick/50,phase:g.phase,level:g.player.level,firstUpgrade,kills:g.kills,xp:earnedXP,health:Math.round(g.player.health),maxEnemies,build:g.player.magic.ranks,equipment:{...g.player.equipment},chestsOpened:g.chestsOpened,lootHistory:g.lootHistory};
+ return {school,seed,seconds:g.tick/50,phase:g.phase,level:g.player.level,firstUpgrade,kills:g.kills,xp:earnedXP,health:Math.round(g.player.health),maxEnemies,build:g.player.magic.ranks,equipment:{...g.player.equipment},chestsOpened:g.chestsOpened,lootHistory:g.lootHistory,eventHistory:g.dungeon.history};
 }
 export function benchmark(config,{seconds=180,seeds=[1,2,3],decisionTicks=5}={}){
  return schools.flatMap(s=>seeds.map(seed=>simulate(config,{school:s.id,seed,seconds,decisionTicks})));
