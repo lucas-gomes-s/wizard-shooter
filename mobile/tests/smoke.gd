@@ -41,12 +41,15 @@ func _initialize() -> void:
 	var a: Dictionary = academy.roster[0]
 	var b: Dictionary = academy.roster[1]
 	check(not academy.eligible(a, b), "Immature parents cannot fuse")
+	check(academy.fusion_hint(a, b).contains("mature"), "Ineligible fusion hint")
 	check(academy.reward(1, a, b, 160, false), "First reward")
 	check(not academy.reward(1, a, b, 160, false), "Duplicate reward rejected")
 	check(int(b.xp) == 40, "Shared XP")
+	check(academy.fusion_hint(a, b).contains("guaranteed"), "Eligible fusion hint")
 	var child: Dictionary = academy.fuse(a, b)
 	check(not child.is_empty() and academy.archive.size() == 2 and academy.roster.size() == 1, "Fusion retires parents")
 	check(not academy.eligible(a, b), "Retired parents not reusable")
+	check(academy.parents_of(child).size() == 2, "Lineage resolves archived parents")
 	var p: Dictionary = child.phenotype
 	var run := RunModel.new(p, true, 1, 7)
 	var start: Vector2 = run.player

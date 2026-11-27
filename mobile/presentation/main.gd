@@ -38,7 +38,20 @@ var result_panel: VBoxContainer
 var academy_panel: VBoxContainer
 var run_hud: Label
 var difficulty_button: Button
-var confirm_fusion: ConfirmationDialog
+var fusion_panel: VBoxContainer
+var fusion_hint: Label
+var fusion_confirm: Button
+var reveal_panel: VBoxContainer
+var reveal_info: Label
+var revealed: Dictionary = {}
+var active_picker: OptionButton
+var partner_picker: OptionButton
+var status_label: Label
+var fuse_button: Button
+var summon_button: Button
+var lineage_panel: VBoxContainer
+var lineage_info: Label
+var lineage_index := 0
 var archive_dialog: AcceptDialog
 var archive_text: RichTextLabel
 var lock_button: Button
@@ -51,8 +64,28 @@ func _ready() -> void:
 	ui.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	ui.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(ui)
+	ui.theme = _make_theme()
 	_build_ui()
 	_show_academy()
+
+func _make_theme() -> Theme:
+	var theme := Theme.new()
+	theme.default_font_size = 14
+	for state in ["normal", "hover", "pressed", "disabled"]:
+		var style := StyleBoxFlat.new()
+		style.bg_color = Color("#383044") if state == "normal" else (Color("#52435f") if state == "hover" else (Color("#705774") if state == "pressed" else Color("#25232c")))
+		style.border_color = Color("#75627f") if state != "disabled" else Color("#393542")
+		style.set_border_width_all(1)
+		style.set_corner_radius_all(3)
+		style.content_margin_left = 8
+		style.content_margin_right = 8
+		style.content_margin_top = 5
+		style.content_margin_bottom = 5
+		theme.set_stylebox(state, "Button", style)
+		theme.set_stylebox(state, "OptionButton", style)
+	theme.set_color("font_color", "Button", Color("#e9dfd0"))
+	theme.set_color("font_disabled_color", "Button", Color("#807789"))
+	return theme
 
 func _button(parent: Node, title: String, action: Callable) -> Button:
 	var b := Button.new()
@@ -78,20 +111,62 @@ func _box_at(pos: Vector2, size: Vector2) -> VBoxContainer:
 	ui.add_child(v)
 	return v
 
+func _picker(parent: Node, callback: Callable) -> OptionButton:
+	var picker := OptionButton.new()
+	picker.fit_to_longest_item = false
+	picker.custom_minimum_size = Vector2(0, 34)
+	picker.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	picker.item_selected.connect(callback)
+	parent.add_child(picker)
+	return picker
+
+func _pair(parent: Node) -> HBoxContainer:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 6)
+	parent.add_child(row)
+	return row
+
 func _build_ui() -> void:
-	academy_panel = _box_at(Vector2(16, 118), Vector2(328, 516))
-	_label(academy_panel, "THE ACADEMY", 21)
-	info = _label(academy_panel, "")
-	_button(academy_panel, "Next wizard", _next_wizard)
-	_button(academy_panel, "Next fusion / training partner", _next_partner)
-	_button(academy_panel, "Summon  (10 essence)", _summon)
-	_button(academy_panel, "Fuse selected pair", _ask_fuse)
+	academy_panel = _box_at(Vector2(16, 205), Vector2(328, 420))
+	var pickers := _pair(academy_panel)
+	active_picker = _picker(pickers, _select_active)
+	partner_picker = _picker(pickers, _select_partner)
+	info = _label(academy_panel, "", 13)
+	info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var actions := _pair(academy_panel)
+	summon_button = _button(actions, "Summon • 10", _summon)
+	fuse_button = _button(actions, "Fusion chamber", _ask_fuse)
+	summon_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	fuse_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var collection := _pair(academy_panel)
+	lock_button = _button(collection, "Lock wizard", _lock_wizard)
+	var archive_button := _button(collection, "Archive / lineage", _show_archive)
+	lock_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	archive_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	difficulty_button = _button(academy_panel, "Difficulty: I", _cycle_difficulty)
 	start_finite = _button(academy_panel, "Enter dungeon", func() -> void: _start(false))
 	start_endless = _button(academy_panel, "Endless survival", func() -> void: _start(true))
-	lock_button = _button(academy_panel, "Lock wizard", _lock_wizard)
-	_button(academy_panel, "Ancestry archive", _show_archive)
-	_label(academy_panel, "Completed progress is saved locally.", 12)
+	status_label = _label(academy_panel, "", 12)
+	status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	fusion_panel = _box_at(Vector2(24, 326), Vector2(312, 270))
+	fusion_hint = _label(fusion_panel, "", 15)
+	fusion_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	fusion_confirm = _button(fusion_panel, "Confirm irreversible fusion", _fuse)
+	_button(fusion_panel, "Return without fusing", _show_academy)
+	reveal_panel = _box_at(Vector2(24, 330), Vector2(312, 220))
+	reveal_info = _label(reveal_panel, "", 15)
+	reveal_info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_button(reveal_panel, "Meet your new wizard", _show_academy)
+	lineage_panel = _box_at(Vector2(20, 362), Vector2(320, 240))
+	lineage_info = _label(lineage_panel, "", 14)
+	lineage_info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var nav := _pair(lineage_panel)
+	var previous := _button(nav, "Previous", func() -> void: _cycle_lineage(-1))
+	var next := _button(nav, "Next", func() -> void: _cycle_lineage(1))
+	previous.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	next.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_button(lineage_panel, "Retired records", _show_retired_records)
+	_button(lineage_panel, "Return to academy", _show_academy)
 	run_hud = _label(ui, "", 14)
 	run_hud.position = Vector2(12, 12)
 	special_button = _button(ui, "CAST", func() -> void: special_requested = true)
@@ -112,11 +187,6 @@ func _build_ui() -> void:
 	_label(result_panel, "")
 	result_return = _button(result_panel, "Return to academy", _show_academy)
 	result_retry = _button(result_panel, "Retry saving rewards", _finish)
-	confirm_fusion = ConfirmationDialog.new()
-	confirm_fusion.title = "Irreversible fusion"
-	confirm_fusion.dialog_text = "Both parents will retire permanently. Create a Tier II descendant?"
-	confirm_fusion.confirmed.connect(_fuse)
-	add_child(confirm_fusion)
 	archive_dialog = AcceptDialog.new()
 	archive_dialog.title = "Ancestry archive"
 	archive_text = RichTextLabel.new()
@@ -131,11 +201,42 @@ func _lock_wizard() -> void:
 	academy.toggle_lock(c.id)
 	_refresh_academy()
 
+func _lineage_records() -> Array[Dictionary]:
+	var records: Array[Dictionary] = []
+	for c in academy.roster:
+		if not c.parents.is_empty(): records.append(c)
+	for c in academy.archive:
+		if not c.parents.is_empty(): records.append(c)
+	return records
+
 func _show_archive() -> void:
+	if academy.blocked: return
+	lineage_index = 0
+	screen = "lineage"
+	_refresh_lineage()
+	_sync_visibility()
+	queue_redraw()
+
+func _cycle_lineage(direction: int) -> void:
+	var records := _lineage_records()
+	if records.is_empty(): return
+	lineage_index = posmod(lineage_index + direction, records.size())
+	_refresh_lineage()
+	queue_redraw()
+
+func _refresh_lineage() -> void:
+	var records := _lineage_records()
+	if records.is_empty():
+		lineage_info.text = "No lineages yet. Fuse two mature wizards to establish a bloodline."
+	else:
+		var c: Dictionary = records[lineage_index]
+		lineage_info.text = "Bloodline %d / %d\n%s • Tier %d\nParents remain in the archive." % [lineage_index + 1, records.size(), c.id, c.phenotype.tier]
+
+func _show_retired_records() -> void:
 	var lines := PackedStringArray()
 	for c in academy.archive:
 		lines.append("%s | Tier %d | %s / %s\nXP %d" % [c.id, c.phenotype.tier, c.phenotype.body.capitalize(), c.phenotype.affinity.capitalize(), c.xp])
-		for descendant in academy.roster:
+		for descendant in academy.roster + academy.archive:
 			if c.id in descendant.parents:
 				lines.append("Descendant: " + str(descendant.id))
 		lines.append("")
@@ -161,54 +262,71 @@ func _show_academy() -> void:
 	_sync_visibility()
 	queue_redraw()
 
+func _disable_controls(root: Node) -> void:
+	for node in root.get_children():
+		if node is BaseButton: node.disabled = true
+		_disable_controls(node)
+
 func _refresh_academy() -> void:
 	if academy.blocked:
 		info.text = academy.error
 		info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		for node in academy_panel.get_children():
-			if node is Button: node.disabled = true
+		_disable_controls(academy_panel)
 		return
 	var c: Dictionary = academy.roster[selected]
 	var p: Dictionary = c.phenotype
-	var partner_text := "None"
-	if partner_index >= 0:
-		var other: Dictionary = academy.roster[partner_index]
-		partner_text = "%s | %s XP %d/%d" % [other.id, other.phenotype.affinity.capitalize(), other.xp, Academy.MATURE_XP]
-	info.text = "%s   Tier %d   %s / %s\nHP %d  Speed %d  Damage %.1f\n%s  |  XP %d/%d\nPartner: %s\nRoster %d  |  Archive %d  |  Essence %d" % [c.id, p.tier, p.body.capitalize(), p.affinity.capitalize(), int(p.health), int(p.speed), p.damage, p.special, c.xp, Academy.MATURE_XP, partner_text, academy.roster.size(), academy.archive.size(), academy.essence]
-	info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	active_picker.clear()
+	partner_picker.clear()
+	partner_picker.add_item("No apprentice", -1)
+	for i in range(academy.roster.size()):
+		var record: Dictionary = academy.roster[i]
+		var label := "%s · %s" % [record.phenotype.affinity.capitalize(), str(record.id).right(4)]
+		active_picker.add_item(label, i)
+		if i != selected: partner_picker.add_item(label, i)
+	active_picker.select(selected)
+	partner_picker.select(0)
+	for i in range(1, partner_picker.item_count):
+		if partner_picker.get_item_id(i) == partner_index: partner_picker.select(i)
+	var p2: Dictionary = academy.roster[partner_index] if partner_index >= 0 else {}
+	info.text = "HP %d  •  Speed %d  •  Power %.1f\n%s  |  %.2fs cast interval\n%s" % [int(p.health), int(p.speed), p.damage, p.special, p.interval, str(p.mutation).replace("_", " ").capitalize() if p.mutation != "none" else "No expressed mutation"]
 	difficulty_button.text = "Difficulty: %s" % ["I", "II", "III"][difficulty - 1]
 	lock_button.text = "Unlock wizard" if c.locked else "Lock wizard"
-	if not c.parents.is_empty(): info.text += "\nParents: " + ", ".join(PackedStringArray(c.parents))
-	if not academy.error.is_empty(): info.text += "\n" + academy.error
-	elif not academy.notice.is_empty(): info.text += "\n" + academy.notice
+	summon_button.disabled = academy.essence < 10
+	fuse_button.disabled = p2.is_empty()
+	status_label.text = academy.error if not academy.error.is_empty() else academy.notice
+	if status_label.text.is_empty(): status_label.text = "Shared training: apprentice gains 25% XP."
 
-func _next_wizard() -> void:
-	selected = (selected + 1) % academy.roster.size()
-	if partner_index == selected:
-		partner_index = (selected + 1) % academy.roster.size() if academy.roster.size() > 1 else -1
+func _select_active(index: int) -> void:
+	selected = active_picker.get_item_id(index)
+	if partner_index == selected: partner_index = -1
 	_refresh_academy()
 	queue_redraw()
 
-func _next_partner() -> void:
-	if academy.roster.size() < 2: return
-	partner_index = (partner_index + 1) % academy.roster.size()
-	if partner_index == selected: partner_index = (partner_index + 1) % academy.roster.size()
+func _select_partner(index: int) -> void:
+	partner_index = -1 if index == 0 else partner_picker.get_item_id(index)
 	_refresh_academy()
 	queue_redraw()
 
 func _summon() -> void:
 	if academy.summon():
 		selected = academy.roster.size() - 1
+		if partner_index == selected: partner_index = -1
 	_refresh_academy()
 	queue_redraw()
 
 func _ask_fuse() -> void:
 	if partner_index < 0: return
-	if academy.eligible(academy.roster[selected], academy.roster[partner_index]):
-		confirm_fusion.popup_centered(Vector2i(300, 160))
-	else:
-		_refresh_academy()
-		info.text += "\nBoth parents must be mature, unlocked Tier I."
+	screen = "fusion"
+	_refresh_fusion()
+	_sync_visibility()
+	queue_redraw()
+
+func _refresh_fusion() -> void:
+	var first: Dictionary = academy.roster[selected]
+	var second: Dictionary = academy.roster[partner_index]
+	fusion_hint.text = academy.fusion_hint(first, second)
+	fusion_confirm.disabled = not academy.eligible(first, second)
+	if not academy.error.is_empty(): fusion_hint.text += "\n" + academy.error
 
 func _fuse() -> void:
 	if partner_index < 0: return
@@ -216,9 +334,13 @@ func _fuse() -> void:
 	if not child.is_empty():
 		selected = academy.roster.size() - 1
 		partner_index = -1
-		_show_academy()
+		revealed = child
+		reveal_info.text = "%s • Tier %d\n%s / %s\n%s\nBoth parents have been archived." % [child.id, child.phenotype.tier, child.phenotype.body.capitalize(), child.phenotype.affinity.capitalize(), child.phenotype.special]
+		screen = "reveal"
+		_sync_visibility()
+		queue_redraw()
 	else:
-		_refresh_academy()
+		_refresh_fusion()
 
 func _cycle_difficulty() -> void:
 	difficulty = difficulty % 3 + 1
@@ -270,6 +392,9 @@ func _finish() -> void:
 func _sync_visibility() -> void:
 	var in_run := screen == "run"
 	academy_panel.visible = screen == "academy"
+	fusion_panel.visible = screen == "fusion"
+	reveal_panel.visible = screen == "reveal"
+	lineage_panel.visible = screen == "lineage"
 	result_panel.visible = screen == "result"
 	run_hud.visible = in_run
 	special_button.visible = in_run
@@ -312,7 +437,7 @@ func _input(event: InputEvent) -> void:
 
 func _physics_process(dt: float) -> void:
 	if screen != "run":
-		queue_redraw()
+		if screen == "reveal": queue_redraw()
 		return
 	var space := Input.is_physical_key_pressed(KEY_SPACE)
 	if not paused and run.pending_upgrades == 0:
@@ -345,9 +470,41 @@ func _physics_process(dt: float) -> void:
 func _draw() -> void:
 	draw_rect(Rect2(0, 0, 360, 640), Color("#1b1924"))
 	if screen == "academy":
+		_draw_title("THE ACADEMY", "%d essence   •   %d active   •   %d retired" % [academy.essence, academy.roster.size(), academy.archive.size()])
 		if academy.blocked or academy.roster.is_empty(): return
-		var c: Dictionary = academy.roster[selected]
-		sprites.draw_wizard(self, c.phenotype, Vector2(180, 112), 0, 3.0)
+		_draw_card(academy.roster[selected], Rect2(16, 55, 160, 140), "ACTIVE")
+		_draw_card(academy.roster[partner_index] if partner_index >= 0 else {}, Rect2(184, 55, 160, 140), "APPRENTICE")
+		return
+	if screen == "fusion":
+		_draw_title("FUSION CHAMBER", "Two bloodlines. One descendant.")
+		_draw_card(academy.roster[selected], Rect2(16, 68, 160, 150), "PARENT I")
+		_draw_card(academy.roster[partner_index], Rect2(184, 68, 160, 150), "PARENT II")
+		draw_line(Vector2(96, 218), Vector2(180, 264), Color("#876c91"), 2)
+		draw_line(Vector2(264, 218), Vector2(180, 264), Color("#876c91"), 2)
+		draw_arc(Vector2(180, 278), 32, 0, TAU, 40, Color("#a48ab8"), 2)
+		_center_text("?", Vector2(180, 288), 26, Color("#dcc8ef"))
+		return
+	if screen == "reveal":
+		_draw_title("A NEW BLOODLINE", "Fusion complete • progress saved")
+		if not revealed.is_empty():
+			var pulse := 0.5 + 0.5 * sin(float(Time.get_ticks_msec()) / 280.0)
+			draw_circle(Vector2(180, 180), 76, Color(0.55, 0.35, 0.7, 0.12 + pulse * 0.08))
+			draw_arc(Vector2(180, 180), 82, 0, TAU, 48, Color("#8f77ac"), 2)
+			sprites.draw_wizard(self, revealed.phenotype, Vector2(180, 246), 0, 5)
+			_center_text(revealed.phenotype.affinity.capitalize(), Vector2(180, 288), 18, Color("#e8d8f1"))
+		return
+	if screen == "lineage":
+		_draw_title("ANCESTRY ARCHIVE", "%d retired wizards" % academy.archive.size())
+		var records := _lineage_records()
+		if not records.is_empty():
+			var c: Dictionary = records[lineage_index]
+			var parents := academy.parents_of(c)
+			if parents.size() == 2:
+				_draw_card(parents[0], Rect2(16, 54, 160, 132), "RETIRED")
+				_draw_card(parents[1], Rect2(184, 54, 160, 132), "RETIRED")
+				draw_line(Vector2(96, 186), Vector2(180, 214), Color("#927e9e"), 2)
+				draw_line(Vector2(264, 186), Vector2(180, 214), Color("#927e9e"), 2)
+			_draw_card(c, Rect2(100, 214, 160, 138), "DESCENDANT")
 		return
 	if screen != "run" or run == null: return
 	draw_texture(arena_art.floor_texture, Vector2(0, 88))
@@ -379,3 +536,32 @@ func _draw() -> void:
 	if paused or run.pending_upgrades > 0:
 		draw_rect(Rect2(0, 90, 360, 446), Color(0.04, 0.03, 0.06, 0.76))
 
+
+func _center_text(value: String, baseline: Vector2, size: int, color: Color) -> void:
+	var font := ThemeDB.fallback_font
+	var width := font.get_string_size(value, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
+	draw_string(font, baseline - Vector2(width / 2.0, 0), value, HORIZONTAL_ALIGNMENT_LEFT, -1, size, color)
+
+func _draw_title(value: String, subtitle: String) -> void:
+	_center_text(value, Vector2(180, 25), 19, Color("#e8d4a7"))
+	_center_text(subtitle, Vector2(180, 44), 12, Color("#b5a5bc"))
+
+func _draw_card(c: Dictionary, rect: Rect2, role: String) -> void:
+	draw_rect(rect, Color("#2c2635"))
+	draw_rect(rect, Color("#62516d"), false, 1)
+	var center := rect.get_center().x
+	_center_text(role, Vector2(center, rect.position.y + 15), 10, Color("#cdb891"))
+	if c.is_empty():
+		_center_text("No wizard", Vector2(center, rect.position.y + 77), 13, Color("#aaa0b2"))
+		return
+	var p: Dictionary = c.phenotype
+	var hue: Color = FIRE if p.affinity == "fire" else (ICE if p.affinity == "ice" else STEAM)
+	draw_circle(Vector2(center, rect.position.y + 58), 31, Color(hue, 0.09))
+	sprites.draw_wizard(self, p, Vector2(center, rect.position.y + 81), 0, 2.0)
+	_center_text("%s · Tier %d" % [p.affinity.capitalize(), p.tier], Vector2(center, rect.position.y + 97), 13, hue)
+	_center_text("%s%s" % [p.body.capitalize(), " / Locked" if c.locked else ""], Vector2(center, rect.position.y + 112), 11, Color("#d1c5d5"))
+	var bar := Rect2(rect.position.x + 13, rect.end.y - 15, rect.size.x - 26, 4)
+	draw_rect(bar, Color("#49404e"))
+	var fraction := clampf(float(c.xp) / Academy.MATURE_XP, 0.0, 1.0)
+	draw_rect(Rect2(bar.position, Vector2(bar.size.x * fraction, bar.size.y)), hue)
+	_center_text("Mature" if int(c.xp) >= Academy.MATURE_XP else "%d / %d XP" % [c.xp, Academy.MATURE_XP], Vector2(center, rect.end.y - 3), 9, Color("#d1c5d5"))

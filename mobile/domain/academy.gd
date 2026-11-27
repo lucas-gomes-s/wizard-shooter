@@ -154,3 +154,24 @@ func reward(run_id: int, active: Dictionary, apprentice: Dictionary, earned: int
 		essence += 10
 		_add(Genetics.founder(_seed()))
 	return _commit(before)
+
+## Public phenotype-only hints. No raw alleles or exact probabilities exposed.
+func fusion_hint(a: Dictionary, b: Dictionary) -> String:
+	if a.is_empty() or b.is_empty(): return "Select two wizards."
+	if not eligible(a, b):
+		return "Both parents must be unlocked, mature Tier I wizards (40 XP each)."
+	var hints := PackedStringArray()
+	hints.append("Mixed anatomy is possible." if a.phenotype.body != b.phenotype.body else "Shared ancestry may persist.")
+	hints.append("Their elements may combine." if a.phenotype.affinity != b.phenotype.affinity else "Their shared element may persist, or dormant magic may emerge.")
+	hints.append("Unexpected mutations are possible.")
+	hints.append("A Tier II descendant is guaranteed. Both parents retire permanently.")
+	return "\n".join(hints)
+
+func parents_of(c: Dictionary) -> Array[Dictionary]:
+	var parents: Array[Dictionary] = []
+	for id in c.get("parents", []):
+		for record in archive:
+			if record.id == id:
+				parents.append(record)
+				break
+	return parents
