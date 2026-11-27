@@ -1,3 +1,4 @@
+import {addGold} from './merchant.js';
 // Optional dungeon challenges. All timings use the 50 Hz simulation clock.
 import {ENEMY_CAP,HAZARD_CAP} from './enemies.js';
 export const eventWindows=[210,510,810,1110,1380];
@@ -26,6 +27,7 @@ function finish(g,outcome){
  const def=eventById[e.id],p=eventCenter(g.player);
  if(outcome==='completed'){
   const tier=g.seconds>=1200?3:g.seconds>=600?2:1;
+  addGold(g,30*tier);
   // Drop close to the wizard, but never stack on the player's collision box.
   if(g.config.equipmentEnabled!==false)g.dropChest(p.x+55,p.y,tier,def.name+' reward');
  }
