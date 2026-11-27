@@ -30,7 +30,7 @@ test('forbidden power has health cost and temporary buff, tonic heals without ov
  const h=make();equipItem(h.player,'tonic');h.step({relic:true});assert.equal(h.activeHistory.length,0);h.player.health=95;h.step({relic:true});close(h.player.health,100);assert.equal(h.activeHistory.length,1);
 });
 test('gold is earned once per kill and reset between runs',()=>{
- const g=make(),e=enemy(350,280,0);e.expGiven=20;g.enemies=[e];g.step();assert.equal(g.player.gold,3);g.step();assert.equal(g.player.gold,3);g.start('ice');assert.equal(g.player.gold,0);
+ const g=make(),e=enemy(350,280,0);e.expGiven=20;g.kills=3;g.enemies=[e];g.step();assert.equal(g.player.gold,1);g.step();assert.equal(g.player.gold,1);g.start('ice');assert.equal(g.player.gold,0);
 });
 function open(g){g.tick=merchantWindows[0]*50;stepMarket(g);const m=g.market.merchant;assert.ok(m);g.player.x=m.x-20;g.player.y=m.y-20;stepMarket(g);assert.equal(g.phase,'shop');}
 test('merchant pauses time, rejects unaffordable purchase and allows leaving',()=>{
