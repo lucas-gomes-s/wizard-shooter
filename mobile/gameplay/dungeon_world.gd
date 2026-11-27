@@ -62,3 +62,17 @@ static func site(seed: int, chunk: Vector2i) -> Dictionary:
 	# Keep the object and its interaction area clear of solid pillars.
 	if not clear_at(seed, point, 28.0): point = origin + Vector2(30, 30)
 	return {"id": "%d:%d" % [chunk.x, chunk.y], "kind": kind, "pos": point}
+
+## Exact segment versus nearby circular pillars, shared by targeting and ranged attacks.
+static func line_clear(seed: int, from: Vector2, to: Vector2, radius: float = 0.0) -> bool:
+	var margin := Vector2.ONE * (radius + PILLAR_RADIUS)
+	var first := chunk_at(from.min(to) - margin)
+	var last := chunk_at(from.max(to) + margin)
+	for y in range(first.y, last.y + 1):
+		for x in range(first.x, last.x + 1):
+			var obstacle := pillar(seed, Vector2i(x,y))
+			if obstacle.is_empty(): continue
+			var center: Vector2 = obstacle.pos
+			var closest := from if from == to else Geometry2D.get_closest_point_to_segment(center, from, to)
+			if closest.distance_squared_to(center) < pow(PILLAR_RADIUS + radius, 2): return false
+	return true

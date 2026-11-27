@@ -1,6 +1,7 @@
 extends RefCounted
 ## Original 16x16 pixel matrices. Cached once, no per-frame texture allocation.
 const PATTERNS := [["................",".......o....o...",".....ogo..ogo...","....oggggggggo..","....oglhhhlggo..","......ogegego...",".....oggggggo...",".......ogttgo...",".......oaaaao...",".....oaaadaao...","....ogoaadaogo..","....ogoaadaogo..",".......oaaoao...",".......ob..bo...",".....obb..bbo...","................"],["................","....o........o..","...obo......obo.","....obo....obo..","..o...oboooobo..","..ob..obbbbbbo..","....oobbhhbbbo..",".....obberebbo..","....oobbrrrrbo..","..ob..obbbbbbo..","..o..oobbbbooo..","....obo....obo..","....obo....obo..",".....o......o...","................","................"],[".......oooooo...","......oggggggo..",".....oghhhhhgo..","...ogggggggggo..","....ogeggggego..","....ogtggggtgo..",".....oggggggo...","....ooaaaaaaoo..","...ogaaaadaago..","...ogaaaddaago..","..oggoaaddaoggo.","..oggoaaaaoggo..",".....oaaaoaaao..",".....obboobbo...","....obbb..bbbo..","................"],["...o..........o.","...oro......oro.","...orro....orro.","....orro..orro..",".....oroooooro..","...oorrhhhrroo..","...orrrererrro..","..orrrrrrrrrrro.",".orrrrortrorrro.","orrrorrrrrorrro.","..oroorrrrroro..","...o..orrro..o..","........orrro...","......orotoro...",".....ooo...ooo..","................"]]
+const WARLOCK := ["................",".......oo.......","......ovvo......",".....ovvvvo.....","....ovvvvvvo....","....ovveevvo....",".....ovvvvo.....","......oooo......",".....ovvvvo...o.","....ovvhhvvo.oeo","....ovvvvvvo..o.","...ovvvhvvvvo.o.","...ovvvvvvvvo.o.",".....oooooo...o.",".....oo..oo...o.","................"]
 const PALETTES := [
 	{"o":"#17171f","g":"#65844c","h":"#a5b96c","l":"#445a38","e":"#ffdf91","t":"#ded2a3","a":"#594438","d":"#a18151","b":"#383039"},
 	{"o":"#17151f","b":"#785064","h":"#9c7281","e":"#ffca78","r":"#c25b61"},
@@ -12,7 +13,7 @@ var floor_texture: Texture2D
 var projectiles: Dictionary = {}
 
 func _init() -> void:
-	for i in range(PATTERNS.size()):
+	for i in range(PATTERNS.size() + 1):
 		enemies.append(ImageTexture.create_from_image(enemy_image(i)))
 	floor_texture = ImageTexture.create_from_image(floor_image())
 	for affinity in ["fire", "ice", "steam"]:
@@ -21,8 +22,8 @@ func _init() -> void:
 static func enemy_image(kind: int) -> Image:
 	var image := Image.create_empty(16, 16, false, Image.FORMAT_RGBA8)
 	image.fill(Color.TRANSPARENT)
-	var rows: Array = PATTERNS[kind]
-	var palette: Dictionary = PALETTES[kind]
+	var rows: Array = WARLOCK if kind == 4 else PATTERNS[kind]
+	var palette: Dictionary = {"o":"#18131e","v":"#766091","h":"#ae8fc5","e":"#f7ce8c"} if kind == 4 else PALETTES[kind]
 	assert(rows.size() == 16)
 	for y in range(16):
 		var row: String = rows[y]
@@ -82,7 +83,9 @@ func draw_enemy(canvas: CanvasItem, enemy: Dictionary, elapsed: float) -> void:
 	var bob := -1.0 if int(elapsed * 8.0 + pos.x * 0.1) % 2 == 0 else 0.0
 	var tint := Color.WHITE
 	if enemy.slow > 0: tint = Color("#a8ddff")
+	if float(enemy.get("freeze", 0.0)) > 0: tint = Color("#c4f5ff")
 	if enemy.burn > 0: tint = tint.lerp(Color("#ffaf83"), 0.4)
+	if enemy.attack == "charge": tint = tint.lerp(Color("#f9bd86"), 0.45)
 	canvas.draw_texture_rect(enemies[kind], Rect2(pos - Vector2(size, size) / 2.0 + Vector2(0, bob), Vector2(size, size)), false, tint)
 	if kind == 3:
 		var bar := Rect2(pos + Vector2(-20, -size / 2.0 - 6), Vector2(40, 3))

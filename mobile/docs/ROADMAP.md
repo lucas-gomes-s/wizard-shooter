@@ -37,6 +37,15 @@ Purpose: skill, readable danger and meaningful builds; prioritize improving 3 ex
 
 Gate A (before expanding breadth): phone build installs over prior alpha without losing saves or has tested export/import; 3 distinct elemental strategies recognizable by testers, at least 3 enemy roles with counterplay, readable boss telegraphs, no blocking touch/save failures; early levels and choices create a satisfying first run. Proposed internal qualitative gate: at least 4 of 5 observed testers voluntarily start another run without a reward prompt. If missed, iterate combat, not monetize. Small sample is directional, not statistically representative.
 
+## Phase 1B: early Google Play closed testing (noncommercial)
+Start immediately after Gate A and minimum onboarding/first-fusion readiness, not after all content expansion. This is a genuine playable early game, not a placeholder to bypass account checks.
+- Minimum release slice: Phase 1 combat, existing collection and fusion, short tutorial, stable saves/signing and tested upgrade path, no blocking bugs, original/licensed art. No ads, purchases or online account required.
+- Owner creates and verifies Play Console account, selects permanent application ID and Play App Signing, prepares upload key outside repository, signed AAB, version codes, store listing/screenshots, privacy policy, Data Safety, content/target audience declarations, and device compatibility. Verify applicable official current requirements before inviting testers: https://support.google.com/googleplay/android-developer/answer/14151465 .
+- Recruit approximately 20–30 reliable consenting Android testers for a buffer; reuse a tester group for future titles. For applicable new personal accounts, plan around the current app-specific closed testing enrollment rule (verify 12 testers continuously enrolled for 14 days and any current production-access rules at submission). Collect real usage and feedback, iterate builds in the same testing track. Do not assume approval for this app removes testing for a different game.
+- Apply for production access when eligible and feedback addressed; approval is not guaranteed. If approved, keep using testing tracks and defer public/commercial release until Gate G. No false engagement, paid testing manipulation, or dummy app. A free public release is a separate owner decision.
+- Noncommercial testing does not authorize commercial work; verify owner-specific legal/immigration/scholarship conditions before any commercial activation.
+Gate A2: genuine closed test completed, feedback documented, store requirements met and production access granted for Wizard Shooter or specific blockers recorded. Development of Phase 2 may proceed during the test; do not delay gameplay while awaiting review.
+
 ## Phase 2: make breeding rewarding (gameplay)
 
 Purpose: a player can understand, care about and plan a bloodline.
@@ -88,10 +97,10 @@ Gate F: closed test cohort shows return behavior; initial internal targets D1 >=
 ## Phase 7: commercial beta and Google Play (monetization + release)
 
 No actual commercial activity until owner explicitly approves after checking immigration/work authorization, scholarship conditions, taxes, developer identity/address disclosure and business setup. Verify current official Play/AdMob requirements at implementation time; no policy numbers or fees assumed fixed.
-- Register Play Console and app, secure account and signing, pin compatible engine/plugins/SDK, production signed AAB, reproducible internal/closed testing build; verify target SDK and applicable testing eligibility before submission. Make package identifier and save migration decision explicit. Prepare store listing, rating, audience, screenshots, privacy policy, Data Safety and ads declarations; audit licenses of all art/music/code.
+- Reuse the Phase 1B Play Console app and signing path; refresh policy, SDK, AAB, store listing, privacy/Data Safety and ads declarations for monetized build. Verify current requirements and licenses; do not assume early approval guarantees commercial approval.
 - Integrate Google Play Billing for direct-price non-consumable cosmetics/supporter pack; show actual localized store prices; use verified purchases, acknowledgement, pending/cancel/refund/revocation and restore. Lightweight serverless backend only as needed for purchase verification/entitlement ledger and optional AdMob server-side reward verification. Never expose API credentials or trust local profile checksums as proof of purchase. Use sandbox billing and test ads first. Ad SDK consent/age controls and privacy requirements depend on regions/audience.
 - Small launch catalog proposal: one supporter pack (¥980–1,500 hypothesis), two cosmetic sets (¥480–800 hypothesis), one academy theme (¥480–980 hypothesis). No paid randomized content, roster scarcity or purchasable power. Direct localized prices; no premium currency. Ads: one optional post-run essence bonus if gate E passes. Keep feature flags/kill switches and conservative rates.
-- Internal testing then required closed testing with actual testers; track upgrade/reinstall, compatibility, entitlement recovery, purchase and ad failure paths, non-payer experience. No paid acquisition until retention, conversion and operating costs can be measured.
+- Internal and closed testing of commercial updates with actual testers; check any applicable new review/testing requirements, track upgrade/reinstall, compatibility, entitlement recovery, purchase and ad failure paths, non-payer experience. No paid acquisition until retention, conversion and operating costs can be measured.
 
 Gate G: official current policy checklist signed off; verified same-key app update and backup/recovery; paid products restored correctly, refund handling tested, ad cancellation and duplicate callbacks tested, no ads on core path; crash-free/stability and free economy targets assessed; owner authorizes launch. Soft launch first, then broader rollout if results support it.
 
@@ -111,7 +120,7 @@ Carry forward prior technical gates: deterministic RNG and versioned schema; 100
 2. Dragon attack patterns and encounter director; fix current targeting/collision shortcomings and profile device. Add automated balance scenarios using current abilities and upgrades.
 3. Tune first-run progression and upgrade frequency with actual playtest evidence.
 4. Stable alpha signing and save export/import in parallel with 1–3, before recruiting repeat testers.
-5. First-fusion tutorial and progression, Grimoire and lineage improvements.
+5. Minimum onboarding and first-fusion tutorial; prepare early noncommercial Play closed test (Phase 1B). Continue Phase 2 progression, Grimoire and lineage improvements during testing.
 6. Only after Gates A/B, free cosmetics/ownership and mock store.
 
 Definition of done for every increment: documented design and acceptance tests, deterministic regressions, compatible saves or explicit migration, CI status, device/playtest evidence where needed, no secrets/generated cache committed, no browser behavior changed, known limitations explicit. Treat the next gate as the planning horizon; estimate work only after breaking down actual tasks. Revisit roadmap after each gate rather than locking content counts or dates now.

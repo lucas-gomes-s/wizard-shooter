@@ -8,6 +8,7 @@ const ArenaArt = preload("res://presentation/arena_art.gd")
 const DungeonArt = preload("res://presentation/dungeon_art.gd")
 const Abilities = preload("res://gameplay/ability_catalog.gd")
 const Upgrades = preload("res://gameplay/upgrade_catalog.gd")
+const EnemyAI = preload("res://gameplay/enemy_behavior.gd")
 const PLAYFIELD := Rect2(0, 88, 360, 448)
 const CAMERA_CENTER := Vector2(180, 312)
 const FIRE := Color("#ef8052")
@@ -561,6 +562,7 @@ func _draw() -> void:
 		if visible_margin.has_point(flash.pos):
 			var flash_color := FIRE if flash.affinity == "fire" else ICE
 			draw_arc(flash.pos, float(flash.radius), 0, TAU, 24, Color(flash_color, float(flash.life) / 0.24), 2.0)
+	_draw_enemy_hazards(visible_margin)
 	for e in run.enemies:
 		if visible_margin.has_point(e.pos):
 			arena_art.draw_enemy(self, e, float(run.elapsed))
@@ -580,6 +582,7 @@ func _draw() -> void:
 	var frame: int = int(run.elapsed * 6) % 2 if movement.length_squared() > 0 else 0
 	sprites.draw_wizard(self, run.phenotype, run.player, frame, 1.2)
 	if run.ward > 0: draw_arc(run.player, 22, 0, TAU, 24, Color("#c6e6ed"), 2.0)
+	if run.webbed: draw_arc(run.player, 18, 0, TAU, 24, Color("#efcfa1"), 2.0)
 	draw_set_transform(Vector2.ZERO)
 	# Mask the world outside the playfield, leaving all touch/HUD controls screen-fixed.
 	draw_rect(Rect2(0, 0, 360, 88), Color("#1b1924"))
@@ -605,6 +608,52 @@ func _draw() -> void:
 	if paused or run.pending_upgrades > 0:
 		draw_rect(Rect2(0, 90, 360, 446), Color(0.04, 0.03, 0.06, 0.76))
 
+
+func _draw_enemy_hazards(view: Rect2) -> void:
+	var danger := Color("#f3a35f")
+	for web in run.webs:
+		if not view.has_point(web.pos): continue
+		var p: Vector2 = web.pos
+		var radius: float = web.radius
+		draw_circle(p, radius, Color("#b5a18b", 0.15))
+		for ring in [0.4, 0.75, 1.0]:
+			draw_arc(p, radius * float(ring), 0, TAU, 12, Color("#d5c5ae", 0.75), 1.0)
+		for i in range(8):
+			draw_line(p, p + Vector2.from_angle(i * TAU / 8.0) * radius, Color("#d5c5ae", 0.7), 1.0)
+	for e in run.enemies:
+		if not view.has_point(e.pos): continue
+		var p: Vector2 = e.pos
+		var target: Vector2 = e.attack_target
+		var progress := 1.0 - float(e.attack_time) / maxf(0.01, float(e.attack_total))
+		match str(e.attack):
+			"web", "breath":
+				var radius := EnemyAI.WEB_RADIUS if e.attack == "web" else EnemyAI.BREATH_RADIUS
+				draw_circle(target, radius, Color(danger, 0.16))
+				draw_arc(target, radius, 0, TAU, 32, danger, 2.0)
+				draw_arc(target, radius - 4, 0, TAU * progress, 32, Color("#fff0b5"), 3.0)
+			"charge_windup":
+				var heading: Vector2 = e.attack_dir
+				var length := (EnemyAI.BOSS_CHARGE_SPEED if int(e.kind) == 3 else EnemyAI.CHARGE_SPEED) * EnemyAI.CHARGE_TIME
+				var normal := heading.orthogonal() * (float(e.radius) + 7.0)
+				var end := p + heading * length
+				draw_colored_polygon(PackedVector2Array([p+normal,end+normal,end-normal,p-normal]), Color(danger, 0.20))
+				draw_line(p+normal,end+normal,danger,2.0)
+				draw_line(p-normal,end-normal,danger,2.0)
+				draw_line(p,p+heading*length*progress,Color("#fff0b5"),2.0)
+			"bolt":
+				draw_line(p, target, Color(danger, 0.6), 1.0)
+				draw_arc(p, 15, 0, TAU * progress, 24, danger, 2.0)
+	for bolt in run.enemy_bolts:
+		if not view.has_point(bolt.pos): continue
+		var p: Vector2 = bolt.pos
+		var direction: Vector2 = bolt.vel.normalized()
+		draw_line(p-direction*11,p,Color("#d87549"),4.0)
+		draw_circle(p,5,Color("#f3a35f"))
+		draw_circle(p,2,Color("#fff0b5"))
+	for flash in run.danger_flashes:
+		if view.has_point(flash.pos):
+			draw_circle(flash.pos,float(flash.radius),Color(danger,float(flash.life)*1.8))
+			draw_arc(flash.pos,float(flash.radius),0,TAU,32,danger,2.0)
 
 func _center_text(value: String, baseline: Vector2, size: int, color: Color) -> void:
 	var font := ThemeDB.fallback_font

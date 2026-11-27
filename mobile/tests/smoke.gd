@@ -9,6 +9,7 @@ const World = preload("res://gameplay/dungeon_world.gd")
 const DungeonArt = preload("res://presentation/dungeon_art.gd")
 const Abilities = preload("res://gameplay/ability_catalog.gd")
 const Upgrades = preload("res://gameplay/upgrade_catalog.gd")
+const EnemyAI = preload("res://gameplay/enemy_behavior.gd")
 var failures := 0
 
 func check(condition: bool, message: String) -> void:
@@ -18,7 +19,7 @@ func check(condition: bool, message: String) -> void:
 
 func _initialize() -> void:
 	var library := Sprites.new()
-	for kind in range(4):
+	for kind in range(5):
 		var image := ArenaArt.enemy_image(kind)
 		check(image.get_size() == Vector2i(16, 16), "Enemy sprite dimensions")
 		check(image.get_used_rect().get_area() > 0, "Enemy sprite nonempty")
@@ -76,6 +77,7 @@ func _initialize() -> void:
 	_test_sites(p)
 	_test_abilities(p)
 	_test_upgrades(p)
+	_test_enemies(p)
 	print("Wizard Shooter smoke: %d failures; 1000 founder/fusion samples" % failures)
 	quit(0 if failures == 0 else 1)
 
@@ -304,3 +306,83 @@ func _test_upgrades(base: Dictionary) -> void:
 	steam._apply_upgrade("pressure")
 	check(absf(float(steam.kit.special.rate) - 0.78) < 0.001, "Pressure upgrade changes vortex")
 	print("Character-specific upgrade checks complete")
+
+func _test_enemies(base: Dictionary) -> void:
+	var p := base.duplicate(true)
+	p.passives = []
+	p.mutation = "none"
+	var run := RunModel.new(p, true, 1, 7)
+	run.spawn_cd = 100000.0
+	run._spawn(1)
+	var spider: Dictionary = run.enemies[0]
+	spider.pos = Vector2(60,0)
+	spider.attack_cd = 0.0
+	EnemyAI.tick(run, spider, 0.01, 1.0, false)
+	check(spider.attack == "web" and run.webs.is_empty(), "Web has readable windup")
+	run.player = Vector2(0,80)
+	EnemyAI.tick(run, spider, 0.7, 1.0, false)
+	check(run.webs.size() == 1 and run.webs[0].pos == Vector2.ZERO, "Web target locks")
+	run.enemies.clear()
+	run.player = Vector2.ZERO
+	run.step(1.0 / 60.0, Vector2.RIGHT, false)
+	check(run.webbed and absf(run.player.x - run.speed / 120.0) < 0.001, "Web slows player")
+	run.webs.clear()
+	run.player = Vector2.ZERO
+	run._spawn(2)
+	var orc: Dictionary = run.enemies[0]
+	orc.pos = Vector2(75,0)
+	orc.attack_cd = 0.0
+	EnemyAI.tick(run, orc, 0.01, 1.0, false)
+	check(orc.attack == "charge_windup", "Orc charge windup")
+	var hp_before := run.hp
+	run.player = Vector2(0,80)
+	EnemyAI.tick(run, orc, 0.8, 1.0, false)
+	for i in range(40): EnemyAI.tick(run, orc, 1.0/60.0, 1.0, false)
+	check(run.hp == hp_before, "Dodging locked charge avoids damage")
+	EnemyAI.windup(orc,"charge_windup",run.player,0.7)
+	EnemyAI.tick(run,orc,0.1,0.0,true)
+	check(orc.attack == "recover", "Freeze interrupts charge windup")
+	run.enemies.clear()
+	run.player = Vector2.ZERO
+	run._spawn(4)
+	var caster: Dictionary = run.enemies[0]
+	caster.pos = Vector2(100,0)
+	caster.attack_cd = 0.0
+	EnemyAI.tick(run,caster,0.01,1.0,false)
+	check(caster.attack == "bolt" and run.enemy_bolts.is_empty(), "Warlock telegraphs bolt")
+	EnemyAI.tick(run,caster,0.8,1.0,false)
+	check(run.enemy_bolts.size() == 1, "Warlock fires once")
+	run.hurt_cd = 0.0
+	hp_before = run.hp
+	for i in range(60): run._update_enemy_hazards(1.0/60.0)
+	check(run.hp < hp_before and run.enemy_bolts.is_empty(), "Bolt collision damages once")
+	for i in range(70): run.add_enemy_bolt(Vector2.ZERO,Vector2.RIGHT,1.0)
+	check(run.enemy_bolts.size() == EnemyAI.MAX_BOLTS, "Enemy bolt budget")
+	for i in range(40): run.add_web(Vector2.ZERO)
+	check(run.webs.size() == EnemyAI.MAX_WEBS, "Web budget")
+	run.enemies.clear()
+	run.enemy_bolts.clear()
+	run.webs.clear()
+	run._spawn(3)
+	var dragon: Dictionary = run.enemies[0]
+	dragon.pos = Vector2(90,0)
+	dragon.attack_cd = 0.0
+	EnemyAI.tick(run,dragon,0.01,1.0,false)
+	check(dragon.attack == "breath", "Boss first attack breath")
+	run.player = Vector2(0,80)
+	run.hurt_cd = 0.0
+	hp_before = run.hp
+	EnemyAI.tick(run,dragon,1.1,1.0,false)
+	check(run.hp == hp_before and run.danger_flashes.size() == 1, "Breath can be dodged")
+	dragon.attack = "chase"
+	dragon.attack_cd = 0.0
+	run.player = Vector2.ZERO
+	EnemyAI.tick(run,dragon,0.01,1.0,false)
+	check(dragon.attack == "charge_windup", "Boss alternates attacks")
+	for x in range(-4,5):
+		var pillar := World.pillar(7,Vector2i(x,0))
+		if pillar.is_empty(): continue
+		var center: Vector2 = pillar.pos
+		check(not World.line_clear(7,center-Vector2(25,0),center+Vector2(25,0),2.0), "Pillar blocks line of sight")
+		break
+	print("Enemy behavior checks complete")

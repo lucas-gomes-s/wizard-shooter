@@ -3,6 +3,7 @@ extends RefCounted
 const World = preload("res://gameplay/dungeon_world.gd")
 const Abilities = preload("res://gameplay/ability_catalog.gd")
 const Upgrades = preload("res://gameplay/upgrade_catalog.gd")
+const EnemyAI = preload("res://gameplay/enemy_behavior.gd")
 const DESPAWN_DISTANCE := 740.0
 const BOSS_RELOCATE_DISTANCE := 950.0
 const TARGET_RANGE := 350.0
@@ -13,7 +14,8 @@ const ENEMY_DATA := [
 	{"name": "Goblin", "hp": 23.0, "speed": 34.0, "damage": 7.0, "radius": 7.0, "xp": 2},
 	{"name": "Spider", "hp": 13.0, "speed": 61.0, "damage": 5.0, "radius": 6.0, "xp": 2},
 	{"name": "Orc", "hp": 62.0, "speed": 22.0, "damage": 12.0, "radius": 11.0, "xp": 5},
-	{"name": "Dragon", "hp": 440.0, "speed": 29.0, "damage": 18.0, "radius": 19.0, "xp": 30}
+	{"name": "Dragon", "hp": 440.0, "speed": 42.0, "damage": 18.0, "radius": 19.0, "xp": 30},
+	{"name": "Warlock", "hp": 32.0, "speed": 44.0, "damage": 9.0, "radius": 8.0, "xp": 4}
 ]
 const FINITE_SECONDS := 90.0 # accelerated playtest, not final dungeon length
 const Genetics = preload("res://domain/genetics.gd")
@@ -71,6 +73,11 @@ var upgrade_offer: Array[String] = []
 var burst_radius := 36.0
 var burst_power := 0.55
 var trail_rate := 0.30
+var webs: Array[Dictionary] = []
+var enemy_bolts: Array[Dictionary] = []
+var danger_flashes: Array[Dictionary] = []
+var webbed := false
+var last_hit := ""
 
 func _init(p: Dictionary, is_endless: bool, level: int, seed: int) -> void:
 	phenotype = p.duplicate(true)
@@ -91,7 +98,10 @@ func step(dt: float, movement: Vector2, special: bool) -> void:
 		return
 	elapsed += dt
 	travel_direction = movement.limit_length()
-	player = World.move(world_seed, player, travel_direction * speed * dt, PLAYER_RADIUS)
+	webbed = false
+	for web in webs:
+		if web.life > 0 and player.distance_to(web.pos) <= float(web.radius) + PLAYER_RADIUS: webbed = true
+	player = World.move(world_seed, player, travel_direction * speed * (0.50 if webbed else 1.0) * dt, PLAYER_RADIUS)
 	_abandon_far_encounter()
 	_recycle_far_enemies()
 	blessing = maxf(0, blessing - dt)
@@ -112,6 +122,7 @@ func step(dt: float, movement: Vector2, special: bool) -> void:
 		var kind := 0
 		if elapsed >= 12 and rng.next_int(100) < 35: kind = 1
 		if elapsed >= 28 and rng.next_int(100) < 28: kind = 2
+		if elapsed >= 42 and rng.next_int(100) < 20: kind = 4
 		_spawn(kind)
 		spawn_cd = maxf(0.24, 1.15 - elapsed * 0.007 - (difficulty - 1) * 0.13)
 	if not endless and elapsed >= FINITE_SECONDS and not boss_spawned:
@@ -123,6 +134,7 @@ func step(dt: float, movement: Vector2, special: bool) -> void:
 		_cast_special()
 	_update_shots(dt)
 	_update_clouds(dt)
+	_update_enemy_hazards(dt)
 	for i in range(flashes.size() - 1, -1, -1):
 		flashes[i].life -= dt
 		if flashes[i].life <= 0: flashes.remove_at(i)
@@ -137,11 +149,9 @@ func step(dt: float, movement: Vector2, special: bool) -> void:
 		enemy.slow = maxf(0, enemy.slow - dt)
 		enemy.freeze = maxf(0, float(enemy.get("freeze", 0.0)) - dt)
 		enemy.chill = maxf(0, float(enemy.get("chill", 0.0)) - dt)
-		var delta: Vector2 = enemy.pos.direction_to(player) * float(enemy.speed) * slow_factor * dt
-		enemy.pos = World.enemy_move(world_seed, enemy.pos, delta, float(enemy.radius), float(enemy.steer))
-		if not frozen and player.distance_to(enemy.pos) <= float(enemy.radius) + 7.0 and hurt_cd <= 0:
-			hp = maxf(0, hp - float(enemy.damage) * float(kit.modifiers.incoming) * (0.45 if ward > 0 else 1.0))
-			hurt_cd = 0.45
+		EnemyAI.tick(self, enemy, dt, slow_factor, frozen)
+		if not frozen and enemy.attack == "chase" and player.distance_to(enemy.pos) <= float(enemy.radius) + PLAYER_RADIUS:
+			take_hit(float(enemy.damage), str(enemy.name))
 	if phenotype.affinity == "fire": _burn_death_bursts()
 	for i in range(enemies.size() - 1, -1, -1):
 		if enemies[i].hp <= 0:
@@ -281,6 +291,7 @@ func _recycle_far_enemies() -> void:
 			# Never delete the dungeon boss. Re-enter offscreen, retaining HP/status.
 			if distance > BOSS_RELOCATE_DISTANCE * BOSS_RELOCATE_DISTANCE:
 				e.pos = _spawn_position(float(e.radius))
+				EnemyAI.recover(e, 1.5)
 		elif str(e.get("encounter", "")) == "" and distance > DESPAWN_DISTANCE * DESPAWN_DISTANCE:
 			enemies.remove_at(i)
 			despawned += 1
@@ -299,6 +310,7 @@ func _spawn(kind: int) -> void:
 	d.freeze = 0.0
 	d.uid = next_enemy_id
 	next_enemy_id += 1
+	EnemyAI.initialize(d)
 	enemies.append(d)
 
 func effective_damage() -> float:
@@ -386,6 +398,7 @@ func _start_encounter(site: Dictionary) -> void:
 		d.uid = next_enemy_id
 		next_enemy_id += 1
 		d.encounter = site.id
+		EnemyAI.initialize(d)
 		enemies.append(d)
 	_announce("Ambush! Defeat the three guardians.")
 
@@ -411,7 +424,7 @@ func _cast_basic() -> bool:
 	for e in enemies:
 		if e.hp <= 0: continue
 		var d := player.distance_squared_to(e.pos)
-		if d <= best:
+		if d <= best and World.line_clear(world_seed, player, e.pos, 2.0):
 			best = d
 			target = e
 	if target.is_empty(): return false
@@ -519,3 +532,42 @@ func _burn_death_bursts() -> void:
 		for enemy in enemies:
 			if enemy.hp > 0 and center.distance_to(enemy.pos) <= burst_radius:
 				enemy.hp -= effective_damage() * burst_power
+
+func take_hit(amount: float, source: String) -> bool:
+	if hurt_cd > 0 or hp <= 0: return false
+	hp = maxf(0, hp - amount * float(kit.modifiers.incoming) * (0.45 if ward > 0 else 1.0))
+	hurt_cd = 0.45
+	last_hit = source
+	return true
+
+func add_web(point: Vector2) -> void:
+	if webs.size() >= EnemyAI.MAX_WEBS: webs.pop_front()
+	webs.append({"pos":point,"radius":EnemyAI.WEB_RADIUS,"life":4.0})
+
+func add_enemy_bolt(point: Vector2, direction: Vector2, amount: float) -> void:
+	if enemy_bolts.size() >= EnemyAI.MAX_BOLTS: return
+	enemy_bolts.append({"pos":point,"vel":direction.normalized() * 145.0,"damage":amount,"life":1.8})
+
+func add_danger_flash(point: Vector2, radius: float) -> void:
+	if danger_flashes.size() >= 12: danger_flashes.pop_front()
+	danger_flashes.append({"pos":point,"radius":radius,"life":0.30})
+
+func _update_enemy_hazards(dt: float) -> void:
+	for i in range(webs.size() - 1, -1, -1):
+		webs[i].life -= dt
+		if webs[i].life <= 0: webs.remove_at(i)
+	for i in range(enemy_bolts.size() - 1, -1, -1):
+		var bolt := enemy_bolts[i]
+		var before: Vector2 = bolt.pos
+		var after: Vector2 = before + bolt.vel * dt
+		bolt.life -= dt
+		if bolt.life <= 0 or not World.line_clear(world_seed, before, after, 3.0):
+			enemy_bolts.remove_at(i)
+			continue
+		bolt.pos = after
+		if Geometry2D.get_closest_point_to_segment(player, before, after).distance_to(player) <= PLAYER_RADIUS + 4.0:
+			take_hit(float(bolt.damage), "Warlock bolt")
+			enemy_bolts.remove_at(i)
+	for i in range(danger_flashes.size() - 1, -1, -1):
+		danger_flashes[i].life -= dt
+		if danger_flashes[i].life <= 0: danger_flashes.remove_at(i)
