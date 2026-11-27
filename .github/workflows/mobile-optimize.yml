@@ -53,7 +53,14 @@ jobs:
           if [ "$ALL_BODIES" = true ]; then args+=(--all-bodies); fi
           python mobile/tools/optimize_balance.py --godot Godot_v4.5.1-stable_linux.x86_64 --trials "$TRIALS" --train-seeds "$TRAIN" --validation-seeds "$VALID" --output /tmp/optimization.json "${args[@]}"
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: wizard-shooter-balance-optimization
-          path: /tmp/optimization.json
+          path: |
+            /tmp/optimization.json
+            /tmp/optimization.study/manifest.json
+            /tmp/optimization.study/study.sqlite3
+            /tmp/optimization.study/snapshot
+            /tmp/optimization.study/trials
+            /tmp/optimization.study/validation
           retention-days: 30
