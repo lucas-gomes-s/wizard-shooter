@@ -62,7 +62,7 @@ test('hostile projectile hits once and hazard damages once after warning',()=>{
 test('dragon spawns exactly once at 25 minutes and persists outside viewport',()=>{
  const g=make();g.tick=BOSS_MINUTE*60*50-1;g.spawnEnemies();assert.equal(g.boss,null);
  g.tick++;g.spawnEnemies();g.spawnEnemies();assert.equal(g.enemies.filter(e=>e.boss).length,1);
- const boss=g.boss;assert.equal(boss.maxHealth,6000);boss.x=100000;g.step();assert.equal(g.boss,boss);
+ const boss=g.boss;assert.equal(boss.maxHealth,18000);boss.x=100000;g.step();assert.equal(g.boss,boss);
 });
 test('dragon phases switch by health and telegraph stronger attacks',()=>{
  const g=make(),e=enemy('Dragon');g.tick=75;stepEnemy(g,e);assert.equal(e.bossPhase,1);
