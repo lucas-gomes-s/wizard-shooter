@@ -17,7 +17,7 @@ export function initEnemy(template,x,y,tick,elite=false){
 }
 function fire(game,e,angle,damage,speed=5,radius=6){
  if(game.hostiles.length>=HOSTILE_CAP)return;
- const c=centerOf(e);game.hostiles.push({x:c.x,y:c.y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,radius,damage,age:0,source:e.name});
+ const c=centerOf(e);game.hostiles.push({x:c.x,y:c.y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,radius,damage,age:0,source:e.name,eventSerial:e.eventSerial});
 }
 function hazard(game,type,x,y,radius,delay,duration,damage=0){
  if(game.hazards.length>=HAZARD_CAP)return;
