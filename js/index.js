@@ -1,3 +1,4 @@
+import {itemAttunements} from './attunements.js';
 import {activeGear,activeInfo} from './active-gear.js';
 import {eventById,eventObjective} from './dungeon-events.js';
 import {equipmentSlots,itemById,rarityColors} from './equipment.js';
@@ -95,6 +96,13 @@ function buy(index){
  setScreen(game.phase==='upgrade'?'upgrade':'play');
 }
 $('skipShop').addEventListener('click',()=>buy(-1));
+function attunementText(item,p){
+ return itemAttunements(item.id).map(a=>a.name+' · '+a.school.toUpperCase()+' rank II · '+((p.magic.ranks[a.school]||0)>=2?'ACTIVE: ':'Locked: ')+a.description).join(' ');
+}
+function appendAttunement(button,item){
+ const value=attunementText(item,game.player);if(!value)return;
+ const node=document.createElement('span');node.className='attunement-preview';node.textContent=value;button.append(node);
+}
 function buildShop(){
  const root=$('shopCards');root.replaceChildren();$('shopGold').textContent=game.player.gold+' gold available';
  for(const [i,item] of game.market.offers.entries()){
@@ -103,6 +111,7 @@ function buildShop(){
   const fields=[['spell-glyph',item.glyph],['skill-flavor',item.kind==='heal'?'CONSUMABLE':item.rarity.toUpperCase()+' · '+item.slot],['skill-title',item.name],['skill-effect',item.description],['skill-value',item.price+' gold'],['skill-rank',old?'Replaces '+old.name:item.kind==='heal'?'Immediate recovery':'Empty slot']];
   if(active)fields.push(['synergy-preview',active.name+' · '+active.description+' ('+active.cooldown/50+'s cooldown)']);
   for(const [cls,value] of fields){const span=document.createElement('span');span.className=cls;span.textContent=value;button.append(span);}
+  appendAttunement(button,item);
   button.disabled=game.player.gold<item.price||(item.kind==='heal'&&game.player.health>=game.player.maxHealth);
   button.addEventListener('click',()=>buy(i));root.append(button);
  }
@@ -122,14 +131,14 @@ function buildLoot(){
    const span=document.createElement('span');span.className=cls;span.textContent=value;button.append(span);
   }
   const active=activeGear[item.id];if(active){const span=document.createElement('span');span.className='synergy-preview';span.textContent=active.name+' · '+active.description+' ('+active.cooldown/50+'s cooldown)';button.append(span)}
-  button.addEventListener('click',()=>chooseLoot(i));root.append(button);
+  appendAttunement(button,item);button.addEventListener('click',()=>chooseLoot(i));root.append(button);
  }
  focus(root.firstElementChild||$('skipLoot'));
 }
 function updateGear(){
- const p=game.player,signature=JSON.stringify(p.equipment);
+ const p=game.player,signature=JSON.stringify([p.equipment,p.magic.ranks]);
  if(signature!==lastGear){lastGear=signature;const root=$('equipmentBuild');root.replaceChildren();
-  for(const slot of equipmentSlots){const item=itemById[p.equipment[slot]],chip=document.createElement('span');chip.className='gear-chip';chip.style.setProperty('--rarity',item?rarityColors[item.rarity]:'#777080');chip.textContent=slot.toUpperCase()+': '+(item?item.glyph+' '+item.name:'Empty');chip.title=item?item.description:'No '+slot+' equipped';root.append(chip);}
+  for(const slot of equipmentSlots){const item=itemById[p.equipment[slot]],chip=document.createElement('span');chip.className='gear-chip';chip.style.setProperty('--rarity',item?rarityColors[item.rarity]:'#777080');chip.textContent=slot.toUpperCase()+': '+(item?item.glyph+' '+item.name:'Empty');chip.title=item?item.description+' '+attunementText(item,p):'No '+slot+' equipped';if(item&&itemAttunements(item.id).some(a=>p.magic.ranks[a.school]>=2)){chip.textContent+=' ✦';chip.classList.add('attuned-gear');}root.append(chip);}
  }
  const chest=game.chests[0],hint=chest?game.chests.length+' treasure chest'+(game.chests.length===1?'':'s')+' · '+Math.ceil(Math.max(0,chest.until-game.tick)/50)+'s remaining':'';if($('treasureHint').textContent!==hint)$('treasureHint').textContent=hint;
 }
@@ -191,6 +200,7 @@ function updateSelection(moveFocus){
   if(moveFocus&&cards[game.selected])focus(cards[game.selected]);
 }
 function showResults(){
+ const t=game.reportCombat(),top=Object.entries(t.damageBySource).sort((a,b)=>b[1].effective-a[1].effective).slice(0,3);$('combatReport').textContent='Effective DPS '+t.dps.toFixed(1)+' · Projectile hit rate '+Math.round(t.accuracy*100)+'% · Damage taken '+Math.round(t.incoming)+' · Healing '+Math.round(t.healing)+' · Leading damage: '+(top.map(([k,v])=>k+' '+Math.round(v.effective)).join(', ')||'None');
   $('resultTime').textContent=formatTime(game.seconds);$('resultLevel').textContent=game.player.level;$('resultKills').textContent=game.kills;
   $('resultTitle').textContent=game.bossDefeated?'Endless run complete.':'The dungeon wins.';
   $('deathPhrase').textContent=config.gameOverPhrases[Math.floor(Math.random()*config.gameOverPhrases.length)];
