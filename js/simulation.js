@@ -1,3 +1,4 @@
+import {stepEnvironment,environmentById} from './environments.js';
 import {attuned} from './attunements.js';
 import {freshTelemetry,trackDamage,trackIncoming,trackHeal,trackCost,trackCast,trackHit,telemetrySummary} from './telemetry.js';
 import {freshMarket,addGold,stepMarket,choosePurchase} from './merchant.js';
@@ -5,7 +6,7 @@ import {useBoots,useRelic} from './active-gear.js';
 import {freshEvents,stepDungeon,recordEventDeath,recordEventHazard} from './dungeon-events.js';
 import {freshEquipment,hasGear,equipItem,lootOffers,treasureMinutes,gearMovement,gearCast,gearDamage} from './equipment.js';
 import {spawnInterval} from './balance.js';
-import {ENEMY_CAP,BOSS_MINUTE,initEnemy,stepEnemy,stepHazards,frontalMultiplier} from './enemies.js';
+import {HAZARD_CAP,ENEMY_CAP,BOSS_MINUTE,initEnemy,stepEnemy,stepHazards,frontalMultiplier} from './enemies.js';
 import {freshMagic,upgradeOffers,applyUpgrade,boltPattern,pierceCount,nearby,dominantSchool} from './magic.js';
 // Pure simulation. Legacy balance uses 50 fixed ticks per second.
 export const STEP_MS = 20;
@@ -28,7 +29,7 @@ export class FixedClock{
 
 export class Game{
  constructor(config,rng=Math.random){this.config=config;this.rng=rng;this.width=600;this.height=600;this.reset()}
- reset(){this.phase='playing';this.tick=0;this.dungeon=freshEvents();this.market=freshMarket();this.telemetry=freshTelemetry();this.activeHistory=[];this.chests=[];this.nextTreasure=0;this.loot=[];this.lootSource=null;this.lootHistory=[];this.chestsOpened=0;this.kills=0;this.enemies=[];this.shots=[];this.potions=[];this.flash=0;this.events=[];this.visualEvents=[];this.offers=[];this.selected=0;this.deathQueue=[];this.hostiles=[];this.hazards=[];this.spawnCount=0;this.minibossSpawned=new Set();this.bossSpawned=false;this.bossDefeated=false;this.victoryTick=null;this.endless=false;this.enemyTimers=this.config.monsters.map(()=>0);this.potionTimers=this.config.potionInfo.map(()=>0);this.player={x:280,y:280,width:40,height:40,maxSpeed:2,health:100,maxHealth:100,level:1,currentExp:0,expNeeded:this.config.levels[0],shotDmg:10,shotSpd:8,shotSize:5,shotCd:50,cooldown:50,skillLvl:this.config.skills.map(()=>0),gold:0,activeReady:{boots:0,relic:0},lastDirection:[0,0],magic:{...freshMagic(),pureOath:!!this.config.pureOath},equipment:freshEquipment(),gearState:Object.fromEntries(['staff','robe','boots','relic'].map(slot=>[slot,{readyAt:0,activeUntil:0,count:0}]))}}
+ reset(){this.phase='playing';this.tick=0;this.nextEnvironmentHazard=0;this.dungeon=freshEvents();this.market=freshMarket();this.telemetry=freshTelemetry();this.activeHistory=[];this.chests=[];this.nextTreasure=0;this.loot=[];this.lootSource=null;this.lootHistory=[];this.chestsOpened=0;this.kills=0;this.enemies=[];this.shots=[];this.potions=[];this.flash=0;this.events=[];this.visualEvents=[];this.offers=[];this.selected=0;this.deathQueue=[];this.hostiles=[];this.hazards=[];this.spawnCount=0;this.minibossSpawned=new Set();this.bossSpawned=false;this.bossDefeated=false;this.victoryTick=null;this.endless=false;this.enemyTimers=this.config.monsters.map(()=>0);this.potionTimers=this.config.potionInfo.map(()=>0);this.player={x:280,y:280,width:40,height:40,maxSpeed:2,health:100,maxHealth:100,level:1,currentExp:0,expNeeded:this.config.levels[0],shotDmg:10,shotSpd:8,shotSize:5,shotCd:50,cooldown:50,skillLvl:this.config.skills.map(()=>0),gold:0,activeReady:{boots:0,relic:0},lastDirection:[0,0],magic:{...freshMagic(),pureOath:!!this.config.pureOath},equipment:freshEquipment(),gearState:Object.fromEntries(['staff','robe','boots','relic'].map(slot=>[slot,{readyAt:0,activeUntil:0,count:0}]))}}
  start(school){this.reset();if(!Object.hasOwn(this.player.magic.ranks,school))return false;this.player.magic.ranks[school]=1;this.player.magic.primary=school;this.player.cooldown=0;return true}
  emit(type,object,value=0,school=null,extra={}){if(this.events.length<128)this.events.push({type,x:object.x+object.width/2,y:object.y+object.height/2,value,school,...extra})}
  emitVisual(type,object,value=0,school=null,extra={}){if(this.visualEvents.length<128)this.visualEvents.push({type,x:object.x+object.width/2,y:object.y+object.height/2,value,school,...extra})}
@@ -156,7 +157,7 @@ export class Game{
  spawnEnemies(){
   if(!this.bossSpawned&&this.seconds>=BOSS_MINUTE*60){
    const template=this.config.monsters.find(m=>m.name==='Dragon');
-   if(template){this.bossSpawned=true;this.enemies.push(this.spawnAtEdge(template));}
+   if(template){this.bossSpawned=true;const boss=this.spawnAtEdge(template);boss.title=environmentById(this.config.environment).boss;this.enemies.push(boss);}
   }
   for(const encounter of this.config.minibosses||[]){
    if(this.seconds<encounter.minute*60||this.minibossSpawned.has(encounter.minute))continue;
@@ -179,7 +180,7 @@ export class Game{
  get boss(){return this.enemies.find(e=>e.boss&&e.health>0)||null}
  continueEndless(){
   if(this.phase!=='victory')return false;
-  this.endless=true;this.phase='playing';this.hostiles=[];this.hazards=[];this.player.webUntil=0;this.levelUp();return true;
+  this.endless=true;this.phase='playing';this.hostiles=[];this.hazards=[];this.player.webUntil=0;this.player.frostUntil=0;this.levelUp();return true;
  }
  dropChest(x,y,tier,source){
   if(this.chests.length>=8)return false;
@@ -236,7 +237,7 @@ export class Game{
   if(this.phase!=='playing')return false;
   const p=this.player,m=p.magic;this.events=[];this.visualEvents=[];this.deathQueue=[];this.tick++;this.flash=Math.max(0,this.flash-1);
   if(m.ranks.arcane>=2&&!m.shieldReady&&this.tick>=m.shieldUntil)m.shieldReady=true;
-  const [dx,dy]=normalize(input.x||0,input.y||0);if(dx||dy)p.lastDirection=[dx,dy];const trailDash=useBoots(this,input,dx,dy);const web=p.webUntil>this.tick&&!hasGear(p,'silk')?.55:1;const speed=p.maxSpeed*web*gearMovement(p,this.tick);p.x+=dx*speed;p.y+=dy*speed;p.cooldown=Math.max(0,p.cooldown-1);if(p.equipment.relic==='crown'||p.equipment.relic==='tonic')useRelic(this,input,null,nearby);this.shoot(input.aim);
+  const [dx,dy]=normalize(input.x||0,input.y||0);if(dx||dy)p.lastDirection=[dx,dy];const trailDash=useBoots(this,input,dx,dy);const web=p.webUntil>this.tick&&!hasGear(p,'silk')?.55:1;const speed=p.maxSpeed*web*gearMovement(p,this.tick)*(p.frostUntil>this.tick?.75:1);p.x+=dx*speed;p.y+=dy*speed;p.cooldown=Math.max(0,p.cooldown-1);if(p.equipment.relic==='crown'||p.equipment.relic==='tonic')useRelic(this,input,null,nearby);this.shoot(input.aim);
   for(const s of this.shots){s.x+=s.vx;s.y+=s.vy;s.age=(s.age||0)+1}
   const hash=new SpatialHash();
   for(const e of this.enemies){
@@ -274,6 +275,6 @@ export class Game{
   if(p.health<=0){stepDungeon(this);this.phase='over';return false}
   if(this.deathQueue.length){this.resolveDeaths(hash);if(this.bossDefeated&&!this.endless){this.phase='victory';return false}}
   this.potions=this.potions.filter(o=>{if(++o.age>=o.fade||!this.visible(o))return false;if(p.health<p.maxHealth&&overlaps(o,p)){const previous=p.health;p.health=Math.min(p.maxHealth,p.health+o.recovery*p.maxHealth*(hasGear(p,'tonic')?1.35:1));trackHeal(this.telemetry,this.tick,'potion',p.health-previous);this.emit('heal',p,p.health-previous);return false}return true});
-  this.spawnEnemies();this.spawnPotions();stepDungeon(this);this.stepLoot();if(this.phase==='playing')stepMarket(this);if(this.phase==='playing')this.levelUp();return this.phase==='playing';
+  this.spawnEnemies();this.spawnPotions();stepEnvironment(this,HAZARD_CAP);stepDungeon(this);this.stepLoot();if(this.phase==='playing')stepMarket(this);if(this.phase==='playing')this.levelUp();return this.phase==='playing';
  }
 }
