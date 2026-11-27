@@ -1,0 +1,4643 @@
+{
+  "seconds": 600,
+  "decisionTicks": 5,
+  "results": [
+    {
+      "primary": "fire",
+      "secondary": null,
+      "seed": 1,
+      "seconds": 422,
+      "phase": "over",
+      "level": 20,
+      "kills": 501,
+      "xp": 2175,
+      "health": 0,
+      "maxEnemies": 36,
+      "firstUpgrade": 6.28,
+      "secondaryOfferedAt": null,
+      "secondaryAt": null,
+      "secondaryLevel": null,
+      "fusion": null,
+      "fusionAt": null,
+      "fusionLevel": null,
+      "mastery": "inferno",
+      "masteryAt": 239.82,
+      "masteryLevel": 15,
+      "reachedDragon": false,
+      "build": {
+        "fire": 5,
+        "ice": 0,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "bloodwood",
+        "robe": "phantom",
+        "boots": null,
+        "relic": "hourglass"
+      },
+      "chestsOpened": 3,
+      "lootHistory": [
+        {
+          "id": "bloodwood",
+          "tick": 6513,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "phantom",
+          "tick": 11098,
+          "source": "Blood moon reward"
+        },
+        {
+          "id": "hourglass",
+          "tick": 15286,
+          "source": "Guardian reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 11088,
+          "startedAt": 10531,
+          "progress": 19,
+          "goal": 19,
+          "hits": 0
+        }
+      ],
+      "gold": 611,
+      "goldEarned": 646,
+      "goldSpent": 35,
+      "marketHistory": [
+        {
+          "id": "heal",
+          "price": 35,
+          "tick": 18627
+        }
+      ],
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 15296
+        },
+        {
+          "id": "hourglass",
+          "tick": 16421
+        },
+        {
+          "id": "hourglass",
+          "tick": 17421
+        },
+        {
+          "id": "hourglass",
+          "tick": 18486
+        },
+        {
+          "id": "hourglass",
+          "tick": 19556
+        },
+        {
+          "id": "hourglass",
+          "tick": 20976
+        }
+      ],
+      "stats": {
+        "damage": 120,
+        "castTicks": 45,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 327,
+          "health": 45,
+          "enemies": 6
+        }
+      }
+    },
+    {
+      "primary": "fire",
+      "secondary": "ice",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "kills": 787,
+      "xp": 4349,
+      "health": 36,
+      "maxEnemies": 36,
+      "firstUpgrade": 6.28,
+      "secondaryOfferedAt": 167,
+      "secondaryAt": 167,
+      "secondaryLevel": 12,
+      "fusion": "steam",
+      "fusionAt": 213.3,
+      "fusionLevel": 14,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 5,
+        "ice": 2,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "bloodwood",
+        "robe": "phantom",
+        "boots": "runner",
+        "relic": "gambler"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "bloodwood",
+          "tick": 6513,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "phantom",
+          "tick": 11147,
+          "source": "Blood moon reward"
+        },
+        {
+          "id": "gambler",
+          "tick": 16451,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "runner",
+          "tick": 21331,
+          "source": "Dungeon treasure"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 11123,
+          "startedAt": 10532,
+          "progress": 22,
+          "goal": 19,
+          "hits": 0
+        },
+        {
+          "id": "guardian",
+          "outcome": "completed",
+          "tick": 25793,
+          "startedAt": 25532,
+          "progress": 1,
+          "goal": 1,
+          "hits": 0
+        }
+      ],
+      "gold": 1073,
+      "goldEarned": 1108,
+      "goldSpent": 35,
+      "marketHistory": [
+        {
+          "id": "heal",
+          "price": 35,
+          "tick": 18241
+        }
+      ],
+      "activeHistory": [
+        {
+          "id": "runner",
+          "tick": 21716
+        },
+        {
+          "id": "runner",
+          "tick": 23011
+        },
+        {
+          "id": "runner",
+          "tick": 23931
+        },
+        {
+          "id": "runner",
+          "tick": 24551
+        },
+        {
+          "id": "runner",
+          "tick": 24976
+        },
+        {
+          "id": "runner",
+          "tick": 26031
+        },
+        {
+          "id": "runner",
+          "tick": 26466
+        },
+        {
+          "id": "runner",
+          "tick": 27151
+        },
+        {
+          "id": "runner",
+          "tick": 28141
+        },
+        {
+          "id": "runner",
+          "tick": 28676
+        },
+        {
+          "id": "runner",
+          "tick": 29221
+        },
+        {
+          "id": "runner",
+          "tick": 29761
+        }
+      ],
+      "stats": {
+        "damage": 120,
+        "castTicks": 40,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 328,
+          "health": 60,
+          "enemies": 5
+        },
+        "600": {
+          "level": 23,
+          "kills": 787,
+          "health": 36,
+          "enemies": 12
+        }
+      }
+    },
+    {
+      "primary": "fire",
+      "secondary": "lightning",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "kills": 788,
+      "xp": 4307,
+      "health": 70,
+      "maxEnemies": 36,
+      "firstUpgrade": 6.28,
+      "secondaryOfferedAt": 474.08,
+      "secondaryAt": 474.08,
+      "secondaryLevel": 21,
+      "fusion": "plasma",
+      "fusionAt": 569.8,
+      "fusionLevel": 23,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 5,
+        "ice": 0,
+        "lightning": 2,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "bloodwood",
+        "robe": "phantom",
+        "boots": "runner",
+        "relic": "gambler"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "bloodwood",
+          "tick": 6513,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "phantom",
+          "tick": 11098,
+          "source": "Blood moon reward"
+        },
+        {
+          "id": "gambler",
+          "tick": 15523,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "silk",
+          "tick": 21027,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "runner",
+          "tick": 25615,
+          "source": "Magical anomaly reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 11088,
+          "startedAt": 10531,
+          "progress": 19,
+          "goal": 19,
+          "hits": 0
+        },
+        {
+          "id": "anomaly",
+          "outcome": "completed",
+          "tick": 25611,
+          "startedAt": 25521,
+          "progress": 3,
+          "goal": 3,
+          "hits": 0
+        }
+      ],
+      "gold": 1069,
+      "goldEarned": 1104,
+      "goldSpent": 35,
+      "marketHistory": [
+        {
+          "id": "heal",
+          "price": 35,
+          "tick": 18024
+        }
+      ],
+      "activeHistory": [
+        {
+          "id": "runner",
+          "tick": 25676
+        },
+        {
+          "id": "runner",
+          "tick": 26391
+        },
+        {
+          "id": "runner",
+          "tick": 26741
+        },
+        {
+          "id": "runner",
+          "tick": 27191
+        },
+        {
+          "id": "runner",
+          "tick": 27816
+        },
+        {
+          "id": "runner",
+          "tick": 28971
+        },
+        {
+          "id": "runner",
+          "tick": 29351
+        }
+      ],
+      "stats": {
+        "damage": 80,
+        "castTicks": 35,
+        "speed": 6,
+        "maxHealth": 120
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 328,
+          "health": 27,
+          "enemies": 5
+        },
+        "600": {
+          "level": 23,
+          "kills": 788,
+          "health": 70,
+          "enemies": 10
+        }
+      }
+    },
+    {
+      "primary": "fire",
+      "secondary": "necro",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "kills": 788,
+      "xp": 4372,
+      "health": 100,
+      "maxEnemies": 36,
+      "firstUpgrade": 6.28,
+      "secondaryOfferedAt": 304.7,
+      "secondaryAt": 304.7,
+      "secondaryLevel": 17,
+      "fusion": "soulfire",
+      "fusionAt": 376.96,
+      "fusionLevel": 19,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 5,
+        "ice": 0,
+        "lightning": 0,
+        "necro": 4,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "bloodwood",
+        "robe": "phantom",
+        "boots": "swift",
+        "relic": "fang"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "bloodwood",
+          "tick": 6513,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "phantom",
+          "tick": 11098,
+          "source": "Blood moon reward"
+        },
+        {
+          "id": "swift",
+          "tick": 15630,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "fang",
+          "tick": 26474,
+          "source": "Treasure guardian reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 11088,
+          "startedAt": 10531,
+          "progress": 19,
+          "goal": 19,
+          "hits": 0
+        },
+        {
+          "id": "guardian",
+          "outcome": "completed",
+          "tick": 26469,
+          "startedAt": 26273,
+          "progress": 1,
+          "goal": 1,
+          "hits": 0
+        }
+      ],
+      "gold": 1066,
+      "goldEarned": 1111,
+      "goldSpent": 45,
+      "marketHistory": [
+        {
+          "id": "tonic",
+          "price": 45,
+          "tick": 18032
+        }
+      ],
+      "activeHistory": [],
+      "stats": {
+        "damage": 100,
+        "castTicks": 40,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 328,
+          "health": 27,
+          "enemies": 5
+        },
+        "600": {
+          "level": 23,
+          "kills": 788,
+          "health": 100,
+          "enemies": 11
+        }
+      }
+    },
+    {
+      "primary": "fire",
+      "secondary": "arcane",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "kills": 791,
+      "xp": 4381,
+      "health": 100,
+      "maxEnemies": 36,
+      "firstUpgrade": 6.28,
+      "secondaryOfferedAt": 121.36,
+      "secondaryAt": 121.36,
+      "secondaryLevel": 10,
+      "fusion": "starfall",
+      "fusionAt": 211.16,
+      "fusionLevel": 14,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 5,
+        "ice": 0,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 2
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "thorns",
+        "boots": "escape",
+        "relic": "hourglass"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "thorns",
+          "tick": 8032,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "echo",
+          "tick": 11380,
+          "source": "Blood moon reward"
+        },
+        {
+          "id": "hourglass",
+          "tick": 15235,
+          "source": "Guardian reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 11375,
+          "startedAt": 10677,
+          "progress": 20,
+          "goal": 19,
+          "hits": 0
+        },
+        {
+          "id": "collapse",
+          "outcome": "completed",
+          "tick": 27031,
+          "startedAt": 25531,
+          "progress": 0,
+          "goal": 3,
+          "hits": 0
+        }
+      ],
+      "gold": 1023,
+      "goldEarned": 1113,
+      "goldSpent": 90,
+      "marketHistory": [
+        {
+          "id": "escape",
+          "price": 90,
+          "tick": 18027
+        }
+      ],
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 15551
+        },
+        {
+          "id": "hourglass",
+          "tick": 16551
+        },
+        {
+          "id": "hourglass",
+          "tick": 18386
+        },
+        {
+          "id": "escape",
+          "tick": 18586
+        },
+        {
+          "id": "hourglass",
+          "tick": 19681
+        },
+        {
+          "id": "escape",
+          "tick": 20161
+        },
+        {
+          "id": "escape",
+          "tick": 20736
+        },
+        {
+          "id": "hourglass",
+          "tick": 21011
+        },
+        {
+          "id": "escape",
+          "tick": 21381
+        },
+        {
+          "id": "hourglass",
+          "tick": 22701
+        },
+        {
+          "id": "escape",
+          "tick": 22846
+        },
+        {
+          "id": "escape",
+          "tick": 23431
+        },
+        {
+          "id": "hourglass",
+          "tick": 24401
+        },
+        {
+          "id": "escape",
+          "tick": 25126
+        },
+        {
+          "id": "escape",
+          "tick": 25731
+        },
+        {
+          "id": "hourglass",
+          "tick": 26501
+        },
+        {
+          "id": "escape",
+          "tick": 26666
+        },
+        {
+          "id": "escape",
+          "tick": 27116
+        },
+        {
+          "id": "escape",
+          "tick": 29341
+        },
+        {
+          "id": "hourglass",
+          "tick": 29791
+        }
+      ],
+      "stats": {
+        "damage": 90,
+        "castTicks": 25,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 327,
+          "health": 100,
+          "enemies": 5
+        },
+        "600": {
+          "level": 23,
+          "kills": 791,
+          "health": 100,
+          "enemies": 6
+        }
+      }
+    },
+    {
+      "primary": "ice",
+      "secondary": null,
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "kills": 766,
+      "xp": 4197,
+      "health": 120,
+      "maxEnemies": 64,
+      "firstUpgrade": 6.28,
+      "secondaryOfferedAt": null,
+      "secondaryAt": null,
+      "secondaryLevel": null,
+      "fusion": null,
+      "fusionAt": null,
+      "fusionLevel": null,
+      "mastery": "absolute-zero",
+      "masteryAt": 252.58,
+      "masteryLevel": 15,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 5,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "phantom",
+        "boots": "runner",
+        "relic": "fang"
+      },
+      "chestsOpened": 4,
+      "lootHistory": [
+        {
+          "id": "echo",
+          "tick": 6073,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "phantom",
+          "tick": 11146,
+          "source": "Blood moon reward"
+        },
+        {
+          "id": "runner",
+          "tick": 18156,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "fang",
+          "tick": 26740,
+          "source": "Magical anomaly reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 11136,
+          "startedAt": 10530,
+          "progress": 19,
+          "goal": 19,
+          "hits": 0
+        },
+        {
+          "id": "anomaly",
+          "outcome": "completed",
+          "tick": 26734,
+          "startedAt": 26226,
+          "progress": 3,
+          "goal": 3,
+          "hits": 0
+        }
+      ],
+      "gold": 986,
+      "goldEarned": 1076,
+      "goldSpent": 90,
+      "marketHistory": [
+        {
+          "id": "gambler",
+          "price": 90,
+          "tick": 18030
+        }
+      ],
+      "activeHistory": [
+        {
+          "id": "runner",
+          "tick": 18556
+        },
+        {
+          "id": "runner",
+          "tick": 19186
+        },
+        {
+          "id": "runner",
+          "tick": 20181
+        },
+        {
+          "id": "runner",
+          "tick": 20711
+        },
+        {
+          "id": "runner",
+          "tick": 21291
+        },
+        {
+          "id": "runner",
+          "tick": 21836
+        },
+        {
+          "id": "runner",
+          "tick": 22206
+        },
+        {
+          "id": "runner",
+          "tick": 22991
+        },
+        {
+          "id": "runner",
+          "tick": 23596
+        },
+        {
+          "id": "runner",
+          "tick": 24121
+        },
+        {
+          "id": "runner",
+          "tick": 24506
+        },
+        {
+          "id": "runner",
+          "tick": 25411
+        },
+        {
+          "id": "runner",
+          "tick": 25781
+        },
+        {
+          "id": "runner",
+          "tick": 26321
+        },
+        {
+          "id": "runner",
+          "tick": 28171
+        },
+        {
+          "id": "runner",
+          "tick": 28916
+        },
+        {
+          "id": "runner",
+          "tick": 29636
+        }
+      ],
+      "stats": {
+        "damage": 130,
+        "castTicks": 40,
+        "speed": 4,
+        "maxHealth": 120
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 317,
+          "health": 101,
+          "enemies": 15
+        },
+        "600": {
+          "level": 23,
+          "kills": 766,
+          "health": 120,
+          "enemies": 31
+        }
+      }
+    },
+    {
+      "primary": "ice",
+      "secondary": "fire",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "kills": 788,
+      "xp": 4360,
+      "health": 84,
+      "maxEnemies": 79,
+      "firstUpgrade": 6.28,
+      "secondaryOfferedAt": 221.06,
+      "secondaryAt": 221.06,
+      "secondaryLevel": 13,
+      "fusion": "steam",
+      "fusionAt": 300.14,
+      "fusionLevel": 16,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 3,
+        "ice": 5,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "phantom",
+        "boots": "runner",
+        "relic": "hourglass"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "echo",
+          "tick": 6073,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "hourglass",
+          "tick": 15855,
+          "source": "Dungeon collapse reward"
+        },
+        {
+          "id": "phantom",
+          "tick": 16490,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "silk",
+          "tick": 21044,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "runner",
+          "tick": 26855,
+          "source": "Blood moon reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "collapse",
+          "outcome": "completed",
+          "tick": 12030,
+          "startedAt": 10530,
+          "progress": 0,
+          "goal": 3,
+          "hits": 0
+        },
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 26342,
+          "startedAt": 25535,
+          "progress": 26,
+          "goal": 24,
+          "hits": 0
+        }
+      ],
+      "gold": 1109,
+      "goldEarned": 1109,
+      "goldSpent": 0,
+      "marketHistory": [],
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 16141
+        },
+        {
+          "id": "hourglass",
+          "tick": 17211
+        },
+        {
+          "id": "hourglass",
+          "tick": 18486
+        },
+        {
+          "id": "hourglass",
+          "tick": 19506
+        },
+        {
+          "id": "hourglass",
+          "tick": 20816
+        },
+        {
+          "id": "hourglass",
+          "tick": 21841
+        },
+        {
+          "id": "hourglass",
+          "tick": 22841
+        },
+        {
+          "id": "hourglass",
+          "tick": 23896
+        },
+        {
+          "id": "hourglass",
+          "tick": 24966
+        },
+        {
+          "id": "hourglass",
+          "tick": 26026
+        },
+        {
+          "id": "hourglass",
+          "tick": 27031
+        },
+        {
+          "id": "runner",
+          "tick": 27096
+        },
+        {
+          "id": "runner",
+          "tick": 27536
+        },
+        {
+          "id": "hourglass",
+          "tick": 28051
+        },
+        {
+          "id": "runner",
+          "tick": 28306
+        },
+        {
+          "id": "hourglass",
+          "tick": 29051
+        },
+        {
+          "id": "runner",
+          "tick": 29361
+        },
+        {
+          "id": "runner",
+          "tick": 29946
+        }
+      ],
+      "stats": {
+        "damage": 100,
+        "castTicks": 35,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 15,
+          "kills": 256,
+          "health": 87,
+          "enemies": 74
+        },
+        "600": {
+          "level": 23,
+          "kills": 788,
+          "health": 84,
+          "enemies": 11
+        }
+      }
+    },
+    {
+      "primary": "ice",
+      "secondary": "lightning",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "kills": 787,
+      "xp": 4318,
+      "health": 100,
+      "maxEnemies": 61,
+      "firstUpgrade": 6.28,
+      "secondaryOfferedAt": 154.54,
+      "secondaryAt": 154.54,
+      "secondaryLevel": 10,
+      "fusion": "thunderfrost",
+      "fusionAt": 184,
+      "fusionLevel": 12,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 4,
+        "lightning": 5,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "thorns",
+        "boots": "escape",
+        "relic": "hourglass"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "echo",
+          "tick": 6073,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "escape",
+          "tick": 11050,
+          "source": "Treasure guardian reward"
+        },
+        {
+          "id": "thorns",
+          "tick": 15338,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "hourglass",
+          "tick": 21724,
+          "source": "Dungeon treasure"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "guardian",
+          "outcome": "completed",
+          "tick": 11045,
+          "startedAt": 10529,
+          "progress": 1,
+          "goal": 1,
+          "hits": 0
+        },
+        {
+          "id": "collapse",
+          "outcome": "completed",
+          "tick": 27032,
+          "startedAt": 25532,
+          "progress": 0,
+          "goal": 3,
+          "hits": 0
+        }
+      ],
+      "gold": 1104,
+      "goldEarned": 1104,
+      "goldSpent": 0,
+      "marketHistory": [],
+      "activeHistory": [
+        {
+          "id": "escape",
+          "tick": 11641
+        },
+        {
+          "id": "escape",
+          "tick": 14956
+        },
+        {
+          "id": "escape",
+          "tick": 15966
+        },
+        {
+          "id": "escape",
+          "tick": 16641
+        },
+        {
+          "id": "escape",
+          "tick": 17321
+        },
+        {
+          "id": "escape",
+          "tick": 18741
+        },
+        {
+          "id": "escape",
+          "tick": 19206
+        },
+        {
+          "id": "escape",
+          "tick": 19806
+        },
+        {
+          "id": "escape",
+          "tick": 21141
+        },
+        {
+          "id": "escape",
+          "tick": 22216
+        },
+        {
+          "id": "hourglass",
+          "tick": 22686
+        },
+        {
+          "id": "escape",
+          "tick": 23021
+        },
+        {
+          "id": "hourglass",
+          "tick": 23856
+        },
+        {
+          "id": "escape",
+          "tick": 24521
+        },
+        {
+          "id": "hourglass",
+          "tick": 25241
+        },
+        {
+          "id": "escape",
+          "tick": 25786
+        },
+        {
+          "id": "hourglass",
+          "tick": 26411
+        },
+        {
+          "id": "escape",
+          "tick": 26601
+        },
+        {
+          "id": "escape",
+          "tick": 27571
+        },
+        {
+          "id": "hourglass",
+          "tick": 27876
+        },
+        {
+          "id": "hourglass",
+          "tick": 28961
+        },
+        {
+          "id": "escape",
+          "tick": 29951
+        }
+      ],
+      "stats": {
+        "damage": 70,
+        "castTicks": 25,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 328,
+          "health": 100,
+          "enemies": 3
+        },
+        "600": {
+          "level": 23,
+          "kills": 787,
+          "health": 100,
+          "enemies": 9
+        }
+      }
+    },
+    {
+      "primary": "ice",
+      "secondary": "necro",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "kills": 780,
+      "xp": 4267,
+      "health": 100,
+      "maxEnemies": 76,
+      "firstUpgrade": 6.28,
+      "secondaryOfferedAt": 237.84,
+      "secondaryAt": 237.84,
+      "secondaryLevel": 14,
+      "fusion": "gravefrost",
+      "fusionAt": 295.64,
+      "fusionLevel": 16,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 5,
+        "lightning": 0,
+        "necro": 5,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "thorns",
+        "boots": "swift",
+        "relic": "hourglass"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "echo",
+          "tick": 6073,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "hourglass",
+          "tick": 12037,
+          "source": "Dungeon collapse reward"
+        },
+        {
+          "id": "swift",
+          "tick": 16689,
+          "source": "Guardian reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "collapse",
+          "outcome": "completed",
+          "tick": 12030,
+          "startedAt": 10530,
+          "progress": 0,
+          "goal": 3,
+          "hits": 0
+        },
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 26021,
+          "startedAt": 25535,
+          "progress": 25,
+          "goal": 24,
+          "hits": 0
+        }
+      ],
+      "gold": 1004,
+      "goldEarned": 1094,
+      "goldSpent": 90,
+      "marketHistory": [
+        {
+          "id": "thorns",
+          "price": 90,
+          "tick": 18023
+        }
+      ],
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 12038
+        },
+        {
+          "id": "hourglass",
+          "tick": 13371
+        },
+        {
+          "id": "hourglass",
+          "tick": 14391
+        },
+        {
+          "id": "hourglass",
+          "tick": 15391
+        },
+        {
+          "id": "hourglass",
+          "tick": 16391
+        },
+        {
+          "id": "hourglass",
+          "tick": 17716
+        },
+        {
+          "id": "hourglass",
+          "tick": 18751
+        },
+        {
+          "id": "hourglass",
+          "tick": 19901
+        },
+        {
+          "id": "hourglass",
+          "tick": 20901
+        },
+        {
+          "id": "hourglass",
+          "tick": 22341
+        },
+        {
+          "id": "hourglass",
+          "tick": 23341
+        },
+        {
+          "id": "hourglass",
+          "tick": 24451
+        },
+        {
+          "id": "hourglass",
+          "tick": 25451
+        },
+        {
+          "id": "hourglass",
+          "tick": 26656
+        },
+        {
+          "id": "hourglass",
+          "tick": 27676
+        },
+        {
+          "id": "hourglass",
+          "tick": 28736
+        },
+        {
+          "id": "hourglass",
+          "tick": 29756
+        }
+      ],
+      "stats": {
+        "damage": 90,
+        "castTicks": 40,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 273,
+          "health": 85,
+          "enemies": 57
+        },
+        "600": {
+          "level": 23,
+          "kills": 780,
+          "health": 100,
+          "enemies": 15
+        }
+      }
+    },
+    {
+      "primary": "ice",
+      "secondary": "arcane",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "kills": 786,
+      "xp": 4332,
+      "health": 100,
+      "maxEnemies": 75,
+      "firstUpgrade": 6.28,
+      "secondaryOfferedAt": 183.02,
+      "secondaryAt": 183.02,
+      "secondaryLevel": 11,
+      "fusion": "mirror",
+      "fusionAt": 220.16,
+      "fusionLevel": 13,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 5,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 3
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "phantom",
+        "boots": "swift",
+        "relic": "hourglass"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "echo",
+          "tick": 6073,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "hourglass",
+          "tick": 12051,
+          "source": "Dungeon collapse reward"
+        },
+        {
+          "id": "phantom",
+          "tick": 16818,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "swift",
+          "tick": 21040,
+          "source": "Dungeon treasure"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "collapse",
+          "outcome": "completed",
+          "tick": 12044,
+          "startedAt": 10544,
+          "progress": 0,
+          "goal": 3,
+          "hits": 0
+        },
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 26266,
+          "startedAt": 25527,
+          "progress": 24,
+          "goal": 24,
+          "hits": 0
+        }
+      ],
+      "gold": 1015,
+      "goldEarned": 1105,
+      "goldSpent": 90,
+      "marketHistory": [
+        {
+          "id": "escape",
+          "price": 90,
+          "tick": 18708
+        }
+      ],
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 12066
+        },
+        {
+          "id": "hourglass",
+          "tick": 13411
+        },
+        {
+          "id": "hourglass",
+          "tick": 14466
+        },
+        {
+          "id": "hourglass",
+          "tick": 15466
+        },
+        {
+          "id": "hourglass",
+          "tick": 16466
+        },
+        {
+          "id": "hourglass",
+          "tick": 17466
+        },
+        {
+          "id": "hourglass",
+          "tick": 18571
+        },
+        {
+          "id": "hourglass",
+          "tick": 19641
+        },
+        {
+          "id": "escape",
+          "tick": 19706
+        },
+        {
+          "id": "escape",
+          "tick": 20336
+        },
+        {
+          "id": "hourglass",
+          "tick": 20651
+        },
+        {
+          "id": "escape",
+          "tick": 20936
+        },
+        {
+          "id": "hourglass",
+          "tick": 21686
+        },
+        {
+          "id": "hourglass",
+          "tick": 22751
+        },
+        {
+          "id": "hourglass",
+          "tick": 23866
+        },
+        {
+          "id": "hourglass",
+          "tick": 24901
+        },
+        {
+          "id": "hourglass",
+          "tick": 25941
+        },
+        {
+          "id": "hourglass",
+          "tick": 26991
+        },
+        {
+          "id": "hourglass",
+          "tick": 27991
+        },
+        {
+          "id": "hourglass",
+          "tick": 29016
+        }
+      ],
+      "stats": {
+        "damage": 110,
+        "castTicks": 40,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 304,
+          "health": 100,
+          "enemies": 26
+        },
+        "600": {
+          "level": 23,
+          "kills": 786,
+          "health": 100,
+          "enemies": 12
+        }
+      }
+    },
+    {
+      "primary": "lightning",
+      "secondary": null,
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "kills": 788,
+      "xp": 4386,
+      "health": 100,
+      "maxEnemies": 14,
+      "firstUpgrade": 8.06,
+      "secondaryOfferedAt": null,
+      "secondaryAt": null,
+      "secondaryLevel": null,
+      "fusion": null,
+      "fusionAt": null,
+      "fusionLevel": null,
+      "mastery": "tempest",
+      "masteryAt": 237.22,
+      "masteryLevel": 15,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 0,
+        "lightning": 5,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "phantom",
+        "boots": "escape",
+        "relic": "hourglass"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "hourglass",
+          "tick": 6303,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "wardrobe",
+          "tick": 12040,
+          "source": "Dungeon collapse reward"
+        },
+        {
+          "id": "escape",
+          "tick": 15759,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "phantom",
+          "tick": 21038,
+          "source": "Dungeon treasure"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "collapse",
+          "outcome": "completed",
+          "tick": 12035,
+          "startedAt": 10535,
+          "progress": 0,
+          "goal": 3,
+          "hits": 1
+        },
+        {
+          "id": "guardian",
+          "outcome": "completed",
+          "tick": 25979,
+          "startedAt": 25530,
+          "progress": 1,
+          "goal": 1,
+          "hits": 0
+        }
+      ],
+      "gold": 1022,
+      "goldEarned": 1112,
+      "goldSpent": 90,
+      "marketHistory": [
+        {
+          "id": "echo",
+          "price": 90,
+          "tick": 18029
+        }
+      ],
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 7471
+        },
+        {
+          "id": "hourglass",
+          "tick": 9406
+        },
+        {
+          "id": "hourglass",
+          "tick": 10831
+        },
+        {
+          "id": "hourglass",
+          "tick": 11876
+        },
+        {
+          "id": "hourglass",
+          "tick": 13431
+        },
+        {
+          "id": "hourglass",
+          "tick": 15781
+        },
+        {
+          "id": "escape",
+          "tick": 15856
+        },
+        {
+          "id": "escape",
+          "tick": 16441
+        },
+        {
+          "id": "hourglass",
+          "tick": 16881
+        },
+        {
+          "id": "hourglass",
+          "tick": 18561
+        },
+        {
+          "id": "escape",
+          "tick": 20091
+        },
+        {
+          "id": "hourglass",
+          "tick": 20161
+        },
+        {
+          "id": "escape",
+          "tick": 20561
+        },
+        {
+          "id": "hourglass",
+          "tick": 21191
+        },
+        {
+          "id": "escape",
+          "tick": 21556
+        },
+        {
+          "id": "escape",
+          "tick": 22091
+        },
+        {
+          "id": "hourglass",
+          "tick": 22206
+        },
+        {
+          "id": "hourglass",
+          "tick": 23211
+        },
+        {
+          "id": "hourglass",
+          "tick": 24626
+        },
+        {
+          "id": "hourglass",
+          "tick": 25701
+        },
+        {
+          "id": "escape",
+          "tick": 25771
+        },
+        {
+          "id": "hourglass",
+          "tick": 27526
+        },
+        {
+          "id": "escape",
+          "tick": 29226
+        },
+        {
+          "id": "hourglass",
+          "tick": 29226
+        }
+      ],
+      "stats": {
+        "damage": 140,
+        "castTicks": 40,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 326,
+          "health": 100,
+          "enemies": 4
+        },
+        "600": {
+          "level": 23,
+          "kills": 788,
+          "health": 100,
+          "enemies": 8
+        }
+      }
+    },
+    {
+      "primary": "lightning",
+      "secondary": "fire",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "kills": 792,
+      "xp": 4345,
+      "health": 100,
+      "maxEnemies": 12,
+      "firstUpgrade": 8.06,
+      "secondaryOfferedAt": 210.72,
+      "secondaryAt": 210.72,
+      "secondaryLevel": 14,
+      "fusion": "plasma",
+      "fusionAt": 272.22,
+      "fusionLevel": 16,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 4,
+        "ice": 0,
+        "lightning": 5,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "quickwand",
+        "robe": "thorns",
+        "boots": "escape",
+        "relic": "fang"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "hourglass",
+          "tick": 6303,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "quickwand",
+          "tick": 12068,
+          "source": "Dungeon collapse reward"
+        },
+        {
+          "id": "thorns",
+          "tick": 15261,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "fang",
+          "tick": 21163,
+          "source": "Dungeon treasure"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "collapse",
+          "outcome": "completed",
+          "tick": 12057,
+          "startedAt": 10557,
+          "progress": 0,
+          "goal": 3,
+          "hits": 1
+        },
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 26187,
+          "startedAt": 25529,
+          "progress": 24,
+          "goal": 24,
+          "hits": 0
+        }
+      ],
+      "gold": 1021,
+      "goldEarned": 1111,
+      "goldSpent": 90,
+      "marketHistory": [
+        {
+          "id": "escape",
+          "price": 90,
+          "tick": 18028
+        }
+      ],
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 7471
+        },
+        {
+          "id": "hourglass",
+          "tick": 8471
+        },
+        {
+          "id": "hourglass",
+          "tick": 9471
+        },
+        {
+          "id": "hourglass",
+          "tick": 10871
+        },
+        {
+          "id": "hourglass",
+          "tick": 12876
+        },
+        {
+          "id": "hourglass",
+          "tick": 13956
+        },
+        {
+          "id": "hourglass",
+          "tick": 15381
+        },
+        {
+          "id": "hourglass",
+          "tick": 16436
+        },
+        {
+          "id": "hourglass",
+          "tick": 18101
+        },
+        {
+          "id": "hourglass",
+          "tick": 19231
+        },
+        {
+          "id": "escape",
+          "tick": 20111
+        },
+        {
+          "id": "hourglass",
+          "tick": 20281
+        },
+        {
+          "id": "escape",
+          "tick": 21076
+        },
+        {
+          "id": "escape",
+          "tick": 22146
+        },
+        {
+          "id": "escape",
+          "tick": 22806
+        },
+        {
+          "id": "escape",
+          "tick": 23391
+        },
+        {
+          "id": "escape",
+          "tick": 24006
+        },
+        {
+          "id": "escape",
+          "tick": 25066
+        },
+        {
+          "id": "escape",
+          "tick": 25916
+        },
+        {
+          "id": "escape",
+          "tick": 26936
+        },
+        {
+          "id": "escape",
+          "tick": 27716
+        },
+        {
+          "id": "escape",
+          "tick": 29696
+        }
+      ],
+      "stats": {
+        "damage": 90,
+        "castTicks": 35,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 326,
+          "health": 80,
+          "enemies": 4
+        },
+        "600": {
+          "level": 23,
+          "kills": 792,
+          "health": 100,
+          "enemies": 7
+        }
+      }
+    },
+    {
+      "primary": "lightning",
+      "secondary": "ice",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "kills": 790,
+      "xp": 4315,
+      "health": 1,
+      "maxEnemies": 37,
+      "firstUpgrade": 8.06,
+      "secondaryOfferedAt": 109.9,
+      "secondaryAt": 109.9,
+      "secondaryLevel": 10,
+      "fusion": "thunderfrost",
+      "fusionAt": 187.98,
+      "fusionLevel": 13,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 4,
+        "lightning": 4,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "bloodwood",
+        "robe": "thorns",
+        "boots": "runner",
+        "relic": "hourglass"
+      },
+      "chestsOpened": 4,
+      "lootHistory": [
+        {
+          "id": "hourglass",
+          "tick": 6303,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "quickwand",
+          "tick": 12040,
+          "source": "Cursed altar reward"
+        },
+        {
+          "id": "runner",
+          "tick": 16074,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "thorns",
+          "tick": 21035,
+          "source": "Dungeon treasure"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "altar",
+          "outcome": "completed",
+          "tick": 12032,
+          "startedAt": 10532,
+          "progress": 1500,
+          "goal": 1500,
+          "hits": 0
+        },
+        {
+          "id": "shrine",
+          "outcome": "failed",
+          "tick": 27530,
+          "startedAt": 25530,
+          "progress": 329,
+          "goal": 750,
+          "hits": 0
+        }
+      ],
+      "gold": 986,
+      "goldEarned": 1076,
+      "goldSpent": 90,
+      "marketHistory": [
+        {
+          "id": "bloodwood",
+          "price": 90,
+          "tick": 18639
+        }
+      ],
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 6781
+        },
+        {
+          "id": "hourglass",
+          "tick": 7986
+        },
+        {
+          "id": "hourglass",
+          "tick": 9141
+        },
+        {
+          "id": "hourglass",
+          "tick": 10306
+        },
+        {
+          "id": "hourglass",
+          "tick": 11346
+        },
+        {
+          "id": "hourglass",
+          "tick": 12356
+        },
+        {
+          "id": "hourglass",
+          "tick": 13371
+        },
+        {
+          "id": "hourglass",
+          "tick": 14406
+        },
+        {
+          "id": "hourglass",
+          "tick": 15721
+        },
+        {
+          "id": "hourglass",
+          "tick": 16781
+        },
+        {
+          "id": "runner",
+          "tick": 17241
+        },
+        {
+          "id": "runner",
+          "tick": 17596
+        },
+        {
+          "id": "hourglass",
+          "tick": 18211
+        },
+        {
+          "id": "runner",
+          "tick": 18286
+        },
+        {
+          "id": "hourglass",
+          "tick": 19331
+        },
+        {
+          "id": "runner",
+          "tick": 19371
+        },
+        {
+          "id": "runner",
+          "tick": 19946
+        },
+        {
+          "id": "hourglass",
+          "tick": 20331
+        },
+        {
+          "id": "runner",
+          "tick": 20491
+        },
+        {
+          "id": "runner",
+          "tick": 21121
+        },
+        {
+          "id": "hourglass",
+          "tick": 21371
+        },
+        {
+          "id": "runner",
+          "tick": 21501
+        },
+        {
+          "id": "runner",
+          "tick": 21946
+        },
+        {
+          "id": "runner",
+          "tick": 22326
+        },
+        {
+          "id": "hourglass",
+          "tick": 22416
+        },
+        {
+          "id": "runner",
+          "tick": 23136
+        },
+        {
+          "id": "hourglass",
+          "tick": 23456
+        },
+        {
+          "id": "runner",
+          "tick": 23601
+        },
+        {
+          "id": "runner",
+          "tick": 23961
+        },
+        {
+          "id": "runner",
+          "tick": 24416
+        },
+        {
+          "id": "hourglass",
+          "tick": 24456
+        },
+        {
+          "id": "runner",
+          "tick": 24806
+        },
+        {
+          "id": "runner",
+          "tick": 25616
+        },
+        {
+          "id": "hourglass",
+          "tick": 25756
+        },
+        {
+          "id": "runner",
+          "tick": 26106
+        },
+        {
+          "id": "runner",
+          "tick": 26466
+        },
+        {
+          "id": "hourglass",
+          "tick": 26876
+        },
+        {
+          "id": "runner",
+          "tick": 27501
+        },
+        {
+          "id": "runner",
+          "tick": 28016
+        },
+        {
+          "id": "hourglass",
+          "tick": 28481
+        },
+        {
+          "id": "runner",
+          "tick": 28746
+        },
+        {
+          "id": "runner",
+          "tick": 29456
+        },
+        {
+          "id": "hourglass",
+          "tick": 29541
+        }
+      ],
+      "stats": {
+        "damage": 90,
+        "castTicks": 30,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 327,
+          "health": 100,
+          "enemies": 9
+        },
+        "600": {
+          "level": 23,
+          "kills": 790,
+          "health": 1,
+          "enemies": 11
+        }
+      }
+    },
+    {
+      "primary": "lightning",
+      "secondary": "necro",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "kills": 783,
+      "xp": 4278,
+      "health": 100,
+      "maxEnemies": 14,
+      "firstUpgrade": 8.06,
+      "secondaryOfferedAt": 136.9,
+      "secondaryAt": 136.9,
+      "secondaryLevel": 11,
+      "fusion": "reaping",
+      "fusionAt": 188.04,
+      "fusionLevel": 13,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 0,
+        "lightning": 4,
+        "necro": 2,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "phantom",
+        "boots": "escape",
+        "relic": "hourglass"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "hourglass",
+          "tick": 6303,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "phantom",
+          "tick": 11005,
+          "source": "Magical anomaly reward"
+        },
+        {
+          "id": "escape",
+          "tick": 15765,
+          "source": "Guardian reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "anomaly",
+          "outcome": "completed",
+          "tick": 10999,
+          "startedAt": 10657,
+          "progress": 3,
+          "goal": 3,
+          "hits": 0
+        },
+        {
+          "id": "shrine",
+          "outcome": "completed",
+          "tick": 26692,
+          "startedAt": 25522,
+          "progress": 750,
+          "goal": 750,
+          "hits": 0
+        }
+      ],
+      "gold": 1007,
+      "goldEarned": 1097,
+      "goldSpent": 90,
+      "marketHistory": [
+        {
+          "id": "echo",
+          "price": 90,
+          "tick": 18027
+        }
+      ],
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 7021
+        },
+        {
+          "id": "hourglass",
+          "tick": 8166
+        },
+        {
+          "id": "hourglass",
+          "tick": 9176
+        },
+        {
+          "id": "hourglass",
+          "tick": 10176
+        },
+        {
+          "id": "hourglass",
+          "tick": 11346
+        },
+        {
+          "id": "hourglass",
+          "tick": 12391
+        },
+        {
+          "id": "hourglass",
+          "tick": 13986
+        },
+        {
+          "id": "hourglass",
+          "tick": 15136
+        },
+        {
+          "id": "hourglass",
+          "tick": 16466
+        },
+        {
+          "id": "escape",
+          "tick": 17301
+        },
+        {
+          "id": "hourglass",
+          "tick": 17571
+        },
+        {
+          "id": "escape",
+          "tick": 18451
+        },
+        {
+          "id": "hourglass",
+          "tick": 18661
+        },
+        {
+          "id": "escape",
+          "tick": 19636
+        },
+        {
+          "id": "hourglass",
+          "tick": 19661
+        },
+        {
+          "id": "escape",
+          "tick": 21101
+        },
+        {
+          "id": "hourglass",
+          "tick": 21366
+        },
+        {
+          "id": "escape",
+          "tick": 22201
+        },
+        {
+          "id": "escape",
+          "tick": 22716
+        },
+        {
+          "id": "hourglass",
+          "tick": 22916
+        },
+        {
+          "id": "escape",
+          "tick": 23396
+        },
+        {
+          "id": "hourglass",
+          "tick": 24086
+        },
+        {
+          "id": "escape",
+          "tick": 24511
+        },
+        {
+          "id": "hourglass",
+          "tick": 25151
+        },
+        {
+          "id": "escape",
+          "tick": 25456
+        },
+        {
+          "id": "escape",
+          "tick": 25971
+        },
+        {
+          "id": "hourglass",
+          "tick": 26166
+        },
+        {
+          "id": "escape",
+          "tick": 26461
+        },
+        {
+          "id": "escape",
+          "tick": 27416
+        },
+        {
+          "id": "hourglass",
+          "tick": 27416
+        },
+        {
+          "id": "escape",
+          "tick": 28206
+        },
+        {
+          "id": "escape",
+          "tick": 28911
+        },
+        {
+          "id": "hourglass",
+          "tick": 28961
+        },
+        {
+          "id": "escape",
+          "tick": 29631
+        },
+        {
+          "id": "hourglass",
+          "tick": 29961
+        }
+      ],
+      "stats": {
+        "damage": 100,
+        "castTicks": 25,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 326,
+          "health": 100,
+          "enemies": 4
+        },
+        "600": {
+          "level": 23,
+          "kills": 783,
+          "health": 100,
+          "enemies": 12
+        }
+      }
+    },
+    {
+      "primary": "lightning",
+      "secondary": "arcane",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "kills": 794,
+      "xp": 4418,
+      "health": 100,
+      "maxEnemies": 12,
+      "firstUpgrade": 8.06,
+      "secondaryOfferedAt": 186.5,
+      "secondaryAt": 186.5,
+      "secondaryLevel": 13,
+      "fusion": "storm",
+      "fusionAt": 239.8,
+      "fusionLevel": 15,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 0,
+        "lightning": 4,
+        "necro": 0,
+        "arcane": 3
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "thorns",
+        "boots": "escape",
+        "relic": "fang"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "hourglass",
+          "tick": 6303,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "echo",
+          "tick": 12535,
+          "source": "Dungeon collapse reward"
+        },
+        {
+          "id": "thorns",
+          "tick": 15126,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "fang",
+          "tick": 21041,
+          "source": "Dungeon treasure"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "collapse",
+          "outcome": "completed",
+          "tick": 12529,
+          "startedAt": 11029,
+          "progress": 0,
+          "goal": 3,
+          "hits": 0
+        },
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 26212,
+          "startedAt": 25529,
+          "progress": 24,
+          "goal": 24,
+          "hits": 0
+        }
+      ],
+      "gold": 1029,
+      "goldEarned": 1119,
+      "goldSpent": 90,
+      "marketHistory": [
+        {
+          "id": "escape",
+          "price": 90,
+          "tick": 18029
+        }
+      ],
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 7471
+        },
+        {
+          "id": "hourglass",
+          "tick": 8471
+        },
+        {
+          "id": "hourglass",
+          "tick": 9941
+        },
+        {
+          "id": "hourglass",
+          "tick": 10946
+        },
+        {
+          "id": "hourglass",
+          "tick": 12116
+        },
+        {
+          "id": "hourglass",
+          "tick": 14331
+        },
+        {
+          "id": "hourglass",
+          "tick": 15626
+        },
+        {
+          "id": "hourglass",
+          "tick": 16781
+        },
+        {
+          "id": "hourglass",
+          "tick": 18101
+        },
+        {
+          "id": "escape",
+          "tick": 18181
+        },
+        {
+          "id": "hourglass",
+          "tick": 20051
+        },
+        {
+          "id": "escape",
+          "tick": 20106
+        },
+        {
+          "id": "escape",
+          "tick": 20616
+        },
+        {
+          "id": "escape",
+          "tick": 21451
+        },
+        {
+          "id": "escape",
+          "tick": 22446
+        },
+        {
+          "id": "escape",
+          "tick": 25751
+        },
+        {
+          "id": "escape",
+          "tick": 26251
+        },
+        {
+          "id": "escape",
+          "tick": 26716
+        }
+      ],
+      "stats": {
+        "damage": 110,
+        "castTicks": 35,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 328,
+          "health": 100,
+          "enemies": 2
+        },
+        "600": {
+          "level": 23,
+          "kills": 794,
+          "health": 100,
+          "enemies": 5
+        }
+      }
+    },
+    {
+      "primary": "necro",
+      "secondary": null,
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "kills": 782,
+      "xp": 4351,
+      "health": 100,
+      "maxEnemies": 90,
+      "firstUpgrade": 6.28,
+      "secondaryOfferedAt": null,
+      "secondaryAt": null,
+      "secondaryLevel": null,
+      "fusion": null,
+      "fusionAt": null,
+      "fusionLevel": null,
+      "mastery": "lich",
+      "masteryAt": 237.42,
+      "masteryLevel": 15,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 0,
+        "lightning": 0,
+        "necro": 5,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "thorns",
+        "boots": "runner",
+        "relic": "gambler"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "thorns",
+          "tick": 6484,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "gambler",
+          "tick": 11937,
+          "source": "Blood moon reward"
+        },
+        {
+          "id": "echo",
+          "tick": 16453,
+          "source": "Guardian reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 11162,
+          "startedAt": 10531,
+          "progress": 91,
+          "goal": 19,
+          "hits": 0
+        },
+        {
+          "id": "guardian",
+          "outcome": "completed",
+          "tick": 25743,
+          "startedAt": 25524,
+          "progress": 1,
+          "goal": 1,
+          "hits": 0
+        }
+      ],
+      "gold": 1013,
+      "goldEarned": 1103,
+      "goldSpent": 90,
+      "marketHistory": [
+        {
+          "id": "runner",
+          "price": 90,
+          "tick": 18312
+        }
+      ],
+      "activeHistory": [
+        {
+          "id": "runner",
+          "tick": 18541
+        },
+        {
+          "id": "runner",
+          "tick": 19036
+        },
+        {
+          "id": "runner",
+          "tick": 19731
+        },
+        {
+          "id": "runner",
+          "tick": 20351
+        },
+        {
+          "id": "runner",
+          "tick": 21411
+        },
+        {
+          "id": "runner",
+          "tick": 21801
+        },
+        {
+          "id": "runner",
+          "tick": 22346
+        },
+        {
+          "id": "runner",
+          "tick": 22986
+        },
+        {
+          "id": "runner",
+          "tick": 23396
+        },
+        {
+          "id": "runner",
+          "tick": 23746
+        },
+        {
+          "id": "runner",
+          "tick": 24756
+        },
+        {
+          "id": "runner",
+          "tick": 25436
+        },
+        {
+          "id": "runner",
+          "tick": 26381
+        },
+        {
+          "id": "runner",
+          "tick": 26731
+        },
+        {
+          "id": "runner",
+          "tick": 27081
+        },
+        {
+          "id": "runner",
+          "tick": 28226
+        },
+        {
+          "id": "runner",
+          "tick": 28926
+        },
+        {
+          "id": "runner",
+          "tick": 29331
+        }
+      ],
+      "stats": {
+        "damage": 100,
+        "castTicks": 25,
+        "speed": 5,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 324,
+          "health": 100,
+          "enemies": 8
+        },
+        "600": {
+          "level": 23,
+          "kills": 782,
+          "health": 100,
+          "enemies": 15
+        }
+      }
+    },
+    {
+      "primary": "necro",
+      "secondary": "fire",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "kills": 778,
+      "xp": 4263,
+      "health": 99,
+      "maxEnemies": 67,
+      "firstUpgrade": 6.28,
+      "secondaryOfferedAt": 149.04,
+      "secondaryAt": 149.04,
+      "secondaryLevel": 10,
+      "fusion": "soulfire",
+      "fusionAt": 202.98,
+      "fusionLevel": 12,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 3,
+        "ice": 0,
+        "lightning": 0,
+        "necro": 5,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "thorns",
+        "boots": "swift",
+        "relic": "hourglass"
+      },
+      "chestsOpened": 3,
+      "lootHistory": [
+        {
+          "id": "thorns",
+          "tick": 6484,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "echo",
+          "tick": 12042,
+          "source": "Dungeon collapse reward"
+        },
+        {
+          "id": "swift",
+          "tick": 21038,
+          "source": "Dungeon treasure"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "collapse",
+          "outcome": "completed",
+          "tick": 12033,
+          "startedAt": 10533,
+          "progress": 0,
+          "goal": 3,
+          "hits": 1
+        },
+        {
+          "id": "shrine",
+          "outcome": "failed",
+          "tick": 27527,
+          "startedAt": 25527,
+          "progress": 679,
+          "goal": 750,
+          "hits": 0
+        }
+      ],
+      "gold": 972,
+      "goldEarned": 1062,
+      "goldSpent": 90,
+      "marketHistory": [
+        {
+          "id": "hourglass",
+          "price": 90,
+          "tick": 18060
+        }
+      ],
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 18226
+        },
+        {
+          "id": "hourglass",
+          "tick": 19291
+        },
+        {
+          "id": "hourglass",
+          "tick": 20476
+        },
+        {
+          "id": "hourglass",
+          "tick": 21671
+        },
+        {
+          "id": "hourglass",
+          "tick": 22671
+        },
+        {
+          "id": "hourglass",
+          "tick": 24496
+        },
+        {
+          "id": "hourglass",
+          "tick": 25511
+        },
+        {
+          "id": "hourglass",
+          "tick": 26581
+        },
+        {
+          "id": "hourglass",
+          "tick": 27686
+        },
+        {
+          "id": "hourglass",
+          "tick": 28711
+        },
+        {
+          "id": "hourglass",
+          "tick": 29731
+        }
+      ],
+      "stats": {
+        "damage": 100,
+        "castTicks": 35,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 322,
+          "health": 100,
+          "enemies": 8
+        },
+        "600": {
+          "level": 23,
+          "kills": 778,
+          "health": 99,
+          "enemies": 17
+        }
+      }
+    },
+    {
+      "primary": "necro",
+      "secondary": "ice",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "kills": 778,
+      "xp": 4248,
+      "health": 100,
+      "maxEnemies": 112,
+      "firstUpgrade": 6.28,
+      "secondaryOfferedAt": 227.72,
+      "secondaryAt": 227.72,
+      "secondaryLevel": 13,
+      "fusion": "gravefrost",
+      "fusionAt": 299.66,
+      "fusionLevel": 15,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 3,
+        "lightning": 0,
+        "necro": 4,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "thorns",
+        "boots": "runner",
+        "relic": "fang"
+      },
+      "chestsOpened": 3,
+      "lootHistory": [
+        {
+          "id": "thorns",
+          "tick": 6484,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "fang",
+          "tick": 16338,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "echo",
+          "tick": 21041,
+          "source": "Dungeon treasure"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "collapse",
+          "outcome": "completed",
+          "tick": 12442,
+          "startedAt": 10942,
+          "progress": 0,
+          "goal": 3,
+          "hits": 0
+        },
+        {
+          "id": "shrine",
+          "outcome": "failed",
+          "tick": 27828,
+          "startedAt": 25828,
+          "progress": 315,
+          "goal": 750,
+          "hits": 0
+        }
+      ],
+      "gold": 971,
+      "goldEarned": 1061,
+      "goldSpent": 90,
+      "marketHistory": [
+        {
+          "id": "runner",
+          "price": 90,
+          "tick": 18685
+        }
+      ],
+      "activeHistory": [
+        {
+          "id": "runner",
+          "tick": 19286
+        },
+        {
+          "id": "runner",
+          "tick": 19756
+        },
+        {
+          "id": "runner",
+          "tick": 20901
+        },
+        {
+          "id": "runner",
+          "tick": 21361
+        },
+        {
+          "id": "runner",
+          "tick": 22186
+        },
+        {
+          "id": "runner",
+          "tick": 23101
+        },
+        {
+          "id": "runner",
+          "tick": 24171
+        },
+        {
+          "id": "runner",
+          "tick": 24521
+        },
+        {
+          "id": "runner",
+          "tick": 24976
+        },
+        {
+          "id": "runner",
+          "tick": 25521
+        },
+        {
+          "id": "runner",
+          "tick": 25896
+        },
+        {
+          "id": "runner",
+          "tick": 26326
+        },
+        {
+          "id": "runner",
+          "tick": 26691
+        },
+        {
+          "id": "runner",
+          "tick": 27046
+        },
+        {
+          "id": "runner",
+          "tick": 27396
+        },
+        {
+          "id": "runner",
+          "tick": 27746
+        },
+        {
+          "id": "runner",
+          "tick": 28391
+        },
+        {
+          "id": "runner",
+          "tick": 28971
+        },
+        {
+          "id": "runner",
+          "tick": 29331
+        }
+      ],
+      "stats": {
+        "damage": 100,
+        "castTicks": 30,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 15,
+          "kills": 220,
+          "health": 100,
+          "enemies": 110
+        },
+        "600": {
+          "level": 23,
+          "kills": 778,
+          "health": 100,
+          "enemies": 17
+        }
+      }
+    },
+    {
+      "primary": "necro",
+      "secondary": "lightning",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "kills": 789,
+      "xp": 4352,
+      "health": 100,
+      "maxEnemies": 67,
+      "firstUpgrade": 6.28,
+      "secondaryOfferedAt": 179.74,
+      "secondaryAt": 179.74,
+      "secondaryLevel": 11,
+      "fusion": "reaping",
+      "fusionAt": 217.18,
+      "fusionLevel": 13,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 0,
+        "lightning": 4,
+        "necro": 3,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "thorns",
+        "boots": "runner",
+        "relic": "hourglass"
+      },
+      "chestsOpened": 4,
+      "lootHistory": [
+        {
+          "id": "thorns",
+          "tick": 6484,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "echo",
+          "tick": 10866,
+          "source": "Treasure guardian reward"
+        },
+        {
+          "id": "hourglass",
+          "tick": 15793,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "runner",
+          "tick": 21064,
+          "source": "Dungeon treasure"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "guardian",
+          "outcome": "completed",
+          "tick": 10859,
+          "startedAt": 10530,
+          "progress": 1,
+          "goal": 1,
+          "hits": 0
+        },
+        {
+          "id": "shrine",
+          "outcome": "failed",
+          "tick": 27531,
+          "startedAt": 25531,
+          "progress": 577,
+          "goal": 750,
+          "hits": 0
+        }
+      ],
+      "gold": 1079,
+      "goldEarned": 1079,
+      "goldSpent": 0,
+      "marketHistory": [],
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 15826
+        },
+        {
+          "id": "hourglass",
+          "tick": 17526
+        },
+        {
+          "id": "hourglass",
+          "tick": 18681
+        },
+        {
+          "id": "hourglass",
+          "tick": 20276
+        },
+        {
+          "id": "runner",
+          "tick": 21071
+        },
+        {
+          "id": "hourglass",
+          "tick": 21471
+        },
+        {
+          "id": "runner",
+          "tick": 22291
+        },
+        {
+          "id": "hourglass",
+          "tick": 22491
+        },
+        {
+          "id": "runner",
+          "tick": 22711
+        },
+        {
+          "id": "hourglass",
+          "tick": 23491
+        },
+        {
+          "id": "runner",
+          "tick": 23616
+        },
+        {
+          "id": "runner",
+          "tick": 24011
+        },
+        {
+          "id": "hourglass",
+          "tick": 24751
+        },
+        {
+          "id": "runner",
+          "tick": 24891
+        },
+        {
+          "id": "runner",
+          "tick": 25591
+        },
+        {
+          "id": "hourglass",
+          "tick": 25751
+        },
+        {
+          "id": "runner",
+          "tick": 26111
+        },
+        {
+          "id": "runner",
+          "tick": 26686
+        },
+        {
+          "id": "hourglass",
+          "tick": 26751
+        },
+        {
+          "id": "runner",
+          "tick": 27046
+        },
+        {
+          "id": "runner",
+          "tick": 27551
+        },
+        {
+          "id": "hourglass",
+          "tick": 27966
+        },
+        {
+          "id": "runner",
+          "tick": 27976
+        }
+      ],
+      "stats": {
+        "damage": 100,
+        "castTicks": 30,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 324,
+          "health": 100,
+          "enemies": 7
+        },
+        "600": {
+          "level": 23,
+          "kills": 789,
+          "health": 100,
+          "enemies": 7
+        }
+      }
+    },
+    {
+      "primary": "necro",
+      "secondary": "arcane",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "kills": 790,
+      "xp": 4394,
+      "health": 100,
+      "maxEnemies": 86,
+      "firstUpgrade": 6.28,
+      "secondaryOfferedAt": 206.78,
+      "secondaryAt": 206.78,
+      "secondaryLevel": 12,
+      "fusion": "soulward",
+      "fusionAt": 249.16,
+      "fusionLevel": 14,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 0,
+        "lightning": 0,
+        "necro": 4,
+        "arcane": 5
+      },
+      "equipment": {
+        "staff": "bloodwood",
+        "robe": "thorns",
+        "boots": "swift",
+        "relic": "gambler"
+      },
+      "chestsOpened": 4,
+      "lootHistory": [
+        {
+          "id": "thorns",
+          "tick": 6484,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "gambler",
+          "tick": 15755,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "swift",
+          "tick": 21072,
+          "source": "Dungeon treasure"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "collapse",
+          "outcome": "completed",
+          "tick": 12533,
+          "startedAt": 11033,
+          "progress": 0,
+          "goal": 3,
+          "hits": 1
+        },
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 26879,
+          "startedAt": 26024,
+          "progress": 24,
+          "goal": 24,
+          "hits": 0
+        }
+      ],
+      "gold": 1024,
+      "goldEarned": 1114,
+      "goldSpent": 90,
+      "marketHistory": [
+        {
+          "id": "bloodwood",
+          "price": 90,
+          "tick": 18026
+        }
+      ],
+      "activeHistory": [],
+      "stats": {
+        "damage": 80,
+        "castTicks": 30,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 263,
+          "health": 100,
+          "enemies": 67
+        },
+        "600": {
+          "level": 23,
+          "kills": 790,
+          "health": 100,
+          "enemies": 10
+        }
+      }
+    },
+    {
+      "primary": "arcane",
+      "secondary": null,
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "kills": 793,
+      "xp": 4390,
+      "health": 100,
+      "maxEnemies": 14,
+      "firstUpgrade": 7.14,
+      "secondaryOfferedAt": null,
+      "secondaryAt": null,
+      "secondaryLevel": null,
+      "fusion": null,
+      "fusionAt": null,
+      "fusionLevel": null,
+      "mastery": "archmage",
+      "masteryAt": 238.1,
+      "masteryLevel": 15,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 0,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 5
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "phantom",
+        "boots": "runner",
+        "relic": "fang"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "hourglass",
+          "tick": 6157,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "echo",
+          "tick": 11080,
+          "source": "Blood moon reward"
+        },
+        {
+          "id": "phantom",
+          "tick": 15775,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "fang",
+          "tick": 27317,
+          "source": "Arcane shrine reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 11075,
+          "startedAt": 10531,
+          "progress": 19,
+          "goal": 19,
+          "hits": 0
+        },
+        {
+          "id": "shrine",
+          "outcome": "completed",
+          "tick": 27306,
+          "startedAt": 25533,
+          "progress": 750,
+          "goal": 750,
+          "hits": 0
+        }
+      ],
+      "gold": 1026,
+      "goldEarned": 1116,
+      "goldSpent": 90,
+      "marketHistory": [
+        {
+          "id": "runner",
+          "price": 90,
+          "tick": 18059
+        }
+      ],
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 6456
+        },
+        {
+          "id": "hourglass",
+          "tick": 7496
+        },
+        {
+          "id": "hourglass",
+          "tick": 8511
+        },
+        {
+          "id": "hourglass",
+          "tick": 9811
+        },
+        {
+          "id": "hourglass",
+          "tick": 10906
+        },
+        {
+          "id": "hourglass",
+          "tick": 11956
+        },
+        {
+          "id": "hourglass",
+          "tick": 15251
+        },
+        {
+          "id": "hourglass",
+          "tick": 17861
+        },
+        {
+          "id": "runner",
+          "tick": 18111
+        },
+        {
+          "id": "runner",
+          "tick": 18791
+        },
+        {
+          "id": "hourglass",
+          "tick": 18876
+        },
+        {
+          "id": "runner",
+          "tick": 20481
+        },
+        {
+          "id": "hourglass",
+          "tick": 21446
+        },
+        {
+          "id": "hourglass",
+          "tick": 24441
+        },
+        {
+          "id": "runner",
+          "tick": 25176
+        },
+        {
+          "id": "hourglass",
+          "tick": 25441
+        },
+        {
+          "id": "runner",
+          "tick": 25726
+        },
+        {
+          "id": "runner",
+          "tick": 26271
+        },
+        {
+          "id": "hourglass",
+          "tick": 26456
+        },
+        {
+          "id": "runner",
+          "tick": 26646
+        },
+        {
+          "id": "runner",
+          "tick": 27031
+        },
+        {
+          "id": "runner",
+          "tick": 28721
+        }
+      ],
+      "stats": {
+        "damage": 110,
+        "castTicks": 25,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 331,
+          "health": 100,
+          "enemies": 3
+        },
+        "600": {
+          "level": 23,
+          "kills": 793,
+          "health": 100,
+          "enemies": 6
+        }
+      }
+    },
+    {
+      "primary": "arcane",
+      "secondary": "fire",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "kills": 788,
+      "xp": 4361,
+      "health": 54,
+      "maxEnemies": 13,
+      "firstUpgrade": 7.14,
+      "secondaryOfferedAt": 184.34,
+      "secondaryAt": 184.34,
+      "secondaryLevel": 13,
+      "fusion": "starfall",
+      "fusionAt": 239.62,
+      "fusionLevel": 15,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 3,
+        "ice": 0,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 5
+      },
+      "equipment": {
+        "staff": "bloodwood",
+        "robe": "phantom",
+        "boots": "runner",
+        "relic": "hourglass"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "hourglass",
+          "tick": 6157,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "bloodwood",
+          "tick": 11266,
+          "source": "Blood moon reward"
+        },
+        {
+          "id": "runner",
+          "tick": 15266,
+          "source": "Guardian reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 11260,
+          "startedAt": 10531,
+          "progress": 19,
+          "goal": 19,
+          "hits": 0
+        },
+        {
+          "id": "collapse",
+          "outcome": "completed",
+          "tick": 27030,
+          "startedAt": 25530,
+          "progress": 0,
+          "goal": 3,
+          "hits": 0
+        }
+      ],
+      "gold": 1019,
+      "goldEarned": 1109,
+      "goldSpent": 90,
+      "marketHistory": [
+        {
+          "id": "phantom",
+          "price": 90,
+          "tick": 18489
+        }
+      ],
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 6456
+        },
+        {
+          "id": "hourglass",
+          "tick": 7716
+        },
+        {
+          "id": "hourglass",
+          "tick": 9936
+        },
+        {
+          "id": "hourglass",
+          "tick": 11116
+        },
+        {
+          "id": "hourglass",
+          "tick": 12116
+        },
+        {
+          "id": "hourglass",
+          "tick": 13481
+        },
+        {
+          "id": "hourglass",
+          "tick": 15006
+        },
+        {
+          "id": "runner",
+          "tick": 15546
+        },
+        {
+          "id": "hourglass",
+          "tick": 16031
+        },
+        {
+          "id": "hourglass",
+          "tick": 17256
+        },
+        {
+          "id": "runner",
+          "tick": 17316
+        },
+        {
+          "id": "runner",
+          "tick": 18051
+        },
+        {
+          "id": "hourglass",
+          "tick": 18456
+        },
+        {
+          "id": "runner",
+          "tick": 18701
+        },
+        {
+          "id": "runner",
+          "tick": 19646
+        },
+        {
+          "id": "hourglass",
+          "tick": 19996
+        },
+        {
+          "id": "runner",
+          "tick": 20071
+        },
+        {
+          "id": "runner",
+          "tick": 20611
+        },
+        {
+          "id": "hourglass",
+          "tick": 21501
+        },
+        {
+          "id": "hourglass",
+          "tick": 22671
+        },
+        {
+          "id": "runner",
+          "tick": 23136
+        },
+        {
+          "id": "hourglass",
+          "tick": 24336
+        },
+        {
+          "id": "runner",
+          "tick": 26001
+        },
+        {
+          "id": "hourglass",
+          "tick": 26166
+        },
+        {
+          "id": "hourglass",
+          "tick": 27411
+        },
+        {
+          "id": "runner",
+          "tick": 27816
+        },
+        {
+          "id": "runner",
+          "tick": 28431
+        },
+        {
+          "id": "hourglass",
+          "tick": 28436
+        },
+        {
+          "id": "runner",
+          "tick": 29321
+        },
+        {
+          "id": "hourglass",
+          "tick": 29536
+        }
+      ],
+      "stats": {
+        "damage": 100,
+        "castTicks": 35,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 327,
+          "health": 86,
+          "enemies": 6
+        },
+        "600": {
+          "level": 23,
+          "kills": 788,
+          "health": 54,
+          "enemies": 10
+        }
+      }
+    },
+    {
+      "primary": "arcane",
+      "secondary": "ice",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "kills": 789,
+      "xp": 4318,
+      "health": 2,
+      "maxEnemies": 13,
+      "firstUpgrade": 7.14,
+      "secondaryOfferedAt": 135.42,
+      "secondaryAt": 135.42,
+      "secondaryLevel": 11,
+      "fusion": "mirror",
+      "fusionAt": 187.7,
+      "fusionLevel": 13,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 3,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 5
+      },
+      "equipment": {
+        "staff": "bloodwood",
+        "robe": "thorns",
+        "boots": "swift",
+        "relic": "hourglass"
+      },
+      "chestsOpened": 4,
+      "lootHistory": [
+        {
+          "id": "hourglass",
+          "tick": 6157,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "thorns",
+          "tick": 11151,
+          "source": "Blood moon reward"
+        },
+        {
+          "id": "bloodwood",
+          "tick": 15700,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "swift",
+          "tick": 21037,
+          "source": "Dungeon treasure"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 11146,
+          "startedAt": 10579,
+          "progress": 19,
+          "goal": 19,
+          "hits": 0
+        },
+        {
+          "id": "shrine",
+          "outcome": "ignored",
+          "tick": 27250,
+          "startedAt": null,
+          "progress": 0,
+          "goal": 1,
+          "hits": 0
+        }
+      ],
+      "gold": 986,
+      "goldEarned": 1076,
+      "goldSpent": 90,
+      "marketHistory": [
+        {
+          "id": "escape",
+          "price": 90,
+          "tick": 18553
+        }
+      ],
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 6456
+        },
+        {
+          "id": "hourglass",
+          "tick": 7496
+        },
+        {
+          "id": "hourglass",
+          "tick": 8496
+        },
+        {
+          "id": "hourglass",
+          "tick": 9501
+        },
+        {
+          "id": "hourglass",
+          "tick": 10516
+        },
+        {
+          "id": "hourglass",
+          "tick": 11646
+        },
+        {
+          "id": "hourglass",
+          "tick": 13421
+        },
+        {
+          "id": "hourglass",
+          "tick": 14576
+        },
+        {
+          "id": "hourglass",
+          "tick": 15586
+        },
+        {
+          "id": "hourglass",
+          "tick": 16626
+        },
+        {
+          "id": "hourglass",
+          "tick": 17776
+        },
+        {
+          "id": "hourglass",
+          "tick": 18776
+        },
+        {
+          "id": "escape",
+          "tick": 19166
+        },
+        {
+          "id": "hourglass",
+          "tick": 20566
+        },
+        {
+          "id": "hourglass",
+          "tick": 21581
+        },
+        {
+          "id": "hourglass",
+          "tick": 22766
+        },
+        {
+          "id": "hourglass",
+          "tick": 23771
+        },
+        {
+          "id": "hourglass",
+          "tick": 24781
+        },
+        {
+          "id": "hourglass",
+          "tick": 27166
+        },
+        {
+          "id": "hourglass",
+          "tick": 28316
+        },
+        {
+          "id": "hourglass",
+          "tick": 29861
+        }
+      ],
+      "stats": {
+        "damage": 80,
+        "castTicks": 25,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 327,
+          "health": 100,
+          "enemies": 5
+        },
+        "600": {
+          "level": 23,
+          "kills": 789,
+          "health": 2,
+          "enemies": 8
+        }
+      }
+    },
+    {
+      "primary": "arcane",
+      "secondary": "lightning",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "kills": 788,
+      "xp": 4330,
+      "health": 100,
+      "maxEnemies": 12,
+      "firstUpgrade": 7.14,
+      "secondaryOfferedAt": 274.78,
+      "secondaryAt": 274.78,
+      "secondaryLevel": 16,
+      "fusion": "storm",
+      "fusionAt": 339.62,
+      "fusionLevel": 18,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 0,
+        "lightning": 4,
+        "necro": 0,
+        "arcane": 5
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "thorns",
+        "boots": "swift",
+        "relic": "fang"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "hourglass",
+          "tick": 6157,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "thorns",
+          "tick": 11149,
+          "source": "Blood moon reward"
+        },
+        {
+          "id": "escape",
+          "tick": 15273,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "fang",
+          "tick": 21195,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "swift",
+          "tick": 27025,
+          "source": "Dungeon collapse reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 11144,
+          "startedAt": 10530,
+          "progress": 19,
+          "goal": 19,
+          "hits": 0
+        },
+        {
+          "id": "collapse",
+          "outcome": "completed",
+          "tick": 27021,
+          "startedAt": 25521,
+          "progress": 0,
+          "goal": 3,
+          "hits": 1
+        }
+      ],
+      "gold": 1016,
+      "goldEarned": 1106,
+      "goldSpent": 90,
+      "marketHistory": [
+        {
+          "id": "echo",
+          "price": 90,
+          "tick": 18018
+        }
+      ],
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 6456
+        },
+        {
+          "id": "hourglass",
+          "tick": 7716
+        },
+        {
+          "id": "hourglass",
+          "tick": 9491
+        },
+        {
+          "id": "hourglass",
+          "tick": 10601
+        },
+        {
+          "id": "hourglass",
+          "tick": 12096
+        },
+        {
+          "id": "hourglass",
+          "tick": 13341
+        },
+        {
+          "id": "hourglass",
+          "tick": 14996
+        },
+        {
+          "id": "escape",
+          "tick": 15286
+        },
+        {
+          "id": "hourglass",
+          "tick": 16441
+        },
+        {
+          "id": "escape",
+          "tick": 16541
+        },
+        {
+          "id": "escape",
+          "tick": 17006
+        },
+        {
+          "id": "hourglass",
+          "tick": 17526
+        },
+        {
+          "id": "escape",
+          "tick": 17736
+        },
+        {
+          "id": "hourglass",
+          "tick": 19651
+        },
+        {
+          "id": "escape",
+          "tick": 19736
+        },
+        {
+          "id": "hourglass",
+          "tick": 20976
+        },
+        {
+          "id": "escape",
+          "tick": 20996
+        },
+        {
+          "id": "escape",
+          "tick": 21811
+        },
+        {
+          "id": "escape",
+          "tick": 22626
+        },
+        {
+          "id": "escape",
+          "tick": 23971
+        },
+        {
+          "id": "escape",
+          "tick": 25421
+        },
+        {
+          "id": "escape",
+          "tick": 26066
+        }
+      ],
+      "stats": {
+        "damage": 80,
+        "castTicks": 40,
+        "speed": 6,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 325,
+          "health": 100,
+          "enemies": 7
+        },
+        "600": {
+          "level": 23,
+          "kills": 788,
+          "health": 100,
+          "enemies": 9
+        }
+      }
+    },
+    {
+      "primary": "arcane",
+      "secondary": "necro",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "kills": 783,
+      "xp": 4302,
+      "health": 100,
+      "maxEnemies": 44,
+      "firstUpgrade": 7.14,
+      "secondaryOfferedAt": 113.9,
+      "secondaryAt": 113.9,
+      "secondaryLevel": 10,
+      "fusion": "soulward",
+      "fusionAt": 165.22,
+      "fusionLevel": 12,
+      "mastery": null,
+      "masteryAt": null,
+      "masteryLevel": null,
+      "reachedDragon": false,
+      "build": {
+        "fire": 0,
+        "ice": 0,
+        "lightning": 0,
+        "necro": 5,
+        "arcane": 4
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "thorns",
+        "boots": "escape",
+        "relic": "hourglass"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "hourglass",
+          "tick": 6157,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "echo",
+          "tick": 11647,
+          "source": "Blood moon reward"
+        },
+        {
+          "id": "escape",
+          "tick": 19789,
+          "source": "Guardian reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 11638,
+          "startedAt": 10995,
+          "progress": 19,
+          "goal": 19,
+          "hits": 0
+        },
+        {
+          "id": "collapse",
+          "outcome": "completed",
+          "tick": 27031,
+          "startedAt": 25531,
+          "progress": 0,
+          "goal": 3,
+          "hits": 1
+        }
+      ],
+      "gold": 1009,
+      "goldEarned": 1099,
+      "goldSpent": 90,
+      "marketHistory": [
+        {
+          "id": "thorns",
+          "price": 90,
+          "tick": 18909
+        }
+      ],
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 6456
+        },
+        {
+          "id": "hourglass",
+          "tick": 7496
+        },
+        {
+          "id": "hourglass",
+          "tick": 8496
+        },
+        {
+          "id": "hourglass",
+          "tick": 9926
+        },
+        {
+          "id": "hourglass",
+          "tick": 10946
+        },
+        {
+          "id": "hourglass",
+          "tick": 11946
+        },
+        {
+          "id": "hourglass",
+          "tick": 12946
+        },
+        {
+          "id": "hourglass",
+          "tick": 14056
+        },
+        {
+          "id": "hourglass",
+          "tick": 15241
+        },
+        {
+          "id": "hourglass",
+          "tick": 16256
+        },
+        {
+          "id": "hourglass",
+          "tick": 17256
+        },
+        {
+          "id": "hourglass",
+          "tick": 18256
+        },
+        {
+          "id": "hourglass",
+          "tick": 19286
+        },
+        {
+          "id": "hourglass",
+          "tick": 20316
+        },
+        {
+          "id": "escape",
+          "tick": 20431
+        },
+        {
+          "id": "hourglass",
+          "tick": 21366
+        },
+        {
+          "id": "escape",
+          "tick": 21471
+        },
+        {
+          "id": "hourglass",
+          "tick": 22406
+        },
+        {
+          "id": "escape",
+          "tick": 22646
+        },
+        {
+          "id": "escape",
+          "tick": 23211
+        },
+        {
+          "id": "hourglass",
+          "tick": 23406
+        },
+        {
+          "id": "hourglass",
+          "tick": 24406
+        },
+        {
+          "id": "escape",
+          "tick": 24941
+        },
+        {
+          "id": "escape",
+          "tick": 25396
+        },
+        {
+          "id": "hourglass",
+          "tick": 25406
+        },
+        {
+          "id": "escape",
+          "tick": 25976
+        },
+        {
+          "id": "hourglass",
+          "tick": 26506
+        },
+        {
+          "id": "escape",
+          "tick": 26646
+        },
+        {
+          "id": "hourglass",
+          "tick": 27506
+        },
+        {
+          "id": "escape",
+          "tick": 27576
+        },
+        {
+          "id": "escape",
+          "tick": 28206
+        },
+        {
+          "id": "hourglass",
+          "tick": 28561
+        },
+        {
+          "id": "escape",
+          "tick": 28676
+        },
+        {
+          "id": "escape",
+          "tick": 29376
+        },
+        {
+          "id": "hourglass",
+          "tick": 29696
+        },
+        {
+          "id": "escape",
+          "tick": 29826
+        }
+      ],
+      "stats": {
+        "damage": 110,
+        "castTicks": 45,
+        "speed": 4,
+        "maxHealth": 100
+      },
+      "milestones": {
+        "300": {
+          "level": 16,
+          "kills": 327,
+          "health": 100,
+          "enemies": 7
+        },
+        "600": {
+          "level": 23,
+          "kills": 783,
+          "health": 100,
+          "enemies": 16
+        }
+      }
+    }
+  ]
+}
