@@ -16,11 +16,11 @@ An offline portrait-oriented action survival roguelite in which the character is
 | [Progression](docs/PROGRESSION.md) | Training, summoning, fusion economy, archive |
 | [Art pipeline](docs/ART_PIPELINE.md) | Pixel art, anatomy and phenotype rendering |
 | [Architecture](docs/ARCHITECTURE.md) | Godot boundaries, schemas, persistence and testing |
-| [Roadmap](docs/ROADMAP.md) | Milestones and acceptance criteria |
+| [Roadmap](docs/ROADMAP.md) | Gameplay-first milestones, monetization foundations and release gates |
 
 ## Status
 
-Design specification v0.1, 2026-11-27. The first Python/Pillow procedural sprite prototype and generated assets are implemented; a first Godot source prototype now exists. The first Godot build and persistence recovery tests passed automated validation; physical device testing remains pending. Numeric parameters are hypotheses, not validated balance. Decisions labeled established reflect the agreed design; defaults and open questions can change. Work in this directory only; do not import legacy assets until their licenses are verified. No ads, paid random acquisition, backend, multiplayer or functional equipment in initial scope.
+Design specification v0.1, 2026-11-27. The first Python/Pillow procedural sprite prototype and generated assets are implemented; a first Godot source prototype now exists. The first Godot build and persistence recovery tests passed automated validation; physical device testing remains pending. Numeric parameters are hypotheses, not validated balance. Decisions labeled established reflect the agreed design; defaults and open questions can change. Work in this directory only; do not import legacy assets until their licenses are verified. Core gameplay is offline-first. No commercial SDK or real purchases before gameplay gates; future optional cosmetics and rewarded ads are planned in the roadmap. No paid random acquisition, multiplayer or functional equipment in initial scope.
 
 ## Sprite prototype
 
