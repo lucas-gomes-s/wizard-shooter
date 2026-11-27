@@ -64,10 +64,23 @@ jobs:
           dest="$HOME/.local/share/godot/export_templates/4.5.1.stable"
           mkdir -p "$dest"
           unzip -j /tmp/templates.tpz templates/android_debug.apk templates/version.txt -d "$dest"
+      - name: Install Android command-line tools
+        run: |
+          sdk="$RUNNER_TEMP/android-sdk"
+          mkdir -p "$sdk/cmdline-tools"
+          curl -fL --retry 3 https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -o /tmp/android-tools.zip
+          unzip -q /tmp/android-tools.zip -d /tmp/android-tools
+          mv /tmp/android-tools/cmdline-tools "$sdk/cmdline-tools/latest"
+          echo "ANDROID_HOME=$sdk" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$sdk" >> "$GITHUB_ENV"
+          echo "$sdk/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
       - name: Configure Android SDK and debug signing
         run: |
-          sdkmanager --install "platform-tools" "build-tools;35.0.0" "platforms;android-35"
+          set +o pipefail
+          yes | sdkmanager --sdk_root="$ANDROID_HOME" --licenses >/dev/null
+          sdkmanager --sdk_root="$ANDROID_HOME" --install "platform-tools" "build-tools;35.0.0" "platforms;android-35"
           mkdir -p "$HOME/.config/godot" "$HOME/.android"
+          rm -f "$HOME/.android/debug.keystore"
           keytool -genkeypair -keystore "$HOME/.android/debug.keystore" -storepass android -keypass android -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Wizard Shooter Debug"
           printf '[gd_resource type="EditorSettings" format=3]\n\n[resource]\nexport/android/java_sdk_path = "%s"\nexport/android/android_sdk_path = "%s"\nexport/android/debug_keystore = "%s"\n' "$JAVA_HOME" "$ANDROID_HOME" "$HOME/.android/debug.keystore" > "$HOME/.config/godot/editor_settings-4.5.tres"
           echo "GODOT_ANDROID_KEYSTORE_DEBUG_PATH=$HOME/.android/debug.keystore" >> "$GITHUB_ENV"
@@ -82,7 +95,7 @@ jobs:
           if grep -E 'SCRIPT ERROR|Parse Error|Failed to export|Export failed' /tmp/android-export.log; then exit 1; fi
           test -s mobile/export/wizard-shooter-alpha.apk
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose mobile/export/wizard-shooter-alpha.apk
-          unzip -l mobile/export/wizard-shooter-alpha.apk | grep -E 'assets/.*\.pck|assets/project.binary'
+          unzip -Z1 mobile/export/wizard-shooter-alpha.apk | grep -E 'assets/.*\.pck|assets/project.binary'
       - name: Upload Android alpha
         uses: actions/upload-artifact@v4
         with:
