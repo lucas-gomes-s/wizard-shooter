@@ -23,6 +23,8 @@ jobs:
           unzip -q /tmp/godot.zip -d /tmp/godot
           chmod +x /tmp/godot/Godot_v4.5.1-stable_linux.x86_64
           echo "/tmp/godot" >> "$GITHUB_PATH"
+      - name: Check ability catalog syntax
+        run: Godot_v4.5.1-stable_linux.x86_64 --headless --path mobile --check-only --script gameplay/ability_catalog.gd
       - name: Import project
         run: |
           set -o pipefail

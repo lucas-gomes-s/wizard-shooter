@@ -23,8 +23,8 @@ static func compile(p: Dictionary) -> Dictionary:
 	var traits: Array = p.get("passives", [])
 	var strength := 0.7 if traits.size() > 1 else 1.0
 	var modifiers := {"damage":1.0,"interval":1.0,"incoming":1.0,"cooldown":1.0}
-	for trait in traits:
-		match str(trait):
+	for talent_id in traits:
+		match str(talent_id):
 			"resilient": modifiers.incoming *= 1.0 - 0.18 * strength
 			"quickcast": modifiers.interval *= 1.0 - 0.12 * strength
 			"focused": modifiers.damage *= 1.0 + 0.12 * strength
@@ -42,6 +42,6 @@ static func compile(p: Dictionary) -> Dictionary:
 
 static func passive_names(p: Dictionary) -> String:
 	var names := PackedStringArray()
-	for trait in p.get("passives", []):
-		names.append(str(PASSIVE_NAMES.get(trait, trait)))
+	for talent_id in p.get("passives", []):
+		names.append(str(PASSIVE_NAMES.get(talent_id, talent_id)))
 	return ", ".join(names) if not names.is_empty() else "None"

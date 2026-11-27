@@ -294,7 +294,7 @@ func _refresh_academy() -> void:
 	for i in range(1, partner_picker.item_count):
 		if partner_picker.get_item_id(i) == partner_index: partner_picker.select(i)
 	var p2: Dictionary = academy.roster[partner_index] if partner_index >= 0 else {}
-	var kit := Abilities.compile(p)
+	var kit: Dictionary = Abilities.compile(p)
 	info.text = "HP %d  •  Speed %d  •  Power %.1f\n%s / %s\nPassive: %s\n%s" % [int(p.health), int(p.speed), float(p.damage) * float(kit.modifiers.damage), kit.basic.name, kit.special.name, Abilities.passive_names(p), str(p.mutation).replace("_", " ").capitalize() if p.mutation != "none" else "No expressed mutation"]
 	difficulty_button.text = "Difficulty: %s" % ["I", "II", "III"][difficulty - 1]
 	lock_button.text = "Unlock wizard" if c.locked else "Lock wizard"
