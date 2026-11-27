@@ -130,7 +130,7 @@ func allocate_run() -> int:
 	next_run_id += 1
 	return id if _commit(before) else -1
 
-func reward(run_id: int, active: Dictionary, apprentice: Dictionary, earned: int, victory: bool) -> bool:
+func reward(run_id: int, active: Dictionary, apprentice: Dictionary, earned: int, victory: bool, exploration_essence: int = 0) -> bool:
 	if blocked or run_id < 1 or (store != null and run_id >= next_run_id):
 		error = "Invalid run."
 		return false
@@ -149,7 +149,7 @@ func reward(run_id: int, active: Dictionary, apprentice: Dictionary, earned: int
 	active.xp += amount
 	if not apprentice.is_empty() and apprentice.id != active.id and roster.has(apprentice):
 		apprentice.xp += floori(amount * 0.25)
-	essence += floori(amount / 8.0)
+	essence += floori(amount / 8.0) + maxi(0, exploration_essence)
 	if victory:
 		essence += 10
 		_add(Genetics.founder(_seed()))

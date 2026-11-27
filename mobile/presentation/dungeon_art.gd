@@ -61,3 +61,36 @@ func draw_world(canvas: CanvasItem, view: Rect2) -> void:
 		canvas.draw_rect(Rect2(p - Vector2(9, 9), Vector2(17, 4)), Color("#77707b"))
 		canvas.draw_rect(Rect2(p + Vector2(6, -5), Vector2(3, 13)), Color("#34303d"))
 		canvas.draw_rect(Rect2(p + Vector2(-8, 7), Vector2(16, 2)), Color("#302a36"))
+
+## Render only sites belonging to the existing visible chunk cache.
+func draw_sites(canvas: CanvasItem, claimed: Dictionary, encounter: Dictionary, remaining: int, elapsed: float) -> void:
+	for chunk in cache.keys():
+		var site := World.site(seed, chunk)
+		if site.is_empty(): continue
+		var p: Vector2 = site.pos
+		var used: bool = claimed.has(site.id)
+		var color := Color("#e4bb6e") if site.kind == "treasure" else (Color("#80d4ae") if site.kind == "healing" else (Color("#ae98e8") if site.kind == "arcane" else Color("#e18b66")))
+		if used: color = Color("#625969")
+		if not used:
+			var pulse := 0.5 + 0.5 * sin(elapsed * 3.0)
+			canvas.draw_circle(p, 18, Color(color, 0.06 + pulse * 0.05))
+		if site.kind in ["treasure", "guarded"]:
+			canvas.draw_rect(Rect2(p - Vector2(12, 8), Vector2(24, 16)), Color("#191721"))
+			canvas.draw_rect(Rect2(p - Vector2(10, 6), Vector2(20, 12)), Color("#704c39") if not used else Color("#39323d"))
+			canvas.draw_rect(Rect2(p - Vector2(10, 4), Vector2(20, 2)), color)
+			canvas.draw_rect(Rect2(p - Vector2(2, 4), Vector2(4, 7)), color)
+			if used:
+				canvas.draw_rect(Rect2(p - Vector2(9, 3), Vector2(18, 5)), Color("#1c1924"))
+			elif site.kind == "guarded":
+				canvas.draw_arc(p, 18, 0, TAU, 24, Color(color, 0.8), 1.0)
+				if not encounter.is_empty() and encounter.id == site.id:
+					for i in range(remaining):
+						canvas.draw_rect(Rect2(p + Vector2(-7 + i * 6, -14), Vector2(4, 3)), color)
+		else:
+			canvas.draw_rect(Rect2(p - Vector2(9, 11), Vector2(18, 22)), Color("#191721"))
+			canvas.draw_rect(Rect2(p - Vector2(7, 9), Vector2(14, 18)), Color("#4b4555"))
+			canvas.draw_rect(Rect2(p - Vector2(4, 5), Vector2(8, 10)), color)
+			if site.kind == "healing":
+				canvas.draw_rect(Rect2(p - Vector2(6, 2), Vector2(12, 4)), color)
+			else:
+				canvas.draw_colored_polygon(PackedVector2Array([p + Vector2(0,-10), p + Vector2(6,0), p + Vector2(0,10), p + Vector2(-6,0)]), color)

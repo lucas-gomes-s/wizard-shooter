@@ -50,3 +50,15 @@ static func enemy_move(seed: int, point: Vector2, displacement: Vector2, radius:
 		if result.distance_squared_to(point) < displacement.length_squared() * 0.05:
 			result = move(seed, point, -tangent, radius)
 	return result
+
+## One deterministic point of interest per eligible chunk. Spawn chunk is safe.
+static func site(seed: int, chunk: Vector2i) -> Dictionary:
+	if chunk == Vector2i.ZERO: return {}
+	var roll := sample(seed, chunk.x, chunk.y, 20) % 100
+	if roll >= 32: return {}
+	var kind := "treasure" if roll < 12 else ("healing" if roll < 20 else ("arcane" if roll < 27 else "guarded"))
+	var origin := Vector2(chunk) * CHUNK
+	var point := origin + Vector2(48 + sample(seed, chunk.x, chunk.y, 21) % 161, 48 + sample(seed, chunk.x, chunk.y, 22) % 161)
+	# Keep the object and its interaction area clear of solid pillars.
+	if not clear_at(seed, point, 28.0): point = origin + Vector2(30, 30)
+	return {"id": "%d:%d" % [chunk.x, chunk.y], "kind": kind, "pos": point}

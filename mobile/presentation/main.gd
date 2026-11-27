@@ -384,14 +384,14 @@ func _upgrade(choice: int) -> void:
 		_sync_visibility()
 
 func _finish() -> void:
-	var earned: int = floori(float(run.elapsed) / 4.0) + int(run.kills) * 2
+	var earned: int = run.training_reward()
 	var active_now := academy.find_active(str(active.id))
 	var apprentice_now := academy.find_active(str(apprentice.get("id", "")))
-	var saved := academy.reward(run_id, active_now, apprentice_now, earned, run.outcome == "Victory")
+	var saved := academy.reward(run_id, active_now, apprentice_now, earned, run.outcome == "Victory", int(run.exploration_essence))
 	screen = "result"
 	_clear_input()
 	var summary := result_panel.get_child(0) as Label
-	summary.text = "%s\nTime %.0fs  |  Kills %d\nCharacter XP +%d\nShared XP +%d" % [run.outcome, run.elapsed, run.kills, earned, floori(earned * 0.25) if not apprentice.is_empty() else 0] if saved else "Reward not saved.\n" + academy.error + "\nRetry before leaving."
+	summary.text = "%s\nTime %.0fs  |  Kills %d\nCharacter XP +%d\nShared XP +%d\nCaches %d  |  Shrines %d\nExploration essence +%d" % [run.outcome, run.elapsed, run.kills, earned, floori(earned * 0.25) if not apprentice.is_empty() else 0, run.treasure_count, run.shrine_count, run.exploration_essence] if saved else "Reward not saved.\n" + academy.error + "\nRetry before leaving."
 	result_retry.visible = not saved
 	result_return.visible = saved
 	_sync_visibility()
@@ -522,6 +522,7 @@ func _draw() -> void:
 	var visible_margin := view.grow(40)
 	draw_set_transform(CAMERA_CENTER - camera)
 	dungeon_art.draw_world(self, view)
+	dungeon_art.draw_sites(self, run.claimed_sites, run.active_encounter, run._guards_remaining(), float(run.elapsed))
 	var color: Color = FIRE if run.phenotype.affinity == "fire" else (ICE if run.phenotype.affinity == "ice" else STEAM)
 	for e in run.enemies:
 		if visible_margin.has_point(e.pos):
@@ -548,6 +549,11 @@ func _draw() -> void:
 	draw_rect(PLAYFIELD, Color("#48404e"), false, 2.0)
 	draw_rect(Rect2(12, 73, 220, 8), Color("#502e40"))
 	draw_rect(Rect2(12, 73, 220 * run.hp / run.max_hp, 8), Color("#c66c73"))
+	if run.blessing > 0:
+		_center_text("Blessed %.0fs" % run.blessing, Vector2(292, 79), 11, Color("#c9b4ef"))
+	if run.site_notice_time > 0:
+		draw_rect(Rect2(8, 94, 344, 23), Color(0.09, 0.07, 0.13, 0.90))
+		_center_text(run.site_notice, Vector2(180, 110), 12, Color("#e6d2ac"))
 	for e in run.enemies:
 		if int(e.kind) == 3 and not view.has_point(e.pos):
 			var direction: Vector2 = camera.direction_to(e.pos)

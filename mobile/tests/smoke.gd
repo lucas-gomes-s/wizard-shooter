@@ -69,6 +69,7 @@ func _initialize() -> void:
 	run.step(1.0 / 60.0, Vector2.ZERO, false)
 	check(run.outcome == "Defeated", "Death ends run")
 	_test_world(p)
+	_test_sites(p)
 	print("Wizard Shooter smoke: %d failures; 1000 founder/fusion samples" % failures)
 	quit(0 if failures == 0 else 1)
 
@@ -98,6 +99,10 @@ func _test_world(p: Dictionary) -> void:
 	check(found, "Pillar fixture exists")
 	var exploration := RunModel.new(p, true, 1, 7)
 	exploration.spawn_cd = 100000.0
+	for y in range(-10, 2):
+		for x in range(-10, 2):
+			var site := World.site(7, Vector2i(x, y))
+			if not site.is_empty(): exploration.claimed_sites[site.id] = true
 	for i in range(600):
 		exploration.step(1.0 / 60.0, Vector2.LEFT, false)
 	check(exploration.player.x < -500, "Unbounded westward travel")
@@ -121,3 +126,64 @@ func _test_world(p: Dictionary) -> void:
 	check(exploration.enemies.size() == 1 and exploration.enemies[0].hp == 123.0, "Boss relocates without resetting health")
 	check(exploration.player.distance_to(exploration.enemies[0].pos) < RunModel.BOSS_RELOCATE_DISTANCE, "Boss remains reachable")
 	print("Infinite world checks complete")
+
+func _test_sites(p: Dictionary) -> void:
+	var samples: Dictionary = {}
+	for y in range(-8, 9):
+		for x in range(-8, 9):
+			var chunk := Vector2i(x,y)
+			var site := World.site(7, chunk)
+			check(site == World.site(7, chunk), "Site generation deterministic")
+			if site.is_empty(): continue
+			check(World.clear_at(7, site.pos, 28), "Site clear of pillar")
+			check(World.chunk_at(site.pos) == chunk, "Site stays in its chunk")
+			samples[site.kind] = site
+	check(samples.size() == 4, "All four site types generated")
+	if samples.size() != 4: return
+	var run := RunModel.new(p, true, 1, 7)
+	run.spawn_cd = 100000.0
+	var treasure: Dictionary = samples.treasure
+	run.player = treasure.pos
+	run._update_sites()
+	check(run.xp == 6 and run.exploration_xp == 4 and run.exploration_essence == 2, "Treasure rewards")
+	run._update_sites()
+	check(run.xp == 6 and run.treasure_count == 1, "Treasure cannot be claimed twice")
+	var healing: Dictionary = samples.healing
+	run.player = healing.pos
+	run._update_sites()
+	check(not run.claimed_sites.has(healing.id), "Full health does not waste shrine")
+	run.hp = run.max_hp * 0.5
+	run._update_sites()
+	check(absf(run.hp - run.max_hp * 0.85) < 0.001, "Healing shrine restores 35 percent")
+	var arcane: Dictionary = samples.arcane
+	run.player = arcane.pos
+	run._update_sites()
+	check(run.blessing == 20.0 and absf(run.effective_damage() - run.damage * 1.25) < 0.001, "Arcane buff applies")
+	run.blessing = 0.0
+	run._update_sites()
+	check(run.blessing == 0.0, "Arcane shrine cannot refresh by revisiting")
+	var guarded: Dictionary = samples.guarded
+	run.player = guarded.pos
+	run._update_sites()
+	check(run._guards_remaining() == 3 and not run.claimed_sites.has(guarded.id), "Guarded cache starts one ambush")
+	run._update_sites()
+	check(run._guards_remaining() == 3, "Ambush cannot spawn duplicates")
+	run.player += Vector2(1000,0)
+	run._abandon_far_encounter()
+	check(run.active_encounter.is_empty() and run.enemies.is_empty() and run.exploration_essence == 2, "Abandonment cannot grant rewards")
+	run.player = guarded.pos
+	run._update_sites()
+	for enemy in run.enemies: enemy.hp = 0
+	run.step(1.0 / 60.0, Vector2.ZERO, false)
+	check(run.encounters_cleared == 1 and run.exploration_essence == 6 and run.kills == 0, "Guardians grant cache once, no duplicate kill reward")
+	run._update_sites()
+	check(run.encounters_cleared == 1, "Guarded cache remains claimed")
+	var academy := Academy.new()
+	var active: Dictionary = academy.roster[0]
+	var partner: Dictionary = academy.roster[1]
+	var before := academy.essence
+	var earned := run.training_reward()
+	check(academy.reward(1, active, partner, earned, false, run.exploration_essence), "Exploration rewards settled")
+	check(academy.essence == before + floori(earned / 8.0) + 6, "Exploration essence granted exactly once")
+	check(not academy.reward(1, active, partner, earned, false, 6), "Duplicate exploration settlement rejected")
+	print("Exploration checks complete")
