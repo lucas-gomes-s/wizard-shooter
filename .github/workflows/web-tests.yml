@@ -4,6 +4,7 @@ on:
     paths:
       - 'js/**'
       - 'index.html'
+      - 'styles/**'
       - 'package.json'
       - 'tests/web/**'
       - '.github/workflows/web-tests.yml'
@@ -11,13 +12,14 @@ on:
     paths:
       - 'js/**'
       - 'index.html'
+      - 'styles/**'
       - 'package.json'
       - 'tests/web/**'
       - '.github/workflows/web-tests.yml'
   workflow_dispatch:
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -25,3 +27,26 @@ jobs:
           node-version: '22'
       - run: npm run check
       - run: npm test
+
+  browser:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save --package-lock=false playwright@1.55.1
+      - run: npx playwright install --with-deps chromium
+      - name: Run browser smoke test
+        run: |
+          python3 -m http.server 8000 --bind 127.0.0.1 > /tmp/web-server.log 2>&1 &
+          server=$!
+          trap 'kill "$server" 2>/dev/null || true' EXIT
+          for attempt in {1..20}; do curl -fsS http://127.0.0.1:8000/ >/dev/null && break; sleep 1; done
+          node tests/web/browser-smoke.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: web-smoke-screenshots
+          path: web-smoke-artifacts/
+          if-no-files-found: ignore
