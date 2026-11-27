@@ -1,11 +1,11 @@
 {
   "name": "wizard-shooter-web",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "private": true,
   "type": "module",
   "scripts": {
     "test": "node --test tests/web/*.test.js",
-    "check": "node --check js/index.js && node --check js/simulation.js && node --check js/data.js && node --check js/presentation.js && node --check js/magic.js"
+    "check": "node --check js/index.js && node --check js/simulation.js && node --check js/data.js && node --check js/presentation.js && node --check js/magic.js && node --check js/enemies.js"
   },
   "engines": {
     "node": ">=20"
