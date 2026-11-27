@@ -18,6 +18,8 @@ const Collection = preload("res://presentation/collection_art.gd")
 const ElementFX = preload("res://presentation/element_fx.gd")
 const Rig = preload("res://presentation/directional_rig.gd")
 const Results = preload("res://presentation/result_art.gd")
+const VisualSettings = preload("res://presentation/visual_settings.gd")
+const Profiler = preload("res://presentation/performance_monitor.gd")
 const PLAYFIELD := Rect2(0, 88, 360, 448)
 const CAMERA_CENTER := Vector2(180, 312)
 const FIRE := Color("#ef8052")
@@ -64,6 +66,15 @@ var title_note: Label
 var audio := GameAudio.new()
 var sound_toggle: Button
 var music_toggle: Button
+var settings := VisualSettings.new()
+var profiler := Profiler.new()
+var settings_button: Button
+var settings_panel: VBoxContainer
+var settings_origin := "title"
+var settings_notice: Label
+var settings_options: Dictionary = {}
+var monitor_text := ""
+var monitor_timer := 0.0
 var reveal_skip: Button
 var reveal_time := 0.0
 const REVEAL_DURATION := 1.65
@@ -117,6 +128,8 @@ var result_reward: Dictionary = {}
 func _ready() -> void:
 	get_viewport().gui_embed_subwindows = true
 	add_child(audio)
+	settings.load_settings()
+	settings.apply()
 	ui = Control.new()
 	ui.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	ui.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -171,11 +184,9 @@ func _build_ui() -> void:
 	title_note = _label(title_panel, "", 12)
 	title_note.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	sound_toggle = _button(ui,"SFX ON",_toggle_sfx)
-	music_toggle = _button(ui,"Music ON",_toggle_music)
-	for b in [sound_toggle,music_toggle]: b.add_theme_font_size_override("font_size",11)
-	sound_toggle.size=Vector2(106,32)
-	music_toggle.size=Vector2(106,32)
+	settings_button=_button(ui,"Settings",_open_settings)
+	settings_button.size=Vector2(130,34)
+	_build_settings()
 	title_menu_button = _button(ui, "Menu", _show_title)
 	title_menu_button.position = Vector2(294, 5)
 	title_menu_button.size = Vector2(58, 30)
@@ -528,6 +539,73 @@ func _complete_reveal() -> void:
 	_sync_visibility()
 	queue_redraw()
 
+func _build_settings() -> void:
+	settings_panel=_box_at(Vector2(24,92),Vector2(312,500))
+	settings_panel.add_theme_constant_override("separation",8)
+	sound_toggle=_button(settings_panel,"SFX ON",_toggle_sfx)
+	music_toggle=_button(settings_panel,"Music ON",_toggle_music)
+	for key in ["fps","reduced_motion","simple_effects","damage_numbers","monitor"]:
+		settings_options[key]=_button(settings_panel,"",_toggle_visual.bind(key))
+	_label(settings_panel,"Simplified effects retain spell boundaries and enemy warnings.",11).autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	_button(settings_panel,"Export performance report",_export_performance)
+	settings_notice=_label(settings_panel,"",11)
+	settings_notice.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	var back := _button(settings_panel,"Back",_close_settings)
+	Fantasy.primary(back)
+
+func _open_settings() -> void:
+	if screen!="title" and not (screen=="run" and paused): return
+	settings_origin=screen
+	screen="settings"
+	_clear_input()
+	settings_notice.text=""
+	_refresh_settings()
+	_sync_visibility()
+	queue_redraw()
+
+func _close_settings() -> void:
+	if screen!="settings": return
+	screen=settings_origin
+	_clear_input()
+	_sync_visibility()
+	queue_redraw()
+
+func _refresh_settings() -> void:
+	settings_options.fps.text="Frame cap: %d FPS" % settings.fps
+	settings_options.reduced_motion.text="Reduced motion: "+("ON" if settings.reduced_motion else "OFF")
+	settings_options.simple_effects.text="Spell effects: "+("SIMPLE" if settings.simple_effects else "FULL")
+	settings_options.damage_numbers.text="Damage numbers: "+("ON" if settings.damage_numbers else "OFF")
+	settings_options.monitor.text="Performance overlay: "+("ON" if settings.monitor else "OFF")
+
+func _toggle_visual(key: String) -> void:
+	match key:
+		"fps": settings.fps=30 if settings.fps==60 else 60
+		"reduced_motion": settings.reduced_motion=not settings.reduced_motion
+		"simple_effects": settings.simple_effects=not settings.simple_effects
+		"damage_numbers": settings.damage_numbers=not settings.damage_numbers
+		"monitor": settings.monitor=not settings.monitor
+	settings.apply()
+	var error := settings.save_settings()
+	settings_notice.text="Preferences saved." if error==OK else "Preferences active; could not save."
+	_refresh_settings()
+	queue_redraw()
+
+func _export_performance() -> void:
+	if profiler.total_frames==0:
+		settings_notice.text="Play an expedition before exporting timings."
+		return
+	var error := profiler.export_report({"fps":settings.fps,"reduced_motion":settings.reduced_motion,"simple_effects":settings.simple_effects,"damage_numbers":settings.damage_numbers})
+	settings_notice.text="Saved: "+ProjectSettings.globalize_path(Profiler.REPORT) if error==OK else "Could not write performance report."
+
+func _process(dt: float) -> void:
+	if screen=="run" and not paused and run.pending_upgrades==0:
+		profiler.record_frame(dt)
+		if settings.monitor:
+			monitor_timer+=dt
+			if monitor_timer>=0.5:
+				monitor_timer=0.0
+				monitor_text=profiler.overlay(run,dungeon_art.cache.size(),sprites.pose_cache.size())
+
 func _toggle_sfx() -> void:
 	audio.toggle_effects()
 	_sync_visibility()
@@ -551,6 +629,9 @@ func _start(endless: bool) -> void:
 	run = RunModel.new(active.phenotype, endless, difficulty, 1000 + run_id)
 	result_before.clear()
 	result_reward.clear()
+	profiler.reset()
+	monitor_text=""
+	monitor_timer=0.0
 	displayed_hp = 1.0
 	previous_level = 1
 	level_flash = 0.0
@@ -630,15 +711,14 @@ func _sync_visibility() -> void:
 	upgrade_panel.visible = in_run and run != null and run.pending_upgrades > 0
 	if upgrade_panel.visible: _refresh_upgrades()
 	pause_button.text = ">" if paused else "II"
-	var audio_controls := screen=="title" or (in_run and paused)
-	sound_toggle.visible=audio_controls
-	music_toggle.visible=audio_controls
-	sound_toggle.position=Vector2(12,604) if screen=="title" else Vector2(68,340)
-	music_toggle.position=Vector2(242,604) if screen=="title" else Vector2(186,340)
+	settings_panel.visible=screen=="settings"
+	settings_button.visible=screen=="title" or (in_run and paused)
+	settings_button.position=Vector2(115,604) if screen=="title" else Vector2(115,340)
 	sound_toggle.text="SFX ON" if audio.effects_enabled else "SFX OFF"
 	music_toggle.text="Music ON" if audio.music_enabled else "Music OFF"
-	audio.set_track("dungeon" if in_run else "academy")
-	audio.duck(in_run and (paused or run.pending_upgrades>0))
+	var dungeon_audio := in_run or (screen=="settings" and settings_origin=="run")
+	audio.set_track("dungeon" if dungeon_audio else "academy")
+	audio.duck(dungeon_audio and (paused or run.pending_upgrades>0))
 
 func _refresh_upgrades() -> void:
 	run.ensure_upgrade_offer()
@@ -689,7 +769,7 @@ func _input(event: InputEvent) -> void:
 func _physics_process(dt: float) -> void:
 	if screen != "run":
 		if screen=="reveal" and reveal_time<REVEAL_DURATION:
-			if reveal_time+dt>=REVEAL_DURATION: _complete_reveal()
+			if settings.reduced_motion or reveal_time+dt>=REVEAL_DURATION: _complete_reveal()
 			else: reveal_time+=dt
 		if screen in ["reveal","title"]: queue_redraw()
 		return
@@ -704,7 +784,9 @@ func _physics_process(dt: float) -> void:
 			if movement.length() < 0.12: movement = Vector2.ZERO
 		var previous: Vector2 = run.player
 		var audio_before := GameAudio.snapshot(run)
+		var sim_start := Time.get_ticks_usec()
 		run.step(dt, movement, special_requested or (space and not prev_space))
+		profiler.record_step(Time.get_ticks_usec()-sim_start,run,dungeon_art.cache.size(),sprites.pose_cache.size())
 		if run.special_casts>audio_before.special: elemental_fx.capture(run)
 		audio.after_step(audio_before,run)
 		_update_motion_art(previous,dt)
@@ -715,7 +797,7 @@ func _physics_process(dt: float) -> void:
 			cast_facing=walk_facing
 			cast_pose_remaining=0.22
 		var target: Vector2 = run.player
-		camera_position = camera_position.lerp(target, 1.0 - exp(-dt * 12.0))
+		camera_position = target if settings.reduced_motion else camera_position.lerp(target, 1.0 - exp(-dt * 12.0))
 		camera_position = target + (camera_position - target).limit_length(24.0)
 		if run.pending_upgrades > 0:
 			_clear_input()
@@ -740,15 +822,19 @@ func _physics_process(dt: float) -> void:
 
 func _draw() -> void:
 	draw_rect(Rect2(0, 0, 360, 640), Color("#1b1924"))
+	if screen=="settings":
+		_draw_title("SETTINGS","Audio, visuals and diagnostics")
+		Fantasy.frame(self,Rect2(12,74,336,544))
+		return
 	if screen == "title":
-		Fantasy.hall(self,float(Time.get_ticks_msec())/1000.0)
+		Fantasy.hall(self,0.0 if settings.reduced_motion else float(Time.get_ticks_msec())/1000.0)
 		PixelArt.heading(self,"WIZARD",Vector2(180,104),5,Fantasy.GOLD)
 		PixelArt.heading(self,"SHOOTER",Vector2(180,144),5,Fantasy.IVORY)
 		Fantasy.text_at(self,"FORGE YOUR BLOODLINE",Vector2(180,170),11,Fantasy.MUTED,true)
 		if not academy.blocked and not academy.roster.is_empty():
 			sprites.draw_wizard(self,academy.roster[selected].phenotype,Vector2(180,324),0,4.0)
 		Fantasy.frame(self,Rect2(30,374,300,224))
-		Fantasy.text_at(self,"OFFLINE ALPHA",Vector2(180,625),10,Fantasy.MUTED,true)
+
 		return
 	if screen == "academy":
 		_draw_title("THE ACADEMY", "%d essence   •   %d active   •   %d retired" % [academy.essence, academy.roster.size(), academy.archive.size()])
@@ -810,11 +896,17 @@ func _draw() -> void:
 	# Ground effects below creatures and hostile telegraphs preserve combat readability.
 	for cloud in run.clouds:
 		if ElementFX.intersects(view,cloud.pos,float(cloud.radius)):
-			ElementFX.cloud(self,cloud,float(run.elapsed))
+			if settings.simple_effects:
+				draw_arc(cloud.pos,float(cloud.radius),0,TAU,32,Color(ElementFX.hue(str(cloud.affinity)),0.65),1)
+			else: ElementFX.cloud(self,cloud,float(run.elapsed))
 	for flash in run.flashes:
 		if ElementFX.intersects(view,flash.pos,float(flash.radius)):
-			ElementFX.burst(self,flash.pos,float(flash.radius),str(flash.affinity),1.0-clampf(float(flash.life)/0.24,0,1),false)
-	elemental_fx.draw_cast(self,view,float(run.elapsed))
+			if settings.simple_effects:
+				draw_arc(flash.pos,float(flash.radius),0,TAU,32,Color(ElementFX.hue(str(flash.affinity)),0.7),1)
+			else: ElementFX.burst(self,flash.pos,float(flash.radius),str(flash.affinity),1.0-clampf(float(flash.life)/0.24,0,1),false)
+	if settings.simple_effects and not elemental_fx.cast.is_empty() and float(run.elapsed)-float(elemental_fx.cast.at)<ElementFX.CAST_LIFE:
+		draw_arc(elemental_fx.cast.pos,float(elemental_fx.cast.radius),0,TAU,32,ElementFX.hue(str(elemental_fx.cast.affinity)),1)
+	elif not settings.simple_effects: elemental_fx.draw_cast(self,view,float(run.elapsed))
 	_draw_enemy_hazards(visible_margin)
 	for e in run.enemies:
 		if visible_margin.has_point(e.pos):
@@ -822,7 +914,10 @@ func _draw() -> void:
 			ElementFX.enemy_status(self,e,float(run.elapsed))
 	for shot in run.shots:
 		if visible_margin.has_point(shot.pos):
-			ElementFX.projectile(self,shot,float(run.elapsed))
+			if settings.simple_effects:
+				var texture: Texture2D=arena_art.projectiles[shot.affinity]
+				draw_texture(texture,shot.pos-Vector2(4,4))
+			else: ElementFX.projectile(self,shot,float(run.elapsed))
 	_draw_player_art(color)
 	if run.ward > 0: draw_arc(run.player, 22, 0, TAU, 24, Color("#c6e6ed"), 2.0)
 	if run.webbed: draw_arc(run.player, 18, 0, TAU, 24, Color("#efcfa1"), 2.0)
@@ -832,9 +927,13 @@ func _draw() -> void:
 	draw_rect(Rect2(0, 0, 360, 88), Color("#1b1924"))
 	draw_rect(Rect2(0, 536, 360, 104), Color("#1b1924"))
 	draw_rect(PLAYFIELD, Color("#48404e"), false, 2.0)
-	if run.player_hit_fx > 0:
+	if run.player_hit_fx > 0 and not settings.reduced_motion:
 		draw_rect(PLAYFIELD.grow(-3), Color(1.0, 0.34, 0.29, float(run.player_hit_fx) * 2.5), false, 3.0)
 	_draw_hud()
+	if settings.monitor and not paused and run.pending_upgrades==0 and not monitor_text.is_empty():
+		draw_rect(Rect2(4,499,352,33),Color(0.06,0.05,0.09,0.88))
+		var lines := monitor_text.split("\n")
+		for i in range(lines.size()): Fantasy.text_at(self,lines[i],Vector2(10,511+i*13),10,Fantasy.IVORY)
 	Fantasy.text_at(self,str(run.kit.special.name),Vector2(298,631),10,Fantasy.MUTED,true)
 	if run.site_notice_time > 0:
 		draw_rect(Rect2(8, 94, 344, 23), Color(0.09, 0.07, 0.13, 0.90))
@@ -902,7 +1001,7 @@ func _update_motion_art(previous: Vector2,dt: float) -> void:
 	cast_pose_remaining=maxf(0,cast_pose_remaining-dt)
 	player_stride = fposmod(player_stride+distance,16.0)
 	dust_distance += distance
-	if dust_distance>=12.0:
+	if dust_distance>=12.0 and not settings.reduced_motion and not settings.simple_effects:
 		dust_distance = fposmod(dust_distance,12.0)
 		if dust.size()>=12: dust.pop_front()
 		dust.append({"pos":previous,"life":0.36})
@@ -920,7 +1019,8 @@ func _draw_player_art(color: Color) -> void:
 	draw_circle(feet+Vector2(0,-1),10,Color(0.05,0.04,0.08,0.35))
 	var frame := 1 if player_moving and player_stride>=8.0 else 0
 	var bob := -1.0 if frame==1 else 0.0
-	if not player_moving: bob = -1.0 if sin(float(run.elapsed)*2.6)>0.65 else 0.0
+	if not player_moving: bob = -1.0 if not settings.reduced_motion and sin(float(run.elapsed)*2.6)>0.65 else 0.0
+	if settings.reduced_motion: bob=0.0
 	var casting := cast_pose_remaining>0
 	var direction := cast_facing if casting else walk_facing
 	sprites.draw_actor(self,run.phenotype,feet+Vector2(0,bob),frame,direction,casting,1.2)
@@ -936,10 +1036,10 @@ func _draw_hud() -> void:
 	Fantasy.text_at(self,"KILLS %d" % run.kills,Vector2(82,18),11,Fantasy.MUTED)
 	Fantasy.text_at(self,"LV %d" % run.run_level,Vector2(193,18),13,Fantasy.GOLD)
 	var low := Fantasy.fraction(float(run.hp),float(run.max_hp)) < 0.25
-	var warning := 0.3+0.2*sin(float(run.elapsed)*5.0) if low else 0.0
-	Fantasy.bar(self,Rect2(12,25,230,22),float(run.hp),float(run.max_hp),Fantasy.HP,displayed_hp,maxf(warning,float(run.player_hit_fx)*3.0))
+	var warning := (0.4 if settings.reduced_motion else 0.3+0.2*sin(float(run.elapsed)*5.0)) if low else 0.0
+	Fantasy.bar(self,Rect2(12,25,230,22),float(run.hp),float(run.max_hp),Fantasy.HP,displayed_hp,maxf(warning,0.0 if settings.reduced_motion else float(run.player_hit_fx)*3.0))
 	Fantasy.text_at(self,"HP   %d / %d" % [ceili(run.hp),roundi(run.max_hp)],Vector2(127,40),12,Fantasy.IVORY,true)
-	Fantasy.bar(self,Rect2(12,52,230,18),float(run.xp),float(run.next_xp),Fantasy.XP,-1.0,level_flash)
+	Fantasy.bar(self,Rect2(12,52,230,18),float(run.xp),float(run.next_xp),Fantasy.XP,-1.0,0.0 if settings.reduced_motion else level_flash)
 	Fantasy.text_at(self,"XP   %d / %d" % [run.xp,run.next_xp],Vector2(127,65),11,Fantasy.IVORY,true)
 	var state := "BLESSED %.0fs" % run.blessing if run.blessing > 0 else ("BOSS ACTIVE" if run.boss_spawned else ("ENDLESS" if run.endless else "DUNGEON"))
 	Fantasy.text_at(self,state,Vector2(12,83),10,Fantasy.MUTED)
@@ -955,8 +1055,8 @@ func _draw_combat_feedback(view: Rect2) -> void:
 		if fx.kind == "hurt": color = Color("#ff9c87")
 		var progress := 1.0 - float(fx.life) / 0.55
 		var alpha := 1.0 - progress
-		ElementFX.impact(self,fx,progress)
-		if fx.kind=="defeat": continue
+		if not settings.simple_effects and not settings.reduced_motion: ElementFX.impact(self,fx,progress)
+		if fx.kind=="defeat" or not settings.damage_numbers: continue
 		var label_text := "%s%d" % ["-" if fx.kind == "hurt" else "", maxi(1, roundi(float(fx.amount)))]
 		var point := p + Vector2(-6, -13 - progress * 14)
 		draw_string(font, point + Vector2(1,1), label_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color(0.06,0.04,0.08,alpha))

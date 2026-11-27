@@ -6,6 +6,8 @@ const Art = preload("res://presentation/pixel_ui_art.gd")
 const Upgrades = preload("res://gameplay/upgrade_catalog.gd")
 const Audio = preload("res://presentation/game_audio.gd")
 const FX = preload("res://presentation/element_fx.gd")
+const Settings = preload("res://presentation/visual_settings.gd")
+const Monitor = preload("res://presentation/performance_monitor.gd")
 var failures := 0
 
 func _initialize() -> void:
@@ -19,6 +21,7 @@ func check(value: bool, note: String) -> void:
 func _test() -> void:
 	var app: Variant = Main.instantiate()
 	app.academy = Academy.new(42)
+	app.settings.persist=false
 	app.audio.persist_settings=false
 	app.audio.effects_enabled=false
 	app.audio.music_enabled=false
@@ -26,6 +29,27 @@ func _test() -> void:
 	await process_frame
 	check(app.screen=="title" and app.title_panel.visible and not app.academy_panel.visible,"Title initially visible")
 	check(not app.title_quick.disabled,"Quick expedition available")
+	app._open_settings()
+	check(app.settings_panel.visible and not app.title_panel.visible,"Title settings navigation")
+	app._toggle_visual("fps")
+	check(Engine.max_fps==30 and Engine.physics_ticks_per_second==60,"Render cap independent of simulation ticks")
+	app._toggle_visual("fps")
+	app._close_settings()
+	check(app.screen=="title","Settings return to title")
+	var preferences := Settings.new()
+	preferences.path="user://test_visual_settings.cfg"
+	preferences.fps=30
+	preferences.simple_effects=true
+	check(preferences.save_settings()==OK,"Visual preferences save")
+	var restored := Settings.new()
+	restored.path=preferences.path
+	restored.load_settings()
+	check(restored.fps==30 and restored.simple_effects,"Visual preferences reload")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(preferences.path))
+	var meter := Monitor.new()
+	for i in range(Monitor.LIMIT+10): meter.record_frame(0.020)
+	check(meter.frame_ms.size()==Monitor.LIMIT and meter.total_frames==Monitor.LIMIT+10,"Rolling frame sample bounded")
+	check(absf(float(Monitor.stats(meter.frame_ms).p95)-20.0)<0.01,"Frame percentile calculation")
 	app._show_academy()
 	await process_frame
 	check(app.academy_panel.visible and app.title_menu_button.visible and not app.title_panel.visible,"Academy navigation")
@@ -96,6 +120,16 @@ func _test() -> void:
 	app._toggle_pause()
 	await process_frame
 	check(app.paused,"Pause works")
+	var elapsed: float=app.run.elapsed
+	app._open_settings()
+	app._toggle_visual("simple_effects")
+	app._toggle_visual("monitor")
+	app._toggle_visual("reduced_motion")
+	await physics_frame
+	await process_frame
+	check(app.screen=="settings" and app.run.elapsed==elapsed,"Settings preserve paused run")
+	app._close_settings()
+	check(app.screen=="run" and app.paused,"Settings return to paused run")
 	app._toggle_pause()
 	app.run.pending_upgrades=1
 	app.run.ensure_upgrade_offer()
@@ -151,6 +185,7 @@ func _test() -> void:
 	check(app.audio.voices.size()==Audio.VOICES,"Audio voice pool bounded")
 	app.academy.roster[0].xp=Academy.MATURE_XP
 	app.academy.roster[1].xp=Academy.MATURE_XP
+	app.settings.reduced_motion=false
 	app._ask_fuse()
 	app._fuse()
 	check(app.screen=="reveal" and app.academy.archive.size()==2 and app.academy.roster.size()==1,"Fusion commits before ritual")
