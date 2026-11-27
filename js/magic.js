@@ -11,21 +11,34 @@ export const synergies=[
  {id:'storm',name:'Storm prism',glyph:'✷',color:'#f2d4ff',requires:['lightning','arcane'],description:'Chain lightning jumps to one additional enemy, with 30 extra units of range.'},
  {id:'soulfire',name:'Soulfire',glyph:'✺',color:'#f6b18c',requires:['fire','necro'],description:'Burning enemies that die release 60% bolt damage to other enemies within 60 units.'}
 ];
+export const SECOND_SCHOOL_LEVEL=10;
+export const MAX_SCHOOLS=2;
 export const schoolById=Object.fromEntries(schools.map(s=>[s.id,s]));
-export function freshMagic(){return {ranks:Object.fromEntries(schools.map(s=>[s.id,0])),synergies:[],shieldUntil:0,shieldReady:false}}
-export function dominantSchool(magic){return schools.reduce((best,s)=>magic.ranks[s.id]>(best?magic.ranks[best.id]:0)?s:best,null)}
+export function freshMagic(){return {ranks:Object.fromEntries(schools.map(s=>[s.id,0])),primary:null,secondary:null,synergies:[],shieldUntil:0,shieldReady:false}}
+export function dominantSchool(magic){return schoolById[magic.primary]||schools.reduce((best,s)=>magic.ranks[s.id]>(best?magic.ranks[best.id]:0)?s:best,null)}
+export function learnedSchools(magic){return schools.filter(s=>magic.ranks[s.id]>0)}
+export function canLearnSchool(player,id){
+ if(!Object.hasOwn(schoolById,id))return false;
+ const m=player.magic,rank=m.ranks[id],count=learnedSchools(m).length;
+ if(rank>0)return rank<5;
+ return count===0||(count<MAX_SCHOOLS&&player.level>=SECOND_SCHOOL_LEVEL);
+}
 function sample(pool,rng){return pool.splice(Math.min(pool.length-1,Math.floor(rng()*pool.length)),1)[0]}
 export function upgradeOffers(player,skills,rng=Math.random){
  const m=player.magic;
  const basic=skills.flatMap((s,i)=>player.skillLvl[i]<s.maxLevel?[{kind:'basic',id:'basic-'+i,index:i,name:s.name,img:s.img,description:s.description2,flavor:s.description1,rank:player.skillLvl[i],max:s.maxLevel,color:'#e5c48b'}]:[]);
- const magic=schools.filter(s=>m.ranks[s.id]<5).map(s=>({kind:'school',id:s.id,name:s.name,glyph:s.glyph,color:s.color,rank:m.ranks[s.id],max:5,description:s.ranks[m.ranks[s.id]],flavor:'Spell school'}));
+ const magic=schools.filter(s=>canLearnSchool(player,s.id)).map(s=>({kind:'school',id:s.id,name:s.name,glyph:s.glyph,color:s.color,rank:m.ranks[s.id],max:5,description:s.ranks[m.ranks[s.id]],flavor:m.ranks[s.id]?'School mastery':learnedSchools(m).length?'Secondary school · permanent choice':'Primary school'}));
  const combos=synergies.filter(s=>!m.synergies.includes(s.id)&&s.requires.every(id=>m.ranks[id]>=2)).map(s=>({kind:'synergy',id:s.id,name:s.name,glyph:s.glyph,color:s.color,description:s.description,flavor:'Synergy · '+s.requires.map(id=>schoolById[id].name).join(' + '),rank:0,max:1}));
  if(player.level===2&&magic.length>=3&&Object.values(m.ranks).every(rank=>rank===0)){return Array.from({length:3},()=>sample(magic,rng))}
  const offers=[];
  // Give new players a reliable path to damage or mobility rather than a dead-end roll.
  if(player.level<=4&&Object.values(m.ranks).some(rank=>rank>0)){const priority=basic.findIndex(o=>o.index===(player.level===3?0:2));if(priority>=0)offers.push(basic.splice(priority,1)[0]);}
  if(combos.length&&offers.length<3)offers.push(sample(combos,rng));
- if(magic.length&&offers.length<3)offers.push(sample(magic,rng));
+ const mastered=magic.filter(o=>o.rank>0),newSchools=magic.filter(o=>o.rank===0);
+ // Give mastery and a new-school option separate slots whenever available.
+ if(mastered.length&&offers.length<3){const offer=sample(mastered,rng);offers.push(offer);magic.splice(magic.indexOf(offer),1);}
+ if(newSchools.length&&offers.length<3){const offer=sample(newSchools,rng);offers.push(offer);magic.splice(magic.indexOf(offer),1);}
+ if(!offers.some(o=>o.kind==='school')&&magic.length&&offers.length<3)offers.push(sample(magic,rng));
  const pool=[...basic,...magic,...combos];
  while(offers.length<3&&pool.length)offers.push(sample(pool,rng));
  return offers;
@@ -33,7 +46,8 @@ export function upgradeOffers(player,skills,rng=Math.random){
 export function applyUpgrade(player,offer,skills,tick){
  if(offer.kind==='basic'){const s=skills[offer.index];if(!s||player.skillLvl[offer.index]>=s.maxLevel)return false;player[s.status]+=s.modifier;player.shotCd=Math.max(1,player.shotCd);player.skillLvl[offer.index]++;return true}
  if(offer.kind==='school'){
-  const m=player.magic;if(!schoolById[offer.id]||m.ranks[offer.id]>=5)return false;
+  const m=player.magic;if(!canLearnSchool(player,offer.id))return false;
+  if(m.ranks[offer.id]===0){if(!learnedSchools(m).length)m.primary=offer.id;else m.secondary=offer.id;}
   m.ranks[offer.id]++;
   if(offer.id==='arcane'&&m.ranks.arcane===2){m.shieldReady=true;m.shieldUntil=tick}
   return true;
