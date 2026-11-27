@@ -226,7 +226,8 @@ export class Game{
   if(this.phase!=='playing')return false;
   const p=this.player,m=p.magic;this.events=[];this.visualEvents=[];this.deathQueue=[];this.tick++;this.flash=Math.max(0,this.flash-1);
   if(m.ranks.arcane>=2&&!m.shieldReady&&this.tick>=m.shieldUntil)m.shieldReady=true;
-  const [dx,dy]=normalize(input.x||0,input.y||0);if(dx||dy)p.lastDirection=[dx,dy];const trailDash=useBoots(this,input,dx,dy);const web=p.webUntil>this.tick&&!hasGear(p,'silk')?.55:1;const speed=p.maxSpeed*web*gearMovement(p,this.tick);p.x+=dx*speed;p.y+=dy*speed;p.cooldown=Math.max(0,p.cooldown-1);if(!input.relic)this.shoot(input.aim);
+  const [dx,dy]=normalize(input.x||0,input.y||0);if(dx||dy)p.lastDirection=[dx,dy];const trailDash=useBoots(this,input,dx,dy);const web=p.webUntil>this.tick&&!hasGear(p,'silk')?.55:1;const speed=p.maxSpeed*web*gearMovement(p,this.tick);p.x+=dx*speed;p.y+=dy*speed;p.cooldown=Math.max(0,p.cooldown-1);if(p.equipment.relic==='crown'||p.equipment.relic==='tonic')useRelic(this,input,null,nearby);this.shoot(input.aim);
+  for(const s of this.shots){s.x+=s.vx;s.y+=s.vy;s.age=(s.age||0)+1}
   const hash=new SpatialHash();
   for(const e of this.enemies){
    if(e.health<=0)continue;
@@ -236,8 +237,7 @@ export class Game{
    stepEnemy(this,e,factor);hash.insert(e);
   }
   if(trailDash)this.pulse(hash,p,80,p.shotDmg*.9,'fire');
-  useRelic(this,input,hash,nearby);if(input.relic)this.shoot(input.aim);
-  for(const s of this.shots){s.x+=s.vx;s.y+=s.vy;s.age=(s.age||0)+1}
+  if(p.equipment.relic!=='crown'&&p.equipment.relic!=='tonic')useRelic(this,input,hash,nearby);
   if(hasGear(p,'trail')&&(dx||dy)&&p.gearState.boots.readyAt<=this.tick){p.gearState.boots.readyAt=this.tick+50;this.pulse(hash,p,48,p.shotDmg*.35,'fire');}
   if(hasGear(p,'hourglass')&&p.gearState.relic.readyAt<=this.tick){p.gearState.relic.readyAt=this.tick+400;this.pulse(hash,p,115,0,'ice',.5);}
   if(hasGear(p,'mending')&&p.gearState.robe.readyAt<=this.tick){p.gearState.robe.readyAt=this.tick+100;if(p.health<p.maxHealth*.5)this.healPlayer(2);}
