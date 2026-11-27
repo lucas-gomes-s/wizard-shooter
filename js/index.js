@@ -1,483 +1,159 @@
-const ctx = document.getElementById("gameArea").getContext("2d")
-const canvasElement = document.getElementById("gameArea")
-const startBtn = document.getElementById("startButton")
-let interval = "";
-let enemies = [];
-let shots = [];
-let canvasWidth = 600;
-let canvasHeight = 600;
-let counter = 0;
-let lvlUpScreen = false;
-let lvlUpNavigation = 0;
-let potions = [];
-let hpBar = false;
-let bgX = 0;
-let bgY=0;
+import * as config from './data.js';
+import { Game, FixedClock } from './simulation.js';
 
-
-
-startBtn.addEventListener("click", () => {
-    startGame();
-    canvasElement.scrollIntoView();
-    canvasElement.click();
-})
-
-function startGame() {
-    printBackground(0,0);
-    enemies = [];
-    shots = [];
-    counter = 0;
-    if (interval) {
-        clearInterval(interval)
+const canvas = document.getElementById('gameArea');
+const ctx = canvas.getContext('2d');
+const start = document.getElementById('startButton');
+const W = 600, H = 600;
+const game = new Game(config);
+const clock = new FixedClock();
+const keys = new Set();
+const movement = ['KeyW','KeyA','KeyS','KeyD'];
+const arrows = ['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'];
+const allowed = new Set([...movement,...arrows,'KeyQ','Escape']);
+let active = false, aimOrder = [], deathPhrase = '', paused = false;
+const images = new Map();
+const urls = new Set([
+  './images/dungeonfloor.jpg','./images/wizard-hat.png','./images/heart.png',
+  ...config.monsters.map(m=>m.imageSrc),
+  ...config.potionInfo.map(p=>p.imageSrc),
+  ...config.skills.map(s=>s.img)
+]);
+function preload(url) {
+  return new Promise(resolve => {
+    const image = new Image();
+    image.onload = () => { images.set(url,image); resolve(); };
+    image.onerror = () => { console.warn('Missing game asset:',url); resolve(); };
+    image.src = url;
+  });
+}
+function sprite(url,x,y,w,h,fallback='#aaa') {
+  const image = images.get(url);
+  if(image) ctx.drawImage(image,x,y,w,h);
+  else {ctx.fillStyle=fallback;ctx.fillRect(x,y,w,h);}
+}
+function clearInput(){keys.clear();aimOrder=[];}
+function resetTiming(){clock.reset();clearInput();}
+start.disabled = true;
+Promise.all([...urls].map(preload)).then(()=>{
+  start.disabled=false; background();
+});
+start.addEventListener('click',()=>{
+  game.reset(); resetTiming(); paused=false; deathPhrase=''; active=true;
+  start.textContent='Restart Game';
+  canvas.scrollIntoView({block:'center'});
+  start.blur();
+});
+document.addEventListener('keydown',e=>{
+  if(!active || !allowed.has(e.code) || e.altKey || e.ctrlKey || e.metaKey) return;
+  if(e.target instanceof HTMLElement && ['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))return;
+  e.preventDefault();
+  if(e.code==='Escape' && !e.repeat && game.phase==='playing'){
+    paused=!paused;resetTiming();return;
+  }
+  if(paused || game.phase==='over')return;
+  if(game.phase==='upgrade'){
+    if(e.repeat)return;
+    if(e.code==='ArrowLeft')game.navigate(-1);
+    if(e.code==='ArrowRight')game.navigate(1);
+    if(e.code==='KeyQ'){game.choose();resetTiming();}
+    return;
+  }
+  if(!keys.has(e.code) && arrows.includes(e.code))aimOrder.push(e.code);
+  keys.add(e.code);
+});
+document.addEventListener('keyup',e=>{
+  keys.delete(e.code);
+  aimOrder=aimOrder.filter(k=>k!==e.code);
+});
+window.addEventListener('blur',()=>{resetTiming();if(active&&game.phase==='playing')paused=true;});
+document.addEventListener('visibilitychange',()=>{resetTiming();if(document.hidden&&active&&game.phase==='playing')paused=true;});
+const aimVectors={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]};
+function input(){
+  return {x:Number(keys.has('KeyD'))-Number(keys.has('KeyA')),y:Number(keys.has('KeyS'))-Number(keys.has('KeyW')),aim:aimVectors[aimOrder[aimOrder.length-1]]};
+}
+function background(){
+  const c=game.camera;
+  const x=-((c.x%W+W)%W), y=-((c.y%H+H)%H);
+  ctx.fillStyle='#292929';ctx.fillRect(0,0,W,H);
+  const floor=images.get('./images/dungeonfloor.jpg');
+  if(floor)for(let iy=y;iy<H;iy+=H)for(let ix=x;ix<W;ix+=W)ctx.drawImage(floor,ix,iy,W,H);
+}
+function bar(x,y,w,h,fraction,color){
+  const f=Math.max(0,Math.min(1,fraction));
+  ctx.fillStyle='rgba(0,0,0,.65)';ctx.fillRect(x,y,w,h);
+  ctx.fillStyle=color;ctx.fillRect(x,y,w*f,h);
+  ctx.strokeStyle=color;ctx.lineWidth=1;ctx.strokeRect(x,y,w,h);
+}
+function text(value,x,y,size=16,color='white',align='center'){
+  ctx.font=size+'px Arial';ctx.textAlign=align;ctx.fillStyle=color;ctx.fillText(value,x,y);
+}
+function timer(){return String(Math.floor(game.seconds/60)).padStart(2,'0')+':'+String(game.seconds%60).padStart(2,'0');}
+function renderWorld(){
+  background();
+  const c=game.camera, p=game.player;
+  for(const o of game.potions)if(game.visible(o,0))sprite(o.imageSrc,o.x-c.x,o.y-c.y,o.width,o.height,'#d44');
+  for(const s of game.shots){ctx.fillStyle='white';ctx.fillRect(s.x-c.x,s.y-c.y,s.width,s.height);}
+  for(const e of game.enemies)if(game.visible(e,0)){
+    sprite(e.imageSrc,e.x-c.x,e.y-c.y,e.width,e.height,'#799653');
+    if(keys.has('KeyQ'))bar(e.x-c.x,e.y-c.y-10,e.width,5,e.health/e.maxHealth,'red');
+  }
+  sprite('./images/wizard-hat.png',p.x-c.x,p.y-c.y,p.width,p.height,'#8c75c7');
+  if(keys.has('KeyQ'))bar(p.x-c.x,p.y-c.y-10,p.width,5,p.health/p.maxHealth,'red');
+  if(game.flash){ctx.fillStyle='rgba(255,0,0,.20)';ctx.fillRect(0,0,W,H);}
+  ctx.fillStyle='rgba(0,0,0,.65)';ctx.fillRect(0,0,W,58);
+  sprite('./images/heart.png',20,22,20,20,'red');
+  bar(50,25,200,15,p.health/p.maxHealth,'red');
+  text(timer(),300,40,20);
+  text('Level',355,20,10);text(String(p.level),355,43,18);
+  bar(380,25,200,15,p.level>=config.maxLevel?1:p.currentExp/p.expNeeded,'yellow');
+}
+function overlay(){ctx.fillStyle='rgba(0,0,0,.85)';ctx.fillRect(0,0,W,H);}
+function renderUpgrade(){
+  overlay();
+  text('Level Up!',300,150,50,'#ff5555');
+  text('Choose a Skill to improve:',300,200,25);
+  text('Left / Right to select, Q to confirm',300,224,15);
+  config.skills.forEach((s,i)=>{
+    const x=50+i*130;
+    ctx.fillStyle='#454545';ctx.fillRect(x,240,100,100);
+    sprite(s.img,x+10,250,80,80);
+    const maxed=game.player.skillLvl[i]>=s.maxLevel;
+    if(maxed){ctx.fillStyle='rgba(0,0,0,.7)';ctx.fillRect(x,240,100,100);text('MAX',x+50,298,16);}
+    if(i===game.selected){ctx.strokeStyle='#ff5555';ctx.lineWidth=4;ctx.strokeRect(x,240,100,100);}
+  });
+  const s=config.skills[game.selected];
+  text(s.name,300,390,25);
+  text('Current level: '+game.player.skillLvl[game.selected]+' / '+s.maxLevel,300,410,15);
+  text(s.description1,300,439,18);
+  text(s.description2,300,463,15);
+}
+function renderEnd(){
+  if(!deathPhrase)deathPhrase=config.gameOverPhrases[Math.floor(Math.random()*config.gameOverPhrases.length)];
+  overlay();text('Game Over',300,250,60,'#ff5555');
+  text('You were overrun by monsters.',300,290,20);
+  text('As the light fades from your eyes, you think:',300,320,17);
+  ctx.font='16px Arial';
+  let line='',y=350;
+  for(const word of deathPhrase.split(' ')){
+    if(ctx.measureText(line+' '+word).width>540){text(line,300,y,16);line=word;y+=20;}
+    else line+=(line?' ':'')+word;
+  }
+  text(line,300,y,16);
+  text('Survived '+timer()+'  |  Level '+game.player.level+'  |  Kills '+game.kills,300,430,17,'yellow');
+  text('Click Restart Game to try again.',300,465,15);
+}
+function frame(now){
+  if(active){
+    if(game.phase==='playing' && !paused && !document.hidden){
+      clock.advance(now,()=>game.step(input()));
+      if(game.phase!=='playing')resetTiming();
     }
-    interval = setInterval(updateCanvas, 20);  
-    return wizard= new Main()
-
+    renderWorld();
+    if(game.phase==='upgrade')renderUpgrade();
+    else if(game.phase==='over')renderEnd();
+    else if(paused){overlay();text('Paused',300,280,45);text('Press Escape to resume',300,320,18);}
+  }
+  requestAnimationFrame(frame);
 }
-
-
-//Prints background (duh)
-function printBackground(bgX, bgY) {
-    const img = new Image();
-    img.src = "./images/dungeonfloor.jpg"
-    //let pattern = ctx.createPattern(img, "repeat");
-    //ctx.fillStyle = pattern;
-    ctx.drawImage(img, bgX, bgY, canvasWidth, canvasHeight)
-    ctx.drawImage(img,bgX-canvasWidth, bgY, canvasWidth, canvasHeight)
-    ctx.drawImage(img,bgX-canvasWidth, bgY+canvasHeight, canvasWidth, canvasHeight)
-    ctx.drawImage(img,bgX-canvasWidth, bgY-canvasHeight, canvasWidth, canvasHeight)
-    ctx.drawImage(img,bgX, bgY-canvasHeight, canvasWidth, canvasHeight)
-    ctx.drawImage(img,bgX+canvasWidth, bgY-canvasHeight, canvasWidth, canvasHeight)
-    ctx.drawImage(img,bgX+canvasWidth, bgY, canvasWidth, canvasHeight)
-    ctx.drawImage(img,bgX+canvasWidth, bgY+canvasHeight, canvasWidth, canvasHeight)
-    ctx.drawImage(img,bgX, bgY+canvasHeight, canvasWidth, canvasHeight)
-    
-}
-
-
-
-//Start of user inputs
-document.addEventListener("keydown", (e) => {
-    switch (e.key){
-        
-        case "a":
-            wizard.xSpeed = -wizard.maxSpeed;
-            break;
-        case "d":
-            wizard.xSpeed = wizard.maxSpeed; 
-            break;
-        case "s":
-            wizard.ySpeed = wizard.maxSpeed;
-            break;
-        case "w":
-            wizard.ySpeed = -wizard.maxSpeed;
-            break;
-        case "ArrowLeft":
-            if (lvlUpScreen && lvlUpNavigation>0) {
-                lvlUpNavigation -= 1;
-            }
-            if (wizard.cooldown === 0) {
-                shots.push(new Shot(wizard.x+wizard.width/2, wizard.y+wizard.height/2, -wizard.shotSpd, 0, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0));
-                wizard.cooldown = wizard.shotCd;
-            }
-            break;
-        case "ArrowRight":
-            if (lvlUpScreen && lvlUpNavigation<3) {
-                lvlUpNavigation += 1;
-            }
-            if (wizard.cooldown === 0) {
-                shots.push(new Shot(wizard.x+wizard.width/2, wizard.y+wizard.height/2, wizard.shotSpd, 0, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0));
-                wizard.cooldown = wizard.shotCd;
-            }         
-            break;
-        case "ArrowUp":
-            e.preventDefault();
-            if (wizard.cooldown === 0) {
-                shots.push(new Shot(wizard.x+wizard.width/2, wizard.y+wizard.height/2, 0, -wizard.shotSpd, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0));
-                wizard.cooldown = wizard.shotCd;
-            }
-            break;
-        case "ArrowDown":
-            e.preventDefault();
-            if (wizard.cooldown === 0) {
-                shots.push(new Shot(wizard.x+wizard.width/2, wizard.y+wizard.height/2, 0, wizard.shotSpd, wizard.shotSpd, wizard.shotSize, wizard.shotSize, wizard.shotDmg, 0));
-                wizard.cooldown = wizard.shotCd;
-            }
-            break;             
-        case "q":
-            if (lvlUpScreen && wizard.skillLvl[lvlUpNavigation]!==skills[lvlUpNavigation].maxLevel) {
-                wizard[skills[lvlUpNavigation].status] += skills[lvlUpNavigation].modifier;
-                wizard.skillLvl[lvlUpNavigation] += 1; 
-                ResumeGame();
-            }
-            else if (!lvlUpScreen) {
-                hpBar = true;
-            }
-            break;
-
-    }
-})
-
-document.addEventListener("keyup", (e) => {
-    switch (e.key){
-        case "a":
-            wizard.xSpeed = 0;
-            break;
-        case "d":
-            wizard.xSpeed = 0;
-            break;
-        case "s":
-            wizard.ySpeed = 0;
-            break;
-        case "w":
-            wizard.ySpeed = 0;
-        case "q":
-            if (!lvlUpScreen) {
-                hpBar = false;
-            }
-            break;
-    }
-})
-//End of user inputs
-
-
-
-//update the position of shots and deletes the offscreen and the ones that already hit
-function updateShots() {
-    for (let i=0; i<shots.length; i++) {
-        shots[i].updatePos(wizard);
-        shots[i].drawShot();
-    }
-
-    shots = shots.filter(shot => shot.checkOnScreen())
-    shots = shots.filter(shot => shot.hits === 0)
-}
-
-
-
-//Generates enemy from random directions
-function generateEnemies() {
-    for (let i=0; i<monsters.length; i++) {
-        if (monsters[i].startMinute<=minutesElapsed()) {
-            monsters[i].cooldown += 1;
-            if (monsters[i].cooldown===monsters[i].spawn) {
-                let randomDirection = Math.floor(Math.random()*4) //0 top, 1 bottom, 2 right, 3 left
-                let randomValue = Math.floor(Math.random()*canvasWidth) 
-                let x = 0;
-                let y = 0;
-                switch(randomDirection) {
-                    case(0):
-                        x = randomValue;
-                        y = 0;
-                        break;
-                    case (1):
-                        x= randomValue;
-                        y= canvasHeight;
-                        break;
-                    case (2):
-                        x=canvasWidth;
-                        y=randomValue;
-                        break;
-                    case (3):
-                        x = 0;
-                        y = randomValue;
-                        break;            
-                }
-                enemies.push(new Enemy(x, y, monsters[i].maxSpeed, monsters[i].width, monsters[i].height, monsters[i].imageSrc, monsters[i].health, monsters[i].maxHealth, monsters[i].damage, monsters[i].expGiven ));
-                monsters[i].cooldown = 0;
-            }    
-        }
-    }
-}
-
-function generatePotion() {
-    for (let i=0; i<potionInfo.length; i++) {
-        if (potionInfo[i].startMinute<=minutesElapsed()) {
-            potionInfo[i].cooldown += 1;    
-            if (potionInfo[i].cooldown === potionInfo[i].currentSpawn) {
-                potions.push (new HpRecovery(Math.floor(Math.random()*canvasWidth), Math.floor(Math.random()*canvasHeight), 0,0,0,30,30,potionInfo[i].imageSrc,potionInfo[i].recovery*wizard.maxHealth,potionInfo[i].type ))
-                potionInfo[i].cooldown = 0;
-            }
-        }
-    }
-}
-
-function drinkPotion() {
-    for (let i=0; i<potions.length; i++) {
-        if (objectsCollide(potions[i], wizard)) {
-            if (!potions[i].drank) {
-                potions[i].drank = true;
-                if (wizard.health < wizard.maxHealth) {
-                    if (wizard.health + potions[i].HpRecovered <= wizard.maxHealth) {
-                        wizard.health += potions[i].HpRecovered;
-                    }
-                    else wizard.health = wizard.maxHealth
-                }
-            }
-        }
-    }
-
-    potions = potions.filter(potion => !potion.drank)
-}
-
-function updatePotions() {
-    potions = potions.filter(potion => {
-        let thisPotion = potionInfo.filter(pot => pot.type === potion.type)
-        return (potion.fadeTime < thisPotion[0].fade)
-    })
-
-    for (let i=0; i<potions.length; i++) {
-        potions[i].fadeTime += 1;
-        potions[i].updatePos(wizard)
-        potions[i].drawObject();
-    }
-
-    generatePotion();
-    drinkPotion();
-}
-
-
-//checks the colision between two GameObjects
-//Maybe make it a GameObject method?
-function objectsCollide(object1, object2) {
-    return !(object1.bottom() < object2.top() || object1.left() > object2.right() || object1.top()>object2.bottom() || object1.right()<object2.left())
-}
-
-
-
-//checks if each enemy was hit by each shot
-function checkShot() {
-    for (let i=0; i<enemies.length; i++) {
-        for (let j=0; j<shots.length; j++) {
-            if (shots[j].hits === 0) {
-                if (objectsCollide(enemies[i], shots[j])) {
-                    enemies[i].health -= shots[j].damage;
-                    shots[j].hits += 1;
-                }
-            }
-        }
-    }
-}
-
-
-//checks if wizard took damage from and enemy
-function checkDamage() {
-    for (let i=0; i<enemies.length; i++) {
-        if (enemies[i].cd > 0) {
-            enemies[i].cd -= 1;
-        }
-        else if (objectsCollide(enemies[i], wizard)) {
-            wizard.health -= enemies[i].damage;
-            enemies[i].cd = enemies[i].dmgCd;
-            ctx.fillStyle = "red"
-            ctx.fillRect(0,0, 600,600)
-        }
-    }
-}
-
-
-
-// Checks if shot, delete dead, gives Exp to wizard, adjust velocity, update position, redraw, generate new enemies
-function updateEnemies () {   
-    
-    checkShot();
-    enemies = enemies.filter(enemy => {
-        if (!enemy.checkAlive()) {
-            wizard.gainExp(enemy)
-        }
-        return enemy.checkAlive()}) 
-    
-    for (let i=0; i<enemies.length; i++) {
-        enemies[i].follow(wizard);
-        enemies[i].updatePos(wizard);
-        enemies[i].drawObject()
-        if (hpBar) {
-            enemies[i].printHealthBar();
-        }
-    }
-    enemies = enemies.filter(enemy => {return enemy.checkOnScreen()})
-    generateEnemies();
-}
-
-function updateWizard () {    
-    
-    checkDamage();
-    //wizard.mainUpdatePos();
-    wizard.bgUpdate();
-    wizard.drawObject();
-    if (hpBar) {
-        wizard.printHealthBar();
-    }
-    wizard.levelUp()
-    if (!wizard.checkAlive()) {
-        gameOver();
-    }
-    if (wizard.cooldown > 0) {
-        wizard.cooldown -= 1;
-    }
-}
-
-
-function updateGameElements() {
-    ctx.clearRect(0,0,600,600);
-    printBackground(bgX, bgY);
-    printTimer();
-    printHpBar();
-    printExpBar();
-}
-
-//Calculate and Print Time Elapsed
-function minutesElapsed() {
-    return Math.floor(counter/50/60)
-}
-
-function secondsElapsed() {
-    return Math.floor((counter/50)%60)
-}
-
-function turnToTwoDigitString (number) {
-    if (number < 10) {
-        return "0"+number
-    }
-    else return number.toString()
-}
-
-function printTimer() {
-    ctx.fillStyle = "white"
-    ctx.font = "20px arial"
-    let text = turnToTwoDigitString(minutesElapsed())+":"+turnToTwoDigitString(secondsElapsed())
-    ctx.fillText(text,278,40)
-}
-//End of Calculate and Print Time Elapsed
-
-function printHpBar() {
-    ctx.strokeStyle = "red";
-    ctx.lineWidth = 1;
-    ctx.strokeRect(50,25,200,15)
-    ctx.fillStyle="red"
-    ctx.fillRect(50,25,200*(wizard.health/wizard.maxHealth),15)
-    let img = new Image()
-    img.src = "./images/heart.png"
-    ctx.drawImage(img, 20, 22, 20, 20)
-}
-
-function printExpBar() {
-    ctx.strokeStyle = "yellow";
-    ctx.lineWidth = 1;
-    ctx.strokeRect(380,25,200,15)
-    ctx.fillStyle="yellow"
-    ctx.fillRect(380,25,200*(wizard.currentExp/wizard.expNeeded),15)
-    ctx.fillStyle = "white"
-    ctx.font = "10px arial"
-    ctx.fillText("Level", 350, 25)
-    ctx.font = "18px arial"
-    ctx.fillText(wizard.level, 355, 45)
-}
-
-
-function lvlUpScreenCanvas() {
-    ctx.clearRect(0,0, canvasWidth, canvasHeight);   
-    ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-    ctx.fillRect(0, 0, 600, 600);
-    ctx.fillStyle = "red";
-    ctx.font = "50px arial";
-    let levelUpString = "Level Up!";
-    ctx.fillText(levelUpString, canvasWidth/2 - ctx.measureText(levelUpString).width/2, 150);
-    let skillString = "Choose a Skill to improve:";
-    ctx.fillStyle = "white";
-    ctx.font = "25px arial";
-    ctx.fillText(skillString, canvasWidth/2 - ctx.measureText(skillString).width/2, 200);
-    ctx.font = "15px arial"
-    skillString = "(Press 'Q' to choose)";
-    ctx.fillText(skillString, canvasWidth/2 - ctx.measureText(skillString).width/2, 220);
-    ctx.fillRect(51, 241, 98, 98);
-    let skillImg = new Image();
-    skillImg.src = skills[0].img;
-    ctx.drawImage(skillImg, 60, 250, 80, 80);
-    ctx.fillRect(181, 241, 98, 98);
-    let skillImg1 = new Image();
-    skillImg1.src = skills[1].img;
-    ctx.drawImage(skillImg1, 190, 250, 80, 80);
-    ctx.fillRect(311, 241, 98, 98);
-    let skillImg2 = new Image();
-    skillImg2.src = skills[2].img
-    ctx.drawImage(skillImg2, 320, 250, 80, 80);
-    ctx.fillRect(441, 241, 98, 98) ;
-    let skillImg3 = new Image();
-    skillImg3.src = skills[3].img;
-    ctx.drawImage(skillImg3, 450, 250, 80, 80);
-    ctx.strokeStyle = "red";
-    ctx.lineWidth = 5;
-    ctx.strokeRect(50+130*lvlUpNavigation, 240, 100, 100);
-    ctx.fillStyle = "white";
-    ctx.font = "25px arial";
-    ctx.fillText(skills[lvlUpNavigation].name, canvasWidth/2-ctx.measureText(skills[lvlUpNavigation].name).width/2, 390 )
-    ctx.fillStyle = "black";
-    ctx.font = "15px arial";
-    let lvlString = `Current level: ${wizard.skillLvl[lvlUpNavigation]}`
-    if (wizard.skillLvl[lvlUpNavigation] === skills[lvlUpNavigation].maxLevel){
-        lvlString = `Current level: Maxed`
-    }
-    ctx.fillText(lvlString, canvasWidth/2-ctx.measureText(lvlString).width/2, 408 )
-    ctx.font = "20px arial";
-    ctx.fillText(skills[lvlUpNavigation].description1, canvasWidth/2-ctx.measureText(skills[lvlUpNavigation].description1).width/2, 430 )
-    ctx.font = "15px arial";
-    ctx.fillText(skills[lvlUpNavigation].description2, canvasWidth/2-ctx.measureText(skills[lvlUpNavigation].description2).width/2, 450 )
-}
-
-function lvlUp() {
-    lvlUpScreen = true;
-    if (1.3*wizard.health > wizard.maxHealth) {
-        wizard.health = wizard.maxHealth
-    }
-    else wizard.health *= 1.3
-    clearInterval(interval);
-    interval = setInterval(lvlUpScreenCanvas, 20);
-}
-
-function ResumeGame() {
-    clearInterval(interval);
-    lvlUpScreen = false;
-    lvlUpNavigation = 0;
-    interval = setInterval(updateCanvas, 20)
-}
-
-function gameOver() {
-    clearInterval(interval);
-    printBackground(0,0);
-    ctx.fillStyle = "red";
-    ctx.font = " 60px arial";
-    let gameOverString = "Game Over"
-    let gameOverStringWidth = ctx.measureText(gameOverString).width
-    ctx.fillText(gameOverString , canvasWidth/2 - gameOverStringWidth/2, 300);
-    ctx.fillStyle = "white";
-    ctx.font = "20px arial";
-    let text1 = "You were overrun by monsters." 
-    let text1Width = ctx.measureText(text1).width
-    let text2 =  "As the light fades from your eyes, you think:"
-    let text2Width = ctx.measureText(text2).width
-    let text3 = gameOverPhrases[Math.floor(Math.random()*gameOverPhrases.length)]
-    let text3Width = ctx.measureText(text3).width
-    ctx.fillText(text1 , canvasWidth/2 - text1Width/2, 330);
-    ctx.fillText(text2 , canvasWidth/2 - text2Width/2, 350);
-    ctx.fillText(text3 , canvasWidth/2 - text3Width/2, 370);
-    ctx.fillStyle = "yellow";
-    ctx.font = "15px arial";
-    let text4 = `You surived for ${turnToTwoDigitString(minutesElapsed())+":"+turnToTwoDigitString(secondsElapsed())}. Try Harder.`
-    let text4Width = ctx.measureText(text4).width
-    ctx.fillText(text4 , canvasWidth/2 - text4Width/2, 420);
-    enemies = [];
-    updateEnemies();
-    potions = [];
-    updatePotions();
-}
-
-//Everything that needs to be updated in each iteraction
-function updateCanvas() {
-    updateGameElements();
-    updateShots();  
-    updateEnemies();
-    updateWizard();
-    updatePotions();
-    counter += 1;
-}
+requestAnimationFrame(frame);

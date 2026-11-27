@@ -1,5 +1,5 @@
-const maxLevel = 50
-let levels = [5]
+export const maxLevel = 50
+export const levels = [5]
 
 for (let i=1; i<maxLevel; i++){
     if (i<5){
@@ -21,7 +21,7 @@ for (let i=1; i<maxLevel; i++){
 } 
 
 
-let skills = [
+export const skills = [
     {name: "Hermes' Emissary",
     description1: "Run like the wind!",
     description2: "Increases move speed",
@@ -57,7 +57,7 @@ let skills = [
 ]
 
 
-let gameOverPhrases  = [
+export const gameOverPhrases  = [
     "'I should've taken anti-dungeon monster defenses in Wizard School'",
     "'Now my laundry will go forever unfolded'",
     "'#Lula2022'",
@@ -104,7 +104,7 @@ let gameOverPhrases  = [
     "'Now God will have to hear some harsh truths'"
 ]
 
-let monsters = [
+export const monsters = [
     {name : "Spider",
     imageSrc : "./images/enemies/spider.png",   
     maxSpeed: 5,
@@ -232,7 +232,7 @@ let monsters = [
     }
 ]
 
-let potionInfo = [
+export const potionInfo = [
     {type: "Minor HP Potion",
     recovery: 0.1,
     minSpawn: 500,
@@ -251,7 +251,7 @@ let potionInfo = [
     startMinute: 10,
     fade: 1000,
     cooldown: 1,
-    imageSrc: "./images/potions/midPotion"},
+    imageSrc: "./images/potions/midPotion.png"},
 
     {type: "Great HP Potion",
     recovery: 0.5,
