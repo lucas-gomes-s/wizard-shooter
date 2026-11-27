@@ -43,8 +43,8 @@ export function stepEnemy(game,e,factor=1){
   switch(a.kind){
    case 'orc-windup':begin(e,t,'charge',22,{angle:a.angle});return;
    case 'recover':return;
-   case 'reaper-windup':game.emitVisual('teleport',e);e.x=a.x-e.width/2;e.y=a.y-e.height/2;game.emitVisual('teleport',e);cooldown(e,t,175);return;
-   case 'demon-windup':for(const offset of [-.23,0,.23])fire(game,e,a.angle+offset,Math.round(e.damage*.65),5.3);cooldown(e,t,110);return;
+   case 'reaper-windup':game.emitVisual('teleport',e);e.x=a.x-e.width/2;e.y=a.y-e.height/2;game.emitVisual('teleport',e);cooldown(e,t,175);if(game.config.combatBalance?.reaperRecovery>0)begin(e,t,'recover',game.config.combatBalance.reaperRecovery);return;
+   case 'demon-windup':for(const offset of [-.23,0,.23])fire(game,e,a.angle+offset,Math.round(e.damage*(game.config.combatBalance?.demonShotMultiplier??.65)),5.3);cooldown(e,t,110);return;
    case 'dragon-windup':{
     const n=e.bossPhase===1?5:e.bossPhase===2?8:12;
     for(let i=0;i<n;i++){const angle=e.bossPhase===1?a.angle+(i-(n-1)/2)*.22:a.angle+i*TAU/n;fire(game,e,angle,30+e.bossPhase*8,5.5+e.bossPhase*.5,9)}
@@ -67,7 +67,7 @@ export function stepEnemy(game,e,factor=1){
    if(t>=e.nextAttack&&d<320&&d>45){const c=centerOf(p),angle=aim(e,p)+Math.PI/2*(game.rng()<.5?-1:1);begin(e,t,'reaper-windup',48,{x:c.x+Math.cos(angle)*95,y:c.y+Math.sin(angle)*95});return;}
    pursuit(e,p,speed*.6);break;
   case 'Demon':
-   if(t>=e.nextAttack&&d<420){begin(e,t,'demon-windup',45,{angle:aim(e,p)});return;}
+   if(t>=e.nextAttack&&d<420){begin(e,t,'demon-windup',game.config.combatBalance?.demonWindup??45,{angle:aim(e,p)});return;}
    if(d>230)pursuit(e,p,speed*.55);else if(d<145)move(e,-dx,-dy,speed*.35);break;
   case 'Dragon':
    if(t>=e.nextAttack&&d<470){const c=centerOf(p);begin(e,t,'dragon-windup',45,{angle:aim(e,p),x:c.x,y:c.y});return;}
