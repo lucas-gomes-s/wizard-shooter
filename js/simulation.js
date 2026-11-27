@@ -1,3 +1,4 @@
+import {ENEMY_CAP,BOSS_MINUTE,initEnemy,stepEnemy,stepHazards,frontalMultiplier} from './enemies.js';
 import {freshMagic,upgradeOffers,applyUpgrade,boltPattern,pierceCount,nearby,dominantSchool} from './magic.js';
 // Pure simulation. Legacy balance uses 50 fixed ticks per second.
 export const STEP_MS = 20;
@@ -20,7 +21,7 @@ export class FixedClock{
 
 export class Game{
  constructor(config,rng=Math.random){this.config=config;this.rng=rng;this.width=600;this.height=600;this.reset()}
- reset(){this.phase='playing';this.tick=0;this.kills=0;this.enemies=[];this.shots=[];this.potions=[];this.flash=0;this.events=[];this.offers=[];this.selected=0;this.deathQueue=[];this.enemyTimers=this.config.monsters.map(()=>0);this.potionTimers=this.config.potionInfo.map(()=>0);this.player={x:280,y:280,width:40,height:40,maxSpeed:2,health:100,maxHealth:100,level:1,currentExp:0,expNeeded:this.config.levels[0],shotDmg:10,shotSpd:8,shotSize:5,shotCd:50,cooldown:50,skillLvl:this.config.skills.map(()=>0),magic:freshMagic()}}
+ reset(){this.phase='playing';this.tick=0;this.kills=0;this.enemies=[];this.shots=[];this.potions=[];this.flash=0;this.events=[];this.offers=[];this.selected=0;this.deathQueue=[];this.hostiles=[];this.hazards=[];this.spawnCount=0;this.bossSpawned=false;this.bossDefeated=false;this.victoryTick=null;this.endless=false;this.enemyTimers=this.config.monsters.map(()=>0);this.potionTimers=this.config.potionInfo.map(()=>0);this.player={x:280,y:280,width:40,height:40,maxSpeed:2,health:100,maxHealth:100,level:1,currentExp:0,expNeeded:this.config.levels[0],shotDmg:10,shotSpd:8,shotSize:5,shotCd:50,cooldown:50,skillLvl:this.config.skills.map(()=>0),magic:freshMagic()}}
  emit(type,object,value=0,school=null,extra={}){if(this.events.length<128)this.events.push({type,x:object.x+object.width/2,y:object.y+object.height/2,value,school,...extra})}
  get camera(){return {x:this.player.x+this.player.width/2-this.width/2,y:this.player.y+this.player.height/2-this.height/2}}
  get seconds(){return Math.floor(this.tick/50)}
@@ -43,7 +44,7 @@ export class Game{
  }
  directHit(enemy,shot,hash){
   const p=this.player,m=p.magic,r=m.ranks,combos=m.synergies;
-  const damage=shot.damage*(r.lightning&&this.rng()<.05*r.lightning?2:1);
+  const damage=shot.damage*(r.lightning&&this.rng()<.05*r.lightning?2:1)*frontalMultiplier(enemy,shot);
   this.damage(enemy,damage,shot.school);
   if(r.fire){
    enemy.burnUntil=this.tick+100;enemy.burnDamage=shot.damage*(.15+.05*r.fire);
@@ -81,14 +82,45 @@ export class Game{
   for(const e of this.deathQueue){
    if(processed.has(e))continue;processed.add(e);
    this.kills++;p.currentExp+=e.expGiven;this.emit('kill',e,e.expGiven);
+   if(e.boss&&!this.bossDefeated){this.bossDefeated=true;this.victoryTick=this.tick;this.emit('victory',e)}
    if(r.necro&&p.health<p.maxHealth){const before=p.health;p.health=Math.min(p.maxHealth,p.health+.5+.5*r.necro);this.emit('heal',p,p.health-before,'necro')}
    if(r.necro>=5){this.emit('burst',e,65,'necro');for(const other of nearby(hash,e,65,new Set([e])))this.damage(other,p.shotDmg*.4,'necro')}
    if(m.synergies.includes('soulfire')&&e.burnUntil>=this.tick){this.emit('burst',e,60,'fire');for(const other of nearby(hash,e,60,new Set([e])))this.damage(other,p.shotDmg*.6,'fire')}
   }
   this.deathQueue=[];
-  this.enemies=this.enemies.filter(e=>e.health>0&&this.visible(e));
+  this.enemies=this.enemies.filter(e=>e.health>0&&(e.boss||this.visible(e)));
  }
- spawnEnemies(){const c=this.camera;this.config.monsters.forEach((m,i)=>{if(this.seconds<m.startMinute*60)return;if(++this.enemyTimers[i]<m.spawn)return;this.enemyTimers[i]=0;const side=Math.floor(this.rng()*4),v=this.rng();let x=c.x+v*this.width,y=c.y+v*this.height;if(side===0)y=c.y-m.height;else if(side===1)y=c.y+this.height;else if(side===2)x=c.x+this.width;else x=c.x-m.width;this.enemies.push({...m,x,y,cd:0})})}
+ spawnAtEdge(template,elite=false){
+  const c=this.camera,side=Math.floor(this.rng()*4),v=this.rng();let x=c.x+v*this.width,y=c.y+v*this.height;
+  if(side===0)y=c.y-template.height;else if(side===1)y=c.y+this.height;else if(side===2)x=c.x+this.width;else x=c.x-template.width;
+  return initEnemy(template,x,y,this.tick,elite);
+ }
+ spawnEnemies(){
+  if(!this.bossSpawned&&this.seconds>=BOSS_MINUTE*60){
+   const template=this.config.monsters.find(m=>m.name==='Dragon');
+   if(template){this.bossSpawned=true;this.enemies.push(this.spawnAtEdge(template));}
+  }
+  this.config.monsters.forEach((m,i)=>{
+   if(m.name==='Dragon'||this.seconds<m.startMinute*60)return;
+   const interval=m.spawn*(this.bossSpawned&&!this.bossDefeated?2:1);
+   if(++this.enemyTimers[i]<interval)return;this.enemyTimers[i]=0;
+   if(this.enemies.length>=ENEMY_CAP)return;
+   const elite=this.seconds>=180&&++this.spawnCount%12===0;
+   const enemy=this.spawnAtEdge(m,elite);
+   if(this.endless){const scale=1+Math.max(0,this.seconds-Math.floor(this.victoryTick/50))/600;enemy.health=enemy.maxHealth=Math.round(enemy.maxHealth*scale);enemy.damage=Math.round(enemy.damage*Math.min(2,scale));}
+   this.enemies.push(enemy);
+  });
+ }
+ get boss(){return this.enemies.find(e=>e.boss&&e.health>0)||null}
+ continueEndless(){
+  if(this.phase!=='victory')return false;
+  this.endless=true;this.phase='playing';this.hostiles=[];this.hazards=[];this.player.webUntil=0;this.levelUp();return true;
+ }
+ hurtPlayer(amount,source='contact'){
+  const p=this.player,m=p.magic;if(p.health<=0)return 0;
+  if(source==='contact'&&m.ranks.arcane>=2&&m.shieldReady){m.shieldReady=false;m.shieldUntil=this.tick+(m.ranks.arcane>=4?500:750);this.emit('shield',p,0,'arcane');return 0;}
+  const previous=p.health;p.health=Math.max(0,p.health-amount);this.emit('hurt',p,previous-p.health);this.flash=4;return previous-p.health;
+ }
  spawnPotions(){const c=this.camera;this.config.potionInfo.forEach((p,i)=>{if(this.seconds<p.startMinute*60)return;if(++this.potionTimers[i]<p.currentSpawn)return;this.potionTimers[i]=0;this.potions.push({x:c.x+this.rng()*(this.width-30),y:c.y+this.rng()*(this.height-30),width:30,height:30,imageSrc:p.imageSrc,recovery:p.recovery,fade:p.fade,age:0})})}
  levelUp(){
   const p=this.player;
@@ -107,16 +139,15 @@ export class Game{
   if(this.phase!=='playing')return false;
   const p=this.player,m=p.magic;this.events=[];this.deathQueue=[];this.tick++;this.flash=Math.max(0,this.flash-1);
   if(m.ranks.arcane>=2&&!m.shieldReady&&this.tick>=m.shieldUntil)m.shieldReady=true;
-  const [dx,dy]=normalize(input.x||0,input.y||0);p.x+=dx*p.maxSpeed;p.y+=dy*p.maxSpeed;p.cooldown=Math.max(0,p.cooldown-1);this.shoot(input.aim);
+  const [dx,dy]=normalize(input.x||0,input.y||0);const web=p.webUntil>this.tick?.55:1;p.x+=dx*p.maxSpeed*web;p.y+=dy*p.maxSpeed*web;p.cooldown=Math.max(0,p.cooldown-1);this.shoot(input.aim);
   for(const s of this.shots){s.x+=s.vx;s.y+=s.vy;s.age=(s.age||0)+1}
   const hash=new SpatialHash();
   for(const e of this.enemies){
    if(e.health<=0)continue;
    if(e.burnUntil>=this.tick&&e.burnNext<=this.tick){this.damage(e,e.burnDamage,'fire');e.burnNext+=25;}
    if(e.health<=0)continue;
-   const x=p.x+p.width/2-e.x-e.width/2,y=p.y+p.height/2-e.y-e.height/2;
-   const [nx,ny]=normalize(x,y),factor=e.freezeUntil>this.tick?0:e.slowUntil>this.tick?e.slowFactor:1;
-   const speed=Math.min(e.maxSpeed*factor,Math.hypot(x,y));e.x+=nx*speed;e.y+=ny*speed;hash.insert(e);
+   const factor=e.freezeUntil>this.tick?0:e.slowUntil>this.tick?e.slowFactor:1;
+   stepEnemy(this,e,factor);hash.insert(e);
   }
   this.shots=this.shots.filter(s=>{
    if(!this.visible(s)||s.age>240)return false;
@@ -127,14 +158,15 @@ export class Game{
    return true;
   });
   this.resolveDeaths(hash);
+  if(this.bossDefeated&&!this.endless){this.phase='victory';return false}
   for(const e of this.enemies){
    if(e.cd>0)e.cd--;
    else if(overlaps(e,p)){
-    e.cd=50;
-    if(m.ranks.arcane>=2&&m.shieldReady){m.shieldReady=false;m.shieldUntil=this.tick+(m.ranks.arcane>=4?500:750);this.emit('shield',p,0,'arcane');continue}
-    const previous=p.health;p.health=Math.max(0,p.health-e.damage);this.emit('hurt',p,previous-p.health);this.flash=4;
+    e.cd=50;const dealt=this.hurtPlayer(e.damage);
+    if(e.name==='Vampire'&&dealt>0)e.health=Math.min(e.maxHealth,e.health+dealt*2);
    }
   }
+  stepHazards(this);
   if(p.health<=0){this.phase='over';return false}
   this.potions=this.potions.filter(o=>{if(++o.age>=o.fade||!this.visible(o))return false;if(p.health<p.maxHealth&&overlaps(o,p)){const previous=p.health;p.health=Math.min(p.maxHealth,p.health+o.recovery*p.maxHealth);this.emit('heal',p,p.health-previous);return false}return true});
   this.spawnEnemies();this.spawnPotions();this.levelUp();return this.phase==='playing';
