@@ -139,3 +139,32 @@ The original seed-1 diagnostic in benchmarks/v1.8/ showed six blocked runs (five
 Actual 125-run results (seeds 1–5, 34.62 simulated hours): 34 victories, 0 blocked, all 125 reached five minutes, 96 reached ten, 74 fifteen, 39 twenty, 34 reached the dragon and defeated it. Hybrid targets: 31/100 wins; pure: 3/25. Of 100 hybrid attempts, 97 learned their requested secondary and fusion; in three the requested school was never offered before death (lightning→fire seeds 1,4; necro→fire seed 5). Median fusion time among successful unlocks 222.78 seconds, median level 14. Unordered pair wins out of ten: Soul conductor 9, Soul ward 7, Storm prism 4, Starfire 4, Glacial mirror 3, Gravefrost 3, Soulfire 1, Steam eruption 0, Plasma surge 0, Thunderfrost 0. Primary school wins out of 25: Arcane 16, Necro 10, Lightning 5, Ice 2, Fire 1. Pure wins out of five: Necro 2, Arcane 1, others 0. These are exploratory outcomes, not human win rates or statistically robust rankings. Recommend investigating offensive/survival tradeoffs, build-specific upgrade policies and matched ablation of fusions before changing balance.
 
 Raw per-seed JSON and aggregate summary are committed; the original opportunistic benchmark remains available. All 80 regression cases passed in a direct JS harness; actual Node/Chromium CI not confirmed.
+
+## Balance iteration 2 (v1.9.0)
+
+Implemented the proposed fusion tuning: Steam damage 35%→55%, radius 70→85; Plasma chain burn 20%→40% per half-second, duration 2→3 seconds (nonstacking); Thunderfrost freeze 0.4→0.8 seconds, retaining its per-target cooldown; Soulfire radius 60→80; Soul conductor bonus healing 3→1.5 HP; Soul ward recharge reduction 0.5→0.3 seconds per kill. Fire burn per rank is now 20/35/45/55/65% of bolt damage, versus 20/25/30/35/40%; rank III+ splash is 45% (was 30%), radius 55/75 at ranks III/V (was 45/65).
+
+Exclusive pure-school mastery becomes an eligible upgrade at level 15 or later, with primary school rank V and no secondary. Choosing it permanently locks the second school. Inferno boosts burn by 40% and makes bursts 65% within 95 units; Absolute zero adds two pierce targets and 40% damage to previously chilled targets; Tempest adds two chain jumps, 40 range and 20 percentage points of crit chance; Lich ascension boosts death pulse to 60% within 85 units and adds 1 HP per kill; Archmage fires five 75% bolts and has a seven-second shield recharge. Mastery is visible in the HUD and results.
+
+Dragon health 6,000→18,000, contact damage 65→75, projectile damage/speed increased, hazard damage 35→45, windup 55→45 ticks, attack cooldown 120/80→90/60 ticks. Dragon movement factor is floored at 0.5, preventing freeze from stopping attacks. Spawn timing and regular enemy stats unchanged.
+
+### Actual matched-seed benchmark
+
+125 runs (25 targeted builds × seeds 1–5, 1800s cap, five-tick decision cadence), 35.48 simulated hours. Compared to v1.8.1, 38/125 reached dragon (was 34), 30 won (was 34); 8/38 arrivals lost to dragon (previously zero). All 125 reached 5 minutes, 101 reached 10, 75 reached 15, 40 reached 20. Hybrid wins 27/100 (was 31), pure wins 3/25 (unchanged). All 25 pure runs acquired capstones; 98/100 hybrid runs acquired fusion, 99 learned desired secondary. No forced-choice blocks. Median pure survival 819.76s vs 766.9s; hybrid 1047.19s vs 1027.36s. The pure bot now prioritizes rank-V mastery after level 10 and selects capstone when eligible; hybrid policy unchanged. Thus pure comparisons include policy change. Same seed does not guarantee identical encounters after divergent RNG consumption.
+
+| Fusion | Previous wins / 10 | New wins / 10 |
+| --- | ---: | ---: |
+| Steam eruption | 0 | 0 |
+| Plasma surge | 0 | 2 |
+| Soulfire | 1 | 5 |
+| Starfire | 4 | 3 |
+| Thunderfrost | 0 | 0 |
+| Gravefrost | 3 | 3 |
+| Glacial mirror | 3 | 3 |
+| Soul conductor | 9 | 3 |
+| Storm prism | 4 | 3 |
+| Soul ward | 7 | 5 |
+
+Primary wins / 25: Fire 1→5; Ice 2→2; Lightning 5→1; Necro 10→10; Arcane 16→12. Spread narrowed, but Ice/Lightning, Steam and pure offensive schools remain weak; Thunderfrost median survival fell from 774.84s to 579.97s despite buff, so further targeted diagnosis is needed. Do not infer causal effects of individual changes from this multi-parameter patch. Five seeds per ordered build, shared bot strategy and unverified human playability limit conclusions.
+
+All 87 direct JS regression checks passed. Actual Node/Chromium CI and human playtests remain unverified. Raw benchmark results and summary in benchmarks/v1.9/. Run npm run balance:builds -- 1800 5 5 results.json.
