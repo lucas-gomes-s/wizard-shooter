@@ -12,7 +12,7 @@ function cooldown(e,tick,ticks){e.nextAttack=tick+ticks;e.action=null}
 export function initEnemy(template,x,y,tick,elite=false){
  const e={...template,x,y,cd:0,nextAttack:tick+50,action:null,facing:0,elite};
  if(elite){e.health=e.maxHealth=Math.round(e.maxHealth*1.6);e.damage=Math.round(e.damage*1.25);e.expGiven=Math.ceil(e.expGiven*1.8);}
- if(e.name==='Dragon'){e.boss=true;e.elite=false;e.health=e.maxHealth=6000;e.damage=65;e.nextAttack=tick+75;e.bossPhase=1;}
+ if(e.name==='Dragon'){e.boss=true;e.elite=false;e.health=e.maxHealth=18000;e.damage=75;e.nextAttack=tick+75;e.bossPhase=1;}
  return e;
 }
 function fire(game,e,angle,damage,speed=5,radius=6){
@@ -25,6 +25,7 @@ function hazard(game,type,x,y,radius,delay,duration,damage=0){
 }
 function begin(e,tick,kind,duration,extra={}){e.action={kind,until:tick+duration,...extra}}
 export function stepEnemy(game,e,factor=1){
+ if(e.boss)factor=Math.max(.5,factor);
  const p=game.player,t=game.tick,{d,dx,dy}=vector(e,p),speed=e.maxSpeed*factor;
  if(e.nextAttack===undefined)e.nextAttack=t+50;
  if(e.name==='Dragon'){const previous=e.bossPhase;e.bossPhase=e.health/e.maxHealth<=.33?3:e.health/e.maxHealth<=.66?2:1;if(previous!==undefined&&previous!==e.bossPhase)game.emitVisual('phase',e,e.bossPhase,'fire')}
@@ -46,9 +47,9 @@ export function stepEnemy(game,e,factor=1){
    case 'demon-windup':for(const offset of [-.23,0,.23])fire(game,e,a.angle+offset,Math.round(e.damage*.65),5.3);cooldown(e,t,110);return;
    case 'dragon-windup':{
     const n=e.bossPhase===1?5:e.bossPhase===2?8:12;
-    for(let i=0;i<n;i++){const angle=e.bossPhase===1?a.angle+(i-(n-1)/2)*.22:a.angle+i*TAU/n;fire(game,e,angle,24+e.bossPhase*6,5+e.bossPhase*.4,9)}
-    if(e.bossPhase>=2){hazard(game,'flame',a.x,a.y,65,35,25,35);if(e.bossPhase===3){hazard(game,'flame',a.x+95,a.y,48,35,25,35);hazard(game,'flame',a.x-95,a.y,48,35,25,35)}}
-    cooldown(e,t,e.bossPhase===3?80:120);return;
+    for(let i=0;i<n;i++){const angle=e.bossPhase===1?a.angle+(i-(n-1)/2)*.22:a.angle+i*TAU/n;fire(game,e,angle,30+e.bossPhase*8,5.5+e.bossPhase*.5,9)}
+    if(e.bossPhase>=2){hazard(game,'flame',a.x,a.y,65,35,25,45);if(e.bossPhase===3){hazard(game,'flame',a.x+95,a.y,48,35,25,45);hazard(game,'flame',a.x-95,a.y,48,35,25,45)}}
+    cooldown(e,t,e.bossPhase===3?60:90);return;
    }
   }
  }
@@ -69,7 +70,7 @@ export function stepEnemy(game,e,factor=1){
    if(t>=e.nextAttack&&d<420){begin(e,t,'demon-windup',45,{angle:aim(e,p)});return;}
    if(d>230)pursuit(e,p,speed*.55);else if(d<145)move(e,-dx,-dy,speed*.35);break;
   case 'Dragon':
-   if(t>=e.nextAttack&&d<470){const c=centerOf(p);begin(e,t,'dragon-windup',55,{angle:aim(e,p),x:c.x,y:c.y});return;}
+   if(t>=e.nextAttack&&d<470){const c=centerOf(p);begin(e,t,'dragon-windup',45,{angle:aim(e,p),x:c.x,y:c.y});return;}
    if(d>170)pursuit(e,p,speed*.55);else if(d<100)move(e,-dx,-dy,speed*.35);break;
   default:pursuit(e,p,speed);
  }
