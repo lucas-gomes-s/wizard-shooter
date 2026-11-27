@@ -7,7 +7,7 @@ const make=()=>new Game(config,()=>.5);
 const enemy=(name,x=100,y=280)=>initEnemy(config.monsters.find(m=>m.name===name),x,y,0);
 test('elite modifies stats and rewards without mutating templates',()=>{
  const m=config.monsters.find(m=>m.name==='Goblin'),e=initEnemy(m,0,0,0,true);
- assert.equal(e.elite,true);assert.equal(e.health,32);assert.equal(e.damage,13);assert.equal(e.expGiven,2);assert.equal(m.health,20);
+ assert.equal(e.elite,true);assert.equal(e.health,Math.round(m.health*1.6));assert.equal(e.damage,Math.round(m.damage*1.25));assert.equal(e.expGiven,Math.ceil(m.expGiven*1.8));assert.equal(m.health,10);
 });
 test('orc telegraphs, charges in locked direction, then recovers',()=>{
  const g=make(),e=enemy('Orc');g.tick=50;stepEnemy(g,e);
@@ -40,7 +40,7 @@ test('knight reduces frontal bolts only; side and rear bypass armor',()=>{
 });
 test('vampire heals only from actual contact damage',()=>{
  const g=make(),e=enemy('Vampire',280,280);e.health=100;e.maxSpeed=0;g.enemies.push(e);
- g.step();assert.equal(g.player.health,70);assert.equal(e.health,160);
+ g.step();assert.equal(g.player.health,100-e.damage);assert.equal(e.health,100+e.damage*2);
  const g2=make(),e2=enemy('Vampire',280,280);e2.health=100;e2.maxSpeed=0;g2.enemies.push(e2);
  g2.player.magic.ranks.arcane=2;g2.player.magic.shieldReady=true;g2.step();assert.equal(e2.health,100);
 });
@@ -83,7 +83,7 @@ test('boss death wins once and endless resumes without respawning dragon',()=>{
  assert.equal(g.continueEndless(),false);g.reset();assert.equal(g.bossDefeated,false);assert.equal(g.endless,false);
 });
 test('ordinary spawning respects cap, boss can still appear',()=>{
- const g=make();g.enemies=Array.from({length:ENEMY_CAP},()=>enemy('Goblin'));g.enemyTimers[1]=99;
+ const g=make();g.enemies=Array.from({length:ENEMY_CAP},()=>enemy('Goblin'));g.enemyTimers[1]=config.monsters[1].spawn-1;
  g.spawnEnemies();assert.equal(g.enemies.length,ENEMY_CAP);
- g.tick=BOSS_MINUTE*60*50;g.spawnEnemies();assert.equal(g.enemies.length,ENEMY_CAP+1);assert.ok(g.boss);
+ g.tick=BOSS_MINUTE*60*50;g.spawnEnemies();assert.equal(g.enemies.length,ENEMY_CAP+1+config.minibosses.length);assert.ok(g.boss);
 });
