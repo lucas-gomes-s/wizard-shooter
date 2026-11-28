@@ -1,5 +1,6 @@
 extends RefCounted
 ## Voluntary local playtest journal. No account, device identifier, wall-clock time or network.
+const Balance = preload("res://gameplay/balance_config.gd")
 const PATH := "user://playtest_journal.json"
 const LIMIT := 512
 const MAX_BYTES := 2*1024*1024
@@ -121,7 +122,8 @@ static func phenotype(p: Dictionary) -> Dictionary:
 
 func start_run(run: Variant,has_apprentice: bool,lessons: int,visual: Dictionary) -> void:
 	current_run=record("run_start",{"mode":"endless" if run.endless else "finite","difficulty":run.difficulty,
-		"wizard":phenotype(run.phenotype),"apprentice":has_apprentice,"lessons":lessons,"visual":visual})
+		"wizard":phenotype(run.phenotype),"apprentice":has_apprentice,"lessons":lessons,"visual":visual,
+		"balance_preset":Balance.preset_id(run.balance),"balance":run.balance.duplicate(true),"boss_after_seconds":90 if not run.endless else 0})
 
 func run_event(kind: String,data: Dictionary) -> void:
 	if current_run<=0: return

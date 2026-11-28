@@ -1,0 +1,50 @@
+name: Mobile balance candidate verification
+on:
+  push:
+    paths:
+      - 'mobile/gameplay/balance_config.gd'
+      - 'mobile/tools/balance_benchmark.gd'
+      - '.github/workflows/mobile-balance-candidate.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [original, trial20-short]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned release engine
+        run: |
+          curl -fL --retry 3 https://github.com/godotengine/godot-builds/releases/download/4.5.1-stable/Godot_v4.5.1-stable_linux.x86_64.zip -o /tmp/godot.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          chmod +x /tmp/godot/Godot_v4.5.1-stable_linux.x86_64
+          echo /tmp/godot >> "$GITHUB_PATH"
+      - name: Reproduce the full holdout protocol on release engine
+        run: |
+          set -euo pipefail
+          Godot_v4.5.1-stable_linux.x86_64 --headless --path mobile --script tools/balance_benchmark.gd -- --seeds=20 --seed-start=200000003 --all-bodies --seconds=150 --preset=${{ matrix.preset }} --output=/tmp/holdout.json 2>&1 | tee /tmp/holdout.log
+          if grep -E 'SCRIPT ERROR|Parse Error|Failed to load script' /tmp/holdout.log; then exit 1; fi
+          python - <<'PY'
+          import json, sys
+          sys.path.insert(0, "mobile/tools")
+          from optimize_balance import evaluate
+          d=json.load(open("/tmp/holdout.json"))
+          assert len(d["runs"]) == 2160 and len(d["groups"]) == 108
+          score, metrics=evaluate(d["runs"])
+          result={"engine":"4.5.1","score":score,"metrics":metrics,"parameters":d["parameters"]}
+          print(json.dumps(result, indent=2))
+          with open("/tmp/metrics.json","w") as f: json.dump(result,f,indent=2)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: holdout-4.5.1-${{ matrix.preset }}
+          path: |
+            /tmp/holdout.json
+            /tmp/metrics.json
+          if-no-files-found: error
+          retention-days: 30

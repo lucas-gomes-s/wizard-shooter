@@ -61,6 +61,15 @@ func _initialize() -> void:
 	check(not academy.eligible(a, b), "Retired parents not reusable")
 	check(academy.parents_of(child).size() == 2, "Lineage resolves archived parents")
 	var p: Dictionary = child.phenotype
+	var original := RunModel.new(p,false,1,7)
+	var candidate := RunModel.new(p,false,1,7,RunModel.Balance.preset(RunModel.Balance.CANDIDATE))
+	check(original.balance==RunModel.Balance.DEFAULTS,"Implicit model defaults remain original")
+	check(candidate.balance==RunModel.Balance.TRIAL_20,"Exact Trial 20 preset applied")
+	check(absf(candidate.damage-float(p.damage)*float(candidate.balance[str(p.affinity)+"_damage"]))<0.00001,"Preset affects actual combat damage")
+	check(RunModel.Balance.preset("unknown").is_empty(),"Unknown preset rejected")
+	var mutable := RunModel.Balance.preset(RunModel.Balance.CANDIDATE)
+	mutable.enemy_hp=1.0
+	check(RunModel.Balance.preset(RunModel.Balance.CANDIDATE).enemy_hp!=1.0,"Preset returned as independent copy")
 	var run := RunModel.new(p, true, 1, 7)
 	var start: Vector2 = run.player
 	run.step(1.0 / 60.0, Vector2(1, 1), false)

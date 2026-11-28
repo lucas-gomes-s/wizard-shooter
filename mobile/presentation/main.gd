@@ -23,6 +23,7 @@ const Profiler = preload("res://presentation/performance_monitor.gd")
 const Onboarding = preload("res://presentation/onboarding.gd")
 const Backup = preload("res://persistence/profile_backup.gd")
 const Playtest = preload("res://persistence/playtest_journal.gd")
+const Balance = preload("res://gameplay/balance_config.gd")
 const PLAYFIELD := Rect2(0, 88, 360, 448)
 const CAMERA_CENTER := Vector2(180, 312)
 const FIRE := Color("#ef8052")
@@ -114,6 +115,7 @@ var player_moving := false
 var dust: Array[Dictionary] = []
 var dust_distance := 0.0
 var difficulty_button: Button
+var balance_button: Button
 var fusion_panel: VBoxContainer
 var fusion_hint: Label
 var fusion_confirm: Button
@@ -222,7 +224,7 @@ func _build_ui() -> void:
 	title_menu_button.size = Vector2(58, 30)
 	title_menu_button.add_theme_font_size_override("font_size", 11)
 	academy_panel = _box_at(Vector2(16, 298), Vector2(328, 328))
-	academy_panel.add_theme_constant_override("separation",7)
+	academy_panel.add_theme_constant_override("separation",4)
 	var collection := _pair(academy_panel)
 	var browse := _button(collection,"Wizard collection",_show_roster)
 	browse.size_flags_horizontal=Control.SIZE_EXPAND_FILL
@@ -238,6 +240,9 @@ func _build_ui() -> void:
 	fuse_button = _button(actions,"Fusion chamber",_ask_fuse)
 	summon_button.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 	fuse_button.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	var balance_row := _pair(academy_panel)
+	balance_button=_button(balance_row,"Balance: Trial 20",_cycle_balance)
+	balance_button.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 	var options := _pair(academy_panel)
 	difficulty_button = _button(options,"Difficulty: I",_cycle_difficulty)
 	difficulty_button.size_flags_horizontal=Control.SIZE_EXPAND_FILL
@@ -496,6 +501,7 @@ func _show_title() -> void:
 	title_quick.text="First expedition" if guide.enabled and academy.settled_runs.is_empty() else "Quick expedition"
 	title_note.text = "Open the Academy to review your profile." if unavailable else "%d essence  |  %d wizards" % [academy.essence,academy.roster.size()]
 	if not unavailable and guide.enabled and academy.settled_runs.is_empty(): title_note.text="New? Open Guide, or learn as you play."
+	if not unavailable: title_note.text+="\nFinite: "+Balance.label(settings.balance_preset)
 	_sync_visibility()
 	queue_redraw()
 
@@ -532,6 +538,7 @@ func _refresh_academy() -> void:
 		var hint := Onboarding.fusion_tip(academy,c,p2)
 		if not hint.is_empty(): info.text=hint
 	difficulty_button.text="Difficulty: %s" % ["I","II","III"][difficulty-1]
+	balance_button.text="Finite balance: "+Balance.label(settings.balance_preset)
 	lock_button.text="Unlock wizard" if c.locked else "Lock wizard"
 	clear_apprentice.disabled=partner_index<0
 	summon_button.disabled=academy.essence<10
@@ -829,9 +836,11 @@ func _build_settings() -> void:
 		settings_options[key]=_button(settings_panel,"",_toggle_visual.bind(key))
 	_label(settings_panel,"Simplified effects retain spell boundaries and enemy warnings.",11).autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	_button(settings_panel,"Export performance report",_export_performance)
-	var backup_link := _button(settings_panel,"Save backup / restore",_open_backup)
-	settings_options["backup"]=backup_link
-	settings_options["playtest"]=_button(settings_panel,"Playtest report",_open_playtest)
+	settings_options["balance"]=_button(settings_panel,"",_cycle_balance)
+	var data_row := _pair(settings_panel)
+	settings_options["backup"]=_button(data_row,"Save backup",_open_backup)
+	settings_options["playtest"]=_button(data_row,"Playtest report",_open_playtest)
+	for key in ["backup","playtest"]: settings_options[key].size_flags_horizontal=Control.SIZE_EXPAND_FILL
 	settings_notice=_label(settings_panel,"",11)
 	settings_notice.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	var back := _button(settings_panel,"Back",_close_settings)
@@ -865,6 +874,8 @@ func _refresh_settings() -> void:
 	settings_options.monitor.text="Performance overlay: "+("ON" if settings.monitor else "OFF")
 	settings_options.backup.disabled=settings_origin=="run"
 	settings_options.playtest.disabled=settings_origin=="run"
+	settings_options.balance.text="Finite balance: "+Balance.label(settings.balance_preset)
+	settings_options.balance.disabled=settings_origin=="run"
 
 func _toggle_visual(key: String) -> void:
 	match key:
@@ -903,6 +914,18 @@ func _toggle_music() -> void:
 	audio.toggle_music()
 	_sync_visibility()
 
+func _cycle_balance() -> void:
+	if screen!="academy" and not (screen=="settings" and settings_origin=="title" and run==null): return
+	settings.balance_preset=Balance.ORIGINAL if settings.balance_preset==Balance.CANDIDATE else Balance.CANDIDATE
+	var error := settings.save_settings()
+	if screen=="settings":
+		_refresh_settings()
+		settings_notice.text="Finite expeditions only. Endless stays original." if error==OK else "Preset active; could not save preference."
+	else:
+		_refresh_academy()
+		status_label.text="Finite expeditions only." if error==OK else "Preset active; could not save preference."
+	queue_redraw()
+
 func _cycle_difficulty() -> void:
 	difficulty = difficulty % 3 + 1
 	_refresh_academy()
@@ -915,7 +938,8 @@ func _start(endless: bool) -> void:
 	if run_id < 0:
 		_show_academy()
 		return
-	run = RunModel.new(active.phenotype, endless, difficulty, 1000 + run_id)
+	var preset := Balance.ORIGINAL if endless else settings.balance_preset
+	run = RunModel.new(active.phenotype, endless, difficulty, 1000 + run_id, Balance.preset(preset))
 	result_before.clear()
 	result_reward.clear()
 	profiler.reset()

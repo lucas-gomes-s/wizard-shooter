@@ -58,6 +58,10 @@ func _test() -> void:
 	app._toggle_visual("fps")
 	check(Engine.max_fps==30 and Engine.physics_ticks_per_second==60,"Render cap independent of simulation ticks")
 	app._toggle_visual("fps")
+	check(app.settings.balance_preset=="trial20-short","Candidate is initial finite playtest preference")
+	app._cycle_balance()
+	check(app.settings.balance_preset=="original","Original comparison selectable")
+	app._cycle_balance()
 	app._open_backup()
 	check(app.screen=="backup" and app.backup_panel.visible,"Backup navigation")
 	app._generate_backup()
@@ -90,11 +94,12 @@ func _test() -> void:
 	preferences.path="user://test_visual_settings.cfg"
 	preferences.fps=30
 	preferences.simple_effects=true
+	preferences.balance_preset="original"
 	check(preferences.save_settings()==OK,"Visual preferences save")
 	var restored := Settings.new()
 	restored.path=preferences.path
 	restored.load_settings()
-	check(restored.fps==30 and restored.simple_effects,"Visual preferences reload")
+	check(restored.fps==30 and restored.simple_effects and restored.balance_preset=="original","Visual and balance preferences reload")
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(preferences.path))
 	var meter := Monitor.new()
 	for i in range(Monitor.LIMIT+10): meter.record_frame(0.020)
@@ -129,6 +134,9 @@ func _test() -> void:
 	app._start(false)
 	await process_frame
 	check(app.screen=="run" and not app.title_panel.visible and app.special_button.visible,"Quick expedition navigation")
+	check(app.run.balance==app.Balance.TRIAL_20,"Finite run receives selected preset")
+	var run_start: Dictionary=app.playtest.events.back().data
+	check(run_start.get("balance_preset")=="trial20-short" and run_start.get("balance")==app.run.balance,"Journal records actual balance")
 	app.walk_facing="west"
 	app._update_motion_art(app.run.player,1.0/60.0)
 	check(app.walk_facing=="west","Idle facing retained")
@@ -175,6 +183,9 @@ func _test() -> void:
 	check(app.paused,"Pause works")
 	var elapsed: float=app.run.elapsed
 	app._open_settings()
+	check(app.settings_options.balance.disabled,"Preset cannot change during a paused run")
+	app._cycle_balance()
+	check(app.settings.balance_preset=="trial20-short","Paused preset guard")
 	app._toggle_visual("simple_effects")
 	app._toggle_visual("monitor")
 	app._toggle_visual("reduced_motion")
@@ -276,6 +287,9 @@ func _test() -> void:
 	app.run.elapsed=30.0
 	app._extract()
 	check(app.screen=="result" and app.run.outcome=="Extracted" and app.result_reward.newcomer.is_empty(),"Extraction rewards without victory founder")
+	app._show_academy()
+	app._start(true)
+	check(app.run.balance==app.Balance.DEFAULTS,"Endless keeps original unoptimized balance")
 	app.queue_free()
 	await process_frame
 	print("Fantasy UI navigation: %d failures" % failures)

@@ -12,6 +12,8 @@ var seconds := 120
 var output := "user://balance.json"
 var seed_start := 7001
 var parameters: Dictionary = {}
+var preset_name := ""
+var config_supplied := false
 var bodies: Array[String] = ["stoneborn"]
 
 func _initialize() -> void:
@@ -21,13 +23,21 @@ func _initialize() -> void:
 		if arg.begins_with("--output="): output = arg.get_slice("=",1)
 		if arg.begins_with("--seed-start="): seed_start = int(arg.get_slice("=",1))
 		if arg == "--all-bodies": bodies = ["stoneborn","fae","hybrid"]
+		if arg.begins_with("--preset="): preset_name=arg.get_slice("=",1)
 		if arg.begins_with("--config="):
+			config_supplied=true
 			var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(arg.get_slice("=",1)))
 			if not parsed is Dictionary:
 				push_error("Invalid configuration JSON"); quit(2); return
 			parameters = RunModel.Balance.validated(parsed)
 			if parameters.is_empty():
 				push_error("Unknown or out-of-bounds configuration"); quit(2); return
+	if not preset_name.is_empty():
+		if config_supplied:
+			push_error("Choose preset or config, not both"); quit(2); return
+		parameters=RunModel.Balance.preset(preset_name)
+		if parameters.is_empty():
+			push_error("Unknown preset"); quit(2); return
 	var rows: Array[Dictionary] = []
 	var started := Time.get_ticks_msec()
 	for body in bodies:
