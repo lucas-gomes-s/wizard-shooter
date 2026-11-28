@@ -71,6 +71,7 @@ func tip(run: Variant) -> String:
 	if not knows(MOVE): return "Drag left pad\nto move.\nWASD on PC"
 	if not knows(BASIC): return "Magic fires\nautomatically."
 	if not knows(SPECIAL): return "Tap CAST\nwhen ready.\nSpace on PC"
+	if run.mana_rules and run.mana.collections==0 and not run.mana.drops.is_empty(): return "Collect green\nmana crystals."
 	if not knows(UPGRADE): return "Gain XP.\nChoose an\nupgrade."
 	if not knows(WARNING) and float(run.elapsed)<18.0: return "Watch orange\nattack warnings."
 	return ""

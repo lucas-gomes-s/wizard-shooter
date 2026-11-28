@@ -38,7 +38,7 @@ func _initialize() -> void:
 		parameters=RunModel.Balance.preset(preset_name)
 		if parameters.is_empty():
 			push_error("Unknown preset"); quit(2); return
-	if preset_name==RunModel.Balance.LONG and seconds<=int(RunModel.Phases.BOSS_AT):
+	if preset_name in [RunModel.Balance.LONG,RunModel.Balance.MANA] and seconds<=int(RunModel.Phases.BOSS_AT):
 		push_error("Six-minute expedition needs a benchmark horizon above 360 seconds"); quit(2); return
 	var rows: Array[Dictionary] = []
 	var started := Time.get_ticks_msec()
@@ -51,7 +51,7 @@ func _initialize() -> void:
 						rows.append(simulate(p,difficulty,strategy,seed_start+i*7919))
 	var groups := summarize(rows)
 	var elapsed_ms := Time.get_ticks_msec()-started
-	var result := {"schema":1,"seeds_per_cell":seed_count,"horizon_seconds":seconds,"physics_hz":60,"economy":RunModel.Economy.VERSION,"profile":"controlled bodies/power 100/no mutation or talents; hybrids and steam tier II","parameters":RunModel.Balance.validated(parameters),"seed_start":seed_start,"preset":preset_name,"frost_rules":preset_name in [RunModel.Balance.FROST,RunModel.Balance.LONG],"phased_expedition":preset_name==RunModel.Balance.LONG,"runs":rows,"groups":groups,"wall_ms":elapsed_ms}
+	var result := {"schema":1,"seeds_per_cell":seed_count,"horizon_seconds":seconds,"physics_hz":60,"economy":RunModel.Economy.VERSION,"profile":"controlled bodies/power 100/no mutation or talents; hybrids and steam tier II","parameters":RunModel.Balance.validated(parameters),"seed_start":seed_start,"preset":preset_name,"frost_rules":preset_name in [RunModel.Balance.FROST,RunModel.Balance.LONG,RunModel.Balance.MANA],"phased_expedition":preset_name in [RunModel.Balance.LONG,RunModel.Balance.MANA],"mana_rules":preset_name==RunModel.Balance.MANA,"runs":rows,"groups":groups,"wall_ms":elapsed_ms}
 	var file := FileAccess.open(output,FileAccess.WRITE)
 	if file == null:
 		push_error("Cannot write benchmark output: "+output)
@@ -78,7 +78,7 @@ static func fixture(affinity: String, body: String = "stoneborn") -> Dictionary:
 	return p
 
 func simulate(p: Dictionary,difficulty: int,strategy: String,seed: int) -> Dictionary:
-	var run := RunModel.new(p,false,difficulty,seed,parameters,preset_name in [RunModel.Balance.FROST,RunModel.Balance.LONG],preset_name==RunModel.Balance.LONG)
+	var run := RunModel.new(p,false,difficulty,seed,parameters,preset_name in [RunModel.Balance.FROST,RunModel.Balance.LONG,RunModel.Balance.MANA],preset_name in [RunModel.Balance.LONG,RunModel.Balance.MANA],preset_name==RunModel.Balance.MANA)
 	var bot_rng := Genetics.SeededRandom.new(seed+17231)
 	var move := Vector2.ZERO
 	var chosen: Dictionary = {}
@@ -103,7 +103,7 @@ func simulate(p: Dictionary,difficulty: int,strategy: String,seed: int) -> Dicti
 					break
 		run.step(DT,move,cast)
 		ticks += 1
-	return {"seed":seed,"affinity":p.affinity,"body":p.body,"tier":p.tier,"difficulty":difficulty,"strategy":strategy,"outcome":run.outcome if run.outcome!="" else "Timeout","seconds":run.elapsed,"kills":run.kills,"level":run.run_level,"run_xp":run.total_run_xp,"training_xp":run.training_reward(),"legacy_training_xp":run.legacy_training_reward(),"apprentice_xp":run.permanent_reward().apprentice,"essence_reward":run.permanent_reward().essence,"damage":run.total_damage_dealt,"taken":run.total_damage_taken,"remaining_hp":run.hp,"basic_casts":run.basic_casts,"special_casts":run.special_casts,"frost_bonus_hits":run.frost_bonus_hits,"frost_shatters":run.frost_shatters,"phase_reached":run.phase_index(),"phase_spawns":run.phase_spawns.duplicate(),"caches":run.treasure_count,"shrines":run.shrine_count,"encounters":run.encounters_cleared,"despawned":run.despawned,"peak_enemies":run.peak_enemies,"last_hit":run.last_hit,"upgrades":chosen,"first_upgrade":run.first_upgrade_time,"level_times":run.level_times,"boss_reached":run.boss_spawned,"boss_spawn_time":run.boss_spawn_time,"ticks":ticks,"cpu_us":Time.get_ticks_usec()-started}
+	return {"seed":seed,"affinity":p.affinity,"body":p.body,"tier":p.tier,"difficulty":difficulty,"strategy":strategy,"outcome":run.outcome if run.outcome!="" else "Timeout","seconds":run.elapsed,"kills":run.kills,"level":run.run_level,"run_xp":run.total_run_xp,"training_xp":run.training_reward(),"legacy_training_xp":run.legacy_training_reward(),"apprentice_xp":run.permanent_reward().apprentice,"essence_reward":run.permanent_reward().essence,"damage":run.total_damage_dealt,"taken":run.total_damage_taken,"remaining_hp":run.hp,"basic_casts":run.basic_casts,"special_casts":run.special_casts,"frost_bonus_hits":run.frost_bonus_hits,"frost_shatters":run.frost_shatters,"phase_reached":run.phase_index(),"phase_spawns":run.phase_spawns.duplicate(),"mana":run.mana.metrics(),"caches":run.treasure_count,"shrines":run.shrine_count,"encounters":run.encounters_cleared,"despawned":run.despawned,"peak_enemies":run.peak_enemies,"last_hit":run.last_hit,"upgrades":chosen,"first_upgrade":run.first_upgrade_time,"level_times":run.level_times,"boss_reached":run.boss_spawned,"boss_spawn_time":run.boss_spawn_time,"ticks":ticks,"cpu_us":Time.get_ticks_usec()-started}
 
 static func choose_upgrade(run: Variant,rng: Variant) -> int:
 	# Same deterministic policy for all strategies. Heal when necessary; otherwise favor affinity.
@@ -147,12 +147,38 @@ static func steering(run: Variant,strategy: String,previous: Vector2,rng: Varian
 		if strategy=="aggressive": direction=toward if distance>55.0 else -toward
 		else: direction=-toward if distance<105.0 else (toward if distance>190.0 else toward.orthogonal())
 	elif previous==Vector2.ZERO: direction=Vector2.RIGHT
+	if run.mana_rules and not run.boss_spawned:
+		var collect := mana_heading(run,strategy)
+		if not collect.is_zero_approx(): direction=collect
 	# Try a different heading if a pillar blocks the intended next segment.
 	var pos: Vector2 = run.player
 	for angle in [0.0,0.7,-0.7,1.4,-1.4,PI]:
 		var candidate := direction.rotated(float(angle))
 		if World.line_clear(run.world_seed,pos,pos+candidate*18.0,7.0): return candidate
 	return Vector2.ZERO
+
+# Simple risk-aware pickup detours, not a model of human behavior.
+static func mana_heading(run: Variant,strategy: String) -> Vector2:
+	var best := -INF
+	var chosen := Vector2.ZERO
+	for item in run.mana.drops:
+		var delta: Vector2=item.pos-run.player
+		var distance := delta.length()
+		if distance<RunModel.Mana.COLLECT_RADIUS or distance>145.0: continue
+		if not World.line_clear(run.world_seed,run.player,item.pos,7.0): continue
+		var unsafe := false
+		var approach: Vector2=run.player+delta.normalized()*minf(distance,40.0)
+		for enemy in run.enemies:
+			if enemy.hp<=0: continue
+			if enemy.pos.distance_to(approach)<float(enemy.radius)+(35.0 if strategy=="kiting" else 22.0):
+				unsafe=true
+				break
+		if unsafe: continue
+		var score := float(item.value)/maxf(24.0,distance)
+		if score>best:
+			best=score
+			chosen=delta.normalized()
+	return chosen
 
 static func summarize(rows: Array[Dictionary]) -> Array[Dictionary]:
 	var by_key: Dictionary = {}

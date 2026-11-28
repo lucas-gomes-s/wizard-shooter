@@ -1,0 +1,59 @@
+name: Mobile mana pacing comparison
+on:
+  push:
+    paths:
+      - 'mobile/gameplay/mana_pickups.gd'
+      - '.github/workflows/mobile-mana.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [expedition-six, expedition-mana]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned engine
+        run: |
+          curl -fL --retry 3 https://github.com/godotengine/godot-builds/releases/download/4.5.1-stable/Godot_v4.5.1-stable_linux.x86_64.zip -o /tmp/godot.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          chmod +x /tmp/godot/Godot_v4.5.1-stable_linux.x86_64
+          echo /tmp/godot >> "$GITHUB_PATH"
+      - name: Paired exploratory pacing matrix
+        run: |
+          set -euo pipefail
+          Godot_v4.5.1-stable_linux.x86_64 --headless --path mobile --script tools/balance_benchmark.gd -- --preset=${{ matrix.preset }} --all-bodies --seeds=2 --seed-start=310000019 --seconds=540 --output=/tmp/pacing.json 2>&1 | tee /tmp/pacing.log
+          if grep -E 'SCRIPT ERROR|Parse Error|Failed to load script' /tmp/pacing.log; then exit 1; fi
+          python - <<'PY'
+          import json, statistics as st
+          d=json.load(open("/tmp/pacing.json"))
+          assert len(d["runs"])==216 and len(d["groups"])==108
+          report={}
+          for level in (1,2,3):
+              for strategy in ("stationary","aggressive","kiting","explorer"):
+                  rows=[r for r in d["runs"] if r["difficulty"]==level and r["strategy"]==strategy]
+                  n=len(rows)
+                  assert n==18
+                  first=[r["first_upgrade"] for r in rows if r["first_upgrade"]>=0]
+                  gaps=[b-a for r in rows for a,b in zip(r["level_times"],r["level_times"][1:])]
+                  gen=sum(r["mana"]["generated"] for r in rows)
+                  col=sum(r["mana"]["collected"] for r in rows)
+                  for r in rows:
+                      m=r["mana"]
+                      assert m["generated"]==m["collected"]+m["lost"]+m["remaining"] and m["remaining"]>=0
+                  report[f"D{level}/{strategy}"]={"n":n,"win":sum(r["outcome"]=="Victory" for r in rows)/n,"boss_reach":sum(r["boss_reached"] for r in rows)/n,"mean_level":st.mean(r["level"] for r in rows),"first_upgrade_median":st.median(first) if first else None,"no_upgrade":1-len(first)/n,"median_upgrade_gap":st.median(gaps) if gaps else None,"mana_collection_fraction":col/gen if gen else None,"mean_seconds":st.mean(r["seconds"] for r in rows)}
+          print(json.dumps(report,indent=2))
+          with open("/tmp/pacing-summary.json","w") as f: json.dump(report,f,indent=2)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pacing-${{ matrix.preset }}
+          path: |
+            /tmp/pacing.json
+            /tmp/pacing-summary.json
+          if-no-files-found: error
+          retention-days: 30

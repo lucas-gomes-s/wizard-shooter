@@ -123,7 +123,7 @@ static func phenotype(p: Dictionary) -> Dictionary:
 func start_run(run: Variant,has_apprentice: bool,lessons: int,visual: Dictionary) -> void:
 	current_run=record("run_start",{"mode":"endless" if run.endless else "finite","difficulty":run.difficulty,
 		"wizard":phenotype(run.phenotype),"apprentice":has_apprentice,"lessons":lessons,"visual":visual,
-		"balance_preset":Balance.LONG if run.phased_expedition else (Balance.FROST if run.frost_rules else Balance.preset_id(run.balance)),"balance":run.balance.duplicate(true),"boss_after_seconds":run.boss_after_seconds(),"economy":str(run.Economy.VERSION)})
+		"balance_preset":Balance.MANA if run.mana_rules else (Balance.LONG if run.phased_expedition else (Balance.FROST if run.frost_rules else Balance.preset_id(run.balance))),"balance":run.balance.duplicate(true),"boss_after_seconds":run.boss_after_seconds(),"economy":str(run.Economy.VERSION)})
 
 func run_event(kind: String,data: Dictionary) -> void:
 	if current_run<=0: return
@@ -137,7 +137,7 @@ func end_run(run: Variant,performance: Dictionary) -> void:
 		"damage_dealt":run.total_damage_dealt,"damage_taken":run.total_damage_taken,
 		"basic_casts":run.basic_casts,"special_casts":run.special_casts,"boss_reached":run.boss_spawned,
 		"treasures":run.treasure_count,"shrines":run.shrine_count,"encounters":run.encounters_cleared,
-		"upgrades":run.upgrade_ranks.duplicate(true),"frost_bonus_hits":run.frost_bonus_hits,"frost_shatters":run.frost_shatters,"phase_reached":run.phase_index(),"phase_spawns":run.phase_spawns.duplicate(),"reward_quote":run.permanent_reward(),"performance":performance})
+		"upgrades":run.upgrade_ranks.duplicate(true),"frost_bonus_hits":run.frost_bonus_hits,"frost_shatters":run.frost_shatters,"phase_reached":run.phase_index(),"phase_spawns":run.phase_spawns.duplicate(),"mana":run.mana.metrics(),"reward_quote":run.permanent_reward(),"performance":performance})
 
 func reward_saved(reward: Dictionary) -> void:
 	run_event("reward_saved",{"active_xp":reward.active_gain,"apprentice_xp":reward.apprentice_gain,

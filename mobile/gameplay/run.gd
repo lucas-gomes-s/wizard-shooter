@@ -7,6 +7,7 @@ const EnemyAI = preload("res://gameplay/enemy_behavior.gd")
 const Balance = preload("res://gameplay/balance_config.gd")
 const Phases = preload("res://gameplay/expedition_schedule.gd")
 const Economy = preload("res://domain/training_economy.gd")
+const Mana = preload("res://gameplay/mana_pickups.gd")
 const DESPAWN_DISTANCE := 740.0
 const BOSS_RELOCATE_DISTANCE := 950.0
 const TARGET_RANGE := 350.0
@@ -95,6 +96,9 @@ var player_hit_fx := 0.0
 var balance: Dictionary
 var frost_rules := false
 var phased_expedition := false
+var mana_rules := false
+var mana := Mana.new()
+var mana_flash := 0.0
 var phase_spawns: Array[int] = [0,0,0,0,0]
 var frost_bonus_hits := 0
 var frost_shatters := 0
@@ -102,8 +106,9 @@ var first_upgrade_time := -1.0
 var level_times: Array[float] = []
 var boss_spawn_time := -1.0
 
-func _init(p: Dictionary, is_endless: bool, level: int, seed: int, parameters: Dictionary = {}, use_frost_rules: bool = false, use_phases: bool = false) -> void:
+func _init(p: Dictionary, is_endless: bool, level: int, seed: int, parameters: Dictionary = {}, use_frost_rules: bool = false, use_phases: bool = false, use_mana: bool = false) -> void:
 	phased_expedition=use_phases and not is_endless
+	mana_rules=use_mana and phased_expedition
 	frost_rules=use_frost_rules
 	balance = Balance.validated(parameters)
 	assert(not balance.is_empty(), "Invalid balance parameters")
@@ -194,10 +199,18 @@ func step(dt: float, movement: Vector2, special: bool) -> void:
 			var dead: Dictionary = enemies[i]
 			if str(dead.get("encounter", "")) == "":
 				kills += 1
-				_gain_xp(int(dead.xp))
+				if mana_rules and int(dead.kind)!=3: mana.drop(dead.pos,int(dead.xp),elapsed,world_seed)
+				else: _gain_xp(int(dead.xp))
 			_add_hit_fx(dead.pos, 0.0, str(phenotype.affinity), "defeat")
 			if dead.kind == 3: boss_defeated = true
 			enemies.remove_at(i)
+	if mana_rules:
+		mana_flash=maxf(0.0,mana_flash-dt)
+		if hp>0:
+			var gathered := mana.tick(player,elapsed,dt,world_seed)
+			if gathered>0:
+				_gain_xp(gathered)
+				mana_flash=0.24
 	if hp <= 0:
 		outcome = "Defeated"
 	elif boss_defeated:

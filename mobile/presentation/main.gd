@@ -502,7 +502,7 @@ func _show_title() -> void:
 	title_note.text = "Open the Academy to review your profile." if unavailable else "%d essence  |  %d wizards" % [academy.essence,academy.roster.size()]
 	if not unavailable and guide.enabled and academy.settled_runs.is_empty(): title_note.text="New? Open Guide, or learn as you play."
 	if not unavailable: title_note.text+="\nFinite: "+Balance.label(settings.balance_preset)
-	if settings.balance_preset==Balance.LONG: title_quick.text="6-minute expedition"
+	if settings.balance_preset in [Balance.LONG,Balance.MANA]: title_quick.text="6-minute expedition"
 	_sync_visibility()
 	queue_redraw()
 
@@ -540,7 +540,7 @@ func _refresh_academy() -> void:
 		if not hint.is_empty(): info.text=hint
 	difficulty_button.text="Difficulty: %s" % ["I","II","III"][difficulty-1]
 	balance_button.text="Finite: "+Balance.label(settings.balance_preset)
-	start_finite.text="Enter 6-minute expedition" if settings.balance_preset==Balance.LONG else "Enter dungeon"
+	start_finite.text="Enter 6-minute expedition" if settings.balance_preset in [Balance.LONG,Balance.MANA] else "Enter dungeon"
 	lock_button.text="Unlock wizard" if c.locked else "Lock wizard"
 	clear_apprentice.disabled=partner_index<0
 	summon_button.disabled=academy.essence<10
@@ -630,7 +630,7 @@ func _refresh_guide() -> void:
 	lines.append(("✓ " if guide.knows(Onboarding.MOVE) else "□ ")+"Move: drag the lower-left pad (WASD or arrows).")
 	lines.append(("✓ " if guide.knows(Onboarding.BASIC) else "□ ")+"Basic magic attacks automatically.")
 	lines.append(("✓ " if guide.knows(Onboarding.SPECIAL) else "□ ")+"Tap CAST (Space) to use your special.")
-	lines.append(("✓ " if guide.knows(Onboarding.UPGRADE) else "□ ")+"Earn XP and select a run upgrade.")
+	lines.append(("✓ " if guide.knows(Onboarding.UPGRADE) else "□ ")+"Earn XP and select a run upgrade." if settings.balance_preset!=Balance.MANA else "Collect green mana crystals to level up.")
 	lines.append("Avoid orange attack zones and charge lines. Defeat the dragon, or extract from endless mode after 30 seconds.")
 	lines.append("")
 	lines.append("BLOODLINE")
@@ -941,7 +941,7 @@ func _start(endless: bool) -> void:
 		_show_academy()
 		return
 	var preset := Balance.ORIGINAL if endless else settings.balance_preset
-	run = RunModel.new(active.phenotype, endless, difficulty, 1000 + run_id, Balance.preset(preset),preset in [Balance.FROST,Balance.LONG],preset==Balance.LONG)
+	run = RunModel.new(active.phenotype, endless, difficulty, 1000 + run_id, Balance.preset(preset),preset in [Balance.FROST,Balance.LONG,Balance.MANA],preset in [Balance.LONG,Balance.MANA],preset==Balance.MANA)
 	result_before.clear()
 	result_reward.clear()
 	profiler.reset()
@@ -1239,6 +1239,7 @@ func _draw() -> void:
 	draw_set_transform(CAMERA_CENTER - camera)
 	dungeon_art.draw_world(self, view)
 	dungeon_art.draw_sites(self, run.claimed_sites, run.active_encounter, run._guards_remaining(), float(run.elapsed))
+	if run.mana_rules: _draw_mana(view)
 	var color: Color = FIRE if run.phenotype.affinity == "fire" else (ICE if run.phenotype.affinity == "ice" else STEAM)
 	# Ground effects below creatures and hostile telegraphs preserve combat readability.
 	for cloud in run.clouds:
@@ -1266,6 +1267,8 @@ func _draw() -> void:
 				draw_texture(texture,shot.pos-Vector2(4,4))
 			else: ElementFX.projectile(self,shot,float(run.elapsed))
 	_draw_player_art(color)
+	if run.mana_rules and run.mana_flash>0 and not settings.reduced_motion:
+		draw_arc(run.player,18,0,TAU,24,Color(0.40,0.95,0.83,float(run.mana_flash)/0.24),1.5)
 	if run.ward > 0: draw_arc(run.player, 22, 0, TAU, 24, Color("#c6e6ed"), 2.0)
 	if run.webbed: draw_arc(run.player, 18, 0, TAU, 24, Color("#efcfa1"), 2.0)
 	_draw_combat_feedback(visible_margin)
@@ -1308,6 +1311,16 @@ func _draw() -> void:
 		if paused: Fantasy.text_at(self,"PAUSED",Vector2(180,305),24,Fantasy.GOLD,true)
 		else: Fantasy.frame(self,Rect2(10,151,340,376),Color("#977ab5"))
 
+
+func _draw_mana(view: Rect2) -> void:
+	for item in run.mana.drops:
+		if not view.grow(8).has_point(item.pos): continue
+		var point: Vector2=item.pos
+		var size := 3.0 if int(item.value)<5 else (4.0 if int(item.value)<12 else 5.0)
+		draw_circle(point+Vector2(0,2),size+2,Color(0.04,0.12,0.12,0.55))
+		if not settings.simple_effects: draw_circle(point,size+3,Color(0.20,0.85,0.72,0.14))
+		draw_colored_polygon(PackedVector2Array([point+Vector2(0,-size-1),point+Vector2(size,0),point+Vector2(0,size+1),point+Vector2(-size,0)]),Color("#45c9b4"))
+		draw_line(point+Vector2(0,-size),point+Vector2(-size,0),Color("#d7fff1"),1.0)
 
 func _draw_reveal() -> void:
 	Fantasy.hall(self,reveal_time)
@@ -1395,7 +1408,7 @@ func _draw_hud() -> void:
 	Fantasy.bar(self,Rect2(12,25,230,22),float(run.hp),float(run.max_hp),Fantasy.HP,displayed_hp,maxf(warning,0.0 if settings.reduced_motion else float(run.player_hit_fx)*3.0))
 	Fantasy.text_at(self,"HP   %d / %d" % [ceili(run.hp),roundi(run.max_hp)],Vector2(127,40),12,Fantasy.IVORY,true)
 	Fantasy.bar(self,Rect2(12,52,230,18),float(run.xp),float(run.next_xp),Fantasy.XP,-1.0,0.0 if settings.reduced_motion else level_flash)
-	Fantasy.text_at(self,"XP   %d / %d" % [run.xp,run.next_xp],Vector2(127,65),11,Fantasy.IVORY,true)
+	Fantasy.text_at(self,("MANA   %d / %d" if run.mana_rules else "XP   %d / %d") % [run.xp,run.next_xp],Vector2(127,65),11,Fantasy.IVORY,true)
 	var state := "BLESSED %.0fs" % run.blessing if run.blessing > 0 else ("BOSS ACTIVE" if run.boss_spawned else ("ENDLESS" if run.endless else "DUNGEON"))
 	if run.phased_expedition:
 		var left := maxi(0,ceili(run.boss_after_seconds()-run.elapsed))
