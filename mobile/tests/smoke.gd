@@ -94,6 +94,7 @@ func _initialize() -> void:
 	_test_expedition(p)
 	_test_mana(p)
 	_test_trials(p)
+	_test_evolution(p)
 	_test_economy(p)
 	_test_upgrades(p)
 	_test_enemies(p)
@@ -661,3 +662,50 @@ func _test_trials(p: Dictionary) -> void:
 	for i in range(30):
 		var offer := Upgrades.offer(p,{},Genetics.SeededRandom.new(i+100))
 		for id in offer: check(not Upgrades.DEFINITIONS[id].get("relic",false),"Relics excluded from normal upgrade pool")
+
+func _test_evolution(base: Dictionary) -> void:
+	for affinity in ["fire","ice","steam"]:
+		for branch in RunModel.Evolution.PATHS[affinity]:
+			var p := base.duplicate(true)
+			p.affinity=affinity
+			p.passives=[]
+			p.mutation="none"
+			var run := RunModel.new(p,false,1,7,RunModel.Balance.TRIAL_20,true,true,true,true,true)
+			var before := run.kit.duplicate(true)
+			run.trials_cleared=1
+			run.relic_pending=true
+			run.pending_upgrades=1
+			run.ensure_upgrade_offer()
+			check(run.upgrade_offer.size()==2 and branch in run.upgrade_offer,"Affinity-specific evolution offer")
+			run.upgrade(run.upgrade_offer.find(branch))
+			check(run.evolution_branch==branch and run.kit!=before and run.pending_upgrades==0,"Branch changes actual compiled spell")
+			run.trials_cleared=2
+			run.relic_pending=true
+			run.pending_upgrades=1
+			run.ensure_upgrade_offer()
+			var mastery: String=RunModel.Evolution.MASTERY[branch]
+			check(run.upgrade_offer==[mastery,"relic_heart"],"Mastery follows selected branch")
+			run.upgrade(0)
+			check(run.evolution_mastery==mastery and not run.relic_pending,"Mastery applied")
+			run._spawn(0)
+			run.enemies[0].pos=Vector2(40,0)
+			run.enemies[0].hp=10000.0
+			check(run._cast_basic(),"Evolved cast fires")
+			if branch in ["evo_fire_fan","evo_ice_volley"]:
+				check(run.shots.size()==5 and run.evolution_extra_shots==4 and run.shots[0].vel.normalized().dot(Vector2.RIGHT)>0.99,"Five distinct fan projectiles")
+			if branch in ["evo_fire_blast","evo_ice_spear","evo_steam_burst"]:
+				run._spawn(0)
+				run.enemies[1].pos=Vector2(45,20)
+				run.enemies[1].hp=10000.0
+				run.shots[0].pos=run.enemies[0].pos
+				run.shots[0].vel=Vector2.ZERO
+				run._update_shots(0.01)
+				check(run.enemies[1].hp<10000.0 and run.evolution_hits==1,"Actual nonrecursive impact splash")
+			if branch=="evo_steam_mantle":
+				run._cast_special()
+				run.player=Vector2(30,0)
+				run._update_clouds(0.01)
+				check(run.clouds[0].pos==run.player and run.clouds[0].follow,"Mobile special follows wizard")
+			check(run.phenotype==p,"Evolution never mutates phenotype")
+	var old := RunModel.new(base,false,1,7,RunModel.Balance.TRIAL_20,true,true,true,true)
+	check(not old.evolution_rules,"Relic-only reference unchanged")

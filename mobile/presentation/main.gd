@@ -502,7 +502,7 @@ func _show_title() -> void:
 	title_note.text = "Open the Academy to review your profile." if unavailable else "%d essence  |  %d wizards" % [academy.essence,academy.roster.size()]
 	if not unavailable and guide.enabled and academy.settled_runs.is_empty(): title_note.text="New? Open Guide, or learn as you play."
 	if not unavailable: title_note.text+="\nFinite: "+Balance.label(settings.balance_preset)
-	if settings.balance_preset in [Balance.LONG,Balance.MANA,Balance.TRIALS]: title_quick.text="6-minute expedition"
+	if settings.balance_preset in [Balance.LONG,Balance.MANA,Balance.TRIALS,Balance.EVOLUTION]: title_quick.text="6-minute expedition"
 	_sync_visibility()
 	queue_redraw()
 
@@ -540,7 +540,7 @@ func _refresh_academy() -> void:
 		if not hint.is_empty(): info.text=hint
 	difficulty_button.text="Difficulty: %s" % ["I","II","III"][difficulty-1]
 	balance_button.text="Finite: "+Balance.label(settings.balance_preset)
-	start_finite.text="Enter 6-minute expedition" if settings.balance_preset in [Balance.LONG,Balance.MANA,Balance.TRIALS] else "Enter dungeon"
+	start_finite.text="Enter 6-minute expedition" if settings.balance_preset in [Balance.LONG,Balance.MANA,Balance.TRIALS,Balance.EVOLUTION] else "Enter dungeon"
 	lock_button.text="Unlock wizard" if c.locked else "Lock wizard"
 	clear_apprentice.disabled=partner_index<0
 	summon_button.disabled=academy.essence<10
@@ -630,7 +630,7 @@ func _refresh_guide() -> void:
 	lines.append(("✓ " if guide.knows(Onboarding.MOVE) else "□ ")+"Move: drag the lower-left pad (WASD or arrows).")
 	lines.append(("✓ " if guide.knows(Onboarding.BASIC) else "□ ")+"Basic magic attacks automatically.")
 	lines.append(("✓ " if guide.knows(Onboarding.SPECIAL) else "□ ")+"Tap CAST (Space) to use your special.")
-	lines.append(("✓ " if guide.knows(Onboarding.UPGRADE) else "□ ")+"Earn XP and select a run upgrade." if settings.balance_preset not in [Balance.MANA,Balance.TRIALS] else "Collect green mana crystals to level up.")
+	lines.append(("✓ " if guide.knows(Onboarding.UPGRADE) else "□ ")+"Earn XP and select a run upgrade." if settings.balance_preset not in [Balance.MANA,Balance.TRIALS,Balance.EVOLUTION] else "Collect green mana crystals to level up.")
 	lines.append("Avoid orange attack zones and charge lines. Defeat the dragon, or extract from endless mode after 30 seconds.")
 	lines.append("")
 	lines.append("BLOODLINE")
@@ -941,7 +941,7 @@ func _start(endless: bool) -> void:
 		_show_academy()
 		return
 	var preset := Balance.ORIGINAL if endless else settings.balance_preset
-	run = RunModel.new(active.phenotype, endless, difficulty, 1000 + run_id, Balance.preset(preset),preset in [Balance.FROST,Balance.LONG,Balance.MANA,Balance.TRIALS],preset in [Balance.LONG,Balance.MANA,Balance.TRIALS],preset in [Balance.MANA,Balance.TRIALS],preset==Balance.TRIALS)
+	run = RunModel.new(active.phenotype, endless, difficulty, 1000 + run_id, Balance.preset(preset),preset in [Balance.FROST,Balance.LONG,Balance.MANA,Balance.TRIALS,Balance.EVOLUTION],preset in [Balance.LONG,Balance.MANA,Balance.TRIALS,Balance.EVOLUTION],preset in [Balance.MANA,Balance.TRIALS,Balance.EVOLUTION],preset in [Balance.TRIALS,Balance.EVOLUTION],preset==Balance.EVOLUTION)
 	result_before.clear()
 	result_reward.clear()
 	profiler.reset()
@@ -1054,7 +1054,7 @@ func _sync_visibility() -> void:
 
 func _refresh_upgrades() -> void:
 	run.ensure_upgrade_offer()
-	upgrade_heading.text = "TRIAL CLEARED • RELIC" if run.relic_pending else ("LEVEL UP • %d CHOICE%s" % [run.pending_upgrades, "S" if run.pending_upgrades > 1 else ""])
+	upgrade_heading.text = ("EVOLVE YOUR MAGIC" if run.evolution_rules else "TRIAL CLEARED • RELIC") if run.relic_pending else ("LEVEL UP • %d CHOICE%s" % [run.pending_upgrades, "S" if run.pending_upgrades > 1 else ""])
 	for i in range(upgrade_buttons.size()):
 		var button := upgrade_buttons[i]
 		button.visible = i < run.upgrade_offer.size()
@@ -1291,6 +1291,9 @@ func _draw() -> void:
 		var lines := monitor_text.split("\n")
 		for i in range(lines.size()): Fantasy.text_at(self,lines[i],Vector2(10,511+i*13),10,Fantasy.IVORY)
 	Fantasy.text_at(self,str(run.kit.special.name),Vector2(298,631),10,Fantasy.MUTED,true)
+	if run.evolution_rules and not run.evolution_branch.is_empty():
+		var spell: String=str(run.kit.special.name) if run.evolution_branch=="evo_steam_mantle" else str(run.kit.basic.name)
+		Fantasy.text_at(self,spell,Vector2(12,550),10,Fantasy.GOLD)
 	if not paused:
 		var hint := guide.tip(run)
 		if not hint.is_empty():

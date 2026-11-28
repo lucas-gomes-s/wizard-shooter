@@ -1,6 +1,18 @@
 extends RefCounted
 ## Upgrade metadata and eligibility. No school selection or permanent stat changes.
 const DEFINITIONS := {
+	"evo_fire_fan": {"name":"Ember fan","text":"3 angled bolts, each at 68% prior impact power.","category":"Evolution","cap":1,"affinity":"fire","relic":true,"evolution":true},
+	"evo_fire_storm": {"name":"Ember storm","text":"5 angled bolts, each at 90% fan power.","category":"Evolution","cap":1,"affinity":"fire","relic":true,"evolution":true},
+	"evo_fire_blast": {"name":"Blast ember","text":"Each hit splashes nearby enemies in 27px.","category":"Evolution","cap":1,"affinity":"fire","relic":true,"evolution":true},
+	"evo_fire_nova": {"name":"Nova ember","text":"Splash expands to 43px and 80% spell power.","category":"Evolution","cap":1,"affinity":"fire","relic":true,"evolution":true},
+	"evo_ice_spear": {"name":"Glacier spear","text":"+2 pierces; wider lance; stronger chill bonus.","category":"Evolution","cap":1,"affinity":"ice","relic":true,"evolution":true},
+	"evo_ice_glacier": {"name":"Absolute zero","text":"Hits pulse chill and damage; larger special.","category":"Evolution","cap":1,"affinity":"ice","relic":true,"evolution":true},
+	"evo_ice_volley": {"name":"Crystal volley","text":"3 angled lances at 63% power; one fewer pierce.","category":"Evolution","cap":1,"affinity":"ice","relic":true,"evolution":true},
+	"evo_ice_storm": {"name":"Crystal storm","text":"5 angled lances at 90% volley power.","category":"Evolution","cap":1,"affinity":"ice","relic":true,"evolution":true},
+	"evo_steam_burst": {"name":"Pressure orb","text":"Impact bursts damage nearby enemies in 35px.","category":"Evolution","cap":1,"affinity":"steam","relic":true,"evolution":true},
+	"evo_steam_rupture": {"name":"Rupture orb","text":"Impact bursts expand to 49px, full spell power.","category":"Evolution","cap":1,"affinity":"steam","relic":true,"evolution":true},
+	"evo_steam_mantle": {"name":"Mist mantle","text":"Special cloud follows you; 15% smaller radius.","category":"Evolution","cap":1,"affinity":"steam","relic":true,"evolution":true},
+	"evo_steam_eye": {"name":"Eye of the storm","text":"Mobile cloud gains 18px radius and 1.2s life.","category":"Evolution","cap":1,"affinity":"steam","relic":true,"evolution":true},
 	"relic_power": {"name":"Emberglass seal","text":"+25% spell damage for this run","category":"Relic","cap":2,"relic":true},
 	"relic_focus": {"name":"Chronomancer seal","text":"25% shorter special cooldown (min 2.5s)","category":"Relic","cap":2,"relic":true},
 	"relic_heart": {"name":"Guardian heart","text":"+25 max HP; heal 40 HP","category":"Relic","cap":2,"relic":true},

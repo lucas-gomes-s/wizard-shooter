@@ -9,6 +9,7 @@ const Phases = preload("res://gameplay/expedition_schedule.gd")
 const Economy = preload("res://domain/training_economy.gd")
 const Mana = preload("res://gameplay/mana_pickups.gd")
 const Trials = preload("res://gameplay/milestone_trials.gd")
+const Evolution = preload("res://gameplay/spell_evolution.gd")
 const DESPAWN_DISTANCE := 740.0
 const BOSS_RELOCATE_DISTANCE := 950.0
 const TARGET_RANGE := 350.0
@@ -99,6 +100,11 @@ var frost_rules := false
 var phased_expedition := false
 var mana_rules := false
 var trial_rules := false
+var evolution_rules := false
+var evolution_branch := ""
+var evolution_mastery := ""
+var evolution_hits := 0
+var evolution_extra_shots := 0
 var trial_index := -1
 var trials_cleared := 0
 var trial_center := Vector2.ZERO
@@ -116,10 +122,11 @@ var first_upgrade_time := -1.0
 var level_times: Array[float] = []
 var boss_spawn_time := -1.0
 
-func _init(p: Dictionary, is_endless: bool, level: int, seed: int, parameters: Dictionary = {}, use_frost_rules: bool = false, use_phases: bool = false, use_mana: bool = false, use_trials: bool = false) -> void:
+func _init(p: Dictionary, is_endless: bool, level: int, seed: int, parameters: Dictionary = {}, use_frost_rules: bool = false, use_phases: bool = false, use_mana: bool = false, use_trials: bool = false, use_evolution: bool = false) -> void:
 	phased_expedition=use_phases and not is_endless
 	mana_rules=use_mana and phased_expedition
 	trial_rules=use_trials and mana_rules
+	evolution_rules=use_evolution and trial_rules
 	frost_rules=use_frost_rules
 	balance = Balance.validated(parameters)
 	assert(not balance.is_empty(), "Invalid balance parameters")
@@ -327,7 +334,10 @@ func _complete_trial() -> void:
 	pending_upgrades+=1
 	upgrade_offer.clear()
 	spawn_cd=maxf(spawn_cd,2.0)
-	_announce("Trial cleared! Choose a relic.")
+	_announce("Trial cleared! Evolve your magic." if evolution_rules else "Trial cleared! Choose a relic.")
+
+func evolution_metrics() -> Dictionary:
+	return {"branch":evolution_branch,"mastery":evolution_mastery,"splash_hits":evolution_hits,"extra_shots":evolution_extra_shots}
 
 func trial_metrics() -> Dictionary:
 	return {"cleared":trials_cleared,"active":trial_index,"seconds":trial_seconds,
@@ -346,7 +356,9 @@ func _phase_scale(d: Dictionary) -> void:
 
 func ensure_upgrade_offer() -> void:
 	if pending_upgrades > 0 and upgrade_offer.is_empty() and outcome == "":
-		if relic_pending: upgrade_offer.assign(Trials.RELICS)
+		if relic_pending:
+			if evolution_rules: upgrade_offer=Evolution.offer(str(phenotype.affinity),evolution_branch,trials_cleared)
+			else: upgrade_offer.assign(Trials.RELICS)
 		else: upgrade_offer = Upgrades.offer(phenotype, upgrade_ranks, upgrade_rng)
 
 func upgrade(choice: int) -> void:
@@ -357,9 +369,16 @@ func upgrade(choice: int) -> void:
 	if not Upgrades.eligible(id, phenotype, upgrade_ranks): return
 	if bool(Upgrades.DEFINITIONS[id].get("relic",false))!=relic_pending: return
 	if relic_pending:
-		relic_choices.append(id)
+		if evolution_rules and not id in Evolution.offer(str(phenotype.affinity),evolution_branch,trials_cleared): return
+		if bool(Upgrades.DEFINITIONS[id].get("evolution",false)):
+			if trials_cleared==1: evolution_branch=id
+			else: evolution_mastery=id
+			Evolution.apply(self,id)
+		else:
+			relic_choices.append(id)
+			_apply_upgrade(id)
 		relic_pending=false
-	_apply_upgrade(id)
+	else: _apply_upgrade(id)
 	upgrade_ranks[id] = int(upgrade_ranks.get(id, 0)) + 1
 	pending_upgrades -= 1
 	upgrade_offer.clear()
@@ -620,10 +639,18 @@ func _cast_basic() -> bool:
 	var direction := player.direction_to(target.pos)
 	if frost_rules and phenotype.affinity=="ice": direction=_frost_aim(target,spec)
 	if direction == Vector2.ZERO: direction = Vector2.UP
-	shots.append({"pos":player,"vel":direction * float(spec.speed),"life":float(spec.life),
-		"damage":effective_damage() * float(spec.power),"pierce":int(spec.pierce),"hit":{},
-		"effects":spec.effects.duplicate(true),"affinity":phenotype.affinity,
-		"hit_padding":float(spec.get("hit_padding",3.0)),"chilled_bonus":float(spec.get("chilled_bonus",0.0))})
+	var count := mini(int(spec.get("count",1)),Abilities.MAX_SHOTS-shots.size())
+	for i in range(count):
+		# Central shot is always first, so a tight projectile budget never removes it.
+		var offset := 0.0 if i==0 else float((i+1)/2)*float(spec.get("spread",0.0))*(1.0 if i%2==1 else -1.0)
+		var heading := direction.rotated(offset)
+		shots.append({"pos":player,"vel":heading * float(spec.speed),"life":float(spec.life),
+			"damage":effective_damage() * float(spec.power),"pierce":int(spec.pierce),"hit":{},
+			"effects":spec.effects.duplicate(true),"affinity":phenotype.affinity,
+			"hit_padding":float(spec.get("hit_padding",3.0)),"chilled_bonus":float(spec.get("chilled_bonus",0.0)),
+			"impact_radius":float(spec.get("impact_radius",0.0)),"impact_damage":effective_damage()*float(spec.get("impact_power",0.0)),
+			"impact_chill":bool(spec.get("impact_chill",false))})
+	evolution_extra_shots+=maxi(0,count-1)
 	last_basic_direction = direction
 	basic_casts += 1
 	return true
@@ -671,7 +698,7 @@ func _cast_special() -> void:
 	trail = float(spec.get("trail", 0.0))
 	trail_cd = 0.0
 	if spec.delivery == "cloud":
-		_add_cloud(player, float(spec.radius), float(spec.duration), float(spec.rate), "steam")
+		_add_cloud(player, float(spec.radius), float(spec.duration), float(spec.rate), "steam",bool(spec.get("follow",false)))
 	else:
 		for enemy in enemies:
 			if enemy.hp <= 0 or player.distance_to(enemy.pos) > float(spec.radius): continue
@@ -721,6 +748,7 @@ func _update_shots(dt: float) -> void:
 				frost_bonus_hits+=1
 			_damage_enemy(enemy, amount, str(shot.affinity))
 			_apply_effects(enemy, shot.effects, float(shot.damage))
+			if float(shot.get("impact_radius",0.0))>0: _evolution_impact(enemy,shot)
 			if int(shot.pierce) <= 0:
 				shot.life = 0.0
 				break
@@ -728,11 +756,26 @@ func _update_shots(dt: float) -> void:
 	for i in range(shots.size() - 1, -1, -1):
 		if shots[i].life <= 0: shots.remove_at(i)
 
-func _add_cloud(point: Vector2, radius: float, duration: float, rate: float, affinity: String) -> void:
+# Nonrecursive splash; each direct impact excludes its primary victim.
+func _evolution_impact(primary: Dictionary,shot: Dictionary) -> void:
+	var radius := float(shot.impact_radius)
+	_flash(primary.pos,radius,str(shot.affinity))
+	for e in enemies:
+		if e.hp<=0 or e.uid==primary.uid or primary.pos.distance_to(e.pos)>radius: continue
+		if not World.line_clear(world_seed,primary.pos,e.pos,1.0): continue
+		_damage_enemy(e,float(shot.impact_damage),str(shot.affinity))
+		evolution_hits+=1
+		if bool(shot.impact_chill) and e.hp>0:
+			e.chill=maxf(float(e.chill),1.5)
+			e.slow=maxf(float(e.slow),1.0)
+
+func _add_cloud(point: Vector2, radius: float, duration: float, rate: float, affinity: String, follow: bool = false) -> void:
 	if clouds.size() >= Abilities.MAX_CLOUDS: clouds.pop_front()
-	clouds.append({"pos":point,"radius":radius,"life":duration,"dps":effective_damage() * rate,"affinity":affinity})
+	clouds.append({"pos":point,"radius":radius,"life":duration,dps":effective_damage() * rate,"affinity":affinity,"follow":follow})
 
 func _update_clouds(dt: float) -> void:
+	for cloud in clouds:
+		if cloud.get("follow",false): cloud.pos=player
 	# Overlapping clouds of the same element use the strongest DPS, not the sum.
 	for enemy in enemies:
 		if enemy.hp <= 0: continue

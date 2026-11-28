@@ -73,6 +73,9 @@ static func draw(canvas: CanvasItem,sprites: Variant,run: Variant,before: Dictio
 	Fantasy.text_at(canvas,"Damage dealt %d   •   Taken %d" % [roundi(run.total_damage_dealt),roundi(run.total_damage_taken)],Vector2(180,248),12,Fantasy.IVORY,true)
 	var exploration := "Caches %d  •  Shrines %d  •  Encounters %d" % [run.treasure_count,run.shrine_count,run.encounters_cleared]
 	if run.trial_rules: exploration="Trials %d/2  •  Relics %d  •  Caches %d" % [run.trials_cleared,run.relic_choices.size(),run.treasure_count]
+	if run.evolution_rules and not run.evolution_branch.is_empty():
+		var id: String=run.evolution_mastery if not run.evolution_mastery.is_empty() else run.evolution_branch
+		exploration="Trials %d/2 • %s" % [run.trials_cleared,run.Upgrades.DEFINITIONS[id].name]
 	Fantasy.text_at(canvas,exploration,Vector2(180,270),11,Fantasy.MUTED,true)
 	Fantasy.frame(canvas,Rect2(12,296,336,132),Color("#86719b"))
 	Fantasy.text_at(canvas,"PERMANENT TRAINING",Vector2(180,314),11,Fantasy.GOLD,true)
