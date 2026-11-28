@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        preset: [original, trial20-short]
+        preset: [original, trial20-short, trial20-frost]
     steps:
       - uses: actions/checkout@v4
       - name: Install pinned release engine

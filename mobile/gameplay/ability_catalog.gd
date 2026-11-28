@@ -16,10 +16,16 @@ const SPECIALS := {
 }
 const PASSIVE_NAMES := {"resilient":"Stone Ward","quickcast":"Quick Casting","focused":"Focused Magic","flow":"Arcane Flow"}
 
-static func compile(p: Dictionary) -> Dictionary:
+static func compile(p: Dictionary, frost_rules: bool = false) -> Dictionary:
 	var affinity: String = p.affinity
 	var basic: Dictionary = BASICS[affinity].duplicate(true)
 	var special: Dictionary = SPECIALS[affinity].duplicate(true)
+	if affinity=="ice" and frost_rules:
+		basic["hit_padding"]=5.0
+		basic["chilled_bonus"]=0.25
+		special.radius=108.0
+		for effect in special.effects:
+			if effect.kind=="shatter": effect.power=1.6
 	var traits: Array = p.get("passives", [])
 	var strength := 0.7 if traits.size() > 1 else 1.0
 	var modifiers := {"damage":1.0,"interval":1.0,"incoming":1.0,"cooldown":1.0}

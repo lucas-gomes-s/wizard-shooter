@@ -18,14 +18,17 @@ const TRIAL_20 := {"enemy_hp":1.1092348917138815,"enemy_damage":0.92888594212434
 	"xp_growth":1.152736567557464,"xp_increment":2.9943887713605015}
 const ORIGINAL := "original"
 const CANDIDATE := "trial20-short"
+const FROST := "trial20-frost"
+const PRESETS := [ORIGINAL,CANDIDATE,FROST]
 
 static func preset(id: String) -> Dictionary:
 	match id:
 		ORIGINAL: return validated({})
-		CANDIDATE: return validated(TRIAL_20)
+		CANDIDATE,FROST: return validated(TRIAL_20)
 	return {}
 
 static func label(id: String) -> String:
+	if id==FROST: return "Trial 20 + Frost"
 	return "Trial 20" if id==CANDIDATE else "Original"
 
 static func preset_id(config: Dictionary) -> String:

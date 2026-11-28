@@ -22,7 +22,7 @@ func load_settings() -> void:
 	damage_numbers=cfg.get_value("visual","damage_numbers",true)==true
 	monitor=cfg.get_value("visual","monitor",false)==true
 	var saved_preset: Variant=cfg.get_value("playtest","balance_preset",Balance.CANDIDATE)
-	balance_preset=Balance.ORIGINAL if saved_preset==Balance.ORIGINAL else Balance.CANDIDATE
+	balance_preset=str(saved_preset) if saved_preset in Balance.PRESETS else Balance.CANDIDATE
 
 func save_settings() -> Error:
 	if not persist: return OK

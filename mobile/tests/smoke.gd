@@ -90,6 +90,7 @@ func _initialize() -> void:
 	_test_world(p)
 	_test_sites(p)
 	_test_abilities(p)
+	_test_frost(p)
 	_test_upgrades(p)
 	_test_enemies(p)
 	_test_combat_metrics(p)
@@ -478,3 +479,45 @@ func _test_directional(library: Sprites) -> void:
 			library.pose_texture(p,1,direction,true)
 			check(library.pose_cache.size()<=library.MAX_POSES,"Directional cache bounded")
 	print("Directional sprite checks complete: %d phenotype groups" % variants.size())
+
+func _test_frost(base: Dictionary) -> void:
+	var p := base.duplicate(true)
+	p.affinity="ice"
+	p.mutation="none"
+	p.passives=[]
+	var old := RunModel.new(p,false,1,7,RunModel.Balance.TRIAL_20)
+	var frost := RunModel.new(p,false,1,7,RunModel.Balance.TRIAL_20,true)
+	check(old.kit.special.radius==86.0 and frost.kit.special.radius==108.0,"Frost radius isolated from reference")
+	frost._spawn(3)
+	var dragon: Dictionary=frost.enemies[0]
+	dragon.pos=Vector2(100,0)
+	dragon.hp=10000.0
+	dragon.chill=2.0
+	var before: float=dragon.hp
+	frost._cast_special()
+	check(absf(before-float(dragon.hp)-frost.effective_damage()*3.1)<0.001,"Chilled boss shatter at expanded radius")
+	check(dragon.chill==0 and dragon.freeze>0 and dragon.freeze<=0.35 and frost.frost_shatters==1,"Shatter consumes chill; boss resistance retained")
+	frost.enemies.clear()
+	frost._spawn(0)
+	var e: Dictionary=frost.enemies[0]
+	e.pos=Vector2(15,0)
+	e.hp=10000.0
+	for i in range(2):
+		check(frost._cast_basic(),"Frost fires")
+		var shot: Dictionary=frost.shots.back()
+		shot.pos=e.pos
+		shot.vel=Vector2.ZERO
+		before=e.hp
+		frost._update_shots(0.01)
+		check(absf(before-float(e.hp)-float(shot.damage)*(1.25 if i==1 else 1.0))<0.001,"Chilled followup bonus only")
+	check(frost.frost_bonus_hits==1,"Bonus telemetry counts distinct hits")
+	frost.enemies.clear()
+	frost.shots.clear()
+	for pos in [Vector2(0,18),Vector2(35,0),Vector2(60,0),Vector2(85,0)]:
+		frost._spawn(0)
+		frost.enemies.back().pos=pos
+	check(frost._cast_basic() and frost.last_basic_direction.dot(Vector2.RIGHT)>0.99,"Frost chooses aligned group over isolated nearest")
+	p.affinity="fire"
+	check(Abilities.compile(p,true)==Abilities.compile(p,false),"Fire mechanics unchanged")
+	p.affinity="steam"
+	check(Abilities.compile(p,true)==Abilities.compile(p,false),"Steam mechanics unchanged")

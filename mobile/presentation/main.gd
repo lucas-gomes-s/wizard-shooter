@@ -916,14 +916,14 @@ func _toggle_music() -> void:
 
 func _cycle_balance() -> void:
 	if screen!="academy" and not (screen=="settings" and settings_origin=="title" and run==null): return
-	settings.balance_preset=Balance.ORIGINAL if settings.balance_preset==Balance.CANDIDATE else Balance.CANDIDATE
+	settings.balance_preset=Balance.PRESETS[(Balance.PRESETS.find(settings.balance_preset)+1)%Balance.PRESETS.size()]
 	var error := settings.save_settings()
 	if screen=="settings":
 		_refresh_settings()
-		settings_notice.text="Finite expeditions only. Endless stays original." if error==OK else "Preset active; could not save preference."
+		settings_notice.text="Frost changes Ice only. Endless stays original." if error==OK else "Preset active; could not save preference."
 	else:
 		_refresh_academy()
-		status_label.text="Finite expeditions only." if error==OK else "Preset active; could not save preference."
+		status_label.text="Frost changes Ice only. Endless original." if error==OK else "Preset active; could not save preference."
 	queue_redraw()
 
 func _cycle_difficulty() -> void:
@@ -939,7 +939,7 @@ func _start(endless: bool) -> void:
 		_show_academy()
 		return
 	var preset := Balance.ORIGINAL if endless else settings.balance_preset
-	run = RunModel.new(active.phenotype, endless, difficulty, 1000 + run_id, Balance.preset(preset))
+	run = RunModel.new(active.phenotype, endless, difficulty, 1000 + run_id, Balance.preset(preset),preset==Balance.FROST)
 	result_before.clear()
 	result_reward.clear()
 	profiler.reset()

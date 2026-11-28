@@ -60,6 +60,8 @@ func _test() -> void:
 	app._toggle_visual("fps")
 	check(app.settings.balance_preset=="trial20-short","Candidate is initial finite playtest preference")
 	app._cycle_balance()
+	check(app.settings.balance_preset=="trial20-frost","Frost experiment selectable")
+	app._cycle_balance()
 	check(app.settings.balance_preset=="original","Original comparison selectable")
 	app._cycle_balance()
 	app._open_backup()
@@ -135,7 +137,9 @@ func _test() -> void:
 	await process_frame
 	check(app.screen=="run" and not app.title_panel.visible and app.special_button.visible,"Quick expedition navigation")
 	check(app.run.balance==app.Balance.TRIAL_20,"Finite run receives selected preset")
-	var run_start: Dictionary=app.playtest.events.back().data
+	var run_start: Dictionary={}
+	for event in app.playtest.events:
+		if event.type=="run_start": run_start=event.data
 	check(run_start.get("balance_preset")=="trial20-short" and run_start.get("balance")==app.run.balance,"Journal records actual balance")
 	app.walk_facing="west"
 	app._update_motion_art(app.run.player,1.0/60.0)
@@ -288,8 +292,12 @@ func _test() -> void:
 	app._extract()
 	check(app.screen=="result" and app.run.outcome=="Extracted" and app.result_reward.newcomer.is_empty(),"Extraction rewards without victory founder")
 	app._show_academy()
+	app._cycle_balance()
+	app._start(false)
+	check(app.run.frost_rules and app.run.balance==app.Balance.TRIAL_20,"Frost run uses candidate numeric parameters and revised rules")
+	app._show_academy()
 	app._start(true)
-	check(app.run.balance==app.Balance.DEFAULTS,"Endless keeps original unoptimized balance")
+	check(app.run.balance==app.Balance.DEFAULTS and not app.run.frost_rules,"Endless keeps original unoptimized balance")
 	app.queue_free()
 	await process_frame
 	print("Fantasy UI navigation: %d failures" % failures)

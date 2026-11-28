@@ -91,15 +91,19 @@ var hit_fx: Array[Dictionary] = []
 const MAX_HIT_FX := 40
 var player_hit_fx := 0.0
 var balance: Dictionary
+var frost_rules := false
+var frost_bonus_hits := 0
+var frost_shatters := 0
 var first_upgrade_time := -1.0
 var level_times: Array[float] = []
 var boss_spawn_time := -1.0
 
-func _init(p: Dictionary, is_endless: bool, level: int, seed: int, parameters: Dictionary = {}) -> void:
+func _init(p: Dictionary, is_endless: bool, level: int, seed: int, parameters: Dictionary = {}, use_frost_rules: bool = false) -> void:
+	frost_rules=use_frost_rules
 	balance = Balance.validated(parameters)
 	assert(not balance.is_empty(), "Invalid balance parameters")
 	phenotype = p.duplicate(true)
-	kit = Abilities.compile(phenotype)
+	kit = Abilities.compile(phenotype,frost_rules)
 	rng = Genetics.SeededRandom.new(seed)
 	upgrade_rng = Genetics.SeededRandom.new(seed + 937621)
 	world_seed = seed
@@ -456,13 +460,49 @@ func _cast_basic() -> bool:
 			target = e
 	if target.is_empty(): return false
 	var direction := player.direction_to(target.pos)
+	if frost_rules and phenotype.affinity=="ice": direction=_frost_aim(target,spec)
 	if direction == Vector2.ZERO: direction = Vector2.UP
 	shots.append({"pos":player,"vel":direction * float(spec.speed),"life":float(spec.life),
 		"damage":effective_damage() * float(spec.power),"pierce":int(spec.pierce),"hit":{},
-		"effects":spec.effects.duplicate(true),"affinity":phenotype.affinity})
+		"effects":spec.effects.duplicate(true),"affinity":phenotype.affinity,
+		"hit_padding":float(spec.get("hit_padding",3.0)),"chilled_bonus":float(spec.get("chilled_bonus",0.0))})
 	last_basic_direction = direction
 	basic_casts += 1
 	return true
+
+# Consider at most six nearby directions, only preferring a line when it
+# can hit more enemies than the nearest-target shot. No new RNG draws.
+func _frost_aim(nearest: Dictionary,spec: Dictionary) -> Vector2:
+	var direction := player.direction_to(nearest.pos)
+	if direction.is_zero_approx(): return Vector2.UP
+	var reach := minf(float(spec.speed)*float(spec.life),float(spec.range)+40.0)
+	var best := _frost_line_hits(direction,reach,int(spec.pierce)+1)
+	var cutoff := minf(float(spec.range),player.distance_to(nearest.pos)+70.0)
+	var tried := 1
+	for e in enemies:
+		if tried>=6 or best>=int(spec.pierce)+1: break
+		if e.hp<=0 or e.uid==nearest.uid or player.distance_to(e.pos)>cutoff: continue
+		if not World.line_clear(world_seed,player,e.pos,2.0): continue
+		var other := player.direction_to(e.pos)
+		if other.is_zero_approx(): continue
+		tried+=1
+		var hits := _frost_line_hits(other,reach,int(spec.pierce)+1)
+		if hits>best:
+			best=hits
+			direction=other
+	return direction
+
+func _frost_line_hits(direction: Vector2,reach: float,limit: int) -> int:
+	var hits := 0
+	for e in enemies:
+		if e.hp<=0: continue
+		var offset: Vector2=e.pos-player
+		var along := offset.dot(direction)
+		if along<0 or along>reach or absf(offset.cross(direction))>float(e.radius)+5.0: continue
+		if not World.line_clear(world_seed,player,player+direction*along,2.0): continue
+		hits+=1
+		if hits>=limit: break
+	return hits
 
 func _cast_special() -> void:
 	var spec: Dictionary = kit.special
@@ -498,6 +538,7 @@ func _apply_effects(enemy: Dictionary, effects: Array, source_damage: float) -> 
 				enemy.freeze = maxf(float(enemy.get("freeze", 0.0)), duration)
 			"shatter":
 				if float(enemy.get("chill", 0.0)) > 0:
+					if frost_rules: frost_shatters+=1
 					_damage_enemy(enemy, source_damage * float(effect.power), "ice")
 					enemy.chill = 0.0
 					_flash(enemy.pos, 19.0, "ice")
@@ -513,9 +554,14 @@ func _update_shots(dt: float) -> void:
 			continue
 		for enemy in enemies:
 			if enemy.hp <= 0 or shot.hit.has(enemy.uid): continue
-			if shot.pos.distance_to(enemy.pos) > float(enemy.radius) + 3.0: continue
+			if shot.pos.distance_to(enemy.pos) > float(enemy.radius) + float(shot.get("hit_padding",3.0)): continue
 			shot.hit[enemy.uid] = true
-			_damage_enemy(enemy, float(shot.damage), str(shot.affinity))
+			var amount := float(shot.damage)
+			var bonus := float(shot.get("chilled_bonus",0.0))
+			if bonus>0 and float(enemy.get("chill",0.0))>0:
+				amount*=1.0+bonus
+				frost_bonus_hits+=1
+			_damage_enemy(enemy, amount, str(shot.affinity))
 			_apply_effects(enemy, shot.effects, float(shot.damage))
 			if int(shot.pierce) <= 0:
 				shot.life = 0.0
