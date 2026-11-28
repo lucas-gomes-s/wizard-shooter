@@ -143,15 +143,15 @@ static func steering(run: Variant,strategy: String,previous: Vector2,rng: Varian
 	var best := -INF
 	var preferred_risk := INF
 	var chosen_risk := INF
-	for angle in ANGLES+[0.0]:
-		# Last candidate is stationary; no simulated lookahead or future state.
-		var index_is_stop := angle==0.0 and preferred_risk!=INF
-		var direction := Vector2.ZERO if index_is_stop else desired.rotated(float(angle))
+	for i in range(ANGLES.size()+1):
+		# Last candidate is stationary, even when the preferred path is blocked.
+		var index_is_stop: bool=i==ANGLES.size()
+		var direction := Vector2.ZERO if index_is_stop else desired.rotated(float(ANGLES[i]))
 		var point := pos+direction*travel
 		if run.trial_index>=0 and point.distance_to(run.trial_center)>Model.Trials.RADIUS: continue
 		if not World.line_clear(run.world_seed,pos,point,Model.PLAYER_RADIUS): continue
 		var risk := danger(run,point,near)
-		if angle==0.0 and not index_is_stop: preferred_risk=risk
+		if i==0: preferred_risk=risk
 		var score := direction.dot(desired)*1.5-risk
 		if not objective.is_empty():
 			var old := absf(pos.distance_to(objective.pos)-float(objective.range))
