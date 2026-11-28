@@ -1,0 +1,13 @@
+import * as config from '../js/data.js';
+import {environments,environmentConfig} from '../js/environments.js';
+import {benchmark} from '../js/balance-bot.js';
+import {writeFileSync} from 'node:fs';
+const [secondsArg='600',seedsArg='2',output='']=process.argv.slice(2);
+const seconds=Number(secondsArg),n=Number(seedsArg);
+if(!Number.isInteger(seconds)||seconds<1||seconds>3600||!Number.isInteger(n)||n<1||n>100)throw Error('Usage: npm run balance:environments -- [seconds 1..3600] [seeds per school 1..100] [output.json]');
+const seeds=Array.from({length:n},(_,i)=>i+1);
+const results=environments.flatMap(e=>benchmark(environmentConfig(config,e.id),{seconds,seeds,decisionTicks:5}).map(r=>({...r,environment:e.id})));
+const summary=environments.map(e=>{const rows=results.filter(r=>r.environment===e.id);return {id:e.id,n:rows.length,survived:rows.filter(r=>r.seconds>=seconds).length,wins:rows.filter(r=>r.phase==='victory').length,meanLevel:rows.reduce((s,r)=>s+r.level,0)/rows.length,meanKills:rows.reduce((s,r)=>s+r.kills,0)/rows.length,hazardDamage:rows.reduce((s,r)=>s+(r.telemetry.incomingBySource['hazard:'+e.hazard?.type]?.applied||0),0)}});
+console.table(summary);
+const report={seconds,seeds,summary,results};
+if(output)writeFileSync(output,JSON.stringify(report,null,2)+'\n');else console.log(JSON.stringify(report,null,2));

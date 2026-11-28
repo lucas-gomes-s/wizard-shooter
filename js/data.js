@@ -28,7 +28,7 @@ export const skills = [
     status: "maxSpeed",
     modifier: 1,
     maxLevel: 5,
-    img: "./images/skills/nimbleFeet.png"
+    img: "./images/beta/speed.svg"
     },
     {name: "Dragon Scales",
     description1: "I've got thick skin and an elastic heart!",
@@ -36,7 +36,7 @@ export const skills = [
     status: "maxHealth",
     modifier: 20,
     maxLevel: 20,
-    img: "./images/skills/dragonScales.png"
+    img: "./images/beta/health.svg"
     },
     {name: "Necronomicon",
     description1: "Give up a little Sanity, gain more power!",
@@ -44,7 +44,7 @@ export const skills = [
     status: "shotDmg",
     modifier: 10,
     maxLevel: 20,
-    img: "./images/skills/necronomicon.jpg"
+    img: "./images/beta/damage.svg"
     },
     {name: "Who is Rambo?",
     description1: "No, really, who is this guy?!",
@@ -52,7 +52,7 @@ export const skills = [
     status: "shotCd",
     modifier: -5,
     maxLevel: 10,
-    img: "./images/skills/machineGun.png"
+    img: "./images/beta/casting.svg"
     }
 ]
 
@@ -107,124 +107,124 @@ export const gameOverPhrases  = [
 export const monsters = [
     {name : "Spider",
     imageSrc : "./images/enemies/spider.png",   
-    maxSpeed: 5,
+    maxSpeed: 2.3,
     width: 20,
     height: 20,
     health:10,
     maxHealth: 10,
-    damage:10,
-    expGiven: 1,
-    startMinute: 4,
-    spawn: 50,
+    damage:5,
+    expGiven: 2,
+    startMinute: 0.33,
+    spawn: 180,
     cooldown: 0
     },
 
     {name : "Goblin",
     imageSrc : "./images/enemies/goblin.png",   
-    maxSpeed: 2,
+    maxSpeed: 1.4,
     width: 30,
     height: 30,
-    health:20,
-    maxHealth: 20,
-    damage:10,
-    expGiven: 1,
+    health:10,
+    maxHealth: 10,
+    damage:5,
+    expGiven: 2,
     startMinute: 0,
-    spawn: 100,
+    spawn: 85,
     cooldown: 0
     },
 
     {name : "Orc",
     imageSrc : "./images/enemies/orc.png",   
-    maxSpeed: 4,
+    maxSpeed: 3,
     width: 40,
     height: 40,
-    health:140,
-    maxHealth: 140,
-    damage:20,
+    health:55,
+    maxHealth: 55,
+    damage:13,
     expGiven: 7,
-    startMinute: 1,
-    spawn: 300,
+    startMinute: 0.75,
+    spawn: 350,
     cooldown: 0
     },
 
     {name : "Zombie",
     imageSrc : "./images/enemies/zombie.png",   
-    maxSpeed: 2,
+    maxSpeed: 1.8,
     width: 40,
     height: 40,
-    health:300,
-    maxHealth: 300,
-    damage:30,
-    expGiven: 15,
-    startMinute: 5,
-    spawn: 200,
+    health:100,
+    maxHealth: 100,
+    damage:15,
+    expGiven: 12,
+    startMinute: 2.5,
+    spawn: 300,
     cooldown: 0
     },    
     
     {name : "Knight",
     imageSrc : "./images/enemies/knight.png",   
-    maxSpeed: 5,
+    maxSpeed: 2.7,
     width: 40,
     height: 40,
-    health:400,
-    maxHealth: 400,
-    damage:50,
-    expGiven: 25,
-    startMinute: 7,
-    spawn: 400,
+    health:150,
+    maxHealth: 150,
+    damage:19,
+    expGiven: 22,
+    startMinute: 5,
+    spawn: 470,
     cooldown: 0
     },    
     
     {name : "Vampire",
     imageSrc : "./images/enemies/vampire.png",   
-    maxSpeed: 6,
+    maxSpeed: 3.4,
     width: 40,
     height: 40,
-    health:300,
-    maxHealth: 300,
-    damage:30,
-    expGiven: 50,
-    startMinute: 10,
-    spawn: 100,
+    health:190,
+    maxHealth: 190,
+    damage:18,
+    expGiven: 30,
+    startMinute: 8,
+    spawn: 390,
     cooldown: 0
     },    
     
     {name : "Reaper",
     imageSrc : "./images/enemies/reaper.png",   
-    maxSpeed: 7,
+    maxSpeed: 3.7,
     width: 50,
     height: 50,
-    health:500,
-    maxHealth: 500,
-    damage:100,
-    expGiven: 100,
-    startMinute: 15,
-    spawn: 200,
+    health:280,
+    maxHealth: 280,
+    damage:30,
+    expGiven: 50,
+    startMinute: 12,
+    spawn: 480,
     cooldown: 0
     },    
     
     {name : "Demon",
     imageSrc : "./images/enemies/demon.png",   
-    maxSpeed: 8,
+    maxSpeed: 3.7,
     width: 50,
     height: 50,
-    health:1000,
-    maxHealth: 1000,
-    damage:50,
-    expGiven: 300,
-    startMinute: 20,
-    spawn: 200,
+    health:390,
+    maxHealth: 390,
+    damage:28,
+    expGiven: 80,
+    startMinute: 16,
+    spawn: 450,
     cooldown: 0
     },    
     
     {name : "Dragon",
     imageSrc : "./images/enemies/dragon.png",   
-    maxSpeed: 5,
+    maxSpeed: 4,
     width: 100,
     height: 100,
-    health:10000,
-    maxHealth: 10000,
-    damage:3000,
+    health:18000,
+    maxHealth: 18000,
+    damage:75,
     expGiven: 2000,
     startMinute: 25,
     spawn: 2000,
@@ -241,7 +241,7 @@ export const potionInfo = [
     startMinute: 0,
     cooldown: 1,
     fade: 1000,
-    imageSrc: "./images/potions/potion.png"},
+    imageSrc: "./images/beta/potion-minor.svg"},
 
     {type: "HP Potion",
     recovery: 0.25,
@@ -251,7 +251,7 @@ export const potionInfo = [
     startMinute: 10,
     fade: 1000,
     cooldown: 1,
-    imageSrc: "./images/potions/midPotion.png"},
+    imageSrc: "./images/beta/potion-medium.svg"},
 
     {type: "Great HP Potion",
     recovery: 0.5,
@@ -261,6 +261,18 @@ export const potionInfo = [
     startMinute: 20,
     fade: 1000,
     cooldown: 1,
-    imageSrc: "./images/potions/highPotion.png"}
+    imageSrc: "./images/beta/potion-great.svg"}
 
 ]
+// Encounters are scheduled by elapsed time, never by current player power.
+export const minibosses=[
+ {minute:5,name:'Orc',title:'The Iron Warlord',health:320,damage:20,xp:55},
+ {minute:10,name:'Knight',title:'The Hollow Sentinel',health:680,damage:30,xp:145},
+ {minute:15,name:'Reaper',title:'The Pale Harvester',health:1250,damage:38,xp:330},
+ {minute:20,name:'Demon',title:'The Ash Tyrant',health:2000,damage:42,xp:650}
+];
+export const balanceSettings={eliteStart:180,eliteEvery:12,spawnRampPerMinute:.018,minSpawnFactor:.65};
+
+// v1.17 candidate selected from matched-seed full-build experiments.
+// Override with {} to reproduce the v1.16 combat rules.
+export const combatBalance=Object.freeze({demonShotMultiplier:.50,demonWindup:55,reaperRecovery:25,nonNecroHeal:.35});

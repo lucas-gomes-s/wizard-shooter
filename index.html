@@ -1,45 +1,88 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <title>Wizard Shooter</title>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-        <link rel="stylesheet" href="./styles/style.css" />       
-    </head>
-    <body>
-        <div id="titleImage">
-            <img id= "title" src = "./images/title.png">
-        </div>
-        <div id="startDiv">
-            <button id="startButton">Start Game</button>
-        </div>
-        <div id="content">
-            <div id = "intro">               
-                <h3>After an insane night-out you wake up in an unfamiliar dungeon.</h3> 
-                <h3>Those monsters over there don't look too friendly.</h3> 
-                <h3>Try and Survive!</h3>            
-            </div>
-            <canvas id="gameArea" width="600" height="600"></canvas>
-            <div id="instructionsContainer">    
-                <h2>Instructions</h2>
-                <div id="instructions"> 
-                    <div id="move" class = "instructions-info">
-                        <img id="wasd" src="./images/wasd.png">
-                        <p class = "instructions-p">Move</p>
-                    </div>
-                    <div id="shoot" class = "instructions-info">
-                        <img id="directional" src="./images/directionalKeys.png">
-                        <p class = "instructions-p">Shoot</p>
-                    </div>
-                </div>
-                <div class = "instructions-info">
-                    <img id="qKey" src="./images/q.png">
-                    <p class = "instructions-p">Hold: HP bars / Confirm skill</p>
-                </div>
-            </div>
-        </div>
-
-        <script type="module" src="./js/index.js"></script>
-    </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101018">
+  <title>Wizard Shooter | Reforged</title>
+  <link rel="stylesheet" href="./styles/style.css">
+</head>
+<body>
+  <main class="game-shell" id="gameShell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">✦</span><div><h1>Wizard Shooter</h1><span class="eyebrow edition" id="biomeName">The Forgotten Crypt</span></div></div>
+      <div class="header-actions"><button id="betaReport" type="button" class="quiet">Report issue</button>
+        <details class="audio-menu"><summary class="quiet">Audio</summary><div class="audio-controls"><button id="muteAudio" type="button" class="quiet" aria-pressed="false">Sound on</button><label>Effects <input id="sfxVolume" type="range" min="0" max="100" value="55" aria-label="Sound effects volume"></label><label>Music <input id="musicVolume" type="range" min="0" max="100" value="25" aria-label="Music volume"></label><small id="audioStatus"></small></div></details>
+        <label class="toggle">Effects <select id="effectsMode" aria-label="Combat effects intensity"><option value="off">Off</option><option value="reduced">Reduced</option><option value="full" selected>Full</option></select></label>
+        <button id="pauseButton" class="quiet" type="button" disabled>Pause <kbd>Esc</kbd></button>
+        <button id="fullscreenButton" class="quiet" type="button" hidden>Full screen</button>
+      </div>
+    </header>
+    <section class="hud" aria-label="Run statistics">
+      <div class="meter health"><div class="meter-label"><span>Vitality</span><strong id="healthText">100 / 100</strong></div><div id="healthMeter" class="track" role="progressbar" aria-label="Health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><i></i></div></div>
+      <div class="run-time"><span class="eyebrow">Survived</span><strong id="timer">00:00</strong><div class="journey-track" aria-hidden="true"><i id="runProgress"></i></div><span id="nextEncounter" class="next-encounter">Next guardian 05:00</span></div>
+      <div class="kill-count"><span class="eyebrow">Kills</span><strong id="kills">0</strong></div>
+      <div class="meter experience"><div class="meter-label"><span>Level <strong id="level">1</strong></span><strong id="xpText">0 / 5 XP</strong></div><div id="xpMeter" class="track" role="progressbar" aria-label="Experience" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div></div>
+    </section>
+    <div id="spellBuild" class="spell-build" aria-label="Current spell build"></div>
+    <div class="gear-row"><div id="equipmentBuild" class="equipment-build" aria-label="Current equipment"></div><div class="active-bar"><strong id="goldText">0 gold</strong><span id="bootsActive"></span><span id="relicActive"></span></div></div>
+    <section id="arena" class="arena" aria-label="Dungeon arena">
+      <canvas id="gameArea" tabindex="0" aria-label="Game arena. WASD to move, arrow keys to shoot."></canvas>
+      <div class="vignette" aria-hidden="true"></div>
+      <div id="bossHud" class="boss-hud" hidden><div class="meter-label"><strong id="bossName"></strong><strong id="bossHealth"></strong></div><div id="bossMeter" class="track" role="progressbar" aria-label="Dragon health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><i></i></div></div>
+      <div id="eventHud" class="event-hud" hidden><strong id="eventTitle"></strong><span id="eventObjective"></span></div>
+      <div id="merchantHint" class="merchant-hint"></div>
+      <div id="treasureHint" class="treasure-hint" aria-live="polite"></div>
+      <div id="overlay" class="overlay">
+        <section id="homePanel" class="panel home" aria-labelledby="homeTitle">
+          <div class="sigil" aria-hidden="true"><img id="titleWizard" alt=""></div>
+          <p class="eyebrow accent">A dungeon survival roguelite</p>
+          <h2 id="homeTitle">The dungeon awaits.</h2>
+          <p>Descend into the forgotten realms. Master your magic, recover ancient relics and survive until the dragon awakens.</p>
+          <p class="eyebrow accent">Choose your starting school</p><p class="small">Your primary school defines your build. A second school unlocks at level 10. Maximum two schools per run, or exclusive mastery at level 15 and rank V.</p>
+          <div id="starterCards" class="starter-cards" role="group" aria-label="Starting magic school"></div>
+          <div class="profile-options"><label>Dungeon <select id="environmentSelect" aria-label="Dungeon environment"></select></label><p id="environmentDescription" class="small"></p><label>Expedition <select id="contractSelect" aria-label="Expedition contract"></select></label><label>Wizard sigil <select id="sigilSelect" aria-label="Wizard sigil"></select></label><p id="contractDescription" class="small"></p></div><button id="startButton" class="primary" type="button" disabled>Loading assets…</button>
+          <button id="profileButton" class="quiet" type="button">Profile &amp; codex</button><p id="profileSummary" class="small"></p><p id="assetStatus" class="small">Prepare your spells.</p>
+          <div class="control-hint"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Move</span><span><kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd> Cast</span></div>
+        </section>
+        <section id="profilePanel" class="panel profile-panel" aria-labelledby="profileTitle" hidden><p class="eyebrow accent">The wizard chronicles</p><h2 id="profileTitle">Profile &amp; codex</h2><p id="profileStats"></p><p id="profileStorage" class="small"></p><div id="codexEntries" class="codex-grid"></div><button id="profileBack" type="button" class="primary">Return to title</button></section>
+        <section id="pausePanel" class="panel" aria-labelledby="pauseTitle" hidden>
+          <p class="eyebrow accent">Run suspended</p><h2 id="pauseTitle">Paused</h2><p>Time stands still in the dungeon.</p>
+          <div class="menu-buttons"><button id="resumeButton" class="primary" type="button">Resume run</button><button id="restartButton" class="quiet" type="button">Start a new run</button><button id="quitButton" class="quiet" type="button">Return to title</button></div>
+          <p id="pauseHint" class="small">Escape to resume.</p>
+        </section>
+        <section id="confirmPanel" class="panel" aria-labelledby="confirmTitle" hidden>
+          <p class="eyebrow accent">Leave current run?</p><h2 id="confirmTitle">Abandon this run?</h2><p>Your current expedition ends. Discovered items and achievements are recorded in your chronicles.</p>
+          <div class="menu-buttons"><button id="confirmButton" class="primary" type="button">Confirm</button><button id="cancelButton" class="quiet" type="button">Keep playing</button></div>
+        </section>
+        <section id="upgradePanel" class="panel upgrade-panel" aria-labelledby="upgradeTitle" hidden>
+          <p class="eyebrow accent" id="upgradeLevel">Level 2 reached</p><h2 id="upgradeTitle">Choose your power.</h2><p id="upgradeHint">Master your primary school. Secondary school unlocks at level 10.</p>
+          <div id="upgradeCards" class="upgrade-cards" role="group" aria-label="Available upgrades"></div>
+          <p class="small">← / → to select · Q or Enter to confirm · Click a card to choose</p>
+        </section>
+        <section id="lootPanel" class="panel upgrade-panel" aria-labelledby="lootTitle" hidden>
+          <p class="eyebrow accent">Equipment recovered</p><h2 id="lootTitle">Treasure recovered</h2><p>Choose one item. A new item replaces equipment in the same slot. You can also leave the treasure.</p>
+          <div id="lootCards" class="upgrade-cards"></div><button id="skipLoot" type="button" class="quiet">Keep current equipment</button>
+        </section>
+        <section id="shopPanel" class="panel upgrade-panel" aria-labelledby="shopTitle" hidden><p class="eyebrow accent">Traveling merchant</p><h2 id="shopTitle">Choose your bargain</h2><p id="shopGold"></p><p>Buy one item or healing draught, or save your gold.</p><div id="shopCards" class="upgrade-cards shop-cards"></div><button id="skipShop" class="quiet" type="button">Leave merchant</button></section>
+        <section id="victoryPanel" class="panel" aria-labelledby="victoryTitle" hidden>
+          <p class="eyebrow accent">Dungeon conquered</p><h2 id="victoryTitle">The dragon falls.</h2><p>You defeated the dungeon's dragon. Leave victorious or test your build against an endless dungeon.</p>
+          <div class="result-stats"><div><span>Victory time</span><strong id="victoryTime">00:00</strong></div><div><span>Monsters slain</span><strong id="victoryKills">0</strong></div></div>
+          <p id="victoryUnlocks" class="unlock-notice"></p><div class="menu-buttons"><button id="endlessButton" class="primary" type="button">Continue endless</button><button id="victoryTitleButton" class="quiet" type="button">Return to title</button></div>
+        </section>
+        <section id="resultPanel" class="panel result-panel" aria-labelledby="resultTitle" hidden>
+          <p class="eyebrow accent">Run ended</p><h2 id="resultTitle">The dungeon wins.</h2>
+          <div class="result-stats"><div><span>Survived</span><strong id="resultTime">00:00</strong></div><div><span>Level</span><strong id="resultLevel">1</strong></div><div><span>Monsters slain</span><strong id="resultKills">0</strong></div></div>
+          <p id="resultUnlocks" class="unlock-notice"></p><p id="combatReport" class="small combat-report"></p><div id="resultSkills" class="result-skills"></div>
+          <blockquote id="deathPhrase"></blockquote>
+          <div class="menu-buttons"><button id="retryButton" class="primary" type="button">Try again</button><button id="titleButton" class="quiet" type="button">Return to title</button></div>
+        </section>
+      </div>
+    </section>
+    <footer class="footer"><span><kbd>WASD</kbd> Move</span><span><kbd>↑ ↓ ← →</kbd> Hold to cast</span><span><kbd>Q</kbd> Hold for HP bars</span><span><kbd>Space</kbd> Boots</span><span><kbd>E</kbd> Relic</span><span><kbd>Esc</kbd> Pause</span><span class="footer-note">Desktop keyboard game · <span id="betaVersion"></span></span></footer>
+    <section id="betaReportPanel" class="beta-report" hidden aria-label="Beta diagnostics"><h2>Beta diagnostics</h2><p>Copy this local report and send it with a description, reproduction steps and screenshot to the beta coordinator. Nothing is sent automatically.</p><textarea id="betaReportText" readonly rows="12" aria-label="Diagnostic JSON"></textarea><div class="header-actions"><button id="copyBetaReport" type="button">Copy report</button><button id="closeBetaReport" type="button">Close</button><span id="betaCopyStatus" role="status"></span></div></section>
+    <noscript>Enable JavaScript to play Wizard Shooter.</noscript>
+  </main>
+  <script type="module" src="./js/index.js"></script>
+</body>
 </html>

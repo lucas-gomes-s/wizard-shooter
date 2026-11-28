@@ -1,0 +1,7080 @@
+{
+  "seconds": 600,
+  "seeds": [
+    1,
+    2
+  ],
+  "summary": [
+    {
+      "id": "crypt",
+      "n": 10,
+      "survived": 9,
+      "meanLevel": 22.5,
+      "meanKills": 719.3,
+      "hazardDamage": 0
+    },
+    {
+      "id": "frost",
+      "n": 10,
+      "survived": 7,
+      "meanLevel": 22,
+      "meanKills": 707.3,
+      "hazardDamage": 64
+    },
+    {
+      "id": "forge",
+      "n": 10,
+      "survived": 8,
+      "meanLevel": 22.1,
+      "meanKills": 684.4,
+      "hazardDamage": 60
+    }
+  ],
+  "results": [
+    {
+      "school": "fire",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "firstUpgrade": 6.28,
+      "kills": 786,
+      "xp": 4369,
+      "health": 100,
+      "maxEnemies": 36,
+      "build": {
+        "fire": 5,
+        "ice": 0,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 5
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "thorns",
+        "boots": "runner",
+        "relic": "hourglass"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "thorns",
+          "tick": 8032,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "echo",
+          "tick": 11380,
+          "source": "Blood moon reward"
+        },
+        {
+          "id": "tonic",
+          "tick": 15119,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "hourglass",
+          "tick": 21038,
+          "source": "Dungeon treasure"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 11375,
+          "startedAt": 10677,
+          "progress": 20,
+          "goal": 19,
+          "hits": 0
+        },
+        {
+          "id": "collapse",
+          "outcome": "completed",
+          "tick": 27034,
+          "startedAt": 25534,
+          "progress": 0,
+          "goal": 3,
+          "hits": 1
+        }
+      ],
+      "gold": 256,
+      "marketHistory": [
+        {
+          "id": "runner",
+          "price": 90,
+          "tick": 18027
+        }
+      ],
+      "goldEarned": 346,
+      "goldSpent": 90,
+      "activeHistory": [
+        {
+          "id": "runner",
+          "tick": 20176
+        },
+        {
+          "id": "hourglass",
+          "tick": 21281
+        },
+        {
+          "id": "hourglass",
+          "tick": 22451
+        },
+        {
+          "id": "runner",
+          "tick": 23406
+        },
+        {
+          "id": "hourglass",
+          "tick": 23571
+        },
+        {
+          "id": "runner",
+          "tick": 24006
+        },
+        {
+          "id": "hourglass",
+          "tick": 24886
+        },
+        {
+          "id": "runner",
+          "tick": 25176
+        },
+        {
+          "id": "runner",
+          "tick": 25566
+        },
+        {
+          "id": "hourglass",
+          "tick": 25891
+        },
+        {
+          "id": "runner",
+          "tick": 26171
+        },
+        {
+          "id": "hourglass",
+          "tick": 26936
+        },
+        {
+          "id": "runner",
+          "tick": 27151
+        },
+        {
+          "id": "hourglass",
+          "tick": 28046
+        },
+        {
+          "id": "runner",
+          "tick": 28421
+        },
+        {
+          "id": "runner",
+          "tick": 28876
+        },
+        {
+          "id": "hourglass",
+          "tick": 29061
+        }
+      ],
+      "telemetry": {
+        "casts": 700,
+        "bolts": 2002,
+        "boltsHit": 869,
+        "directHits": 869,
+        "damage": 29157.100000000002,
+        "overkill": 23360.47500000002,
+        "damageBySource": {
+          "direct:fire": {
+            "effective": 21334.975000000024,
+            "overkill": 20207.300000000007,
+            "hits": 869
+          },
+          "fire:burn": {
+            "effective": 4612.375000000003,
+            "overkill": 1233.0750000000005,
+            "hits": 206
+          },
+          "fire:burst": {
+            "effective": 2874.7500000000005,
+            "overkill": 1820.1000000000004,
+            "hits": 196
+          },
+          "gear:thorns": {
+            "effective": 140,
+            "overkill": 100,
+            "hits": 8
+          },
+          "fusion:starfall": {
+            "effective": 195,
+            "overkill": 0,
+            "hits": 11
+          }
+        },
+        "incoming": 74,
+        "prevented": 102,
+        "incomingBySource": {
+          "contact:Goblin": {
+            "requested": 20,
+            "applied": 15,
+            "prevented": 5,
+            "hits": 4
+          },
+          "contact:Spider": {
+            "requested": 26,
+            "applied": 15,
+            "prevented": 11,
+            "hits": 5
+          },
+          "contact:Orc": {
+            "requested": 39,
+            "applied": 26,
+            "prevented": 13,
+            "hits": 3
+          },
+          "contact:Zombie": {
+            "requested": 30,
+            "applied": 0,
+            "prevented": 30,
+            "hits": 2
+          },
+          "contact:Knight": {
+            "requested": 43,
+            "applied": 0,
+            "prevented": 43,
+            "hits": 2
+          },
+          "hazard:rubble": {
+            "requested": 18,
+            "applied": 18,
+            "prevented": 0,
+            "hits": 1
+          }
+        },
+        "healing": 74,
+        "healingBySource": {
+          "level-up": 54,
+          "potion": 20
+        },
+        "selfDamage": 0,
+        "selfDamageBySource": {},
+        "windows": {
+          "0": {
+            "damage": 7566.100000000001,
+            "incoming": 56,
+            "healing": 56,
+            "casts": 325,
+            "bolts": 633,
+            "boltsHit": 298
+          },
+          "5": {
+            "damage": 21590.999999999996,
+            "incoming": 18,
+            "healing": 18,
+            "casts": 375,
+            "bolts": 1369,
+            "boltsHit": 571
+          }
+        },
+        "seconds": 600,
+        "dps": 48.59516666666667,
+        "accuracy": 0.4340659340659341,
+        "hitsPerCast": 1.2414285714285713
+      },
+      "environment": "crypt"
+    },
+    {
+      "school": "fire",
+      "seed": 2,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "firstUpgrade": 7.72,
+      "kills": 619,
+      "xp": 3920,
+      "health": 100,
+      "maxEnemies": 178,
+      "build": {
+        "fire": 1,
+        "ice": 5,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "bloodwood",
+        "robe": "phantom",
+        "boots": "escape",
+        "relic": "fang"
+      },
+      "chestsOpened": 4,
+      "lootHistory": [
+        {
+          "id": "quickwand",
+          "tick": 6048,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "phantom",
+          "tick": 11655,
+          "source": "Blood moon reward"
+        },
+        {
+          "id": "escape",
+          "tick": 21040,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "bloodwood",
+          "tick": 26933,
+          "source": "Magical anomaly reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 11647,
+          "startedAt": 10531,
+          "progress": 19,
+          "goal": 19,
+          "hits": 0
+        },
+        {
+          "id": "anomaly",
+          "outcome": "completed",
+          "tick": 26921,
+          "startedAt": 25531,
+          "progress": 3,
+          "goal": 3,
+          "hits": 0
+        }
+      ],
+      "gold": 233,
+      "marketHistory": [
+        {
+          "id": "fang",
+          "price": 45,
+          "tick": 18961
+        }
+      ],
+      "goldEarned": 278,
+      "goldSpent": 45,
+      "activeHistory": [
+        {
+          "id": "escape",
+          "tick": 21751
+        },
+        {
+          "id": "escape",
+          "tick": 22476
+        },
+        {
+          "id": "escape",
+          "tick": 23421
+        },
+        {
+          "id": "escape",
+          "tick": 24061
+        },
+        {
+          "id": "escape",
+          "tick": 25071
+        },
+        {
+          "id": "escape",
+          "tick": 25616
+        },
+        {
+          "id": "escape",
+          "tick": 26186
+        },
+        {
+          "id": "escape",
+          "tick": 26636
+        },
+        {
+          "id": "escape",
+          "tick": 27111
+        },
+        {
+          "id": "escape",
+          "tick": 28046
+        },
+        {
+          "id": "escape",
+          "tick": 29311
+        }
+      ],
+      "telemetry": {
+        "casts": 655,
+        "bolts": 655,
+        "boltsHit": 481,
+        "directHits": 649,
+        "damage": 26696,
+        "overkill": 48775.75,
+        "damageBySource": {
+          "direct:fire": {
+            "effective": 22329,
+            "overkill": 48210.75,
+            "hits": 649
+          },
+          "fire:burn": {
+            "effective": 4367,
+            "overkill": 565,
+            "hits": 186
+          }
+        },
+        "incoming": 239,
+        "prevented": 45,
+        "incomingBySource": {
+          "contact:Orc": {
+            "requested": 78,
+            "applied": 78,
+            "prevented": 0,
+            "hits": 6
+          },
+          "contact:Goblin": {
+            "requested": 86,
+            "applied": 71,
+            "prevented": 15,
+            "hits": 17
+          },
+          "contact:Zombie": {
+            "requested": 45,
+            "applied": 30,
+            "prevented": 15,
+            "hits": 3
+          },
+          "contact:Spider": {
+            "requested": 20,
+            "applied": 5,
+            "prevented": 15,
+            "hits": 4
+          },
+          "contact:Knight": {
+            "requested": 19,
+            "applied": 19,
+            "prevented": 0,
+            "hits": 1
+          },
+          "contact:Vampire": {
+            "requested": 36,
+            "applied": 36,
+            "prevented": 0,
+            "hits": 2
+          }
+        },
+        "healing": 269,
+        "healingBySource": {
+          "level-up": 153,
+          "potion": 30,
+          "gear:fang": 86
+        },
+        "selfDamage": 30,
+        "selfDamageBySource": {
+          "gear:bloodwood": 30
+        },
+        "windows": {
+          "0": {
+            "damage": 4739,
+            "incoming": 130,
+            "healing": 130,
+            "casts": 322,
+            "bolts": 322,
+            "boltsHit": 224
+          },
+          "5": {
+            "damage": 21957,
+            "incoming": 109,
+            "healing": 139,
+            "casts": 333,
+            "bolts": 333,
+            "boltsHit": 257
+          }
+        },
+        "seconds": 600,
+        "dps": 44.49333333333333,
+        "accuracy": 0.7343511450381679,
+        "hitsPerCast": 0.9908396946564886
+      },
+      "environment": "crypt"
+    },
+    {
+      "school": "ice",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "firstUpgrade": 6.28,
+      "kills": 780,
+      "xp": 4282,
+      "health": 80,
+      "maxEnemies": 59,
+      "build": {
+        "fire": 0,
+        "ice": 5,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "thorns",
+        "boots": "escape",
+        "relic": "hourglass"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "echo",
+          "tick": 6073,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "linen",
+          "tick": 11041,
+          "source": "Blood moon reward"
+        },
+        {
+          "id": "gambler",
+          "tick": 15878,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "thorns",
+          "tick": 21361,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "hourglass",
+          "tick": 26747,
+          "source": "Magical anomaly reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 11035,
+          "startedAt": 10531,
+          "progress": 19,
+          "goal": 19,
+          "hits": 0
+        },
+        {
+          "id": "anomaly",
+          "outcome": "completed",
+          "tick": 26741,
+          "startedAt": 26117,
+          "progress": 3,
+          "goal": 3,
+          "hits": 0
+        }
+      ],
+      "gold": 253,
+      "marketHistory": [
+        {
+          "id": "escape",
+          "price": 90,
+          "tick": 18586
+        }
+      ],
+      "goldEarned": 343,
+      "goldSpent": 90,
+      "activeHistory": [
+        {
+          "id": "escape",
+          "tick": 18611
+        },
+        {
+          "id": "escape",
+          "tick": 19966
+        },
+        {
+          "id": "escape",
+          "tick": 20731
+        },
+        {
+          "id": "escape",
+          "tick": 21361
+        },
+        {
+          "id": "escape",
+          "tick": 22231
+        },
+        {
+          "id": "escape",
+          "tick": 23281
+        },
+        {
+          "id": "escape",
+          "tick": 24466
+        },
+        {
+          "id": "escape",
+          "tick": 25691
+        },
+        {
+          "id": "escape",
+          "tick": 26141
+        },
+        {
+          "id": "escape",
+          "tick": 26661
+        },
+        {
+          "id": "hourglass",
+          "tick": 26851
+        },
+        {
+          "id": "escape",
+          "tick": 27221
+        },
+        {
+          "id": "escape",
+          "tick": 27671
+        },
+        {
+          "id": "hourglass",
+          "tick": 28161
+        },
+        {
+          "id": "escape",
+          "tick": 28256
+        },
+        {
+          "id": "escape",
+          "tick": 28741
+        },
+        {
+          "id": "hourglass",
+          "tick": 29386
+        },
+        {
+          "id": "escape",
+          "tick": 29641
+        }
+      ],
+      "telemetry": {
+        "casts": 670,
+        "bolts": 780,
+        "boltsHit": 512,
+        "directHits": 966,
+        "damage": 28799.999999999996,
+        "overkill": 55712.95999999999,
+        "damageBySource": {
+          "direct:ice": {
+            "effective": 28375.999999999996,
+            "overkill": 55421.95999999999,
+            "hits": 966
+          },
+          "gear:thorns": {
+            "effective": 424,
+            "overkill": 291,
+            "hits": 11
+          }
+        },
+        "incoming": 197.88000000000002,
+        "prevented": 73.12,
+        "incomingBySource": {
+          "contact:Goblin": {
+            "requested": 30,
+            "applied": 18.80000000000001,
+            "prevented": 11.2,
+            "hits": 6
+          },
+          "contact:Spider": {
+            "requested": 31,
+            "applied": 24.080000000000013,
+            "prevented": 6.919999999999999,
+            "hits": 6
+          },
+          "contact:Orc": {
+            "requested": 68,
+            "applied": 48.879999999999995,
+            "prevented": 19.12,
+            "hits": 5
+          },
+          "contact:Zombie": {
+            "requested": 105,
+            "applied": 71.4,
+            "prevented": 33.6,
+            "hits": 7
+          },
+          "contact:Knight": {
+            "requested": 19,
+            "applied": 16.72,
+            "prevented": 2.280000000000001,
+            "hits": 1
+          },
+          "contact:Vampire": {
+            "requested": 18,
+            "applied": 18,
+            "prevented": 0,
+            "hits": 1
+          }
+        },
+        "healing": 177.38000000000002,
+        "healingBySource": {
+          "potion": 41.616,
+          "level-up": 135.764
+        },
+        "selfDamage": 0,
+        "selfDamageBySource": {},
+        "windows": {
+          "0": {
+            "damage": 7301,
+            "incoming": 60.400000000000006,
+            "healing": 60.400000000000006,
+            "casts": 308,
+            "bolts": 345,
+            "boltsHit": 222
+          },
+          "5": {
+            "damage": 21499.000000000007,
+            "incoming": 137.48000000000002,
+            "healing": 116.98000000000002,
+            "casts": 362,
+            "bolts": 435,
+            "boltsHit": 290
+          }
+        },
+        "seconds": 600,
+        "dps": 47.99999999999999,
+        "accuracy": 0.6564102564102564,
+        "hitsPerCast": 1.4417910447761193
+      },
+      "environment": "crypt"
+    },
+    {
+      "school": "ice",
+      "seed": 2,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "firstUpgrade": 7.72,
+      "kills": 664,
+      "xp": 3960,
+      "health": 100,
+      "maxEnemies": 167,
+      "build": {
+        "fire": 0,
+        "ice": 5,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "phantom",
+        "boots": "runner",
+        "relic": "hourglass"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "runner",
+          "tick": 6923,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "hourglass",
+          "tick": 13551,
+          "source": "Cursed altar reward"
+        },
+        {
+          "id": "phantom",
+          "tick": 21038,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "echo",
+          "tick": 22471,
+          "source": "Guardian reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "altar",
+          "outcome": "completed",
+          "tick": 13541,
+          "startedAt": 12041,
+          "progress": 1500,
+          "goal": 1500,
+          "hits": 0
+        },
+        {
+          "id": "anomaly",
+          "outcome": "completed",
+          "tick": 26273,
+          "startedAt": 25529,
+          "progress": 3,
+          "goal": 3,
+          "hits": 0
+        }
+      ],
+      "gold": 259,
+      "marketHistory": [
+        {
+          "id": "heal",
+          "price": 35,
+          "tick": 18755
+        }
+      ],
+      "goldEarned": 294,
+      "goldSpent": 35,
+      "activeHistory": [
+        {
+          "id": "runner",
+          "tick": 9336
+        },
+        {
+          "id": "runner",
+          "tick": 9916
+        },
+        {
+          "id": "runner",
+          "tick": 10526
+        },
+        {
+          "id": "runner",
+          "tick": 10966
+        },
+        {
+          "id": "runner",
+          "tick": 11966
+        },
+        {
+          "id": "runner",
+          "tick": 12606
+        },
+        {
+          "id": "runner",
+          "tick": 12966
+        },
+        {
+          "id": "runner",
+          "tick": 13481
+        },
+        {
+          "id": "hourglass",
+          "tick": 13596
+        },
+        {
+          "id": "runner",
+          "tick": 14011
+        },
+        {
+          "id": "hourglass",
+          "tick": 14606
+        },
+        {
+          "id": "runner",
+          "tick": 14966
+        },
+        {
+          "id": "runner",
+          "tick": 15401
+        },
+        {
+          "id": "hourglass",
+          "tick": 15606
+        },
+        {
+          "id": "runner",
+          "tick": 16406
+        },
+        {
+          "id": "hourglass",
+          "tick": 16606
+        },
+        {
+          "id": "runner",
+          "tick": 16776
+        },
+        {
+          "id": "runner",
+          "tick": 17376
+        },
+        {
+          "id": "hourglass",
+          "tick": 17616
+        },
+        {
+          "id": "runner",
+          "tick": 17891
+        },
+        {
+          "id": "runner",
+          "tick": 18496
+        },
+        {
+          "id": "hourglass",
+          "tick": 18616
+        },
+        {
+          "id": "runner",
+          "tick": 18916
+        },
+        {
+          "id": "hourglass",
+          "tick": 19731
+        },
+        {
+          "id": "runner",
+          "tick": 20106
+        },
+        {
+          "id": "hourglass",
+          "tick": 20866
+        },
+        {
+          "id": "runner",
+          "tick": 21096
+        },
+        {
+          "id": "hourglass",
+          "tick": 21936
+        },
+        {
+          "id": "runner",
+          "tick": 22046
+        },
+        {
+          "id": "runner",
+          "tick": 22606
+        },
+        {
+          "id": "hourglass",
+          "tick": 22936
+        },
+        {
+          "id": "runner",
+          "tick": 22976
+        },
+        {
+          "id": "runner",
+          "tick": 23361
+        },
+        {
+          "id": "hourglass",
+          "tick": 23936
+        },
+        {
+          "id": "runner",
+          "tick": 24056
+        },
+        {
+          "id": "hourglass",
+          "tick": 25006
+        },
+        {
+          "id": "runner",
+          "tick": 25026
+        },
+        {
+          "id": "runner",
+          "tick": 25671
+        },
+        {
+          "id": "hourglass",
+          "tick": 26006
+        },
+        {
+          "id": "runner",
+          "tick": 26021
+        },
+        {
+          "id": "hourglass",
+          "tick": 27021
+        },
+        {
+          "id": "runner",
+          "tick": 27046
+        },
+        {
+          "id": "runner",
+          "tick": 27411
+        },
+        {
+          "id": "runner",
+          "tick": 27831
+        },
+        {
+          "id": "hourglass",
+          "tick": 28021
+        },
+        {
+          "id": "runner",
+          "tick": 28351
+        },
+        {
+          "id": "runner",
+          "tick": 29001
+        },
+        {
+          "id": "hourglass",
+          "tick": 29316
+        }
+      ],
+      "telemetry": {
+        "casts": 603,
+        "bolts": 634,
+        "boltsHit": 447,
+        "directHits": 824,
+        "damage": 27105.000000000004,
+        "overkill": 48840.30000000001,
+        "damageBySource": {
+          "direct:ice": {
+            "effective": 27105.000000000004,
+            "overkill": 48840.30000000001,
+            "hits": 824
+          }
+        },
+        "incoming": 249,
+        "prevented": 153,
+        "incomingBySource": {
+          "contact:Orc": {
+            "requested": 39,
+            "applied": 39,
+            "prevented": 0,
+            "hits": 3
+          },
+          "contact:Spider": {
+            "requested": 42,
+            "applied": 25,
+            "prevented": 17,
+            "hits": 8
+          },
+          "contact:Goblin": {
+            "requested": 52,
+            "applied": 27,
+            "prevented": 25,
+            "hits": 10
+          },
+          "contact:Zombie": {
+            "requested": 75,
+            "applied": 45,
+            "prevented": 30,
+            "hits": 5
+          },
+          "contact:Knight": {
+            "requested": 176,
+            "applied": 95,
+            "prevented": 81,
+            "hits": 9
+          },
+          "contact:Vampire": {
+            "requested": 18,
+            "applied": 18,
+            "prevented": 0,
+            "hits": 1
+          }
+        },
+        "healing": 248.99999999999997,
+        "healingBySource": {
+          "level-up": 190.20000000000002,
+          "potion": 23.799999999999997,
+          "merchant": 35
+        },
+        "selfDamage": 0,
+        "selfDamageBySource": {},
+        "windows": {
+          "0": {
+            "damage": 4569,
+            "incoming": 59,
+            "healing": 59,
+            "casts": 297,
+            "bolts": 297,
+            "boltsHit": 207
+          },
+          "5": {
+            "damage": 22536,
+            "incoming": 190,
+            "healing": 190,
+            "casts": 306,
+            "bolts": 337,
+            "boltsHit": 240
+          }
+        },
+        "seconds": 600,
+        "dps": 45.175000000000004,
+        "accuracy": 0.7050473186119873,
+        "hitsPerCast": 1.3665008291873963
+      },
+      "environment": "crypt"
+    },
+    {
+      "school": "lightning",
+      "seed": 1,
+      "seconds": 346.7,
+      "phase": "over",
+      "level": 18,
+      "firstUpgrade": 8.06,
+      "kills": 390,
+      "xp": 1520,
+      "health": 0,
+      "maxEnemies": 15,
+      "build": {
+        "fire": 0,
+        "ice": 4,
+        "lightning": 2,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": null,
+        "boots": null,
+        "relic": "hourglass"
+      },
+      "chestsOpened": 2,
+      "lootHistory": [
+        {
+          "id": "hourglass",
+          "tick": 6303,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "echo",
+          "tick": 12347,
+          "source": "Dungeon collapse reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "collapse",
+          "outcome": "completed",
+          "tick": 12031,
+          "startedAt": 10531,
+          "progress": 0,
+          "goal": 3,
+          "hits": 0
+        }
+      ],
+      "gold": 166,
+      "marketHistory": [],
+      "goldEarned": 166,
+      "goldSpent": 0,
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 6781
+        },
+        {
+          "id": "hourglass",
+          "tick": 8301
+        },
+        {
+          "id": "hourglass",
+          "tick": 9396
+        },
+        {
+          "id": "hourglass",
+          "tick": 10681
+        },
+        {
+          "id": "hourglass",
+          "tick": 11881
+        },
+        {
+          "id": "hourglass",
+          "tick": 12891
+        },
+        {
+          "id": "hourglass",
+          "tick": 14291
+        },
+        {
+          "id": "hourglass",
+          "tick": 15396
+        },
+        {
+          "id": "hourglass",
+          "tick": 16396
+        }
+      ],
+      "telemetry": {
+        "casts": 390,
+        "bolts": 414,
+        "boltsHit": 266,
+        "directHits": 286,
+        "damage": 10083.8,
+        "overkill": 14388.099999999999,
+        "damageBySource": {
+          "direct:lightning": {
+            "effective": 6830.3,
+            "overkill": 11916.1,
+            "hits": 286
+          },
+          "lightning:chain": {
+            "effective": 3253.5,
+            "overkill": 2472.0000000000005,
+            "hits": 200
+          }
+        },
+        "incoming": 221.97,
+        "prevented": 0,
+        "incomingBySource": {
+          "contact:Orc": {
+            "requested": 75,
+            "applied": 75,
+            "prevented": 0,
+            "hits": 5
+          },
+          "contact:Goblin": {
+            "requested": 30,
+            "applied": 27.970000000000006,
+            "prevented": 0,
+            "hits": 6
+          },
+          "contact:Spider": {
+            "requested": 21,
+            "applied": 21,
+            "prevented": 0,
+            "hits": 4
+          },
+          "contact:Zombie": {
+            "requested": 79,
+            "applied": 79,
+            "prevented": 0,
+            "hits": 5
+          },
+          "contact:Knight": {
+            "requested": 19,
+            "applied": 19,
+            "prevented": 0,
+            "hits": 1
+          }
+        },
+        "healing": 121.97,
+        "healingBySource": {
+          "level-up": 94.47,
+          "potion": 27.5
+        },
+        "selfDamage": 0,
+        "selfDamageBySource": {},
+        "windows": {
+          "0": {
+            "damage": 7164.5,
+            "incoming": 114,
+            "healing": 78,
+            "casts": 332,
+            "bolts": 345,
+            "boltsHit": 219
+          },
+          "5": {
+            "damage": 2919.3,
+            "incoming": 107.97,
+            "healing": 43.970000000000006,
+            "casts": 58,
+            "bolts": 69,
+            "boltsHit": 47
+          }
+        },
+        "seconds": 346.7,
+        "dps": 29.085087972310355,
+        "accuracy": 0.642512077294686,
+        "hitsPerCast": 0.7333333333333333
+      },
+      "environment": "crypt"
+    },
+    {
+      "school": "lightning",
+      "seed": 2,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "firstUpgrade": 7.7,
+      "kills": 790,
+      "xp": 4384,
+      "health": 100,
+      "maxEnemies": 12,
+      "build": {
+        "fire": 0,
+        "ice": 0,
+        "lightning": 5,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "thorns",
+        "boots": "swift",
+        "relic": "gambler"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "gambler",
+          "tick": 6037,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "echo",
+          "tick": 10895,
+          "source": "Magical anomaly reward"
+        },
+        {
+          "id": "thorns",
+          "tick": 15252,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "swift",
+          "tick": 21049,
+          "source": "Dungeon treasure"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "anomaly",
+          "outcome": "completed",
+          "tick": 10881,
+          "startedAt": 10531,
+          "progress": 3,
+          "goal": 3,
+          "hits": 0
+        },
+        {
+          "id": "collapse",
+          "outcome": "completed",
+          "tick": 27069,
+          "startedAt": 25569,
+          "progress": 0,
+          "goal": 3,
+          "hits": 0
+        }
+      ],
+      "gold": 259,
+      "marketHistory": [
+        {
+          "id": "escape",
+          "price": 90,
+          "tick": 18027
+        }
+      ],
+      "goldEarned": 349,
+      "goldSpent": 90,
+      "activeHistory": [
+        {
+          "id": "escape",
+          "tick": 20576
+        }
+      ],
+      "telemetry": {
+        "casts": 857,
+        "bolts": 979,
+        "boltsHit": 528,
+        "directHits": 528,
+        "damage": 29138,
+        "overkill": 59044.350000000006,
+        "damageBySource": {
+          "direct:lightning": {
+            "effective": 17325.25,
+            "overkill": 43056.100000000006,
+            "hits": 528
+          },
+          "lightning:chain": {
+            "effective": 11762.75,
+            "overkill": 15988.249999999998,
+            "hits": 467
+          },
+          "gear:thorns": {
+            "effective": 50,
+            "overkill": 0,
+            "hits": 1
+          }
+        },
+        "incoming": 38,
+        "prevented": 0,
+        "incomingBySource": {
+          "contact:Goblin": {
+            "requested": 15,
+            "applied": 15,
+            "prevented": 0,
+            "hits": 3
+          },
+          "contact:Spider": {
+            "requested": 10,
+            "applied": 10,
+            "prevented": 0,
+            "hits": 2
+          },
+          "contact:Orc": {
+            "requested": 13,
+            "applied": 13,
+            "prevented": 0,
+            "hits": 1
+          }
+        },
+        "healing": 38,
+        "healingBySource": {
+          "level-up": 28,
+          "potion": 10
+        },
+        "selfDamage": 0,
+        "selfDamageBySource": {},
+        "windows": {
+          "0": {
+            "damage": 7436,
+            "incoming": 25,
+            "healing": 25,
+            "casts": 345,
+            "bolts": 365,
+            "boltsHit": 211
+          },
+          "5": {
+            "damage": 21702,
+            "incoming": 13,
+            "healing": 13,
+            "casts": 512,
+            "bolts": 614,
+            "boltsHit": 317
+          }
+        },
+        "seconds": 600,
+        "dps": 48.56333333333333,
+        "accuracy": 0.5393258426966292,
+        "hitsPerCast": 0.6161026837806302
+      },
+      "environment": "crypt"
+    },
+    {
+      "school": "necro",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "firstUpgrade": 6.28,
+      "kills": 796,
+      "xp": 4404,
+      "health": 100,
+      "maxEnemies": 73,
+      "build": {
+        "fire": 0,
+        "ice": 0,
+        "lightning": 5,
+        "necro": 2,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "bloodwood",
+        "robe": "thorns",
+        "boots": "runner",
+        "relic": "gambler"
+      },
+      "chestsOpened": 4,
+      "lootHistory": [
+        {
+          "id": "bloodwood",
+          "tick": 7585,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "runner",
+          "tick": 12044,
+          "source": "Cursed altar reward"
+        },
+        {
+          "id": "wardrobe",
+          "tick": 21173,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "thorns",
+          "tick": 27040,
+          "source": "Dungeon collapse reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "altar",
+          "outcome": "completed",
+          "tick": 12035,
+          "startedAt": 10535,
+          "progress": 1500,
+          "goal": 1500,
+          "hits": 0
+        },
+        {
+          "id": "collapse",
+          "outcome": "completed",
+          "tick": 27035,
+          "startedAt": 25535,
+          "progress": 0,
+          "goal": 3,
+          "hits": 0
+        }
+      ],
+      "gold": 261,
+      "marketHistory": [
+        {
+          "id": "gambler",
+          "price": 90,
+          "tick": 18029
+        }
+      ],
+      "goldEarned": 351,
+      "goldSpent": 90,
+      "activeHistory": [
+        {
+          "id": "runner",
+          "tick": 14776
+        },
+        {
+          "id": "runner",
+          "tick": 15296
+        },
+        {
+          "id": "runner",
+          "tick": 15711
+        },
+        {
+          "id": "runner",
+          "tick": 16531
+        },
+        {
+          "id": "runner",
+          "tick": 17201
+        },
+        {
+          "id": "runner",
+          "tick": 18101
+        },
+        {
+          "id": "runner",
+          "tick": 19656
+        },
+        {
+          "id": "runner",
+          "tick": 21501
+        },
+        {
+          "id": "runner",
+          "tick": 22136
+        },
+        {
+          "id": "runner",
+          "tick": 23066
+        },
+        {
+          "id": "runner",
+          "tick": 23426
+        },
+        {
+          "id": "runner",
+          "tick": 24996
+        },
+        {
+          "id": "runner",
+          "tick": 25456
+        },
+        {
+          "id": "runner",
+          "tick": 28196
+        },
+        {
+          "id": "runner",
+          "tick": 29231
+        }
+      ],
+      "telemetry": {
+        "casts": 706,
+        "bolts": 706,
+        "boltsHit": 482,
+        "directHits": 482,
+        "damage": 29459,
+        "overkill": 54313.125,
+        "damageBySource": {
+          "direct:necro": {
+            "effective": 15418.5,
+            "overkill": 36421.375,
+            "hits": 482
+          },
+          "lightning:chain": {
+            "effective": 9818.75,
+            "overkill": 15465.5,
+            "hits": 376
+          },
+          "fusion:reaping": {
+            "effective": 4221.75,
+            "overkill": 2426.25,
+            "hits": 182
+          }
+        },
+        "incoming": 197,
+        "prevented": 49,
+        "incomingBySource": {
+          "contact:Goblin": {
+            "requested": 51,
+            "applied": 41,
+            "prevented": 10,
+            "hits": 10
+          },
+          "contact:Spider": {
+            "requested": 45,
+            "applied": 25,
+            "prevented": 20,
+            "hits": 9
+          },
+          "contact:Orc": {
+            "requested": 59,
+            "applied": 59,
+            "prevented": 0,
+            "hits": 4
+          },
+          "contact:Knight": {
+            "requested": 76,
+            "applied": 57,
+            "prevented": 19,
+            "hits": 4
+          },
+          "contact:Zombie": {
+            "requested": 15,
+            "applied": 15,
+            "prevented": 0,
+            "hits": 1
+          }
+        },
+        "healing": 469,
+        "healingBySource": {
+          "necro:kill": 344.95,
+          "potion": 26.5,
+          "fusion:reaping": 56,
+          "level-up": 41.55
+        },
+        "selfDamage": 272,
+        "selfDamageBySource": {
+          "gear:bloodwood": 272
+        },
+        "windows": {
+          "0": {
+            "damage": 7250,
+            "incoming": 71,
+            "healing": 153,
+            "casts": 325,
+            "bolts": 325,
+            "boltsHit": 231
+          },
+          "5": {
+            "damage": 22209,
+            "incoming": 126,
+            "healing": 316,
+            "casts": 381,
+            "bolts": 381,
+            "boltsHit": 251
+          }
+        },
+        "seconds": 600,
+        "dps": 49.098333333333336,
+        "accuracy": 0.6827195467422096,
+        "hitsPerCast": 0.6827195467422096
+      },
+      "environment": "crypt"
+    },
+    {
+      "school": "necro",
+      "seed": 2,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "firstUpgrade": 7.72,
+      "kills": 788,
+      "xp": 4340,
+      "health": 100,
+      "maxEnemies": 56,
+      "build": {
+        "fire": 0,
+        "ice": 0,
+        "lightning": 2,
+        "necro": 4,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "phantom",
+        "boots": "runner",
+        "relic": "fang"
+      },
+      "chestsOpened": 4,
+      "lootHistory": [
+        {
+          "id": "echo",
+          "tick": 6842,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "fang",
+          "tick": 11441,
+          "source": "Treasure guardian reward"
+        },
+        {
+          "id": "runner",
+          "tick": 21039,
+          "source": "Dungeon treasure"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "guardian",
+          "outcome": "completed",
+          "tick": 11434,
+          "startedAt": 10576,
+          "progress": 1,
+          "goal": 1,
+          "hits": 0
+        },
+        {
+          "id": "anomaly",
+          "outcome": "completed",
+          "tick": 26126,
+          "startedAt": 25529,
+          "progress": 3,
+          "goal": 3,
+          "hits": 0
+        }
+      ],
+      "gold": 259,
+      "marketHistory": [
+        {
+          "id": "phantom",
+          "price": 90,
+          "tick": 18036
+        }
+      ],
+      "goldEarned": 349,
+      "goldSpent": 90,
+      "activeHistory": [
+        {
+          "id": "runner",
+          "tick": 21441
+        },
+        {
+          "id": "runner",
+          "tick": 21796
+        },
+        {
+          "id": "runner",
+          "tick": 22311
+        },
+        {
+          "id": "runner",
+          "tick": 22706
+        },
+        {
+          "id": "runner",
+          "tick": 24396
+        },
+        {
+          "id": "runner",
+          "tick": 24916
+        },
+        {
+          "id": "runner",
+          "tick": 25666
+        },
+        {
+          "id": "runner",
+          "tick": 26256
+        },
+        {
+          "id": "runner",
+          "tick": 27466
+        },
+        {
+          "id": "runner",
+          "tick": 27816
+        },
+        {
+          "id": "runner",
+          "tick": 28176
+        },
+        {
+          "id": "runner",
+          "tick": 29046
+        }
+      ],
+      "telemetry": {
+        "casts": 781,
+        "bolts": 910,
+        "boltsHit": 624,
+        "directHits": 624,
+        "damage": 29370.000000000007,
+        "overkill": 33795.469999999994,
+        "damageBySource": {
+          "direct:necro": {
+            "effective": 18656.50000000001,
+            "overkill": 26182.370000000003,
+            "hits": 624
+          },
+          "lightning:chain": {
+            "effective": 8031.96,
+            "overkill": 6081.040000000001,
+            "hits": 410
+          },
+          "fusion:reaping": {
+            "effective": 2681.54,
+            "overkill": 1532.06,
+            "hits": 111
+          }
+        },
+        "incoming": 310,
+        "prevented": 57,
+        "incomingBySource": {
+          "contact:Orc": {
+            "requested": 104,
+            "applied": 91,
+            "prevented": 13,
+            "hits": 8
+          },
+          "contact:Goblin": {
+            "requested": 66,
+            "applied": 40,
+            "prevented": 26,
+            "hits": 13
+          },
+          "contact:Spider": {
+            "requested": 21,
+            "applied": 21,
+            "prevented": 0,
+            "hits": 4
+          },
+          "contact:Zombie": {
+            "requested": 60,
+            "applied": 60,
+            "prevented": 0,
+            "hits": 4
+          },
+          "contact:Knight": {
+            "requested": 57,
+            "applied": 57,
+            "prevented": 0,
+            "hits": 3
+          },
+          "contact:Vampire": {
+            "requested": 59,
+            "applied": 41,
+            "prevented": 18,
+            "hits": 3
+          }
+        },
+        "healing": 310.00000000000057,
+        "healingBySource": {
+          "necro:kill": 211.10000000000014,
+          "level-up": 17,
+          "potion": 14,
+          "gear:fang": 48.899999999999835,
+          "fusion:reaping": 19.00000000000003
+        },
+        "selfDamage": 0,
+        "selfDamageBySource": {},
+        "windows": {
+          "0": {
+            "damage": 7523,
+            "incoming": 105,
+            "healing": 98.6,
+            "casts": 315,
+            "bolts": 351,
+            "boltsHit": 255
+          },
+          "5": {
+            "damage": 21847,
+            "incoming": 205,
+            "healing": 211.40000000000023,
+            "casts": 466,
+            "bolts": 559,
+            "boltsHit": 369
+          }
+        },
+        "seconds": 600,
+        "dps": 48.95000000000001,
+        "accuracy": 0.6857142857142857,
+        "hitsPerCast": 0.7989756722151088
+      },
+      "environment": "crypt"
+    },
+    {
+      "school": "arcane",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "firstUpgrade": 7.14,
+      "kills": 794,
+      "xp": 4302,
+      "health": 1,
+      "maxEnemies": 27,
+      "build": {
+        "fire": 0,
+        "ice": 5,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 3
+      },
+      "equipment": {
+        "staff": "bloodwood",
+        "robe": "thorns",
+        "boots": "escape",
+        "relic": "hourglass"
+      },
+      "chestsOpened": 4,
+      "lootHistory": [
+        {
+          "id": "bloodwood",
+          "tick": 6037,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "thorns",
+          "tick": 12111,
+          "source": "Magical anomaly reward"
+        },
+        {
+          "id": "hourglass",
+          "tick": 21036,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "escape",
+          "tick": 27038,
+          "source": "Cursed altar reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "anomaly",
+          "outcome": "completed",
+          "tick": 12106,
+          "startedAt": 11020,
+          "progress": 3,
+          "goal": 3,
+          "hits": 0
+        },
+        {
+          "id": "altar",
+          "outcome": "completed",
+          "tick": 27031,
+          "startedAt": 25531,
+          "progress": 1500,
+          "goal": 1500,
+          "hits": 0
+        }
+      ],
+      "gold": 311,
+      "marketHistory": [
+        {
+          "id": "heal",
+          "price": 35,
+          "tick": 18026
+        }
+      ],
+      "goldEarned": 346,
+      "goldSpent": 35,
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 21046
+        },
+        {
+          "id": "hourglass",
+          "tick": 22056
+        },
+        {
+          "id": "hourglass",
+          "tick": 23056
+        },
+        {
+          "id": "hourglass",
+          "tick": 24216
+        },
+        {
+          "id": "hourglass",
+          "tick": 25226
+        },
+        {
+          "id": "hourglass",
+          "tick": 26261
+        },
+        {
+          "id": "escape",
+          "tick": 27066
+        },
+        {
+          "id": "hourglass",
+          "tick": 27386
+        },
+        {
+          "id": "escape",
+          "tick": 27516
+        },
+        {
+          "id": "escape",
+          "tick": 28046
+        },
+        {
+          "id": "hourglass",
+          "tick": 28561
+        },
+        {
+          "id": "escape",
+          "tick": 28621
+        },
+        {
+          "id": "escape",
+          "tick": 29426
+        },
+        {
+          "id": "hourglass",
+          "tick": 29751
+        }
+      ],
+      "telemetry": {
+        "casts": 822,
+        "bolts": 1695,
+        "boltsHit": 902,
+        "directHits": 1119,
+        "damage": 29554.5,
+        "overkill": 37637.75,
+        "damageBySource": {
+          "direct:arcane": {
+            "effective": 29198.5,
+            "overkill": 37418.75,
+            "hits": 1119
+          },
+          "gear:thorns": {
+            "effective": 356,
+            "overkill": 219,
+            "hits": 12
+          }
+        },
+        "incoming": 152,
+        "prevented": 88,
+        "incomingBySource": {
+          "contact:Goblin": {
+            "requested": 37,
+            "applied": 32,
+            "prevented": 5,
+            "hits": 7
+          },
+          "contact:Spider": {
+            "requested": 15,
+            "applied": 15,
+            "prevented": 0,
+            "hits": 3
+          },
+          "contact:Orc": {
+            "requested": 84,
+            "applied": 68,
+            "prevented": 16,
+            "hits": 6
+          },
+          "contact:Vampire": {
+            "requested": 36,
+            "applied": 18,
+            "prevented": 18,
+            "hits": 2
+          },
+          "contact:Knight": {
+            "requested": 38,
+            "applied": 19,
+            "prevented": 19,
+            "hits": 2
+          },
+          "contact:Zombie": {
+            "requested": 30,
+            "applied": 0,
+            "prevented": 30,
+            "hits": 2
+          }
+        },
+        "healing": 384.5843301020801,
+        "healingBySource": {
+          "level-up": 181.5843301020801,
+          "potion": 168,
+          "merchant": 34.99999999999999
+        },
+        "selfDamage": 332,
+        "selfDamageBySource": {
+          "gear:bloodwood": 332
+        },
+        "windows": {
+          "0": {
+            "damage": 7251,
+            "incoming": 97,
+            "healing": 163.74240000000003,
+            "casts": 393,
+            "bolts": 786,
+            "boltsHit": 370
+          },
+          "5": {
+            "damage": 22303.5,
+            "incoming": 55,
+            "healing": 220.84193010208006,
+            "casts": 429,
+            "bolts": 909,
+            "boltsHit": 532
+          }
+        },
+        "seconds": 600,
+        "dps": 49.2575,
+        "accuracy": 0.5321533923303835,
+        "hitsPerCast": 1.3613138686131387
+      },
+      "environment": "crypt"
+    },
+    {
+      "school": "arcane",
+      "seed": 2,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "firstUpgrade": 7.98,
+      "kills": 786,
+      "xp": 4315,
+      "health": 100,
+      "maxEnemies": 18,
+      "build": {
+        "fire": 0,
+        "ice": 5,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 4
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "phantom",
+        "boots": "escape",
+        "relic": "gambler"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "bloodwood",
+          "tick": 6038,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "escape",
+          "tick": 10820,
+          "source": "Treasure guardian reward"
+        },
+        {
+          "id": "phantom",
+          "tick": 15961,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "echo",
+          "tick": 21043,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "gambler",
+          "tick": 26319,
+          "source": "Blood moon reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "guardian",
+          "outcome": "completed",
+          "tick": 10815,
+          "startedAt": 10538,
+          "progress": 1,
+          "goal": 1,
+          "hits": 0
+        },
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 26303,
+          "startedAt": 25529,
+          "progress": 24,
+          "goal": 24,
+          "hits": 0
+        }
+      ],
+      "gold": 303,
+      "marketHistory": [
+        {
+          "id": "tonic",
+          "price": 45,
+          "tick": 18029
+        }
+      ],
+      "goldEarned": 348,
+      "goldSpent": 45,
+      "activeHistory": [
+        {
+          "id": "escape",
+          "tick": 11841
+        },
+        {
+          "id": "escape",
+          "tick": 12511
+        },
+        {
+          "id": "escape",
+          "tick": 13726
+        },
+        {
+          "id": "escape",
+          "tick": 14806
+        },
+        {
+          "id": "escape",
+          "tick": 15276
+        },
+        {
+          "id": "escape",
+          "tick": 15966
+        },
+        {
+          "id": "escape",
+          "tick": 16416
+        },
+        {
+          "id": "escape",
+          "tick": 17051
+        },
+        {
+          "id": "escape",
+          "tick": 19681
+        },
+        {
+          "id": "escape",
+          "tick": 21956
+        },
+        {
+          "id": "escape",
+          "tick": 23171
+        },
+        {
+          "id": "escape",
+          "tick": 24431
+        },
+        {
+          "id": "escape",
+          "tick": 25076
+        },
+        {
+          "id": "escape",
+          "tick": 25566
+        },
+        {
+          "id": "escape",
+          "tick": 26771
+        },
+        {
+          "id": "escape",
+          "tick": 27681
+        },
+        {
+          "id": "escape",
+          "tick": 28251
+        },
+        {
+          "id": "escape",
+          "tick": 28706
+        },
+        {
+          "id": "escape",
+          "tick": 29641
+        }
+      ],
+      "telemetry": {
+        "casts": 732,
+        "bolts": 2136,
+        "boltsHit": 1009,
+        "directHits": 1245,
+        "damage": 29426.999999999913,
+        "overkill": 27119.625,
+        "damageBySource": {
+          "direct:arcane": {
+            "effective": 29426.999999999913,
+            "overkill": 27119.625,
+            "hits": 1245
+          }
+        },
+        "incoming": 38,
+        "prevented": 123,
+        "incomingBySource": {
+          "contact:Goblin": {
+            "requested": 51,
+            "applied": 15,
+            "prevented": 36,
+            "hits": 10
+          },
+          "contact:Spider": {
+            "requested": 20,
+            "applied": 10,
+            "prevented": 10,
+            "hits": 4
+          },
+          "contact:Orc": {
+            "requested": 26,
+            "applied": 13,
+            "prevented": 13,
+            "hits": 2
+          },
+          "contact:Zombie": {
+            "requested": 45,
+            "applied": 0,
+            "prevented": 45,
+            "hits": 3
+          },
+          "contact:Knight": {
+            "requested": 19,
+            "applied": 0,
+            "prevented": 19,
+            "hits": 1
+          }
+        },
+        "healing": 224,
+        "healingBySource": {
+          "level-up": 166.39999999999998,
+          "potion": 57.599999999999994
+        },
+        "selfDamage": 186,
+        "selfDamageBySource": {
+          "gear:bloodwood": 186
+        },
+        "windows": {
+          "0": {
+            "damage": 7796,
+            "incoming": 28,
+            "healing": 130,
+            "casts": 357,
+            "bolts": 955,
+            "boltsHit": 417
+          },
+          "5": {
+            "damage": 21631.000000000025,
+            "incoming": 10,
+            "healing": 94,
+            "casts": 375,
+            "bolts": 1181,
+            "boltsHit": 592
+          }
+        },
+        "seconds": 600,
+        "dps": 49.04499999999985,
+        "accuracy": 0.47237827715355807,
+        "hitsPerCast": 1.7008196721311475
+      },
+      "environment": "crypt"
+    },
+    {
+      "school": "fire",
+      "seed": 1,
+      "seconds": 277.52,
+      "phase": "over",
+      "level": 14,
+      "firstUpgrade": 7.36,
+      "kills": 194,
+      "xp": 721,
+      "health": 0,
+      "maxEnemies": 120,
+      "build": {
+        "fire": 2,
+        "ice": 2,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": null,
+        "robe": "phantom",
+        "boots": null,
+        "relic": "hourglass"
+      },
+      "chestsOpened": 2,
+      "lootHistory": [
+        {
+          "id": "phantom",
+          "tick": 6043,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "hourglass",
+          "tick": 11286,
+          "source": "Magical anomaly reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "anomaly",
+          "outcome": "completed",
+          "tick": 11267,
+          "startedAt": 11099,
+          "progress": 3,
+          "goal": 3,
+          "hits": 0
+        }
+      ],
+      "gold": 77,
+      "marketHistory": [],
+      "goldEarned": 77,
+      "goldSpent": 0,
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 11287
+        },
+        {
+          "id": "hourglass",
+          "tick": 12531
+        },
+        {
+          "id": "hourglass",
+          "tick": 13531
+        }
+      ],
+      "telemetry": {
+        "casts": 287,
+        "bolts": 287,
+        "boltsHit": 195,
+        "directHits": 195,
+        "damage": 4799,
+        "overkill": 8171.5,
+        "damageBySource": {
+          "direct:fire": {
+            "effective": 4169.5,
+            "overkill": 8000.5,
+            "hits": 195
+          },
+          "fire:burn": {
+            "effective": 629.5,
+            "overkill": 171,
+            "hits": 34
+          }
+        },
+        "incoming": 217,
+        "prevented": 322,
+        "incomingBySource": {
+          "contact:Orc": {
+            "requested": 182,
+            "applied": 82,
+            "prevented": 91,
+            "hits": 14
+          },
+          "contact:Spider": {
+            "requested": 206,
+            "applied": 55,
+            "prevented": 151,
+            "hits": 41
+          },
+          "contact:Goblin": {
+            "requested": 70,
+            "applied": 35,
+            "prevented": 35,
+            "hits": 14
+          },
+          "contact:Zombie": {
+            "requested": 90,
+            "applied": 45,
+            "prevented": 45,
+            "hits": 6
+          }
+        },
+        "healing": 117,
+        "healingBySource": {
+          "level-up": 92,
+          "potion": 25
+        },
+        "selfDamage": 0,
+        "selfDamageBySource": {},
+        "windows": {
+          "0": {
+            "damage": 4799,
+            "incoming": 217,
+            "healing": 117,
+            "casts": 287,
+            "bolts": 287,
+            "boltsHit": 195
+          }
+        },
+        "seconds": 277.52,
+        "dps": 17.292447391179014,
+        "accuracy": 0.6794425087108014,
+        "hitsPerCast": 0.6794425087108014
+      },
+      "environment": "frost"
+    },
+    {
+      "school": "fire",
+      "seed": 2,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "firstUpgrade": 8.14,
+      "kills": 816,
+      "xp": 4621,
+      "health": 79,
+      "maxEnemies": 70,
+      "build": {
+        "fire": 5,
+        "ice": 0,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "thorns",
+        "boots": "escape",
+        "relic": "fang"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "thorns",
+          "tick": 6038,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "hourglass",
+          "tick": 11257,
+          "source": "Magical anomaly reward"
+        },
+        {
+          "id": "escape",
+          "tick": 15707,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "fang",
+          "tick": 21037,
+          "source": "Dungeon treasure"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "anomaly",
+          "outcome": "completed",
+          "tick": 11243,
+          "startedAt": 10532,
+          "progress": 3,
+          "goal": 3,
+          "hits": 0
+        },
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 26235,
+          "startedAt": 25622,
+          "progress": 26,
+          "goal": 24,
+          "hits": 0
+        }
+      ],
+      "gold": 270,
+      "marketHistory": [
+        {
+          "id": "echo",
+          "price": 90,
+          "tick": 18133
+        }
+      ],
+      "goldEarned": 360,
+      "goldSpent": 90,
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 11571
+        },
+        {
+          "id": "hourglass",
+          "tick": 12731
+        },
+        {
+          "id": "hourglass",
+          "tick": 14011
+        },
+        {
+          "id": "hourglass",
+          "tick": 15031
+        },
+        {
+          "id": "escape",
+          "tick": 16116
+        },
+        {
+          "id": "hourglass",
+          "tick": 16116
+        },
+        {
+          "id": "hourglass",
+          "tick": 17141
+        },
+        {
+          "id": "escape",
+          "tick": 18156
+        },
+        {
+          "id": "hourglass",
+          "tick": 18191
+        },
+        {
+          "id": "escape",
+          "tick": 18766
+        },
+        {
+          "id": "escape",
+          "tick": 19396
+        },
+        {
+          "id": "hourglass",
+          "tick": 19516
+        },
+        {
+          "id": "escape",
+          "tick": 20786
+        },
+        {
+          "id": "hourglass",
+          "tick": 20786
+        },
+        {
+          "id": "escape",
+          "tick": 21271
+        },
+        {
+          "id": "escape",
+          "tick": 22356
+        },
+        {
+          "id": "escape",
+          "tick": 23761
+        },
+        {
+          "id": "escape",
+          "tick": 24396
+        },
+        {
+          "id": "escape",
+          "tick": 25301
+        },
+        {
+          "id": "escape",
+          "tick": 25751
+        },
+        {
+          "id": "escape",
+          "tick": 26226
+        },
+        {
+          "id": "escape",
+          "tick": 26676
+        },
+        {
+          "id": "escape",
+          "tick": 28066
+        },
+        {
+          "id": "escape",
+          "tick": 28721
+        },
+        {
+          "id": "escape",
+          "tick": 29726
+        }
+      ],
+      "telemetry": {
+        "casts": 749,
+        "bolts": 813,
+        "boltsHit": 498,
+        "directHits": 498,
+        "damage": 30705,
+        "overkill": 40579.98000000002,
+        "damageBySource": {
+          "direct:fire": {
+            "effective": 14782.14,
+            "overkill": 23282.86,
+            "hits": 498
+          },
+          "fire:burn": {
+            "effective": 4978.66,
+            "overkill": 2614.120000000001,
+            "hits": 117
+          },
+          "gear:thorns": {
+            "effective": 600,
+            "overkill": 370,
+            "hits": 18
+          },
+          "fire:burst": {
+            "effective": 10344.2,
+            "overkill": 14312.999999999998,
+            "hits": 424
+          }
+        },
+        "incoming": 200,
+        "prevented": 71,
+        "incomingBySource": {
+          "contact:Orc": {
+            "requested": 78,
+            "applied": 52,
+            "prevented": 26,
+            "hits": 6
+          },
+          "contact:Goblin": {
+            "requested": 21,
+            "applied": 15,
+            "prevented": 6,
+            "hits": 4
+          },
+          "contact:Zombie": {
+            "requested": 45,
+            "applied": 30,
+            "prevented": 15,
+            "hits": 3
+          },
+          "contact:Spider": {
+            "requested": 10,
+            "applied": 5,
+            "prevented": 5,
+            "hits": 2
+          },
+          "contact:Knight": {
+            "requested": 86,
+            "applied": 67,
+            "prevented": 19,
+            "hits": 4
+          },
+          "contact:Vampire": {
+            "requested": 23,
+            "applied": 23,
+            "prevented": 0,
+            "hits": 1
+          },
+          "hazard:frost-fissure": {
+            "requested": 8,
+            "applied": 8,
+            "prevented": 0,
+            "hits": 1
+          }
+        },
+        "healing": 179,
+        "healingBySource": {
+          "level-up": 94.20000000000002,
+          "potion": 6.3999999999999915,
+          "gear:fang": 78.39999999999999
+        },
+        "selfDamage": 0,
+        "selfDamageBySource": {},
+        "windows": {
+          "0": {
+            "damage": 7453,
+            "incoming": 74,
+            "healing": 56,
+            "casts": 348,
+            "bolts": 348,
+            "boltsHit": 226
+          },
+          "5": {
+            "damage": 23252,
+            "incoming": 126,
+            "healing": 123,
+            "casts": 401,
+            "bolts": 465,
+            "boltsHit": 272
+          }
+        },
+        "seconds": 600,
+        "dps": 51.175,
+        "accuracy": 0.6125461254612546,
+        "hitsPerCast": 0.664886515353805
+      },
+      "environment": "frost"
+    },
+    {
+      "school": "ice",
+      "seed": 1,
+      "seconds": 421.98,
+      "phase": "over",
+      "level": 19,
+      "firstUpgrade": 7.36,
+      "kills": 480,
+      "xp": 2156,
+      "health": 0,
+      "maxEnemies": 80,
+      "build": {
+        "fire": 0,
+        "ice": 5,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "bloodwood",
+        "robe": "thorns",
+        "boots": "silk",
+        "relic": "gambler"
+      },
+      "chestsOpened": 3,
+      "lootHistory": [
+        {
+          "id": "gambler",
+          "tick": 6421,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "thorns",
+          "tick": 17738,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "silk",
+          "tick": 21052,
+          "source": "Dungeon treasure"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "shrine",
+          "outcome": "failed",
+          "tick": 12530,
+          "startedAt": 10530,
+          "progress": 276,
+          "goal": 750,
+          "hits": 0
+        }
+      ],
+      "gold": 102,
+      "marketHistory": [
+        {
+          "id": "bloodwood",
+          "price": 90,
+          "tick": 18916
+        }
+      ],
+      "goldEarned": 192,
+      "goldSpent": 90,
+      "activeHistory": [],
+      "telemetry": {
+        "casts": 439,
+        "bolts": 439,
+        "boltsHit": 298,
+        "directHits": 603,
+        "damage": 14878,
+        "overkill": 31250.899999999998,
+        "damageBySource": {
+          "direct:ice": {
+            "effective": 14708,
+            "overkill": 31170.899999999998,
+            "hits": 603
+          },
+          "gear:thorns": {
+            "effective": 170,
+            "overkill": 80,
+            "hits": 5
+          }
+        },
+        "incoming": 249,
+        "prevented": 0,
+        "incomingBySource": {
+          "contact:Goblin": {
+            "requested": 85,
+            "applied": 85,
+            "prevented": 0,
+            "hits": 17
+          },
+          "contact:Spider": {
+            "requested": 20,
+            "applied": 20,
+            "prevented": 0,
+            "hits": 4
+          },
+          "contact:Orc": {
+            "requested": 33,
+            "applied": 33,
+            "prevented": 0,
+            "hits": 2
+          },
+          "contact:Zombie": {
+            "requested": 45,
+            "applied": 45,
+            "prevented": 0,
+            "hits": 3
+          },
+          "hazard:frost-fissure": {
+            "requested": 8,
+            "applied": 8,
+            "prevented": 0,
+            "hits": 1
+          },
+          "contact:Knight": {
+            "requested": 62,
+            "applied": 58,
+            "prevented": 0,
+            "hits": 3
+          }
+        },
+        "healing": 175,
+        "healingBySource": {
+          "level-up": 150,
+          "potion": 25
+        },
+        "selfDamage": 26,
+        "selfDamageBySource": {
+          "gear:bloodwood": 26
+        },
+        "windows": {
+          "0": {
+            "damage": 6922,
+            "incoming": 131,
+            "healing": 131,
+            "casts": 299,
+            "bolts": 299,
+            "boltsHit": 201
+          },
+          "5": {
+            "damage": 7956,
+            "incoming": 118,
+            "healing": 44,
+            "casts": 140,
+            "bolts": 140,
+            "boltsHit": 97
+          }
+        },
+        "seconds": 421.98,
+        "dps": 35.25759514668942,
+        "accuracy": 0.6788154897494305,
+        "hitsPerCast": 1.3735763097949887
+      },
+      "environment": "frost"
+    },
+    {
+      "school": "ice",
+      "seed": 2,
+      "seconds": 561.26,
+      "phase": "over",
+      "level": 23,
+      "firstUpgrade": 8.14,
+      "kills": 718,
+      "xp": 3938,
+      "health": 0,
+      "maxEnemies": 110,
+      "build": {
+        "fire": 0,
+        "ice": 5,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "bloodwood",
+        "robe": "thorns",
+        "boots": "escape",
+        "relic": "gambler"
+      },
+      "chestsOpened": 4,
+      "lootHistory": [
+        {
+          "id": "bloodwood",
+          "tick": 6761,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "gambler",
+          "tick": 12040,
+          "source": "Cursed altar reward"
+        },
+        {
+          "id": "thorns",
+          "tick": 17985,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "escape",
+          "tick": 21038,
+          "source": "Dungeon treasure"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "altar",
+          "outcome": "completed",
+          "tick": 12031,
+          "startedAt": 10531,
+          "progress": 1500,
+          "goal": 1500,
+          "hits": 0
+        },
+        {
+          "id": "shrine",
+          "outcome": "failed",
+          "tick": 27932,
+          "startedAt": 25932,
+          "progress": 137,
+          "goal": 750,
+          "hits": 0
+        }
+      ],
+      "gold": 269,
+      "marketHistory": [
+        {
+          "id": "heal",
+          "price": 35,
+          "tick": 18055
+        }
+      ],
+      "goldEarned": 304,
+      "goldSpent": 35,
+      "activeHistory": [
+        {
+          "id": "escape",
+          "tick": 21076
+        },
+        {
+          "id": "escape",
+          "tick": 22341
+        },
+        {
+          "id": "escape",
+          "tick": 23106
+        },
+        {
+          "id": "escape",
+          "tick": 23861
+        },
+        {
+          "id": "escape",
+          "tick": 24401
+        },
+        {
+          "id": "escape",
+          "tick": 25166
+        },
+        {
+          "id": "escape",
+          "tick": 25761
+        },
+        {
+          "id": "escape",
+          "tick": 26451
+        },
+        {
+          "id": "escape",
+          "tick": 27026
+        },
+        {
+          "id": "escape",
+          "tick": 27761
+        }
+      ],
+      "telemetry": {
+        "casts": 628,
+        "bolts": 628,
+        "boltsHit": 423,
+        "directHits": 879,
+        "damage": 26572.7,
+        "overkill": 60846.25000000001,
+        "damageBySource": {
+          "direct:ice": {
+            "effective": 26215.2,
+            "overkill": 60243.75000000001,
+            "hits": 879
+          },
+          "gear:thorns": {
+            "effective": 357.5,
+            "overkill": 602.5,
+            "hits": 17
+          }
+        },
+        "incoming": 263.70797954569696,
+        "prevented": 34,
+        "incomingBySource": {
+          "contact:Orc": {
+            "requested": 39,
+            "applied": 39,
+            "prevented": 0,
+            "hits": 3
+          },
+          "contact:Goblin": {
+            "requested": 65,
+            "applied": 55,
+            "prevented": 10,
+            "hits": 13
+          },
+          "contact:Spider": {
+            "requested": 75,
+            "applied": 70,
+            "prevented": 5,
+            "hits": 15
+          },
+          "hazard:frost-fissure": {
+            "requested": 8,
+            "applied": 8,
+            "prevented": 0,
+            "hits": 1
+          },
+          "contact:Zombie": {
+            "requested": 64,
+            "applied": 45,
+            "prevented": 19,
+            "hits": 4
+          },
+          "contact:Knight": {
+            "requested": 57,
+            "applied": 46.707979545696986,
+            "prevented": 0,
+            "hits": 3
+          }
+        },
+        "healing": 411.70797954569696,
+        "healingBySource": {
+          "level-up": 216.70797954569696,
+          "potion": 160,
+          "merchant": 35
+        },
+        "selfDamage": 248,
+        "selfDamageBySource": {
+          "gear:bloodwood": 248
+        },
+        "windows": {
+          "0": {
+            "damage": 6343,
+            "incoming": 134,
+            "healing": 170.38220890000008,
+            "casts": 301,
+            "bolts": 301,
+            "boltsHit": 190
+          },
+          "5": {
+            "damage": 20229.7,
+            "incoming": 129.707979545697,
+            "healing": 241.32577064569688,
+            "casts": 327,
+            "bolts": 327,
+            "boltsHit": 233
+          }
+        },
+        "seconds": 561.26,
+        "dps": 47.34472437016713,
+        "accuracy": 0.6735668789808917,
+        "hitsPerCast": 1.3996815286624205
+      },
+      "environment": "frost"
+    },
+    {
+      "school": "lightning",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 24,
+      "firstUpgrade": 8.28,
+      "kills": 826,
+      "xp": 4724,
+      "health": 100,
+      "maxEnemies": 14,
+      "build": {
+        "fire": 0,
+        "ice": 0,
+        "lightning": 5,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "phantom",
+        "boots": "silk",
+        "relic": "gambler"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "hourglass",
+          "tick": 6059,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "phantom",
+          "tick": 11697,
+          "source": "Arcane shrine reward"
+        },
+        {
+          "id": "quickwand",
+          "tick": 15440,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "silk",
+          "tick": 21042,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "echo",
+          "tick": 25644,
+          "source": "Treasure guardian reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "shrine",
+          "outcome": "completed",
+          "tick": 11687,
+          "startedAt": 10559,
+          "progress": 750,
+          "goal": 750,
+          "hits": 0
+        },
+        {
+          "id": "guardian",
+          "outcome": "completed",
+          "tick": 25637,
+          "startedAt": 25532,
+          "progress": 1,
+          "goal": 1,
+          "hits": 0
+        }
+      ],
+      "gold": 274,
+      "marketHistory": [
+        {
+          "id": "gambler",
+          "price": 90,
+          "tick": 18172
+        }
+      ],
+      "goldEarned": 364,
+      "goldSpent": 90,
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 6661
+        },
+        {
+          "id": "hourglass",
+          "tick": 7881
+        },
+        {
+          "id": "hourglass",
+          "tick": 9686
+        },
+        {
+          "id": "hourglass",
+          "tick": 10721
+        },
+        {
+          "id": "hourglass",
+          "tick": 12196
+        },
+        {
+          "id": "hourglass",
+          "tick": 14331
+        },
+        {
+          "id": "hourglass",
+          "tick": 16216
+        },
+        {
+          "id": "hourglass",
+          "tick": 17486
+        }
+      ],
+      "telemetry": {
+        "casts": 1169,
+        "bolts": 1212,
+        "boltsHit": 599,
+        "directHits": 599,
+        "damage": 31632,
+        "overkill": 44689.05000000001,
+        "damageBySource": {
+          "direct:lightning": {
+            "effective": 19188.35,
+            "overkill": 31942.5,
+            "hits": 599
+          },
+          "lightning:chain": {
+            "effective": 12443.65,
+            "overkill": 12746.55,
+            "hits": 555
+          }
+        },
+        "incoming": 193,
+        "prevented": 39,
+        "incomingBySource": {
+          "contact:Spider": {
+            "requested": 15,
+            "applied": 15,
+            "prevented": 0,
+            "hits": 3
+          },
+          "contact:Goblin": {
+            "requested": 20,
+            "applied": 20,
+            "prevented": 0,
+            "hits": 4
+          },
+          "contact:Orc": {
+            "requested": 39,
+            "applied": 39,
+            "prevented": 0,
+            "hits": 3
+          },
+          "contact:Zombie": {
+            "requested": 60,
+            "applied": 45,
+            "prevented": 15,
+            "hits": 4
+          },
+          "hazard:frost-fissure": {
+            "requested": 16,
+            "applied": 16,
+            "prevented": 0,
+            "hits": 2
+          },
+          "contact:Knight": {
+            "requested": 43,
+            "applied": 19,
+            "prevented": 24,
+            "hits": 2
+          },
+          "contact:Vampire": {
+            "requested": 39,
+            "applied": 39,
+            "prevented": 0,
+            "hits": 2
+          }
+        },
+        "healing": 193,
+        "healingBySource": {
+          "level-up": 139.2,
+          "potion": 53.8
+        },
+        "selfDamage": 0,
+        "selfDamageBySource": {},
+        "windows": {
+          "0": {
+            "damage": 7658,
+            "incoming": 94,
+            "healing": 79,
+            "casts": 417,
+            "bolts": 417,
+            "boltsHit": 242
+          },
+          "5": {
+            "damage": 23974,
+            "incoming": 99,
+            "healing": 114,
+            "casts": 752,
+            "bolts": 795,
+            "boltsHit": 357
+          }
+        },
+        "seconds": 600,
+        "dps": 52.72,
+        "accuracy": 0.49422442244224424,
+        "hitsPerCast": 0.5124037639007699
+      },
+      "environment": "frost"
+    },
+    {
+      "school": "lightning",
+      "seed": 2,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 24,
+      "firstUpgrade": 8.12,
+      "kills": 835,
+      "xp": 4780,
+      "health": 100,
+      "maxEnemies": 19,
+      "build": {
+        "fire": 0,
+        "ice": 0,
+        "lightning": 1,
+        "necro": 0,
+        "arcane": 4
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "phantom",
+        "boots": "escape",
+        "relic": "hourglass"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "phantom",
+          "tick": 6037,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "echo",
+          "tick": 10691,
+          "source": "Treasure guardian reward"
+        },
+        {
+          "id": "hourglass",
+          "tick": 15127,
+          "source": "Guardian reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "guardian",
+          "outcome": "completed",
+          "tick": 10684,
+          "startedAt": 10530,
+          "progress": 1,
+          "goal": 1,
+          "hits": 0
+        },
+        {
+          "id": "altar",
+          "outcome": "completed",
+          "tick": 27249,
+          "startedAt": 25749,
+          "progress": 1500,
+          "goal": 1500,
+          "hits": 0
+        }
+      ],
+      "gold": 276,
+      "marketHistory": [
+        {
+          "id": "escape",
+          "price": 90,
+          "tick": 18029
+        }
+      ],
+      "goldEarned": 366,
+      "goldSpent": 90,
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 15196
+        },
+        {
+          "id": "hourglass",
+          "tick": 16221
+        },
+        {
+          "id": "hourglass",
+          "tick": 17371
+        },
+        {
+          "id": "hourglass",
+          "tick": 18426
+        },
+        {
+          "id": "escape",
+          "tick": 18506
+        },
+        {
+          "id": "escape",
+          "tick": 18956
+        },
+        {
+          "id": "escape",
+          "tick": 19551
+        },
+        {
+          "id": "hourglass",
+          "tick": 19826
+        },
+        {
+          "id": "escape",
+          "tick": 20001
+        },
+        {
+          "id": "escape",
+          "tick": 20531
+        },
+        {
+          "id": "hourglass",
+          "tick": 20826
+        },
+        {
+          "id": "escape",
+          "tick": 21116
+        },
+        {
+          "id": "hourglass",
+          "tick": 21891
+        },
+        {
+          "id": "escape",
+          "tick": 21896
+        },
+        {
+          "id": "escape",
+          "tick": 22496
+        },
+        {
+          "id": "hourglass",
+          "tick": 22946
+        },
+        {
+          "id": "escape",
+          "tick": 23056
+        },
+        {
+          "id": "escape",
+          "tick": 23621
+        },
+        {
+          "id": "escape",
+          "tick": 24146
+        },
+        {
+          "id": "hourglass",
+          "tick": 24156
+        },
+        {
+          "id": "escape",
+          "tick": 24756
+        },
+        {
+          "id": "hourglass",
+          "tick": 25156
+        },
+        {
+          "id": "escape",
+          "tick": 25626
+        },
+        {
+          "id": "hourglass",
+          "tick": 26456
+        },
+        {
+          "id": "escape",
+          "tick": 26481
+        },
+        {
+          "id": "escape",
+          "tick": 27071
+        },
+        {
+          "id": "hourglass",
+          "tick": 27521
+        },
+        {
+          "id": "escape",
+          "tick": 27751
+        },
+        {
+          "id": "hourglass",
+          "tick": 28661
+        },
+        {
+          "id": "escape",
+          "tick": 28881
+        },
+        {
+          "id": "escape",
+          "tick": 29366
+        },
+        {
+          "id": "hourglass",
+          "tick": 29661
+        }
+      ],
+      "telemetry": {
+        "casts": 704,
+        "bolts": 1600,
+        "boltsHit": 759,
+        "directHits": 759,
+        "damage": 32273.999999999996,
+        "overkill": 40704.75000000012,
+        "damageBySource": {
+          "direct:lightning": {
+            "effective": 23954.95,
+            "overkill": 33879.20000000001,
+            "hits": 759
+          },
+          "lightning:chain": {
+            "effective": 8319.050000000001,
+            "overkill": 6825.55,
+            "hits": 427
+          }
+        },
+        "incoming": 182,
+        "prevented": 221,
+        "incomingBySource": {
+          "contact:Goblin": {
+            "requested": 50,
+            "applied": 40,
+            "prevented": 10,
+            "hits": 10
+          },
+          "contact:Spider": {
+            "requested": 26,
+            "applied": 21,
+            "prevented": 5,
+            "hits": 5
+          },
+          "contact:Orc": {
+            "requested": 98,
+            "applied": 72,
+            "prevented": 26,
+            "hits": 7
+          },
+          "contact:Zombie": {
+            "requested": 60,
+            "applied": 30,
+            "prevented": 30,
+            "hits": 4
+          },
+          "contact:Knight": {
+            "requested": 133,
+            "applied": 19,
+            "prevented": 114,
+            "hits": 7
+          },
+          "contact:Vampire": {
+            "requested": 36,
+            "applied": 0,
+            "prevented": 36,
+            "hits": 2
+          }
+        },
+        "healing": 182,
+        "healingBySource": {
+          "level-up": 137,
+          "potion": 45
+        },
+        "selfDamage": 0,
+        "selfDamageBySource": {},
+        "windows": {
+          "0": {
+            "damage": 8013,
+            "incoming": 94,
+            "healing": 94,
+            "casts": 329,
+            "bolts": 569,
+            "boltsHit": 261
+          },
+          "5": {
+            "damage": 24260.999999999993,
+            "incoming": 88,
+            "healing": 88,
+            "casts": 375,
+            "bolts": 1031,
+            "boltsHit": 498
+          }
+        },
+        "seconds": 600,
+        "dps": 53.78999999999999,
+        "accuracy": 0.474375,
+        "hitsPerCast": 1.078125
+      },
+      "environment": "frost"
+    },
+    {
+      "school": "necro",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "firstUpgrade": 7.36,
+      "kills": 816,
+      "xp": 4636,
+      "health": 100,
+      "maxEnemies": 110,
+      "build": {
+        "fire": 0,
+        "ice": 5,
+        "lightning": 0,
+        "necro": 2,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "bloodwood",
+        "robe": "linen",
+        "boots": "swift",
+        "relic": "fang"
+      },
+      "chestsOpened": 4,
+      "lootHistory": [
+        {
+          "id": "bloodwood",
+          "tick": 6047,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "fang",
+          "tick": 12112,
+          "source": "Dungeon collapse reward"
+        },
+        {
+          "id": "wardrobe",
+          "tick": 16921,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "linen",
+          "tick": 26928,
+          "source": "Treasure guardian reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "collapse",
+          "outcome": "completed",
+          "tick": 12041,
+          "startedAt": 10541,
+          "progress": 0,
+          "goal": 3,
+          "hits": 0
+        },
+        {
+          "id": "guardian",
+          "outcome": "completed",
+          "tick": 26917,
+          "startedAt": 25870,
+          "progress": 1,
+          "goal": 1,
+          "hits": 0
+        }
+      ],
+      "gold": 317,
+      "marketHistory": [
+        {
+          "id": "swift",
+          "price": 45,
+          "tick": 18026
+        }
+      ],
+      "goldEarned": 362,
+      "goldSpent": 45,
+      "activeHistory": [],
+      "telemetry": {
+        "casts": 707,
+        "bolts": 707,
+        "boltsHit": 489,
+        "directHits": 686,
+        "damage": 31581,
+        "overkill": 35633.75,
+        "damageBySource": {
+          "direct:necro": {
+            "effective": 21276.5,
+            "overkill": 30615.25,
+            "hits": 686
+          },
+          "fusion:gravefrost": {
+            "effective": 10304.5,
+            "overkill": 5018.5,
+            "hits": 544
+          }
+        },
+        "incoming": 443,
+        "prevented": 0,
+        "incomingBySource": {
+          "contact:Spider": {
+            "requested": 145,
+            "applied": 145,
+            "prevented": 0,
+            "hits": 29
+          },
+          "contact:Goblin": {
+            "requested": 75,
+            "applied": 75,
+            "prevented": 0,
+            "hits": 15
+          },
+          "contact:Orc": {
+            "requested": 39,
+            "applied": 39,
+            "prevented": 0,
+            "hits": 3
+          },
+          "contact:Zombie": {
+            "requested": 45,
+            "applied": 45,
+            "prevented": 0,
+            "hits": 3
+          },
+          "contact:Knight": {
+            "requested": 38,
+            "applied": 38,
+            "prevented": 0,
+            "hits": 2
+          },
+          "contact:Vampire": {
+            "requested": 101,
+            "applied": 101,
+            "prevented": 0,
+            "hits": 5
+          }
+        },
+        "healing": 734.9999999999983,
+        "healingBySource": {
+          "necro:kill": 462.23999999999927,
+          "level-up": 55.76000000000005,
+          "potion": 42.5,
+          "gear:fang": 174.50000000000034
+        },
+        "selfDamage": 292,
+        "selfDamageBySource": {
+          "gear:bloodwood": 292
+        },
+        "windows": {
+          "0": {
+            "damage": 7416,
+            "incoming": 209,
+            "healing": 279.0000000000002,
+            "casts": 304,
+            "bolts": 304,
+            "boltsHit": 203
+          },
+          "5": {
+            "damage": 24165,
+            "incoming": 234,
+            "healing": 456.000000000001,
+            "casts": 403,
+            "bolts": 403,
+            "boltsHit": 286
+          }
+        },
+        "seconds": 600,
+        "dps": 52.635,
+        "accuracy": 0.6916548797736917,
+        "hitsPerCast": 0.9702970297029703
+      },
+      "environment": "frost"
+    },
+    {
+      "school": "necro",
+      "seed": 2,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "firstUpgrade": 8.14,
+      "kills": 761,
+      "xp": 4473,
+      "health": 100,
+      "maxEnemies": 76,
+      "build": {
+        "fire": 0,
+        "ice": 0,
+        "lightning": 0,
+        "necro": 2,
+        "arcane": 2
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "linen",
+        "boots": "runner",
+        "relic": "fang"
+      },
+      "chestsOpened": 4,
+      "lootHistory": [
+        {
+          "id": "fang",
+          "tick": 6502,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "linen",
+          "tick": 12825,
+          "source": "Magical anomaly reward"
+        },
+        {
+          "id": "bloodwood",
+          "tick": 23340,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "echo",
+          "tick": 26797,
+          "source": "Blood moon reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "anomaly",
+          "outcome": "completed",
+          "tick": 12820,
+          "startedAt": 11094,
+          "progress": 3,
+          "goal": 3,
+          "hits": 0
+        },
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 26791,
+          "startedAt": 25974,
+          "progress": 24,
+          "goal": 24,
+          "hits": 0
+        }
+      ],
+      "gold": 246,
+      "marketHistory": [
+        {
+          "id": "runner",
+          "price": 90,
+          "tick": 18029
+        }
+      ],
+      "goldEarned": 336,
+      "goldSpent": 90,
+      "activeHistory": [
+        {
+          "id": "runner",
+          "tick": 18671
+        },
+        {
+          "id": "runner",
+          "tick": 20121
+        },
+        {
+          "id": "runner",
+          "tick": 21076
+        },
+        {
+          "id": "runner",
+          "tick": 21636
+        },
+        {
+          "id": "runner",
+          "tick": 21996
+        },
+        {
+          "id": "runner",
+          "tick": 22446
+        },
+        {
+          "id": "runner",
+          "tick": 23066
+        },
+        {
+          "id": "runner",
+          "tick": 24371
+        },
+        {
+          "id": "runner",
+          "tick": 24866
+        },
+        {
+          "id": "runner",
+          "tick": 25346
+        },
+        {
+          "id": "runner",
+          "tick": 25711
+        },
+        {
+          "id": "runner",
+          "tick": 26121
+        },
+        {
+          "id": "runner",
+          "tick": 26701
+        },
+        {
+          "id": "runner",
+          "tick": 27261
+        },
+        {
+          "id": "runner",
+          "tick": 28121
+        },
+        {
+          "id": "runner",
+          "tick": 28806
+        },
+        {
+          "id": "runner",
+          "tick": 29981
+        }
+      ],
+      "telemetry": {
+        "casts": 968,
+        "bolts": 1807,
+        "boltsHit": 1174,
+        "directHits": 1174,
+        "damage": 29764,
+        "overkill": 35606.99999999999,
+        "damageBySource": {
+          "direct:necro": {
+            "effective": 29649,
+            "overkill": 35601.99999999999,
+            "hits": 1174
+          },
+          "fusion:soulward": {
+            "effective": 115,
+            "overkill": 5,
+            "hits": 2
+          }
+        },
+        "incoming": 191.28000000000006,
+        "prevented": 100.72,
+        "incomingBySource": {
+          "contact:Orc": {
+            "requested": 72,
+            "applied": 55.040000000000006,
+            "prevented": 16.96,
+            "hits": 5
+          },
+          "contact:Goblin": {
+            "requested": 60,
+            "applied": 46.400000000000034,
+            "prevented": 13.599999999999998,
+            "hits": 12
+          },
+          "contact:Spider": {
+            "requested": 40,
+            "applied": 28.200000000000017,
+            "prevented": 11.799999999999999,
+            "hits": 8
+          },
+          "contact:Zombie": {
+            "requested": 102,
+            "applied": 61.64,
+            "prevented": 40.36,
+            "hits": 6
+          },
+          "contact:Vampire": {
+            "requested": 18,
+            "applied": 0,
+            "prevented": 18,
+            "hits": 1
+          }
+        },
+        "healing": 259.2800000000003,
+        "healingBySource": {
+          "necro:kill": 142.24000000000007,
+          "level-up": 34.82000000000008,
+          "gear:fang": 80.21999999999979,
+          "potion": 2
+        },
+        "selfDamage": 68,
+        "selfDamageBySource": {
+          "gear:bloodwood": 68
+        },
+        "windows": {
+          "0": {
+            "damage": 7238,
+            "incoming": 106.80000000000003,
+            "healing": 106.80000000000003,
+            "casts": 382,
+            "bolts": 603,
+            "boltsHit": 399
+          },
+          "5": {
+            "damage": 22526,
+            "incoming": 84.48000000000003,
+            "healing": 152.48000000000002,
+            "casts": 586,
+            "bolts": 1204,
+            "boltsHit": 775
+          }
+        },
+        "seconds": 600,
+        "dps": 49.60666666666667,
+        "accuracy": 0.6496956281128943,
+        "hitsPerCast": 1.212809917355372
+      },
+      "environment": "frost"
+    },
+    {
+      "school": "arcane",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 24,
+      "firstUpgrade": 8.22,
+      "kills": 826,
+      "xp": 4742,
+      "health": 100,
+      "maxEnemies": 19,
+      "build": {
+        "fire": 0,
+        "ice": 0,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 5
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "phantom",
+        "boots": "runner",
+        "relic": "hourglass"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "phantom",
+          "tick": 6080,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "bloodwood",
+          "tick": 12036,
+          "source": "Dungeon collapse reward"
+        },
+        {
+          "id": "hourglass",
+          "tick": 15375,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "echo",
+          "tick": 21057,
+          "source": "Dungeon treasure"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "collapse",
+          "outcome": "completed",
+          "tick": 12030,
+          "startedAt": 10530,
+          "progress": 0,
+          "goal": 3,
+          "hits": 0
+        },
+        {
+          "id": "guardian",
+          "outcome": "completed",
+          "tick": 25724,
+          "startedAt": 25531,
+          "progress": 1,
+          "goal": 1,
+          "hits": 0
+        }
+      ],
+      "gold": 274,
+      "marketHistory": [
+        {
+          "id": "runner",
+          "price": 90,
+          "tick": 18557
+        }
+      ],
+      "goldEarned": 364,
+      "goldSpent": 90,
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 16266
+        },
+        {
+          "id": "hourglass",
+          "tick": 18106
+        },
+        {
+          "id": "runner",
+          "tick": 18836
+        },
+        {
+          "id": "hourglass",
+          "tick": 19346
+        },
+        {
+          "id": "runner",
+          "tick": 19351
+        },
+        {
+          "id": "runner",
+          "tick": 20206
+        },
+        {
+          "id": "hourglass",
+          "tick": 20481
+        },
+        {
+          "id": "runner",
+          "tick": 20606
+        },
+        {
+          "id": "runner",
+          "tick": 22306
+        },
+        {
+          "id": "hourglass",
+          "tick": 22366
+        },
+        {
+          "id": "runner",
+          "tick": 22886
+        },
+        {
+          "id": "hourglass",
+          "tick": 23421
+        },
+        {
+          "id": "runner",
+          "tick": 23566
+        },
+        {
+          "id": "runner",
+          "tick": 24021
+        },
+        {
+          "id": "runner",
+          "tick": 24586
+        },
+        {
+          "id": "hourglass",
+          "tick": 24741
+        },
+        {
+          "id": "runner",
+          "tick": 25406
+        },
+        {
+          "id": "hourglass",
+          "tick": 25921
+        },
+        {
+          "id": "runner",
+          "tick": 26026
+        },
+        {
+          "id": "runner",
+          "tick": 26381
+        },
+        {
+          "id": "runner",
+          "tick": 26731
+        },
+        {
+          "id": "hourglass",
+          "tick": 27141
+        },
+        {
+          "id": "runner",
+          "tick": 27691
+        },
+        {
+          "id": "runner",
+          "tick": 28071
+        },
+        {
+          "id": "hourglass",
+          "tick": 28356
+        },
+        {
+          "id": "runner",
+          "tick": 29216
+        },
+        {
+          "id": "hourglass",
+          "tick": 29736
+        },
+        {
+          "id": "runner",
+          "tick": 29946
+        }
+      ],
+      "telemetry": {
+        "casts": 708,
+        "bolts": 2951,
+        "boltsHit": 1198,
+        "directHits": 1198,
+        "damage": 31680,
+        "overkill": 43708.799999999996,
+        "damageBySource": {
+          "direct:arcane": {
+            "effective": 31680,
+            "overkill": 43708.799999999996,
+            "hits": 1198
+          }
+        },
+        "incoming": 85,
+        "prevented": 192,
+        "incomingBySource": {
+          "contact:Goblin": {
+            "requested": 41,
+            "applied": 5,
+            "prevented": 36,
+            "hits": 8
+          },
+          "contact:Orc": {
+            "requested": 42,
+            "applied": 13,
+            "prevented": 29,
+            "hits": 3
+          },
+          "contact:Spider": {
+            "requested": 41,
+            "applied": 10,
+            "prevented": 31,
+            "hits": 8
+          },
+          "hazard:frost-fissure": {
+            "requested": 24,
+            "applied": 24,
+            "prevented": 0,
+            "hits": 3
+          },
+          "contact:Zombie": {
+            "requested": 30,
+            "applied": 15,
+            "prevented": 15,
+            "hits": 2
+          },
+          "contact:Knight": {
+            "requested": 81,
+            "applied": 0,
+            "prevented": 81,
+            "hits": 4
+          },
+          "contact:Vampire": {
+            "requested": 18,
+            "applied": 18,
+            "prevented": 0,
+            "hits": 1
+          }
+        },
+        "healing": 187,
+        "healingBySource": {
+          "level-up": 147,
+          "potion": 40
+        },
+        "selfDamage": 102,
+        "selfDamageBySource": {
+          "gear:bloodwood": 102
+        },
+        "windows": {
+          "0": {
+            "damage": 7734,
+            "incoming": 51,
+            "healing": 50.2,
+            "casts": 297,
+            "bolts": 830,
+            "boltsHit": 384
+          },
+          "5": {
+            "damage": 23946,
+            "incoming": 34,
+            "healing": 136.8,
+            "casts": 411,
+            "bolts": 2121,
+            "boltsHit": 814
+          }
+        },
+        "seconds": 600,
+        "dps": 52.8,
+        "accuracy": 0.4059640799728905,
+        "hitsPerCast": 1.692090395480226
+      },
+      "environment": "frost"
+    },
+    {
+      "school": "arcane",
+      "seed": 2,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "firstUpgrade": 8.24,
+      "kills": 801,
+      "xp": 4617,
+      "health": 100,
+      "maxEnemies": 34,
+      "build": {
+        "fire": 0,
+        "ice": 0,
+        "lightning": 0,
+        "necro": 2,
+        "arcane": 5
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "phantom",
+        "boots": "runner",
+        "relic": "fang"
+      },
+      "chestsOpened": 4,
+      "lootHistory": [
+        {
+          "id": "fang",
+          "tick": 6240,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "phantom",
+          "tick": 11424,
+          "source": "Magical anomaly reward"
+        },
+        {
+          "id": "bloodwood",
+          "tick": 21039,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "echo",
+          "tick": 26211,
+          "source": "Treasure guardian reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "anomaly",
+          "outcome": "completed",
+          "tick": 11419,
+          "startedAt": 10992,
+          "progress": 3,
+          "goal": 3,
+          "hits": 0
+        },
+        {
+          "id": "guardian",
+          "outcome": "completed",
+          "tick": 26204,
+          "startedAt": 25875,
+          "progress": 1,
+          "goal": 1,
+          "hits": 0
+        }
+      ],
+      "gold": 266,
+      "marketHistory": [
+        {
+          "id": "runner",
+          "price": 90,
+          "tick": 18026
+        }
+      ],
+      "goldEarned": 356,
+      "goldSpent": 90,
+      "activeHistory": [
+        {
+          "id": "runner",
+          "tick": 18381
+        },
+        {
+          "id": "runner",
+          "tick": 19046
+        },
+        {
+          "id": "runner",
+          "tick": 20881
+        },
+        {
+          "id": "runner",
+          "tick": 21301
+        },
+        {
+          "id": "runner",
+          "tick": 22061
+        },
+        {
+          "id": "runner",
+          "tick": 22751
+        },
+        {
+          "id": "runner",
+          "tick": 23136
+        },
+        {
+          "id": "runner",
+          "tick": 23976
+        },
+        {
+          "id": "runner",
+          "tick": 24431
+        },
+        {
+          "id": "runner",
+          "tick": 25121
+        },
+        {
+          "id": "runner",
+          "tick": 25481
+        },
+        {
+          "id": "runner",
+          "tick": 25891
+        },
+        {
+          "id": "runner",
+          "tick": 26581
+        },
+        {
+          "id": "runner",
+          "tick": 26931
+        },
+        {
+          "id": "runner",
+          "tick": 27436
+        },
+        {
+          "id": "runner",
+          "tick": 27851
+        },
+        {
+          "id": "runner",
+          "tick": 28276
+        },
+        {
+          "id": "runner",
+          "tick": 28936
+        },
+        {
+          "id": "runner",
+          "tick": 29391
+        },
+        {
+          "id": "runner",
+          "tick": 29811
+        }
+      ],
+      "telemetry": {
+        "casts": 714,
+        "bolts": 2053,
+        "boltsHit": 1196,
+        "directHits": 1196,
+        "damage": 30878.70000000002,
+        "overkill": 35843.78749999999,
+        "damageBySource": {
+          "direct:arcane": {
+            "effective": 30395.875000000015,
+            "overkill": 35331.612499999996,
+            "hits": 1196
+          },
+          "fusion:soulward": {
+            "effective": 482.825,
+            "overkill": 512.175,
+            "hits": 20
+          }
+        },
+        "incoming": 44,
+        "prevented": 265,
+        "incomingBySource": {
+          "contact:Spider": {
+            "requested": 55,
+            "applied": 20,
+            "prevented": 35,
+            "hits": 11
+          },
+          "contact:Goblin": {
+            "requested": 31,
+            "applied": 5,
+            "prevented": 26,
+            "hits": 6
+          },
+          "contact:Orc": {
+            "requested": 39,
+            "applied": 0,
+            "prevented": 39,
+            "hits": 3
+          },
+          "contact:Zombie": {
+            "requested": 30,
+            "applied": 0,
+            "prevented": 30,
+            "hits": 2
+          },
+          "contact:Knight": {
+            "requested": 95,
+            "applied": 19,
+            "prevented": 76,
+            "hits": 5
+          },
+          "contact:Vampire": {
+            "requested": 59,
+            "applied": 0,
+            "prevented": 59,
+            "hits": 3
+          }
+        },
+        "healing": 108,
+        "healingBySource": {
+          "level-up": 15,
+          "gear:fang": 36.29999999999991,
+          "necro:kill": 56.70000000000009
+        },
+        "selfDamage": 64,
+        "selfDamageBySource": {
+          "gear:bloodwood": 64
+        },
+        "windows": {
+          "0": {
+            "damage": 7655,
+            "incoming": 15,
+            "healing": 15,
+            "casts": 339,
+            "bolts": 905,
+            "boltsHit": 425
+          },
+          "5": {
+            "damage": 23223.700000000004,
+            "incoming": 29,
+            "healing": 93,
+            "casts": 375,
+            "bolts": 1148,
+            "boltsHit": 771
+          }
+        },
+        "seconds": 600,
+        "dps": 51.46450000000003,
+        "accuracy": 0.5825621042377009,
+        "hitsPerCast": 1.6750700280112045
+      },
+      "environment": "frost"
+    },
+    {
+      "school": "fire",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "firstUpgrade": 6.28,
+      "kills": 754,
+      "xp": 4296,
+      "health": 100,
+      "maxEnemies": 39,
+      "build": {
+        "fire": 4,
+        "ice": 5,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "phantom",
+        "boots": "swift",
+        "relic": "hourglass"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "hourglass",
+          "tick": 6595,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "phantom",
+          "tick": 12254,
+          "source": "Arcane shrine reward"
+        },
+        {
+          "id": "echo",
+          "tick": 16161,
+          "source": "Guardian reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "shrine",
+          "outcome": "completed",
+          "tick": 12243,
+          "startedAt": 10531,
+          "progress": 750,
+          "goal": 750,
+          "hits": 0
+        },
+        {
+          "id": "moon",
+          "outcome": "completed",
+          "tick": 26078,
+          "startedAt": 25532,
+          "progress": 25,
+          "goal": 24,
+          "hits": 0
+        }
+      ],
+      "gold": 289,
+      "marketHistory": [
+        {
+          "id": "swift",
+          "price": 45,
+          "tick": 18026
+        }
+      ],
+      "goldEarned": 334,
+      "goldSpent": 45,
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 6601
+        },
+        {
+          "id": "hourglass",
+          "tick": 7606
+        },
+        {
+          "id": "hourglass",
+          "tick": 8701
+        },
+        {
+          "id": "hourglass",
+          "tick": 10211
+        },
+        {
+          "id": "hourglass",
+          "tick": 11211
+        },
+        {
+          "id": "hourglass",
+          "tick": 12411
+        },
+        {
+          "id": "hourglass",
+          "tick": 13561
+        },
+        {
+          "id": "hourglass",
+          "tick": 14806
+        },
+        {
+          "id": "hourglass",
+          "tick": 15846
+        },
+        {
+          "id": "hourglass",
+          "tick": 16921
+        },
+        {
+          "id": "hourglass",
+          "tick": 18366
+        },
+        {
+          "id": "hourglass",
+          "tick": 19366
+        },
+        {
+          "id": "hourglass",
+          "tick": 20511
+        },
+        {
+          "id": "hourglass",
+          "tick": 22106
+        },
+        {
+          "id": "hourglass",
+          "tick": 23376
+        },
+        {
+          "id": "hourglass",
+          "tick": 24791
+        },
+        {
+          "id": "hourglass",
+          "tick": 25791
+        },
+        {
+          "id": "hourglass",
+          "tick": 27086
+        },
+        {
+          "id": "hourglass",
+          "tick": 28241
+        },
+        {
+          "id": "hourglass",
+          "tick": 29651
+        }
+      ],
+      "telemetry": {
+        "casts": 800,
+        "bolts": 880,
+        "boltsHit": 524,
+        "directHits": 578,
+        "damage": 28843.99999999999,
+        "overkill": 24220.600000000002,
+        "damageBySource": {
+          "direct:fire": {
+            "effective": 15853.600000000004,
+            "overkill": 18017.5,
+            "hits": 578
+          },
+          "fire:burn": {
+            "effective": 5925.999999999998,
+            "overkill": 1211.8000000000002,
+            "hits": 232
+          },
+          "fire:burst": {
+            "effective": 3357.9,
+            "overkill": 2519.1,
+            "hits": 200
+          },
+          "fusion:steam": {
+            "effective": 3706.5,
+            "overkill": 2472.2,
+            "hits": 154
+          }
+        },
+        "incoming": 183,
+        "prevented": 17,
+        "incomingBySource": {
+          "contact:Goblin": {
+            "requested": 45,
+            "applied": 40,
+            "prevented": 5,
+            "hits": 9
+          },
+          "contact:Orc": {
+            "requested": 65,
+            "applied": 65,
+            "prevented": 0,
+            "hits": 5
+          },
+          "contact:Spider": {
+            "requested": 5,
+            "applied": 5,
+            "prevented": 0,
+            "hits": 1
+          },
+          "hazard:lava-vent": {
+            "requested": 12,
+            "applied": 0,
+            "prevented": 12,
+            "hits": 1
+          },
+          "contact:Zombie": {
+            "requested": 30,
+            "applied": 30,
+            "prevented": 0,
+            "hits": 2
+          },
+          "contact:Knight": {
+            "requested": 43,
+            "applied": 43,
+            "prevented": 0,
+            "hits": 2
+          }
+        },
+        "healing": 183,
+        "healingBySource": {
+          "level-up": 161.6,
+          "potion": 21.39999999999999
+        },
+        "selfDamage": 0,
+        "selfDamageBySource": {},
+        "windows": {
+          "0": {
+            "damage": 7345,
+            "incoming": 122,
+            "healing": 107,
+            "casts": 364,
+            "bolts": 364,
+            "boltsHit": 236
+          },
+          "5": {
+            "damage": 21499.000000000004,
+            "incoming": 61,
+            "healing": 76,
+            "casts": 436,
+            "bolts": 516,
+            "boltsHit": 288
+          }
+        },
+        "seconds": 600,
+        "dps": 48.073333333333316,
+        "accuracy": 0.5954545454545455,
+        "hitsPerCast": 0.7225
+      },
+      "environment": "forge"
+    },
+    {
+      "school": "fire",
+      "seed": 2,
+      "seconds": 536.1,
+      "phase": "over",
+      "level": 22,
+      "firstUpgrade": 7.72,
+      "kills": 618,
+      "xp": 3433,
+      "health": 0,
+      "maxEnemies": 83,
+      "build": {
+        "fire": 1,
+        "ice": 5,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "bloodwood",
+        "robe": "phantom",
+        "boots": "runner",
+        "relic": "gambler"
+      },
+      "chestsOpened": 3,
+      "lootHistory": [
+        {
+          "id": "phantom",
+          "tick": 11767,
+          "source": "Treasure guardian reward"
+        },
+        {
+          "id": "gambler",
+          "tick": 17818,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "runner",
+          "tick": 21347,
+          "source": "Dungeon treasure"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "guardian",
+          "outcome": "completed",
+          "tick": 11759,
+          "startedAt": 11191,
+          "progress": 1,
+          "goal": 1,
+          "hits": 0
+        },
+        {
+          "id": "altar",
+          "outcome": "failed",
+          "tick": 26805,
+          "startedAt": 25525,
+          "progress": 1279,
+          "goal": 1500,
+          "hits": 0
+        }
+      ],
+      "gold": 173,
+      "marketHistory": [
+        {
+          "id": "bloodwood",
+          "price": 90,
+          "tick": 18055
+        }
+      ],
+      "goldEarned": 263,
+      "goldSpent": 90,
+      "activeHistory": [
+        {
+          "id": "runner",
+          "tick": 21436
+        },
+        {
+          "id": "runner",
+          "tick": 22281
+        },
+        {
+          "id": "runner",
+          "tick": 24456
+        },
+        {
+          "id": "runner",
+          "tick": 25631
+        },
+        {
+          "id": "runner",
+          "tick": 26401
+        },
+        {
+          "id": "runner",
+          "tick": 26786
+        }
+      ],
+      "telemetry": {
+        "casts": 659,
+        "bolts": 659,
+        "boltsHit": 464,
+        "directHits": 673,
+        "damage": 23748,
+        "overkill": 41276.375,
+        "damageBySource": {
+          "direct:fire": {
+            "effective": 19814.75,
+            "overkill": 40736.125,
+            "hits": 673
+          },
+          "fire:burn": {
+            "effective": 3933.25,
+            "overkill": 540.25,
+            "hits": 242
+          }
+        },
+        "incoming": 251.4822,
+        "prevented": 395,
+        "incomingBySource": {
+          "contact:Goblin": {
+            "requested": 363,
+            "applied": 50,
+            "prevented": 313,
+            "hits": 72
+          },
+          "contact:Orc": {
+            "requested": 104,
+            "applied": 91,
+            "prevented": 13,
+            "hits": 8
+          },
+          "contact:Zombie": {
+            "requested": 90,
+            "applied": 60,
+            "prevented": 30,
+            "hits": 6
+          },
+          "contact:Spider": {
+            "requested": 35,
+            "applied": 15,
+            "prevented": 20,
+            "hits": 7
+          },
+          "contact:Knight": {
+            "requested": 19,
+            "applied": 0,
+            "prevented": 19,
+            "hits": 1
+          },
+          "contact:Vampire": {
+            "requested": 36,
+            "applied": 35.48220000000001,
+            "prevented": 0,
+            "hits": 2
+          }
+        },
+        "healing": 277.48220000000003,
+        "healingBySource": {
+          "level-up": 177.48220000000003,
+          "potion": 100
+        },
+        "selfDamage": 126,
+        "selfDamageBySource": {
+          "gear:bloodwood": 126
+        },
+        "windows": {
+          "0": {
+            "damage": 7036,
+            "incoming": 140,
+            "healing": 128.23490000000004,
+            "casts": 324,
+            "bolts": 324,
+            "boltsHit": 223
+          },
+          "5": {
+            "damage": 16712,
+            "incoming": 111.4822,
+            "healing": 149.2473,
+            "casts": 335,
+            "bolts": 335,
+            "boltsHit": 241
+          }
+        },
+        "seconds": 536.1,
+        "dps": 44.297705651930606,
+        "accuracy": 0.7040971168437026,
+        "hitsPerCast": 1.0212443095599393
+      },
+      "environment": "forge"
+    },
+    {
+      "school": "ice",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "firstUpgrade": 6.28,
+      "kills": 752,
+      "xp": 4285,
+      "health": 48,
+      "maxEnemies": 32,
+      "build": {
+        "fire": 0,
+        "ice": 5,
+        "lightning": 3,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "bloodwood",
+        "robe": "thorns",
+        "boots": "escape",
+        "relic": "hourglass"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "hourglass",
+          "tick": 7151,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "thorns",
+          "tick": 11405,
+          "source": "Treasure guardian reward"
+        },
+        {
+          "id": "longshot",
+          "tick": 16274,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "escape",
+          "tick": 21432,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "bloodwood",
+          "tick": 26203,
+          "source": "Magical anomaly reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "guardian",
+          "outcome": "completed",
+          "tick": 11391,
+          "startedAt": 10884,
+          "progress": 1,
+          "goal": 1,
+          "hits": 0
+        },
+        {
+          "id": "anomaly",
+          "outcome": "completed",
+          "tick": 26194,
+          "startedAt": 25796,
+          "progress": 3,
+          "goal": 3,
+          "hits": 0
+        }
+      ],
+      "gold": 291,
+      "marketHistory": [
+        {
+          "id": "quickwand",
+          "price": 45,
+          "tick": 18027
+        }
+      ],
+      "goldEarned": 336,
+      "goldSpent": 45,
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 7152
+        },
+        {
+          "id": "hourglass",
+          "tick": 8241
+        },
+        {
+          "id": "hourglass",
+          "tick": 9241
+        },
+        {
+          "id": "hourglass",
+          "tick": 10306
+        },
+        {
+          "id": "hourglass",
+          "tick": 11491
+        },
+        {
+          "id": "hourglass",
+          "tick": 12671
+        },
+        {
+          "id": "hourglass",
+          "tick": 13971
+        },
+        {
+          "id": "hourglass",
+          "tick": 14971
+        },
+        {
+          "id": "hourglass",
+          "tick": 15971
+        },
+        {
+          "id": "hourglass",
+          "tick": 16976
+        },
+        {
+          "id": "hourglass",
+          "tick": 18096
+        },
+        {
+          "id": "hourglass",
+          "tick": 19696
+        },
+        {
+          "id": "hourglass",
+          "tick": 21076
+        },
+        {
+          "id": "hourglass",
+          "tick": 22451
+        },
+        {
+          "id": "escape",
+          "tick": 22696
+        },
+        {
+          "id": "escape",
+          "tick": 23826
+        },
+        {
+          "id": "escape",
+          "tick": 24411
+        },
+        {
+          "id": "hourglass",
+          "tick": 24436
+        },
+        {
+          "id": "escape",
+          "tick": 25086
+        },
+        {
+          "id": "hourglass",
+          "tick": 25461
+        },
+        {
+          "id": "escape",
+          "tick": 25631
+        },
+        {
+          "id": "escape",
+          "tick": 26136
+        },
+        {
+          "id": "hourglass",
+          "tick": 26466
+        },
+        {
+          "id": "escape",
+          "tick": 27141
+        },
+        {
+          "id": "hourglass",
+          "tick": 27466
+        },
+        {
+          "id": "escape",
+          "tick": 27741
+        },
+        {
+          "id": "escape",
+          "tick": 28221
+        },
+        {
+          "id": "hourglass",
+          "tick": 28656
+        }
+      ],
+      "telemetry": {
+        "casts": 945,
+        "bolts": 945,
+        "boltsHit": 585,
+        "directHits": 764,
+        "damage": 29045,
+        "overkill": 24227.75,
+        "damageBySource": {
+          "direct:ice": {
+            "effective": 19863,
+            "overkill": 19997.25,
+            "hits": 764
+          },
+          "lightning:chain": {
+            "effective": 9042,
+            "overkill": 4190.5,
+            "hits": 482
+          },
+          "gear:thorns": {
+            "effective": 140,
+            "overkill": 40,
+            "hits": 6
+          }
+        },
+        "incoming": 99,
+        "prevented": 52,
+        "incomingBySource": {
+          "contact:Goblin": {
+            "requested": 15,
+            "applied": 10,
+            "prevented": 5,
+            "hits": 3
+          },
+          "contact:Spider": {
+            "requested": 5,
+            "applied": 5,
+            "prevented": 0,
+            "hits": 1
+          },
+          "contact:Orc": {
+            "requested": 52,
+            "applied": 39,
+            "prevented": 13,
+            "hits": 4
+          },
+          "contact:Zombie": {
+            "requested": 30,
+            "applied": 15,
+            "prevented": 15,
+            "hits": 2
+          },
+          "contact:Knight": {
+            "requested": 19,
+            "applied": 0,
+            "prevented": 19,
+            "hits": 1
+          },
+          "contact:Vampire": {
+            "requested": 18,
+            "applied": 18,
+            "prevented": 0,
+            "hits": 1
+          },
+          "hazard:lava-vent": {
+            "requested": 12,
+            "applied": 12,
+            "prevented": 0,
+            "hits": 1
+          }
+        },
+        "healing": 141.2,
+        "healingBySource": {
+          "level-up": 101.2,
+          "potion": 40
+        },
+        "selfDamage": 94,
+        "selfDamageBySource": {
+          "gear:bloodwood": 94
+        },
+        "windows": {
+          "0": {
+            "damage": 7801.5,
+            "incoming": 51,
+            "healing": 51,
+            "casts": 323,
+            "bolts": 323,
+            "boltsHit": 211
+          },
+          "5": {
+            "damage": 21243.5,
+            "incoming": 48,
+            "healing": 90.2,
+            "casts": 622,
+            "bolts": 622,
+            "boltsHit": 374
+          }
+        },
+        "seconds": 600,
+        "dps": 48.40833333333333,
+        "accuracy": 0.6190476190476191,
+        "hitsPerCast": 0.8084656084656084
+      },
+      "environment": "forge"
+    },
+    {
+      "school": "ice",
+      "seed": 2,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "firstUpgrade": 7.72,
+      "kills": 737,
+      "xp": 4158,
+      "health": 36,
+      "maxEnemies": 80,
+      "build": {
+        "fire": 0,
+        "ice": 5,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "bloodwood",
+        "robe": "phantom",
+        "boots": "runner",
+        "relic": "hourglass"
+      },
+      "chestsOpened": 4,
+      "lootHistory": [
+        {
+          "id": "phantom",
+          "tick": 6038,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "hourglass",
+          "tick": 16458,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "bloodwood",
+          "tick": 26482,
+          "source": "Magical anomaly reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "guardian",
+          "outcome": "failed",
+          "tick": 12542,
+          "startedAt": 10542,
+          "progress": 0,
+          "goal": 1,
+          "hits": 0
+        },
+        {
+          "id": "anomaly",
+          "outcome": "completed",
+          "tick": 26473,
+          "startedAt": 25534,
+          "progress": 3,
+          "goal": 3,
+          "hits": 0
+        }
+      ],
+      "gold": 223,
+      "marketHistory": [
+        {
+          "id": "runner",
+          "price": 90,
+          "tick": 18027
+        }
+      ],
+      "goldEarned": 313,
+      "goldSpent": 90,
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 16459
+        },
+        {
+          "id": "hourglass",
+          "tick": 17459
+        },
+        {
+          "id": "runner",
+          "tick": 18451
+        },
+        {
+          "id": "hourglass",
+          "tick": 18491
+        },
+        {
+          "id": "hourglass",
+          "tick": 19561
+        },
+        {
+          "id": "hourglass",
+          "tick": 20871
+        },
+        {
+          "id": "runner",
+          "tick": 20921
+        },
+        {
+          "id": "runner",
+          "tick": 21271
+        },
+        {
+          "id": "hourglass",
+          "tick": 21976
+        },
+        {
+          "id": "runner",
+          "tick": 22176
+        },
+        {
+          "id": "hourglass",
+          "tick": 22976
+        },
+        {
+          "id": "runner",
+          "tick": 23906
+        },
+        {
+          "id": "hourglass",
+          "tick": 24026
+        },
+        {
+          "id": "runner",
+          "tick": 24546
+        },
+        {
+          "id": "runner",
+          "tick": 25006
+        },
+        {
+          "id": "hourglass",
+          "tick": 25026
+        },
+        {
+          "id": "runner",
+          "tick": 25581
+        },
+        {
+          "id": "runner",
+          "tick": 25931
+        },
+        {
+          "id": "hourglass",
+          "tick": 26026
+        },
+        {
+          "id": "runner",
+          "tick": 26666
+        },
+        {
+          "id": "runner",
+          "tick": 27031
+        },
+        {
+          "id": "hourglass",
+          "tick": 27031
+        },
+        {
+          "id": "runner",
+          "tick": 27381
+        },
+        {
+          "id": "runner",
+          "tick": 28021
+        },
+        {
+          "id": "hourglass",
+          "tick": 28031
+        },
+        {
+          "id": "runner",
+          "tick": 28546
+        },
+        {
+          "id": "runner",
+          "tick": 28986
+        },
+        {
+          "id": "runner",
+          "tick": 29721
+        },
+        {
+          "id": "hourglass",
+          "tick": 29741
+        }
+      ],
+      "telemetry": {
+        "casts": 619,
+        "bolts": 619,
+        "boltsHit": 440,
+        "directHits": 896,
+        "damage": 28778.1,
+        "overkill": 57748.19999999999,
+        "damageBySource": {
+          "direct:ice": {
+            "effective": 28778.1,
+            "overkill": 57748.19999999999,
+            "hits": 896
+          }
+        },
+        "incoming": 178,
+        "prevented": 125,
+        "incomingBySource": {
+          "contact:Goblin": {
+            "requested": 71,
+            "applied": 45,
+            "prevented": 26,
+            "hits": 14
+          },
+          "contact:Spider": {
+            "requested": 21,
+            "applied": 5,
+            "prevented": 16,
+            "hits": 4
+          },
+          "contact:Orc": {
+            "requested": 39,
+            "applied": 13,
+            "prevented": 26,
+            "hits": 3
+          },
+          "contact:Zombie": {
+            "requested": 79,
+            "applied": 60,
+            "prevented": 19,
+            "hits": 5
+          },
+          "contact:Knight": {
+            "requested": 57,
+            "applied": 19,
+            "prevented": 38,
+            "hits": 3
+          },
+          "contact:Vampire": {
+            "requested": 36,
+            "applied": 36,
+            "prevented": 0,
+            "hits": 2
+          }
+        },
+        "healing": 153.76,
+        "healingBySource": {
+          "level-up": 98.4,
+          "potion": 55.36
+        },
+        "selfDamage": 40,
+        "selfDamageBySource": {
+          "gear:bloodwood": 40
+        },
+        "windows": {
+          "0": {
+            "damage": 7161,
+            "incoming": 45,
+            "healing": 45,
+            "casts": 297,
+            "bolts": 297,
+            "boltsHit": 211
+          },
+          "5": {
+            "damage": 21617.1,
+            "incoming": 133,
+            "healing": 108.76,
+            "casts": 322,
+            "bolts": 322,
+            "boltsHit": 229
+          }
+        },
+        "seconds": 600,
+        "dps": 47.963499999999996,
+        "accuracy": 0.7108239095315024,
+        "hitsPerCast": 1.4474959612277867
+      },
+      "environment": "forge"
+    },
+    {
+      "school": "lightning",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "firstUpgrade": 8.06,
+      "kills": 747,
+      "xp": 4294,
+      "health": 100,
+      "maxEnemies": 27,
+      "build": {
+        "fire": 0,
+        "ice": 5,
+        "lightning": 1,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "phantom",
+        "boots": "runner",
+        "relic": "hourglass"
+      },
+      "chestsOpened": 4,
+      "lootHistory": [
+        {
+          "id": "gambler",
+          "tick": 6037,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "phantom",
+          "tick": 16953,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "runner",
+          "tick": 21038,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "hourglass",
+          "tick": 26219,
+          "source": "Treasure guardian reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "shrine",
+          "outcome": "failed",
+          "tick": 13000,
+          "startedAt": 11000,
+          "progress": 518,
+          "goal": 750,
+          "hits": 0
+        },
+        {
+          "id": "guardian",
+          "outcome": "completed",
+          "tick": 26213,
+          "startedAt": 25531,
+          "progress": 1,
+          "goal": 1,
+          "hits": 0
+        }
+      ],
+      "gold": 227,
+      "marketHistory": [
+        {
+          "id": "echo",
+          "price": 90,
+          "tick": 18028
+        }
+      ],
+      "goldEarned": 317,
+      "goldSpent": 90,
+      "activeHistory": [
+        {
+          "id": "runner",
+          "tick": 21616
+        },
+        {
+          "id": "runner",
+          "tick": 23296
+        },
+        {
+          "id": "runner",
+          "tick": 23801
+        },
+        {
+          "id": "runner",
+          "tick": 24176
+        },
+        {
+          "id": "runner",
+          "tick": 24571
+        },
+        {
+          "id": "runner",
+          "tick": 25621
+        },
+        {
+          "id": "hourglass",
+          "tick": 26341
+        },
+        {
+          "id": "runner",
+          "tick": 26436
+        },
+        {
+          "id": "runner",
+          "tick": 27071
+        },
+        {
+          "id": "hourglass",
+          "tick": 27416
+        },
+        {
+          "id": "runner",
+          "tick": 27921
+        },
+        {
+          "id": "hourglass",
+          "tick": 28646
+        },
+        {
+          "id": "runner",
+          "tick": 29386
+        },
+        {
+          "id": "hourglass",
+          "tick": 29646
+        },
+        {
+          "id": "runner",
+          "tick": 29931
+        }
+      ],
+      "telemetry": {
+        "casts": 647,
+        "bolts": 700,
+        "boltsHit": 458,
+        "directHits": 546,
+        "damage": 29103,
+        "overkill": 49822.85000000001,
+        "damageBySource": {
+          "direct:lightning": {
+            "effective": 19686.700000000004,
+            "overkill": 39359.950000000004,
+            "hits": 546
+          },
+          "lightning:chain": {
+            "effective": 9416.3,
+            "overkill": 10462.9,
+            "hits": 404
+          }
+        },
+        "incoming": 182,
+        "prevented": 68,
+        "incomingBySource": {
+          "contact:Goblin": {
+            "requested": 62,
+            "applied": 31,
+            "prevented": 31,
+            "hits": 12
+          },
+          "contact:Spider": {
+            "requested": 15,
+            "applied": 10,
+            "prevented": 5,
+            "hits": 3
+          },
+          "contact:Orc": {
+            "requested": 91,
+            "applied": 78,
+            "prevented": 13,
+            "hits": 7
+          },
+          "contact:Zombie": {
+            "requested": 45,
+            "applied": 45,
+            "prevented": 0,
+            "hits": 3
+          },
+          "contact:Vampire": {
+            "requested": 18,
+            "applied": 18,
+            "prevented": 0,
+            "hits": 1
+          },
+          "contact:Knight": {
+            "requested": 19,
+            "applied": 0,
+            "prevented": 19,
+            "hits": 1
+          }
+        },
+        "healing": 182,
+        "healingBySource": {
+          "potion": 65,
+          "level-up": 117
+        },
+        "selfDamage": 0,
+        "selfDamageBySource": {},
+        "windows": {
+          "0": {
+            "damage": 7169,
+            "incoming": 112,
+            "healing": 112,
+            "casts": 313,
+            "bolts": 313,
+            "boltsHit": 205
+          },
+          "5": {
+            "damage": 21934,
+            "incoming": 70,
+            "healing": 70,
+            "casts": 334,
+            "bolts": 387,
+            "boltsHit": 253
+          }
+        },
+        "seconds": 600,
+        "dps": 48.505,
+        "accuracy": 0.6542857142857142,
+        "hitsPerCast": 0.8438948995363215
+      },
+      "environment": "forge"
+    },
+    {
+      "school": "lightning",
+      "seed": 2,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "firstUpgrade": 7.7,
+      "kills": 747,
+      "xp": 4268,
+      "health": 100,
+      "maxEnemies": 13,
+      "build": {
+        "fire": 0,
+        "ice": 5,
+        "lightning": 3,
+        "necro": 0,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "phantom",
+        "boots": "runner",
+        "relic": "hourglass"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "phantom",
+          "tick": 6116,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "quickwand",
+          "tick": 11690,
+          "source": "Arcane shrine reward"
+        },
+        {
+          "id": "hourglass",
+          "tick": 16199,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "echo",
+          "tick": 21037,
+          "source": "Dungeon treasure"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "shrine",
+          "outcome": "completed",
+          "tick": 11685,
+          "startedAt": 10530,
+          "progress": 750,
+          "goal": 750,
+          "hits": 0
+        },
+        {
+          "id": "guardian",
+          "outcome": "completed",
+          "tick": 25973,
+          "startedAt": 25550,
+          "progress": 1,
+          "goal": 1,
+          "hits": 0
+        }
+      ],
+      "gold": 244,
+      "marketHistory": [
+        {
+          "id": "runner",
+          "price": 90,
+          "tick": 18313
+        }
+      ],
+      "goldEarned": 334,
+      "goldSpent": 90,
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 16211
+        },
+        {
+          "id": "hourglass",
+          "tick": 17781
+        },
+        {
+          "id": "hourglass",
+          "tick": 18856
+        },
+        {
+          "id": "runner",
+          "tick": 18976
+        },
+        {
+          "id": "runner",
+          "tick": 19421
+        },
+        {
+          "id": "runner",
+          "tick": 19846
+        },
+        {
+          "id": "hourglass",
+          "tick": 19856
+        },
+        {
+          "id": "runner",
+          "tick": 20516
+        },
+        {
+          "id": "hourglass",
+          "tick": 20991
+        },
+        {
+          "id": "runner",
+          "tick": 21386
+        },
+        {
+          "id": "runner",
+          "tick": 21981
+        },
+        {
+          "id": "hourglass",
+          "tick": 21991
+        },
+        {
+          "id": "runner",
+          "tick": 22641
+        },
+        {
+          "id": "hourglass",
+          "tick": 23021
+        },
+        {
+          "id": "runner",
+          "tick": 23106
+        },
+        {
+          "id": "runner",
+          "tick": 23471
+        },
+        {
+          "id": "hourglass",
+          "tick": 24386
+        },
+        {
+          "id": "runner",
+          "tick": 24596
+        },
+        {
+          "id": "runner",
+          "tick": 25251
+        },
+        {
+          "id": "hourglass",
+          "tick": 25396
+        },
+        {
+          "id": "runner",
+          "tick": 26111
+        },
+        {
+          "id": "runner",
+          "tick": 26566
+        },
+        {
+          "id": "hourglass",
+          "tick": 26731
+        },
+        {
+          "id": "runner",
+          "tick": 27101
+        },
+        {
+          "id": "runner",
+          "tick": 27511
+        },
+        {
+          "id": "hourglass",
+          "tick": 27731
+        },
+        {
+          "id": "runner",
+          "tick": 27886
+        },
+        {
+          "id": "runner",
+          "tick": 28236
+        },
+        {
+          "id": "hourglass",
+          "tick": 28761
+        },
+        {
+          "id": "runner",
+          "tick": 29136
+        },
+        {
+          "id": "runner",
+          "tick": 29676
+        },
+        {
+          "id": "hourglass",
+          "tick": 29911
+        }
+      ],
+      "telemetry": {
+        "casts": 855,
+        "bolts": 907,
+        "boltsHit": 551,
+        "directHits": 591,
+        "damage": 29159,
+        "overkill": 30632,
+        "damageBySource": {
+          "direct:lightning": {
+            "effective": 16700.099999999995,
+            "overkill": 23493.9,
+            "hits": 591
+          },
+          "lightning:chain": {
+            "effective": 12458.9,
+            "overkill": 7138.1,
+            "hits": 540
+          }
+        },
+        "incoming": 177,
+        "prevented": 140,
+        "incomingBySource": {
+          "contact:Goblin": {
+            "requested": 40,
+            "applied": 20,
+            "prevented": 20,
+            "hits": 8
+          },
+          "contact:Spider": {
+            "requested": 15,
+            "applied": 10,
+            "prevented": 5,
+            "hits": 3
+          },
+          "contact:Orc": {
+            "requested": 133,
+            "applied": 120,
+            "prevented": 13,
+            "hits": 10
+          },
+          "contact:Zombie": {
+            "requested": 60,
+            "applied": 15,
+            "prevented": 45,
+            "hits": 4
+          },
+          "contact:Knight": {
+            "requested": 57,
+            "applied": 0,
+            "prevented": 57,
+            "hits": 3
+          },
+          "hazard:lava-vent": {
+            "requested": 12,
+            "applied": 12,
+            "prevented": 0,
+            "hits": 1
+          }
+        },
+        "healing": 177,
+        "healingBySource": {
+          "level-up": 148.10000000000002,
+          "potion": 28.89999999999999
+        },
+        "selfDamage": 0,
+        "selfDamageBySource": {},
+        "windows": {
+          "0": {
+            "damage": 7504,
+            "incoming": 85,
+            "healing": 85,
+            "casts": 396,
+            "bolts": 396,
+            "boltsHit": 237
+          },
+          "5": {
+            "damage": 21655,
+            "incoming": 92,
+            "healing": 92,
+            "casts": 459,
+            "bolts": 511,
+            "boltsHit": 314
+          }
+        },
+        "seconds": 600,
+        "dps": 48.598333333333336,
+        "accuracy": 0.607497243660419,
+        "hitsPerCast": 0.6912280701754386
+      },
+      "environment": "forge"
+    },
+    {
+      "school": "necro",
+      "seed": 1,
+      "seconds": 350.56,
+      "phase": "over",
+      "level": 15,
+      "firstUpgrade": 6.28,
+      "kills": 230,
+      "xp": 962,
+      "health": 0,
+      "maxEnemies": 152,
+      "build": {
+        "fire": 0,
+        "ice": 1,
+        "lightning": 0,
+        "necro": 3,
+        "arcane": 0
+      },
+      "equipment": {
+        "staff": "bloodwood",
+        "robe": null,
+        "boots": null,
+        "relic": "hourglass"
+      },
+      "chestsOpened": 2,
+      "lootHistory": [
+        {
+          "id": "bloodwood",
+          "tick": 6035,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "hourglass",
+          "tick": 14872,
+          "source": "Dungeon collapse reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "collapse",
+          "outcome": "completed",
+          "tick": 12901,
+          "startedAt": 11401,
+          "progress": 0,
+          "goal": 3,
+          "hits": 1
+        }
+      ],
+      "gold": 90,
+      "marketHistory": [],
+      "goldEarned": 90,
+      "goldSpent": 0,
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 15026
+        },
+        {
+          "id": "hourglass",
+          "tick": 16026
+        },
+        {
+          "id": "hourglass",
+          "tick": 17026
+        }
+      ],
+      "telemetry": {
+        "casts": 391,
+        "bolts": 391,
+        "boltsHit": 276,
+        "directHits": 276,
+        "damage": 7068.2,
+        "overkill": 10410.45,
+        "damageBySource": {
+          "direct:necro": {
+            "effective": 7068.2,
+            "overkill": 10410.45,
+            "hits": 276
+          }
+        },
+        "incoming": 282,
+        "prevented": 0,
+        "incomingBySource": {
+          "contact:Goblin": {
+            "requested": 36,
+            "applied": 36,
+            "prevented": 0,
+            "hits": 7
+          },
+          "contact:Orc": {
+            "requested": 65,
+            "applied": 65,
+            "prevented": 0,
+            "hits": 5
+          },
+          "hazard:rubble": {
+            "requested": 13,
+            "applied": 13,
+            "prevented": 0,
+            "hits": 1
+          },
+          "contact:Spider": {
+            "requested": 11,
+            "applied": 11,
+            "prevented": 0,
+            "hits": 2
+          },
+          "contact:Zombie": {
+            "requested": 60,
+            "applied": 60,
+            "prevented": 0,
+            "hits": 4
+          },
+          "contact:Knight": {
+            "requested": 100,
+            "applied": 97,
+            "prevented": 0,
+            "hits": 5
+          }
+        },
+        "healing": 316,
+        "healingBySource": {
+          "necro:kill": 209,
+          "level-up": 77,
+          "potion": 30
+        },
+        "selfDamage": 134,
+        "selfDamageBySource": {
+          "gear:bloodwood": 134
+        },
+        "windows": {
+          "0": {
+            "damage": 5561,
+            "incoming": 180,
+            "healing": 282,
+            "casts": 327,
+            "bolts": 327,
+            "boltsHit": 228
+          },
+          "5": {
+            "damage": 1507.2,
+            "incoming": 102,
+            "healing": 34,
+            "casts": 64,
+            "bolts": 64,
+            "boltsHit": 48
+          }
+        },
+        "seconds": 350.56,
+        "dps": 20.16259698767686,
+        "accuracy": 0.7058823529411765,
+        "hitsPerCast": 0.7058823529411765
+      },
+      "environment": "forge"
+    },
+    {
+      "school": "necro",
+      "seed": 2,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "firstUpgrade": 7.72,
+      "kills": 753,
+      "xp": 4315,
+      "health": 100,
+      "maxEnemies": 49,
+      "build": {
+        "fire": 0,
+        "ice": 0,
+        "lightning": 0,
+        "necro": 3,
+        "arcane": 2
+      },
+      "equipment": {
+        "staff": "quickwand",
+        "robe": "thorns",
+        "boots": "escape",
+        "relic": "fang"
+      },
+      "chestsOpened": 4,
+      "lootHistory": [
+        {
+          "id": "thorns",
+          "tick": 6487,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "gambler",
+          "tick": 10956,
+          "source": "Treasure guardian reward"
+        },
+        {
+          "id": "quickwand",
+          "tick": 16063,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "fang",
+          "tick": 21040,
+          "source": "Dungeon treasure"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "guardian",
+          "outcome": "completed",
+          "tick": 10949,
+          "startedAt": 10548,
+          "progress": 1,
+          "goal": 1,
+          "hits": 0
+        },
+        {
+          "id": "shrine",
+          "outcome": "failed",
+          "tick": 27791,
+          "startedAt": 25791,
+          "progress": 595,
+          "goal": 750,
+          "hits": 0
+        }
+      ],
+      "gold": 231,
+      "marketHistory": [
+        {
+          "id": "escape",
+          "price": 90,
+          "tick": 18367
+        }
+      ],
+      "goldEarned": 321,
+      "goldSpent": 90,
+      "activeHistory": [
+        {
+          "id": "escape",
+          "tick": 19706
+        },
+        {
+          "id": "escape",
+          "tick": 20411
+        },
+        {
+          "id": "escape",
+          "tick": 23061
+        },
+        {
+          "id": "escape",
+          "tick": 24081
+        },
+        {
+          "id": "escape",
+          "tick": 24761
+        },
+        {
+          "id": "escape",
+          "tick": 25231
+        },
+        {
+          "id": "escape",
+          "tick": 25741
+        },
+        {
+          "id": "escape",
+          "tick": 26226
+        },
+        {
+          "id": "escape",
+          "tick": 26691
+        },
+        {
+          "id": "escape",
+          "tick": 27286
+        },
+        {
+          "id": "escape",
+          "tick": 28016
+        }
+      ],
+      "telemetry": {
+        "casts": 1162,
+        "bolts": 2139,
+        "boltsHit": 1110,
+        "directHits": 1110,
+        "damage": 29129.00000000009,
+        "overkill": 32962.821874999994,
+        "damageBySource": {
+          "direct:necro": {
+            "effective": 28792.75625000009,
+            "overkill": 32547.315624999996,
+            "hits": 1110
+          },
+          "gear:thorns": {
+            "effective": 316.24375,
+            "overkill": 345.50625,
+            "hits": 17
+          },
+          "fusion:soulward": {
+            "effective": 20,
+            "overkill": 70,
+            "hits": 2
+          }
+        },
+        "incoming": 128,
+        "prevented": 41,
+        "incomingBySource": {
+          "contact:Spider": {
+            "requested": 10,
+            "applied": 10,
+            "prevented": 0,
+            "hits": 2
+          },
+          "contact:Orc": {
+            "requested": 13,
+            "applied": 13,
+            "prevented": 0,
+            "hits": 1
+          },
+          "contact:Zombie": {
+            "requested": 64,
+            "applied": 64,
+            "prevented": 0,
+            "hits": 4
+          },
+          "contact:Goblin": {
+            "requested": 15,
+            "applied": 10,
+            "prevented": 5,
+            "hits": 3
+          },
+          "contact:Knight": {
+            "requested": 19,
+            "applied": 19,
+            "prevented": 0,
+            "hits": 1
+          },
+          "hazard:lava-vent": {
+            "requested": 12,
+            "applied": 12,
+            "prevented": 0,
+            "hits": 1
+          },
+          "contact:Vampire": {
+            "requested": 36,
+            "applied": 0,
+            "prevented": 36,
+            "hits": 2
+          }
+        },
+        "healing": 128,
+        "healingBySource": {
+          "necro:kill": 102.5,
+          "level-up": 15.5,
+          "gear:fang": 0.7999999999999972,
+          "potion": 9.200000000000003
+        },
+        "selfDamage": 0,
+        "selfDamageBySource": {},
+        "windows": {
+          "0": {
+            "damage": 7844,
+            "incoming": 47,
+            "healing": 47,
+            "casts": 385,
+            "bolts": 585,
+            "boltsHit": 387
+          },
+          "5": {
+            "damage": 21285.000000000076,
+            "incoming": 81,
+            "healing": 81,
+            "casts": 777,
+            "bolts": 1554,
+            "boltsHit": 723
+          }
+        },
+        "seconds": 600,
+        "dps": 48.54833333333349,
+        "accuracy": 0.5189340813464236,
+        "hitsPerCast": 0.955249569707401
+      },
+      "environment": "forge"
+    },
+    {
+      "school": "arcane",
+      "seed": 1,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "firstUpgrade": 7.14,
+      "kills": 759,
+      "xp": 4307,
+      "health": 65,
+      "maxEnemies": 19,
+      "build": {
+        "fire": 0,
+        "ice": 4,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 3
+      },
+      "equipment": {
+        "staff": "echo",
+        "robe": "thorns",
+        "boots": "runner",
+        "relic": "hourglass"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "thorns",
+          "tick": 6039,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "runner",
+          "tick": 12967,
+          "source": "Arcane shrine reward"
+        },
+        {
+          "id": "gambler",
+          "tick": 15208,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "echo",
+          "tick": 21172,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "hourglass",
+          "tick": 27301,
+          "source": "Cursed altar reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "shrine",
+          "outcome": "completed",
+          "tick": 11924,
+          "startedAt": 10531,
+          "progress": 750,
+          "goal": 750,
+          "hits": 0
+        },
+        {
+          "id": "altar",
+          "outcome": "completed",
+          "tick": 27293,
+          "startedAt": 25793,
+          "progress": 1500,
+          "goal": 1500,
+          "hits": 0
+        }
+      ],
+      "gold": 245,
+      "marketHistory": [
+        {
+          "id": "bloodwood",
+          "price": 90,
+          "tick": 18027
+        }
+      ],
+      "goldEarned": 335,
+      "goldSpent": 90,
+      "activeHistory": [
+        {
+          "id": "runner",
+          "tick": 13896
+        },
+        {
+          "id": "runner",
+          "tick": 15241
+        },
+        {
+          "id": "runner",
+          "tick": 15666
+        },
+        {
+          "id": "runner",
+          "tick": 16906
+        },
+        {
+          "id": "runner",
+          "tick": 17671
+        },
+        {
+          "id": "runner",
+          "tick": 18611
+        },
+        {
+          "id": "runner",
+          "tick": 19806
+        },
+        {
+          "id": "runner",
+          "tick": 22396
+        },
+        {
+          "id": "runner",
+          "tick": 22756
+        },
+        {
+          "id": "runner",
+          "tick": 23106
+        },
+        {
+          "id": "runner",
+          "tick": 25436
+        },
+        {
+          "id": "runner",
+          "tick": 26036
+        },
+        {
+          "id": "runner",
+          "tick": 26426
+        },
+        {
+          "id": "runner",
+          "tick": 26776
+        },
+        {
+          "id": "hourglass",
+          "tick": 27396
+        },
+        {
+          "id": "runner",
+          "tick": 27496
+        },
+        {
+          "id": "runner",
+          "tick": 27851
+        },
+        {
+          "id": "runner",
+          "tick": 28376
+        },
+        {
+          "id": "hourglass",
+          "tick": 28641
+        },
+        {
+          "id": "runner",
+          "tick": 29411
+        },
+        {
+          "id": "hourglass",
+          "tick": 29901
+        },
+        {
+          "id": "runner",
+          "tick": 29951
+        }
+      ],
+      "telemetry": {
+        "casts": 916,
+        "bolts": 2447,
+        "boltsHit": 1085,
+        "directHits": 1210,
+        "damage": 29439.999999999945,
+        "overkill": 29026.324999999997,
+        "damageBySource": {
+          "direct:arcane": {
+            "effective": 29219.999999999945,
+            "overkill": 28891.324999999997,
+            "hits": 1210
+          },
+          "gear:thorns": {
+            "effective": 220,
+            "overkill": 135,
+            "hits": 9
+          }
+        },
+        "incoming": 124,
+        "prevented": 182,
+        "incomingBySource": {
+          "contact:Orc": {
+            "requested": 81,
+            "applied": 65,
+            "prevented": 16,
+            "hits": 6
+          },
+          "contact:Goblin": {
+            "requested": 21,
+            "applied": 10,
+            "prevented": 11,
+            "hits": 4
+          },
+          "contact:Zombie": {
+            "requested": 90,
+            "applied": 0,
+            "prevented": 90,
+            "hits": 6
+          },
+          "contact:Spider": {
+            "requested": 5,
+            "applied": 0,
+            "prevented": 5,
+            "hits": 1
+          },
+          "contact:Vampire": {
+            "requested": 59,
+            "applied": 18,
+            "prevented": 41,
+            "hits": 3
+          },
+          "contact:Knight": {
+            "requested": 38,
+            "applied": 19,
+            "prevented": 19,
+            "hits": 2
+          },
+          "hazard:lava-vent": {
+            "requested": 12,
+            "applied": 12,
+            "prevented": 0,
+            "hits": 1
+          }
+        },
+        "healing": 140.8,
+        "healingBySource": {
+          "level-up": 108.8,
+          "potion": 32
+        },
+        "selfDamage": 52,
+        "selfDamageBySource": {
+          "gear:bloodwood": 52
+        },
+        "windows": {
+          "0": {
+            "damage": 7514,
+            "incoming": 62,
+            "healing": 62,
+            "casts": 416,
+            "bolts": 874,
+            "boltsHit": 382
+          },
+          "5": {
+            "damage": 21926.000000000004,
+            "incoming": 62,
+            "healing": 78.8,
+            "casts": 500,
+            "bolts": 1573,
+            "boltsHit": 703
+          }
+        },
+        "seconds": 600,
+        "dps": 49.06666666666658,
+        "accuracy": 0.443400081732734,
+        "hitsPerCast": 1.3209606986899562
+      },
+      "environment": "forge"
+    },
+    {
+      "school": "arcane",
+      "seed": 2,
+      "seconds": 600,
+      "phase": "playing",
+      "level": 23,
+      "firstUpgrade": 7.98,
+      "kills": 747,
+      "xp": 4241,
+      "health": 32,
+      "maxEnemies": 15,
+      "build": {
+        "fire": 0,
+        "ice": 5,
+        "lightning": 0,
+        "necro": 0,
+        "arcane": 5
+      },
+      "equipment": {
+        "staff": "bloodwood",
+        "robe": "phantom",
+        "boots": "escape",
+        "relic": "hourglass"
+      },
+      "chestsOpened": 5,
+      "lootHistory": [
+        {
+          "id": "hourglass",
+          "tick": 6120,
+          "source": "Dungeon treasure"
+        },
+        {
+          "id": "bloodwood",
+          "tick": 12046,
+          "source": "Dungeon collapse reward"
+        },
+        {
+          "id": "phantom",
+          "tick": 15380,
+          "source": "Guardian reward"
+        },
+        {
+          "id": "escape",
+          "tick": 25682,
+          "source": "Magical anomaly reward"
+        }
+      ],
+      "eventHistory": [
+        {
+          "id": "collapse",
+          "outcome": "completed",
+          "tick": 12040,
+          "startedAt": 10540,
+          "progress": 0,
+          "goal": 3,
+          "hits": 0
+        },
+        {
+          "id": "anomaly",
+          "outcome": "completed",
+          "tick": 25673,
+          "startedAt": 25532,
+          "progress": 3,
+          "goal": 3,
+          "hits": 0
+        }
+      ],
+      "gold": 285,
+      "marketHistory": [
+        {
+          "id": "silk",
+          "price": 45,
+          "tick": 18027
+        }
+      ],
+      "goldEarned": 330,
+      "goldSpent": 45,
+      "activeHistory": [
+        {
+          "id": "hourglass",
+          "tick": 9016
+        },
+        {
+          "id": "hourglass",
+          "tick": 10086
+        },
+        {
+          "id": "hourglass",
+          "tick": 11116
+        },
+        {
+          "id": "hourglass",
+          "tick": 13216
+        },
+        {
+          "id": "hourglass",
+          "tick": 15071
+        },
+        {
+          "id": "hourglass",
+          "tick": 16611
+        },
+        {
+          "id": "hourglass",
+          "tick": 17756
+        },
+        {
+          "id": "hourglass",
+          "tick": 18896
+        },
+        {
+          "id": "hourglass",
+          "tick": 20081
+        },
+        {
+          "id": "hourglass",
+          "tick": 21081
+        },
+        {
+          "id": "hourglass",
+          "tick": 22191
+        },
+        {
+          "id": "hourglass",
+          "tick": 23431
+        },
+        {
+          "id": "hourglass",
+          "tick": 24586
+        },
+        {
+          "id": "hourglass",
+          "tick": 25671
+        },
+        {
+          "id": "escape",
+          "tick": 25921
+        },
+        {
+          "id": "hourglass",
+          "tick": 27116
+        },
+        {
+          "id": "hourglass",
+          "tick": 28131
+        },
+        {
+          "id": "escape",
+          "tick": 28261
+        },
+        {
+          "id": "escape",
+          "tick": 28756
+        },
+        {
+          "id": "hourglass",
+          "tick": 29356
+        },
+        {
+          "id": "escape",
+          "tick": 29616
+        }
+      ],
+      "telemetry": {
+        "casts": 665,
+        "bolts": 1860,
+        "boltsHit": 944,
+        "directHits": 1150,
+        "damage": 28600.099999999984,
+        "overkill": 30351.412499999984,
+        "damageBySource": {
+          "direct:arcane": {
+            "effective": 28600.099999999984,
+            "overkill": 30351.412499999984,
+            "hits": 1150
+          }
+        },
+        "incoming": 116,
+        "prevented": 123,
+        "incomingBySource": {
+          "contact:Goblin": {
+            "requested": 20,
+            "applied": 5,
+            "prevented": 15,
+            "hits": 4
+          },
+          "contact:Orc": {
+            "requested": 39,
+            "applied": 26,
+            "prevented": 13,
+            "hits": 3
+          },
+          "contact:Spider": {
+            "requested": 15,
+            "applied": 0,
+            "prevented": 15,
+            "hits": 3
+          },
+          "contact:Knight": {
+            "requested": 100,
+            "applied": 43,
+            "prevented": 57,
+            "hits": 5
+          },
+          "contact:Zombie": {
+            "requested": 30,
+            "applied": 30,
+            "prevented": 0,
+            "hits": 2
+          },
+          "contact:Vampire": {
+            "requested": 23,
+            "applied": 0,
+            "prevented": 23,
+            "hits": 1
+          },
+          "hazard:lava-vent": {
+            "requested": 12,
+            "applied": 12,
+            "prevented": 0,
+            "hits": 1
+          }
+        },
+        "healing": 252.057525,
+        "healingBySource": {
+          "level-up": 152.057525,
+          "potion": 100
+        },
+        "selfDamage": 204,
+        "selfDamageBySource": {
+          "gear:bloodwood": 204
+        },
+        "windows": {
+          "0": {
+            "damage": 7498,
+            "incoming": 31,
+            "healing": 49.3,
+            "casts": 322,
+            "bolts": 831,
+            "boltsHit": 387
+          },
+          "5": {
+            "damage": 21102.100000000006,
+            "incoming": 85,
+            "healing": 202.75752500000004,
+            "casts": 343,
+            "bolts": 1029,
+            "boltsHit": 557
+          }
+        },
+        "seconds": 600,
+        "dps": 47.66683333333331,
+        "accuracy": 0.5075268817204301,
+        "hitsPerCast": 1.7293233082706767
+      },
+      "environment": "forge"
+    }
+  ]
+}
