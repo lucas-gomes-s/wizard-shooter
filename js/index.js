@@ -276,6 +276,9 @@ function updateBuild(){const m=game.player.magic,signature=JSON.stringify([m.ran
 function meter(id,value){const percent=Math.round(Math.max(0,Math.min(1,value))*100),node=$(id);node.firstElementChild.style.width=percent+'%';node.setAttribute('aria-valuenow',percent);}
 function updateBoss(){const boss=game.boss||game.miniboss,signature=boss?[boss.title||boss.name,Math.ceil(boss.health),boss.bossPhase].join('|'):String(game.endless);if(signature===lastBoss)return;lastBoss=signature;const node=$('bossHud');node.hidden=!boss&&!game.endless;if(boss){$('bossName').textContent=boss.boss?(boss.title||'Ancient Dragon')+' · Phase '+boss.bossPhase+' / 3':boss.title;$('bossHealth').textContent=Math.ceil(boss.health)+' / '+boss.maxHealth;meter('bossMeter',boss.health/boss.maxHealth);$('bossMeter').hidden=false}else{$('bossName').textContent='Endless survival';$('bossHealth').textContent='Dragon defeated';$('bossMeter').hidden=true}}
 function updateHud(){
+  const wave=game.wave,label=wave.name+(wave.theme?' · '+wave.theme.name:'')+(wave.remaining?' · '+wave.remaining+'s':'');
+  if($('waveLabel').textContent!==label){$('waveLabel').textContent=label;$('waveLabel').style.color=wave.color;}
+  $('waveLabel').hidden=screen==='home'||screen==='profile';
   const sec=game.seconds,upcoming=journey.find(([t])=>t>sec),next=upcoming?upcoming[1]+' '+formatTime(upcoming[0]):game.bossDefeated?'Endless survival':'Dragon encounter';
   if($('nextEncounter').textContent!==next)$('nextEncounter').textContent=next;
   $('runProgress').style.width=Math.min(100,sec/15)+'%';
