@@ -502,7 +502,7 @@ func _show_title() -> void:
 	title_note.text = "Open the Academy to review your profile." if unavailable else "%d essence  |  %d wizards" % [academy.essence,academy.roster.size()]
 	if not unavailable and guide.enabled and academy.settled_runs.is_empty(): title_note.text="New? Open Guide, or learn as you play."
 	if not unavailable: title_note.text+="\nFinite: "+Balance.label(settings.balance_preset)
-	if settings.balance_preset in [Balance.LONG,Balance.MANA,Balance.TRIALS,Balance.EVOLUTION,Balance.LINEAGE]: title_quick.text="6-minute expedition"
+	if settings.balance_preset in [Balance.LONG,Balance.MANA,Balance.TRIALS,Balance.EVOLUTION,Balance.LINEAGE,Balance.ARTIFACTS]: title_quick.text="6-minute expedition"
 	_sync_visibility()
 	queue_redraw()
 
@@ -540,7 +540,7 @@ func _refresh_academy() -> void:
 		if not hint.is_empty(): info.text=hint
 	difficulty_button.text="Difficulty: %s" % ["I","II","III"][difficulty-1]
 	balance_button.text="Finite: "+Balance.label(settings.balance_preset)
-	start_finite.text="Enter 6-minute expedition" if settings.balance_preset in [Balance.LONG,Balance.MANA,Balance.TRIALS,Balance.EVOLUTION,Balance.LINEAGE] else "Enter dungeon"
+	start_finite.text="Enter 6-minute expedition" if settings.balance_preset in [Balance.LONG,Balance.MANA,Balance.TRIALS,Balance.EVOLUTION,Balance.LINEAGE,Balance.ARTIFACTS] else "Enter dungeon"
 	lock_button.text="Unlock wizard" if c.locked else "Lock wizard"
 	clear_apprentice.disabled=partner_index<0
 	summon_button.disabled=academy.essence<10
@@ -630,7 +630,7 @@ func _refresh_guide() -> void:
 	lines.append(("✓ " if guide.knows(Onboarding.MOVE) else "□ ")+"Move: drag the lower-left pad (WASD or arrows).")
 	lines.append(("✓ " if guide.knows(Onboarding.BASIC) else "□ ")+"Basic magic attacks automatically.")
 	lines.append(("✓ " if guide.knows(Onboarding.SPECIAL) else "□ ")+"Tap CAST (Space) to use your special.")
-	lines.append(("✓ " if guide.knows(Onboarding.UPGRADE) else "□ ")+"Earn XP and select a run upgrade." if settings.balance_preset not in [Balance.MANA,Balance.TRIALS,Balance.EVOLUTION,Balance.LINEAGE] else "Collect green mana crystals to level up.")
+	lines.append(("✓ " if guide.knows(Onboarding.UPGRADE) else "□ ")+"Earn XP and select a run upgrade." if settings.balance_preset not in [Balance.MANA,Balance.TRIALS,Balance.EVOLUTION,Balance.LINEAGE,Balance.ARTIFACTS] else "Collect green mana crystals to level up.")
 	lines.append("Avoid orange attack zones and charge lines. Defeat the dragon, or extract from endless mode after 30 seconds.")
 	lines.append("")
 	lines.append("BLOODLINE")
@@ -941,7 +941,7 @@ func _start(endless: bool) -> void:
 		_show_academy()
 		return
 	var preset := Balance.ORIGINAL if endless else settings.balance_preset
-	run = RunModel.new(active.phenotype, endless, difficulty, 1000 + run_id, Balance.preset(preset),preset in [Balance.FROST,Balance.LONG,Balance.MANA,Balance.TRIALS,Balance.EVOLUTION,Balance.LINEAGE],preset in [Balance.LONG,Balance.MANA,Balance.TRIALS,Balance.EVOLUTION,Balance.LINEAGE],preset in [Balance.MANA,Balance.TRIALS,Balance.EVOLUTION,Balance.LINEAGE],preset in [Balance.TRIALS,Balance.EVOLUTION,Balance.LINEAGE],preset in [Balance.EVOLUTION,Balance.LINEAGE],preset==Balance.LINEAGE)
+	run = RunModel.new(active.phenotype, endless, difficulty, 1000 + run_id, Balance.preset(preset),preset in [Balance.FROST,Balance.LONG,Balance.MANA,Balance.TRIALS,Balance.EVOLUTION,Balance.LINEAGE,Balance.ARTIFACTS],preset in [Balance.LONG,Balance.MANA,Balance.TRIALS,Balance.EVOLUTION,Balance.LINEAGE,Balance.ARTIFACTS],preset in [Balance.MANA,Balance.TRIALS,Balance.EVOLUTION,Balance.LINEAGE,Balance.ARTIFACTS],preset in [Balance.TRIALS,Balance.EVOLUTION,Balance.LINEAGE,Balance.ARTIFACTS],preset in [Balance.EVOLUTION,Balance.LINEAGE,Balance.ARTIFACTS],preset in [Balance.LINEAGE,Balance.ARTIFACTS],preset==Balance.ARTIFACTS)
 	result_before.clear()
 	result_reward.clear()
 	profiler.reset()
@@ -1055,6 +1055,7 @@ func _sync_visibility() -> void:
 func _refresh_upgrades() -> void:
 	run.ensure_upgrade_offer()
 	upgrade_heading.text = ("EVOLVE YOUR MAGIC" if run.evolution_rules else "TRIAL CLEARED • RELIC") if run.relic_pending else ("LEVEL UP • %d CHOICE%s" % [run.pending_upgrades, "S" if run.pending_upgrades > 1 else ""])
+	if not run.relic_pending and not run.artifact_pending.is_empty(): upgrade_heading.text="RARE CACHE • ARTIFACT"
 	for i in range(upgrade_buttons.size()):
 		var button := upgrade_buttons[i]
 		button.visible = i < run.upgrade_offer.size()
@@ -1063,7 +1064,7 @@ func _refresh_upgrades() -> void:
 		var d: Dictionary = Upgrades.DEFINITIONS[id]
 		var color := Color("#e9dfd0")
 		if d.has("affinity"): color = FIRE if d.affinity == "fire" else (ICE if d.affinity == "ice" else STEAM)
-		elif d.category=="Relic": color=Fantasy.GOLD
+		elif d.category in ["Relic","Artifact"]: color=Fantasy.GOLD
 		elif d.category != "Universal": color = Color("#c6b5e6")
 		if run.lineage_rules and run.relic_pending and run.trials_cleared==1:
 			var bonus := RunModel.Evolution.resonance_bonus(run.phenotype,id)
@@ -1244,7 +1245,7 @@ func _draw() -> void:
 	var visible_margin := view.grow(40)
 	draw_set_transform(CAMERA_CENTER - camera)
 	dungeon_art.draw_world(self, view)
-	dungeon_art.draw_sites(self, run.claimed_sites, run.active_encounter, run._guards_remaining(), float(run.elapsed))
+	dungeon_art.draw_sites(self, run.claimed_sites, run.active_encounter, run._guards_remaining(), float(run.elapsed),run.artifact_rules and run.expedition_time()>=RunModel.Artifacts.UNLOCK and run.artifacts_owned.size()<RunModel.Artifacts.LIMIT)
 	if run.mana_rules: _draw_mana(view)
 	if run.trial_index>=0:
 		draw_arc(run.trial_center,RunModel.Trials.RADIUS,0,TAU,96,Color("#c1a2e8"),2.0)
@@ -1291,6 +1292,8 @@ func _draw() -> void:
 	if run.player_hit_fx > 0 and not settings.reduced_motion:
 		draw_rect(PLAYFIELD.grow(-3), Color(1.0, 0.34, 0.29, float(run.player_hit_fx) * 2.5), false, 3.0)
 	_draw_hud()
+	if run.artifact_rules:
+		Fantasy.text_at(self,"ARTIFACTS %d/3" % run.artifacts_owned.size(),Vector2(300,78),9,Fantasy.GOLD,true)
 	if settings.monitor and not paused and run.pending_upgrades==0 and not monitor_text.is_empty():
 		draw_rect(Rect2(4,499,352,33),Color(0.06,0.05,0.09,0.88))
 		var lines := monitor_text.split("\n")

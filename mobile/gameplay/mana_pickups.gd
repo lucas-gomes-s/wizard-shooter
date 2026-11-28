@@ -31,7 +31,7 @@ func drop(point: Vector2,amount: int,now: float,seed: int) -> void:
 
 const RunWorld = preload("res://gameplay/dungeon_world.gd")
 
-func tick(player: Vector2,now: float,dt: float,seed: int) -> int:
+func tick(player: Vector2,now: float,dt: float,seed: int,magnet_radius: float = MAGNET_RADIUS) -> int:
 	var total := 0
 	for i in range(drops.size()-1,-1,-1):
 		var item: Dictionary=drops[i]
@@ -41,7 +41,7 @@ func tick(player: Vector2,now: float,dt: float,seed: int) -> int:
 			lost+=int(item.value)
 			drops.remove_at(i)
 			continue
-		if distance>MAGNET_RADIUS*MAGNET_RADIUS: continue
+		if distance>magnet_radius*magnet_radius: continue
 		if not RunWorld.line_clear(seed,point,player,2.0): continue
 		if distance>COLLECT_RADIUS*COLLECT_RADIUS:
 			item.pos=point.move_toward(player,PULL_SPEED*dt)

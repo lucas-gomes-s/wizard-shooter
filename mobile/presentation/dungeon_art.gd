@@ -1,6 +1,7 @@
 extends RefCounted
 ## Generate only visible 256px chunks, and immediately evict distant textures.
 const World = preload("res://gameplay/dungeon_world.gd")
+const Artifacts = preload("res://gameplay/artifact_catalog.gd")
 const MAX_CACHED := 12
 var cache: Dictionary = {}
 var seed := 0
@@ -109,13 +110,17 @@ static func draw_pillar(canvas: CanvasItem,p: Vector2,variant: int) -> void:
 		canvas.draw_line(p+Vector2(1,-4),p+Vector2(-2,4),Color("#211e28"),1)
 
 ## Render only sites belonging to the existing visible chunk cache.
-func draw_sites(canvas: CanvasItem, claimed: Dictionary, encounter: Dictionary, remaining: int, elapsed: float) -> void:
+func draw_sites(canvas: CanvasItem, claimed: Dictionary, encounter: Dictionary, remaining: int, elapsed: float, artifacts_enabled: bool = false) -> void:
 	for chunk in cache.keys():
 		var site := World.site(seed, chunk)
 		if site.is_empty(): continue
 		var p: Vector2 = site.pos
 		var used: bool = claimed.has(site.id)
 		var color := Color("#e4bb6e") if site.kind == "treasure" else (Color("#80d4ae") if site.kind == "healing" else (Color("#ae98e8") if site.kind == "arcane" else Color("#e18b66")))
+		if artifacts_enabled and not used and Artifacts.is_cache(seed,site):
+			color=Color("#d8a4ff")
+			canvas.draw_arc(p,22,0,TAU,32,color,1.5)
+			canvas.draw_colored_polygon(PackedVector2Array([p+Vector2(0,-29),p+Vector2(4,-23),p+Vector2(0,-17),p+Vector2(-4,-23)]),color)
 		if used: color = Color("#625969")
 		if not used:
 			var pulse := 0.5 + 0.5 * sin(elapsed * 3.0)

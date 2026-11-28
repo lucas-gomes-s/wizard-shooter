@@ -1,6 +1,12 @@
 extends RefCounted
 ## Upgrade metadata and eligibility. No school selection or permanent stat changes.
 const DEFINITIONS := {
+	"artifact_magnet": {"name":"Lodestone","text":"Mana attraction radius increases to 96px.","category":"Artifact","cap":1,"artifact":true},
+	"artifact_blood": {"name":"Bloodstone","text":"Heal 3 HP for every 12 mana collected.","category":"Artifact","cap":1,"artifact":true},
+	"artifact_ward": {"name":"Aegis shard","text":"Special grants at least 1s of damage ward.","category":"Artifact","cap":1,"artifact":true},
+	"artifact_echo": {"name":"Echo prism","text":"Special resets the basic cast cooldown.","category":"Artifact","cap":1,"artifact":true},
+	"artifact_pierce": {"name":"Rune needle","text":"Basic projectiles pierce one extra enemy.","category":"Artifact","cap":1,"artifact":true},
+	"artifact_stride": {"name":"Wind charm","text":"Move 20% faster for 2s after a special.","category":"Artifact","cap":1,"artifact":true},
 	"evo_fire_fan": {"name":"Ember fan","text":"3 angled bolts, each at 68% prior impact power.","category":"Evolution","cap":1,"affinity":"fire","relic":true,"evolution":true},
 	"evo_fire_storm": {"name":"Ember storm","text":"5 angled bolts, each at 90% fan power.","category":"Evolution","cap":1,"affinity":"fire","relic":true,"evolution":true},
 	"evo_fire_blast": {"name":"Blast ember","text":"Each hit splashes nearby enemies in 27px.","category":"Evolution","cap":1,"affinity":"fire","relic":true,"evolution":true},
@@ -57,7 +63,7 @@ static func offer(p: Dictionary, ranks: Dictionary, rng: Variant) -> Array[Strin
 	var elemental: Array[String] = []
 	var genetic: Array[String] = []
 	for id in DEFINITIONS:
-		if DEFINITIONS[id].get("relic",false): continue
+		if DEFINITIONS[id].get("relic",false) or DEFINITIONS[id].get("artifact",false): continue
 		if not eligible(id, p, ranks): continue
 		var d: Dictionary = DEFINITIONS[id]
 		if d.category == "Universal": universal.append(id)

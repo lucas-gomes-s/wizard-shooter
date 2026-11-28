@@ -10,6 +10,7 @@ const Economy = preload("res://domain/training_economy.gd")
 const Mana = preload("res://gameplay/mana_pickups.gd")
 const Trials = preload("res://gameplay/milestone_trials.gd")
 const Evolution = preload("res://gameplay/spell_evolution.gd")
+const Artifacts = preload("res://gameplay/artifact_catalog.gd")
 const DESPAWN_DISTANCE := 740.0
 const BOSS_RELOCATE_DISTANCE := 950.0
 const TARGET_RANGE := 350.0
@@ -102,6 +103,13 @@ var mana_rules := false
 var trial_rules := false
 var evolution_rules := false
 var lineage_rules := false
+var artifact_rules := false
+var artifact_pending: Array[String]=[]
+var artifacts_owned: Array[String]=[]
+var artifact_times: Array[float]=[]
+var artifact_heal_credit := 0
+var artifact_healing := 0.0
+var artifact_haste := 0.0
 var evolution_resonance_bonus := 0.0
 var evolution_branch := ""
 var evolution_mastery := ""
@@ -124,12 +132,13 @@ var first_upgrade_time := -1.0
 var level_times: Array[float] = []
 var boss_spawn_time := -1.0
 
-func _init(p: Dictionary, is_endless: bool, level: int, seed: int, parameters: Dictionary = {}, use_frost_rules: bool = false, use_phases: bool = false, use_mana: bool = false, use_trials: bool = false, use_evolution: bool = false, use_lineage: bool = false) -> void:
+func _init(p: Dictionary, is_endless: bool, level: int, seed: int, parameters: Dictionary = {}, use_frost_rules: bool = false, use_phases: bool = false, use_mana: bool = false, use_trials: bool = false, use_evolution: bool = false, use_lineage: bool = false, use_artifacts: bool = false) -> void:
 	phased_expedition=use_phases and not is_endless
 	mana_rules=use_mana and phased_expedition
 	trial_rules=use_trials and mana_rules
 	evolution_rules=use_evolution and trial_rules
 	lineage_rules=use_lineage and evolution_rules
+	artifact_rules=use_artifacts and lineage_rules
 	frost_rules=use_frost_rules
 	balance = Balance.validated(parameters)
 	assert(not balance.is_empty(), "Invalid balance parameters")
@@ -157,7 +166,8 @@ func step(dt: float, movement: Vector2, special: bool) -> void:
 	webbed = false
 	for web in webs:
 		if web.life > 0 and player.distance_to(web.pos) <= float(web.radius) + PLAYER_RADIUS: webbed = true
-	var displacement := travel_direction * speed * (0.50 if webbed else 1.0) * dt
+	artifact_haste=maxf(0.0,artifact_haste-dt)
+	var displacement := travel_direction * speed * (1.20 if artifact_haste>0 else 1.0) * (0.50 if webbed else 1.0) * dt
 	if trial_index>=0: displacement=Trials.clamp_point(trial_center,player+displacement)-player
 	var moved := World.move(world_seed,player,displacement,PLAYER_RADIUS)
 	if trial_index<0 or moved.distance_to(trial_center)<=Trials.RADIUS+0.001: player=moved
@@ -240,9 +250,15 @@ func step(dt: float, movement: Vector2, special: bool) -> void:
 	if mana_rules:
 		mana_flash=maxf(0.0,mana_flash-dt)
 		if hp>0:
-			var gathered := mana.tick(player,elapsed,dt,world_seed)
+			var gathered := mana.tick(player,elapsed,dt,world_seed,96.0 if "artifact_magnet" in artifacts_owned else Mana.MAGNET_RADIUS)
 			if gathered>0:
 				_gain_xp(gathered)
+				if "artifact_blood" in artifacts_owned:
+					artifact_heal_credit+=gathered
+					var heal := minf(max_hp-hp,3.0*floori(artifact_heal_credit/12.0))
+					artifact_heal_credit%=12
+					hp+=heal
+					artifact_healing+=heal
 				mana_flash=0.24
 	if hp <= 0:
 		outcome = "Defeated"
@@ -362,6 +378,7 @@ func ensure_upgrade_offer() -> void:
 		if relic_pending:
 			if evolution_rules: upgrade_offer=Evolution.offer(str(phenotype.affinity),evolution_branch,trials_cleared)
 			else: upgrade_offer.assign(Trials.RELICS)
+		elif not artifact_pending.is_empty(): upgrade_offer.assign(artifact_pending)
 		else: upgrade_offer = Upgrades.offer(phenotype, upgrade_ranks, upgrade_rng)
 
 func upgrade(choice: int) -> void:
@@ -371,6 +388,9 @@ func upgrade(choice: int) -> void:
 	var id: String = upgrade_offer[choice]
 	if not Upgrades.eligible(id, phenotype, upgrade_ranks): return
 	if bool(Upgrades.DEFINITIONS[id].get("relic",false))!=relic_pending: return
+	var choosing_artifact := not relic_pending and not artifact_pending.is_empty()
+	if bool(Upgrades.DEFINITIONS[id].get("artifact",false))!=choosing_artifact: return
+	if choosing_artifact and id not in artifact_pending: return
 	if relic_pending:
 		if evolution_rules and not id in Evolution.offer(str(phenotype.affinity),evolution_branch,trials_cleared): return
 		if bool(Upgrades.DEFINITIONS[id].get("evolution",false)):
@@ -383,6 +403,11 @@ func upgrade(choice: int) -> void:
 			relic_choices.append(id)
 			_apply_upgrade(id)
 		relic_pending=false
+	elif choosing_artifact:
+		artifacts_owned.append(id)
+		artifact_times.append(elapsed)
+		artifact_pending.clear()
+		_announce("Artifact acquired: "+str(Upgrades.DEFINITIONS[id].name))
 	else: _apply_upgrade(id)
 	upgrade_ranks[id] = int(upgrade_ranks.get(id, 0)) + 1
 	pending_upgrades -= 1
@@ -557,6 +582,18 @@ func _claim(site: Dictionary) -> void:
 			_announce("Guarded cache: +12 run XP, reward credit")
 		_: return
 	claimed_sites[id] = true
+	if artifact_available(site):
+		artifact_pending=Artifacts.offer(world_seed,site,artifacts_owned)
+		if not artifact_pending.is_empty():
+			pending_upgrades+=1
+			upgrade_offer.clear()
+			_announce("Rare cache! Choose an artifact.")
+
+func artifact_available(site: Dictionary) -> bool:
+	return artifact_rules and expedition_time()>=Artifacts.UNLOCK and artifacts_owned.size()<Artifacts.LIMIT and Artifacts.is_cache(world_seed,site)
+
+func artifact_metrics() -> Dictionary:
+	return {"owned":artifacts_owned.duplicate(),"times":artifact_times.duplicate(),"healing":artifact_healing,"pending":not artifact_pending.is_empty()}
 
 func _guards_remaining() -> int:
 	if active_encounter.is_empty(): return 0
@@ -651,7 +688,7 @@ func _cast_basic() -> bool:
 		var offset := 0.0 if i==0 else floorf(float(i+1)*0.5)*float(spec.get("spread",0.0))*(1.0 if i%2==1 else -1.0)
 		var heading := direction.rotated(offset)
 		shots.append({"pos":player,"vel":heading * float(spec.speed),"life":float(spec.life),
-			"damage":effective_damage() * float(spec.power)*evolved_power,"pierce":int(spec.pierce),"hit":{},
+			"damage":effective_damage() * float(spec.power)*evolved_power,"pierce":int(spec.pierce)+(1 if "artifact_pierce" in artifacts_owned else 0),"hit":{},
 			"effects":spec.effects.duplicate(true),"affinity":phenotype.affinity,
 			"hit_padding":float(spec.get("hit_padding",3.0)),"chilled_bonus":float(spec.get("chilled_bonus",0.0)),
 			"impact_radius":float(spec.get("impact_radius",0.0)),"impact_damage":effective_damage()*float(spec.get("impact_power",0.0))*evolved_power,
@@ -701,6 +738,9 @@ func _cast_special() -> void:
 	special_casts += 1
 	special_fx = 0.35
 	ward = float(spec.get("ward", 0.0))
+	if "artifact_ward" in artifacts_owned: ward=maxf(ward,1.0)
+	if "artifact_echo" in artifacts_owned: auto_cd=0.0
+	if "artifact_stride" in artifacts_owned: artifact_haste=2.0
 	trail = float(spec.get("trail", 0.0))
 	trail_cd = 0.0
 	if spec.delivery == "cloud":

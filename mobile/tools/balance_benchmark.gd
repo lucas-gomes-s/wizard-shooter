@@ -38,7 +38,7 @@ func _initialize() -> void:
 		parameters=RunModel.Balance.preset(preset_name)
 		if parameters.is_empty():
 			push_error("Unknown preset"); quit(2); return
-	if preset_name in [RunModel.Balance.LONG,RunModel.Balance.MANA,RunModel.Balance.TRIALS,RunModel.Balance.EVOLUTION,RunModel.Balance.LINEAGE] and seconds<=int(RunModel.Phases.BOSS_AT):
+	if preset_name in [RunModel.Balance.LONG,RunModel.Balance.MANA,RunModel.Balance.TRIALS,RunModel.Balance.EVOLUTION,RunModel.Balance.LINEAGE,RunModel.Balance.ARTIFACTS] and seconds<=int(RunModel.Phases.BOSS_AT):
 		push_error("Six-minute expedition needs a benchmark horizon above 360 seconds"); quit(2); return
 	var rows: Array[Dictionary] = []
 	var started := Time.get_ticks_msec()
@@ -49,11 +49,11 @@ func _initialize() -> void:
 				for strategy in STRATEGIES:
 					for i in range(seed_count):
 						var sample := p.duplicate(true)
-						if preset_name==RunModel.Balance.LINEAGE: sample.resonance=[Genetics.RESONANCES[i%2]]
+						if preset_name in [RunModel.Balance.LINEAGE,RunModel.Balance.ARTIFACTS]: sample.resonance=[Genetics.RESONANCES[i%2]]
 						rows.append(simulate(sample,difficulty,strategy,seed_start+i*7919))
 	var groups := summarize(rows)
 	var elapsed_ms := Time.get_ticks_msec()-started
-	var result := {"schema":1,"seeds_per_cell":seed_count,"horizon_seconds":seconds,"physics_hz":60,"economy":RunModel.Economy.VERSION,"profile":"controlled bodies/power 100/no mutation or talents; hybrids and steam tier II","parameters":RunModel.Balance.validated(parameters),"seed_start":seed_start,"preset":preset_name,"frost_rules":preset_name in [RunModel.Balance.FROST,RunModel.Balance.LONG,RunModel.Balance.MANA,RunModel.Balance.TRIALS,RunModel.Balance.EVOLUTION,RunModel.Balance.LINEAGE],"phased_expedition":preset_name in [RunModel.Balance.LONG,RunModel.Balance.MANA,RunModel.Balance.TRIALS,RunModel.Balance.EVOLUTION,RunModel.Balance.LINEAGE],"mana_rules":preset_name in [RunModel.Balance.MANA,RunModel.Balance.TRIALS,RunModel.Balance.EVOLUTION,RunModel.Balance.LINEAGE],"trial_rules":preset_name in [RunModel.Balance.TRIALS,RunModel.Balance.EVOLUTION,RunModel.Balance.LINEAGE],"evolution_rules":preset_name in [RunModel.Balance.EVOLUTION,RunModel.Balance.LINEAGE],"lineage_rules":preset_name==RunModel.Balance.LINEAGE,"runs":rows,"groups":groups,"wall_ms":elapsed_ms}
+	var result := {"schema":1,"seeds_per_cell":seed_count,"horizon_seconds":seconds,"physics_hz":60,"economy":RunModel.Economy.VERSION,"profile":"controlled bodies/power 100/no mutation or talents; hybrids and steam tier II","parameters":RunModel.Balance.validated(parameters),"seed_start":seed_start,"preset":preset_name,"frost_rules":preset_name in [RunModel.Balance.FROST,RunModel.Balance.LONG,RunModel.Balance.MANA,RunModel.Balance.TRIALS,RunModel.Balance.EVOLUTION,RunModel.Balance.LINEAGE,RunModel.Balance.ARTIFACTS],"phased_expedition":preset_name in [RunModel.Balance.LONG,RunModel.Balance.MANA,RunModel.Balance.TRIALS,RunModel.Balance.EVOLUTION,RunModel.Balance.LINEAGE,RunModel.Balance.ARTIFACTS],"mana_rules":preset_name in [RunModel.Balance.MANA,RunModel.Balance.TRIALS,RunModel.Balance.EVOLUTION,RunModel.Balance.LINEAGE,RunModel.Balance.ARTIFACTS],"trial_rules":preset_name in [RunModel.Balance.TRIALS,RunModel.Balance.EVOLUTION,RunModel.Balance.LINEAGE,RunModel.Balance.ARTIFACTS],"evolution_rules":preset_name in [RunModel.Balance.EVOLUTION,RunModel.Balance.LINEAGE,RunModel.Balance.ARTIFACTS],"lineage_rules":preset_name in [RunModel.Balance.LINEAGE,RunModel.Balance.ARTIFACTS],"artifact_rules":preset_name==RunModel.Balance.ARTIFACTS,"runs":rows,"groups":groups,"wall_ms":elapsed_ms}
 	var file := FileAccess.open(output,FileAccess.WRITE)
 	if file == null:
 		push_error("Cannot write benchmark output: "+output)
@@ -80,7 +80,7 @@ static func fixture(affinity: String, body: String = "stoneborn") -> Dictionary:
 	return p
 
 func simulate(p: Dictionary,difficulty: int,strategy: String,seed: int) -> Dictionary:
-	var run := RunModel.new(p,false,difficulty,seed,parameters,preset_name in [RunModel.Balance.FROST,RunModel.Balance.LONG,RunModel.Balance.MANA,RunModel.Balance.TRIALS,RunModel.Balance.EVOLUTION,RunModel.Balance.LINEAGE],preset_name in [RunModel.Balance.LONG,RunModel.Balance.MANA,RunModel.Balance.TRIALS,RunModel.Balance.EVOLUTION,RunModel.Balance.LINEAGE],preset_name in [RunModel.Balance.MANA,RunModel.Balance.TRIALS,RunModel.Balance.EVOLUTION,RunModel.Balance.LINEAGE],preset_name in [RunModel.Balance.TRIALS,RunModel.Balance.EVOLUTION,RunModel.Balance.LINEAGE],preset_name in [RunModel.Balance.EVOLUTION,RunModel.Balance.LINEAGE],preset_name==RunModel.Balance.LINEAGE)
+	var run := RunModel.new(p,false,difficulty,seed,parameters,preset_name in [RunModel.Balance.FROST,RunModel.Balance.LONG,RunModel.Balance.MANA,RunModel.Balance.TRIALS,RunModel.Balance.EVOLUTION,RunModel.Balance.LINEAGE,RunModel.Balance.ARTIFACTS],preset_name in [RunModel.Balance.LONG,RunModel.Balance.MANA,RunModel.Balance.TRIALS,RunModel.Balance.EVOLUTION,RunModel.Balance.LINEAGE,RunModel.Balance.ARTIFACTS],preset_name in [RunModel.Balance.MANA,RunModel.Balance.TRIALS,RunModel.Balance.EVOLUTION,RunModel.Balance.LINEAGE,RunModel.Balance.ARTIFACTS],preset_name in [RunModel.Balance.TRIALS,RunModel.Balance.EVOLUTION,RunModel.Balance.LINEAGE,RunModel.Balance.ARTIFACTS],preset_name in [RunModel.Balance.EVOLUTION,RunModel.Balance.LINEAGE,RunModel.Balance.ARTIFACTS],preset_name in [RunModel.Balance.LINEAGE,RunModel.Balance.ARTIFACTS],preset_name==RunModel.Balance.ARTIFACTS)
 	var bot_rng := Genetics.SeededRandom.new(seed+17231)
 	var move := Vector2.ZERO
 	var chosen: Dictionary = {}
@@ -105,9 +105,11 @@ func simulate(p: Dictionary,difficulty: int,strategy: String,seed: int) -> Dicti
 					break
 		run.step(DT,move,cast)
 		ticks += 1
-	return {"seed":seed,"affinity":p.affinity,"body":p.body,"tier":p.tier,"difficulty":difficulty,"strategy":strategy,"outcome":run.outcome if run.outcome!="" else "Timeout","seconds":run.elapsed,"kills":run.kills,"level":run.run_level,"run_xp":run.total_run_xp,"training_xp":run.training_reward(),"legacy_training_xp":run.legacy_training_reward(),"apprentice_xp":run.permanent_reward().apprentice,"essence_reward":run.permanent_reward().essence,"damage":run.total_damage_dealt,"taken":run.total_damage_taken,"remaining_hp":run.hp,"basic_casts":run.basic_casts,"special_casts":run.special_casts,"frost_bonus_hits":run.frost_bonus_hits,"frost_shatters":run.frost_shatters,"phase_reached":run.phase_index(),"phase_spawns":run.phase_spawns.duplicate(),"mana":run.mana.metrics(),"trials":run.trial_metrics(),"evolution":run.evolution_metrics(),"resonance":p.get("resonance",[]),"caches":run.treasure_count,"shrines":run.shrine_count,"encounters":run.encounters_cleared,"despawned":run.despawned,"peak_enemies":run.peak_enemies,"last_hit":run.last_hit,"upgrades":chosen,"first_upgrade":run.first_upgrade_time,"level_times":run.level_times,"boss_reached":run.boss_spawned,"boss_spawn_time":run.boss_spawn_time,"ticks":ticks,"cpu_us":Time.get_ticks_usec()-started}
+	return {"seed":seed,"affinity":p.affinity,"body":p.body,"tier":p.tier,"difficulty":difficulty,"strategy":strategy,"outcome":run.outcome if run.outcome!="" else "Timeout","seconds":run.elapsed,"kills":run.kills,"level":run.run_level,"run_xp":run.total_run_xp,"training_xp":run.training_reward(),"legacy_training_xp":run.legacy_training_reward(),"apprentice_xp":run.permanent_reward().apprentice,"essence_reward":run.permanent_reward().essence,"damage":run.total_damage_dealt,"taken":run.total_damage_taken,"remaining_hp":run.hp,"basic_casts":run.basic_casts,"special_casts":run.special_casts,"frost_bonus_hits":run.frost_bonus_hits,"frost_shatters":run.frost_shatters,"phase_reached":run.phase_index(),"phase_spawns":run.phase_spawns.duplicate(),"mana":run.mana.metrics(),"trials":run.trial_metrics(),"evolution":run.evolution_metrics(),"artifacts":run.artifact_metrics(),"resonance":p.get("resonance",[]),"caches":run.treasure_count,"shrines":run.shrine_count,"encounters":run.encounters_cleared,"despawned":run.despawned,"peak_enemies":run.peak_enemies,"last_hit":run.last_hit,"upgrades":chosen,"first_upgrade":run.first_upgrade_time,"level_times":run.level_times,"boss_reached":run.boss_spawned,"boss_spawn_time":run.boss_spawn_time,"ticks":ticks,"cpu_us":Time.get_ticks_usec()-started}
 
 static func choose_upgrade(run: Variant,rng: Variant) -> int:
+	if not run.relic_pending and not run.artifact_pending.is_empty():
+		return rng.next_int(run.upgrade_offer.size())
 	if run.relic_pending and run.evolution_rules:
 		if run.trials_cleared==1: return rng.next_int(run.upgrade_offer.size())
 		return 1 if run.hp<run.max_hp*0.35 else 0
@@ -144,6 +146,7 @@ static func steering(run: Variant,strategy: String,previous: Vector2,rng: Varian
 				if site.is_empty() or run.claimed_sites.has(site.id): continue
 				if site.kind=="healing" and run.hp>run.max_hp-10.0: continue
 				var dist: float = run.player.distance_squared_to(site.pos)
+				if run.artifact_available(site): dist*=0.65
 				if dist<best:
 					best=dist
 					direction=run.player.direction_to(site.pos)

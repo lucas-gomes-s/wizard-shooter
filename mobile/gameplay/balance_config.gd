@@ -24,15 +24,17 @@ const MANA := "expedition-mana"
 const TRIALS := "expedition-trials"
 const EVOLUTION := "expedition-evolution"
 const LINEAGE := "expedition-lineage"
-const PRESETS := [ORIGINAL,CANDIDATE,FROST,LONG,MANA,TRIALS,EVOLUTION,LINEAGE]
+const ARTIFACTS := "expedition-artifacts"
+const PRESETS := [ORIGINAL,CANDIDATE,FROST,LONG,MANA,TRIALS,EVOLUTION,LINEAGE,ARTIFACTS]
 
 static func preset(id: String) -> Dictionary:
 	match id:
 		ORIGINAL: return validated({})
-		CANDIDATE,FROST,LONG,MANA,TRIALS,EVOLUTION,LINEAGE: return validated(TRIAL_20)
+		CANDIDATE,FROST,LONG,MANA,TRIALS,EVOLUTION,LINEAGE,ARTIFACTS: return validated(TRIAL_20)
 	return {}
 
 static func label(id: String) -> String:
+	if id==ARTIFACTS: return "Six-minute + Artifacts"
 	if id==LINEAGE: return "Six-minute + Lineage"
 	if id==EVOLUTION: return "Six-minute + Evolution"
 	if id==TRIALS: return "Six-minute + Trials"

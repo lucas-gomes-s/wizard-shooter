@@ -1,0 +1,62 @@
+name: Mobile rare artifact comparison
+on:
+  push:
+    paths:
+      - 'mobile/gameplay/artifact_catalog.gd'
+      - '.github/workflows/mobile-artifacts.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [expedition-lineage, expedition-artifacts]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned engine
+        run: |
+          curl -fL --retry 3 https://github.com/godotengine/godot-builds/releases/download/4.5.1-stable/Godot_v4.5.1-stable_linux.x86_64.zip -o /tmp/godot.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          chmod +x /tmp/godot/Godot_v4.5.1-stable_linux.x86_64
+          echo /tmp/godot >> "$GITHUB_PATH"
+      - name: Check evolution and simulation syntax
+        run: |
+          set -euo pipefail
+          Godot_v4.5.1-stable_linux.x86_64 --headless --path mobile --check-only --script gameplay/spell_evolution.gd
+          Godot_v4.5.1-stable_linux.x86_64 --headless --path mobile --check-only --script gameplay/run.gd
+      - name: Paired exploratory evolution matrix
+        run: |
+          set -euo pipefail
+          Godot_v4.5.1-stable_linux.x86_64 --headless --path mobile --script tools/balance_benchmark.gd -- --preset=${{ matrix.preset }} --all-bodies --seeds=2 --seed-start=310000019 --seconds=660 --output=/tmp/trials.json 2>&1 | tee /tmp/trials.log
+          if grep -E 'SCRIPT ERROR|Parse Error|Failed to load script' /tmp/trials.log; then exit 1; fi
+          python - <<'PY'
+          import json, statistics as st
+          d=json.load(open("/tmp/trials.json"))
+          assert len(d["runs"])==216 and len(d["groups"])==108
+          report={}
+          for level in (1,2,3):
+              for strategy in ("stationary","aggressive","kiting","explorer"):
+                  rows=[r for r in d["runs"] if r["difficulty"]==level and r["strategy"]==strategy]
+                  n=len(rows)
+                  assert n==18
+                  for r in rows:
+                      t=r["trials"]
+                      assert 0<=t["cleared"]<=2 and len(t["relics"])<=t["cleared"]
+                      assert abs(r["seconds"]-t["seconds"]-t["expedition_seconds"])<0.001
+                  durations=[x for r in rows for x in r["trials"]["durations"]]
+                  report[f"D{level}/{strategy}"]={"n":n,"win":sum(r["outcome"]=="Victory" for r in rows)/n,"boss_reach":sum(r["boss_reached"] for r in rows)/n,"first_trial_clear":sum(r["trials"]["cleared"]>=1 for r in rows)/n,"second_trial_clear":sum(r["trials"]["cleared"]==2 for r in rows)/n,"trial_median_duration":st.median(durations) if durations else None,"branches":{k:sum(r["evolution"]["branch"]==k for r in rows) for k in sorted({r["evolution"]["branch"] for r in rows})},"masteries":sum(bool(r["evolution"]["mastery"]) for r in rows),"mean_artifacts":st.mean(len(r["artifacts"]["owned"]) for r in rows),"artifact_runs":sum(bool(r["artifacts"]["owned"]) for r in rows),"mean_level":st.mean(r["level"] for r in rows),"mean_seconds":st.mean(r["seconds"] for r in rows),"timeouts":sum(r["outcome"]=="Timeout" for r in rows)/n}
+          print(json.dumps(report,indent=2))
+          with open("/tmp/trials-summary.json","w") as f: json.dump(report,f,indent=2)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: trials-${{ matrix.preset }}
+          path: |
+            /tmp/trials.json
+            /tmp/trials-summary.json
+          if-no-files-found: error
+          retention-days: 30

@@ -76,6 +76,7 @@ static func draw(canvas: CanvasItem,sprites: Variant,run: Variant,before: Dictio
 	if run.evolution_rules and not run.evolution_branch.is_empty():
 		var id: String=run.evolution_mastery if not run.evolution_mastery.is_empty() else run.evolution_branch
 		exploration="Trials %d/2 • %s" % [run.trials_cleared,run.Upgrades.DEFINITIONS[id].name]
+	if run.artifact_rules: exploration+=" • Artifacts %d" % run.artifacts_owned.size()
 	Fantasy.text_at(canvas,exploration,Vector2(180,270),11,Fantasy.MUTED,true)
 	Fantasy.frame(canvas,Rect2(12,296,336,132),Color("#86719b"))
 	Fantasy.text_at(canvas,"PERMANENT TRAINING",Vector2(180,314),11,Fantasy.GOLD,true)

@@ -96,6 +96,7 @@ func _initialize() -> void:
 	_test_trials(p)
 	_test_evolution(p)
 	_test_lineage(p)
+	_test_artifacts(p)
 	_test_economy(p)
 	_test_upgrades(p)
 	_test_enemies(p)
@@ -757,3 +758,57 @@ func _test_lineage(base: Dictionary) -> void:
 				check(is_equal_approx(float(run.shots[0].damage),float(control.shots[0].damage)*1.15),"Resonant projectile damage")
 			p.resonance=["dispersed" if kind=="concentrated" else "concentrated"]
 			check(RunModel.Evolution.resonance_bonus(p,branch)==0.0,"Nonmatching branch no penalty or bonus")
+
+func _test_artifacts(base: Dictionary) -> void:
+	var run := RunModel.new(base,false,1,7,RunModel.Balance.TRIAL_20,true,true,true,true,true,true,true)
+	var site: Dictionary={}
+	for x in range(-30,31):
+		var candidate := World.site(7,Vector2i(x,1))
+		if not candidate.is_empty() and candidate.kind=="treasure" and RunModel.Artifacts.is_cache(7,candidate):
+			site=candidate
+			break
+	check(not site.is_empty(),"Deterministic rare cache fixture")
+	if site.is_empty(): return
+	check(not run.artifact_available(site),"Rare caches unlock after early phase")
+	run.elapsed=45.0
+	check(run.artifact_available(site),"Rare cache available after unlock")
+	run._claim(site)
+	var choices := run.artifact_pending.duplicate()
+	check(choices.size()==3 and choices==RunModel.Artifacts.offer(7,site,[]),"Independent deterministic distinct artifact offer")
+	run.ensure_upgrade_offer()
+	check(run.upgrade_offer==choices,"Artifact choice precedes normal levels")
+	run.upgrade(0)
+	check(run.artifacts_owned==[choices[0]] and run.artifact_pending.is_empty(),"Artifact selected once")
+	run._claim(site)
+	check(run.artifacts_owned.size()==1 and run.pending_upgrades==0,"Claim cannot duplicate reward")
+	for i in range(20):
+		for id in Upgrades.offer(base,{},Genetics.SeededRandom.new(i+1)):
+			check(not Upgrades.DEFINITIONS[id].get("artifact",false),"Artifact excluded from ordinary pool")
+	run.artifacts_owned.assign(["artifact_magnet","artifact_blood","artifact_ward"])
+	check(not run.artifact_available(site),"Three artifact cap")
+	var pool := RunModel.Mana.new()
+	pool.drop(Vector2(80,0),12,0,7)
+	check(pool.tick(Vector2.ZERO,1,0.01,7)==0,"Normal magnet cannot reach 80px")
+	pool.tick(Vector2.ZERO,1,0.25,7,96)
+	check(pool.collected==12,"Expanded magnet reaches and collects")
+	run.spawn_cd=100.0
+	run.auto_cd=100.0
+	run.hp=run.max_hp-10.0
+	run.mana.drop(Vector2.ZERO,12,run.elapsed,7)
+	run.step(1.0/60.0,Vector2.ZERO,false)
+	check(is_equal_approx(run.artifact_healing,3.0),"Bloodstone heals on collected mana")
+	while run.pending_upgrades>0: run.upgrade(0)
+	run._cast_special()
+	check(run.ward>=1.0,"Aegis special ward")
+	run.artifacts_owned.assign(["artifact_pierce","artifact_echo","artifact_stride"])
+	run.enemies.clear()
+	run._spawn(0)
+	run.enemies[0].pos=Vector2(40,0)
+	run._cast_basic()
+	check(int(run.shots.back().pierce)==int(run.kit.basic.pierce)+1,"Needle adds projectile penetration")
+	run.auto_cd=4.0
+	run._cast_special()
+	check(run.auto_cd==0.0 and run.artifact_haste==2.0,"Echo and wind trigger on special")
+	var old := RunModel.new(base,false,1,7,RunModel.Balance.TRIAL_20,true,true,true,true,true,true)
+	old.elapsed=60
+	check(not old.artifact_available(site),"Lineage reference has no artifacts")
