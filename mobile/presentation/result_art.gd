@@ -53,7 +53,7 @@ static func draw(canvas: CanvasItem,sprites: Variant,run: Variant,before: Dictio
 	canvas.draw_rect(Rect2(0,0,360,640),Color("#17131f"))
 	var heading := "VICTORY" if run.outcome=="Victory" else ("EXTRACTED" if run.outcome=="Extracted" else "DEFEATED")
 	Pixel.heading(canvas,heading,Vector2(180,38),3,accent)
-	var mode := "Endless survival" if run.endless else "Dungeon expedition"
+	var mode := "Endless survival" if run.endless else ("6-minute expedition" if run.phased_expedition else "Dungeon expedition")
 	Fantasy.text_at(canvas,mode+" • Difficulty "+["I","II","III"][int(run.difficulty)-1],Vector2(180,56),11,Fantasy.MUTED,true)
 	Fantasy.frame(canvas,Rect2(12,66,336,104),accent.darkened(0.25))
 	var p: Dictionary=before.active.phenotype

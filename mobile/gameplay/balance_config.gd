@@ -19,15 +19,17 @@ const TRIAL_20 := {"enemy_hp":1.1092348917138815,"enemy_damage":0.92888594212434
 const ORIGINAL := "original"
 const CANDIDATE := "trial20-short"
 const FROST := "trial20-frost"
-const PRESETS := [ORIGINAL,CANDIDATE,FROST]
+const LONG := "expedition-six"
+const PRESETS := [ORIGINAL,CANDIDATE,FROST,LONG]
 
 static func preset(id: String) -> Dictionary:
 	match id:
 		ORIGINAL: return validated({})
-		CANDIDATE,FROST: return validated(TRIAL_20)
+		CANDIDATE,FROST,LONG: return validated(TRIAL_20)
 	return {}
 
 static func label(id: String) -> String:
+	if id==LONG: return "Six-minute expedition"
 	if id==FROST: return "Trial 20 + Frost"
 	return "Trial 20" if id==CANDIDATE else "Original"
 

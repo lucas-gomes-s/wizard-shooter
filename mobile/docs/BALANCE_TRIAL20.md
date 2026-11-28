@@ -14,3 +14,6 @@ User's complete optimization.json: 32,400 training and 4,320 holdout runs. Exact
 
 ## Manual test
 Academy or title Settings: choose Finite balance Trial 20 or Original. Start a finite run; selection is fixed for the run, next runs retain preference. Endless uses Original. Enable local Playtest report before starting to compare actual parameter snapshots. Test both Fire and Ice, both close combat and kiting. Record difficulty and whether boss encounter felt fair.
+
+## Implementation update
+The six-minute phase schedule now exists as optional `expedition-six`; see gameplay/expedition_schedule.gd for exact provisional values. The old 90s presets remain available. The long-run benchmark uses 540s horizon, fresh exploratory seed start 310000019, two seeds per cell (216 simulations). Do not compare its aggregate win rate directly to the 150s protocol. No long-run optimizer yet. Next: inspect survival/progression and calibrate permanent XP/essence, then improve bots and long-run objective.

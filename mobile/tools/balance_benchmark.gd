@@ -38,6 +38,8 @@ func _initialize() -> void:
 		parameters=RunModel.Balance.preset(preset_name)
 		if parameters.is_empty():
 			push_error("Unknown preset"); quit(2); return
+	if preset_name==RunModel.Balance.LONG and seconds<=int(RunModel.Phases.BOSS_AT):
+		push_error("Six-minute expedition needs a benchmark horizon above 360 seconds"); quit(2); return
 	var rows: Array[Dictionary] = []
 	var started := Time.get_ticks_msec()
 	for body in bodies:
@@ -49,7 +51,7 @@ func _initialize() -> void:
 						rows.append(simulate(p,difficulty,strategy,seed_start+i*7919))
 	var groups := summarize(rows)
 	var elapsed_ms := Time.get_ticks_msec()-started
-	var result := {"schema":1,"seeds_per_cell":seed_count,"horizon_seconds":seconds,"physics_hz":60,"profile":"controlled bodies/power 100/no mutation or talents; hybrids and steam tier II","parameters":RunModel.Balance.validated(parameters),"seed_start":seed_start,"preset":preset_name,"frost_rules":preset_name==RunModel.Balance.FROST,"runs":rows,"groups":groups,"wall_ms":elapsed_ms}
+	var result := {"schema":1,"seeds_per_cell":seed_count,"horizon_seconds":seconds,"physics_hz":60,"profile":"controlled bodies/power 100/no mutation or talents; hybrids and steam tier II","parameters":RunModel.Balance.validated(parameters),"seed_start":seed_start,"preset":preset_name,"frost_rules":preset_name in [RunModel.Balance.FROST,RunModel.Balance.LONG],"phased_expedition":preset_name==RunModel.Balance.LONG,"runs":rows,"groups":groups,"wall_ms":elapsed_ms}
 	var file := FileAccess.open(output,FileAccess.WRITE)
 	if file == null:
 		push_error("Cannot write benchmark output: "+output)
@@ -76,7 +78,7 @@ static func fixture(affinity: String, body: String = "stoneborn") -> Dictionary:
 	return p
 
 func simulate(p: Dictionary,difficulty: int,strategy: String,seed: int) -> Dictionary:
-	var run := RunModel.new(p,false,difficulty,seed,parameters,preset_name==RunModel.Balance.FROST)
+	var run := RunModel.new(p,false,difficulty,seed,parameters,preset_name in [RunModel.Balance.FROST,RunModel.Balance.LONG],preset_name==RunModel.Balance.LONG)
 	var bot_rng := Genetics.SeededRandom.new(seed+17231)
 	var move := Vector2.ZERO
 	var chosen: Dictionary = {}
@@ -101,7 +103,7 @@ func simulate(p: Dictionary,difficulty: int,strategy: String,seed: int) -> Dicti
 					break
 		run.step(DT,move,cast)
 		ticks += 1
-	return {"seed":seed,"affinity":p.affinity,"body":p.body,"tier":p.tier,"difficulty":difficulty,"strategy":strategy,"outcome":run.outcome if run.outcome!="" else "Timeout","seconds":run.elapsed,"kills":run.kills,"level":run.run_level,"run_xp":run.total_run_xp,"training_xp":run.training_reward(),"damage":run.total_damage_dealt,"taken":run.total_damage_taken,"remaining_hp":run.hp,"basic_casts":run.basic_casts,"special_casts":run.special_casts,"frost_bonus_hits":run.frost_bonus_hits,"frost_shatters":run.frost_shatters,"caches":run.treasure_count,"shrines":run.shrine_count,"encounters":run.encounters_cleared,"despawned":run.despawned,"peak_enemies":run.peak_enemies,"last_hit":run.last_hit,"upgrades":chosen,"first_upgrade":run.first_upgrade_time,"level_times":run.level_times,"boss_reached":run.boss_spawned,"boss_spawn_time":run.boss_spawn_time,"ticks":ticks,"cpu_us":Time.get_ticks_usec()-started}
+	return {"seed":seed,"affinity":p.affinity,"body":p.body,"tier":p.tier,"difficulty":difficulty,"strategy":strategy,"outcome":run.outcome if run.outcome!="" else "Timeout","seconds":run.elapsed,"kills":run.kills,"level":run.run_level,"run_xp":run.total_run_xp,"training_xp":run.training_reward(),"damage":run.total_damage_dealt,"taken":run.total_damage_taken,"remaining_hp":run.hp,"basic_casts":run.basic_casts,"special_casts":run.special_casts,"frost_bonus_hits":run.frost_bonus_hits,"frost_shatters":run.frost_shatters,"phase_reached":run.phase_index(),"phase_spawns":run.phase_spawns.duplicate(),"caches":run.treasure_count,"shrines":run.shrine_count,"encounters":run.encounters_cleared,"despawned":run.despawned,"peak_enemies":run.peak_enemies,"last_hit":run.last_hit,"upgrades":chosen,"first_upgrade":run.first_upgrade_time,"level_times":run.level_times,"boss_reached":run.boss_spawned,"boss_spawn_time":run.boss_spawn_time,"ticks":ticks,"cpu_us":Time.get_ticks_usec()-started}
 
 static func choose_upgrade(run: Variant,rng: Variant) -> int:
 	# Same deterministic policy for all strategies. Heal when necessary; otherwise favor affinity.

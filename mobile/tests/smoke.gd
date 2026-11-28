@@ -91,6 +91,7 @@ func _initialize() -> void:
 	_test_sites(p)
 	_test_abilities(p)
 	_test_frost(p)
+	_test_expedition(p)
 	_test_upgrades(p)
 	_test_enemies(p)
 	_test_combat_metrics(p)
@@ -521,3 +522,47 @@ func _test_frost(base: Dictionary) -> void:
 	check(Abilities.compile(p,true)==Abilities.compile(p,false),"Fire mechanics unchanged")
 	p.affinity="steam"
 	check(Abilities.compile(p,true)==Abilities.compile(p,false),"Steam mechanics unchanged")
+
+func _test_expedition(p: Dictionary) -> void:
+	var schedule=RunModel.Phases
+	for boundary in [[0,0],[59.99,0],[60,1],[179.99,1],[180,2],[300,3],[360,4]]:
+		check(schedule.index_at(boundary[0])==boundary[1],"Phase boundary")
+	for t in [0.0,12.0,59.0,60.0,179.0]:
+		for roll in range(100):
+			var k: int=schedule.kind_at(t,roll)
+			check(k!=3 and k!=4 and (t>=60 or k!=2),"Early spawn pool")
+	check(schedule.kind_at(180,99)==4,"Warlock unlocks in pressure phase")
+	check(schedule.recovery(72) and not schedule.recovery(80) and not schedule.recovery(351.0),"Recovery windows")
+	check(schedule.warning(345) and not schedule.warning(360),"Boss warning boundary")
+	check(schedule.delay(72,1,RunModel.Balance.TRIAL_20)>schedule.delay(70,1,RunModel.Balance.TRIAL_20)*2,"Recovery slows reinforcement")
+	var run := RunModel.new(p,false,1,7,RunModel.Balance.TRIAL_20,true,true)
+	check(run.boss_after_seconds()==360.0 and run.phase_index()==0,"Long run protocol")
+	run.elapsed=59.0
+	run._start_encounter({"id":"test","pos":Vector2(60,0)})
+	check(run.active_encounter.is_empty(),"Guarded encounter waits until escalation")
+	run.elapsed=90.0
+	run._spawn_phased()
+	check(not run.boss_spawned and run.phase_spawns[1]==1,"No short boss in long protocol")
+	run.enemies.clear()
+	run.elapsed=180.0
+	run.spawn_cd=0
+	run._spawn_phased()
+	check(run.enemies.size()==2 and run.phase_spawns[2]==2,"Pressure mixed pack")
+	run.enemies.clear()
+	run.elapsed=300.0
+	for i in range(schedule.density_cap(300,1)-1): run._spawn(0)
+	run.spawn_cd=0
+	run._spawn_phased()
+	check(run.enemies.size()==schedule.density_cap(300,1),"Pack respects density cap")
+	var count:=run.enemies.size()
+	run.elapsed=360.0
+	run.spawn_cd=0
+	run._spawn_phased()
+	check(run.boss_spawned and run.boss_spawn_time==360.0 and run.enemies.size()==count+1,"Boss spawns even above reduced reinforcement cap")
+	run.spawn_cd=0
+	run._spawn_phased()
+	check(run.enemies.size()==count+1,"No second boss or deletion on cap drop")
+	var short := RunModel.new(p,false,1,7)
+	check(short.boss_after_seconds()==90.0 and not short.phased_expedition,"Historical protocol unchanged")
+	var endless := RunModel.new(p,true,1,7,{},false,true)
+	check(endless.boss_after_seconds()==0 and not endless.phased_expedition,"Endless cannot enable phase schedule")

@@ -62,6 +62,8 @@ func _test() -> void:
 	app._cycle_balance()
 	check(app.settings.balance_preset=="trial20-frost","Frost experiment selectable")
 	app._cycle_balance()
+	check(app.settings.balance_preset=="expedition-six","Long experiment selectable")
+	app._cycle_balance()
 	check(app.settings.balance_preset=="original","Original comparison selectable")
 	app._cycle_balance()
 	app._open_backup()
@@ -295,6 +297,13 @@ func _test() -> void:
 	app._cycle_balance()
 	app._start(false)
 	check(app.run.frost_rules and app.run.balance==app.Balance.TRIAL_20,"Frost run uses candidate numeric parameters and revised rules")
+	app._show_academy()
+	app._cycle_balance()
+	app._start(false)
+	check(app.run.phased_expedition and app.run.boss_after_seconds()==360.0,"Long run selected")
+	app.run.elapsed=345.0
+	app.queue_redraw()
+	await process_frame
 	app._show_academy()
 	app._start(true)
 	check(app.run.balance==app.Balance.DEFAULTS and not app.run.frost_rules,"Endless keeps original unoptimized balance")

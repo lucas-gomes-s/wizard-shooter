@@ -502,6 +502,7 @@ func _show_title() -> void:
 	title_note.text = "Open the Academy to review your profile." if unavailable else "%d essence  |  %d wizards" % [academy.essence,academy.roster.size()]
 	if not unavailable and guide.enabled and academy.settled_runs.is_empty(): title_note.text="New? Open Guide, or learn as you play."
 	if not unavailable: title_note.text+="\nFinite: "+Balance.label(settings.balance_preset)
+	if settings.balance_preset==Balance.LONG: title_quick.text="6-minute expedition"
 	_sync_visibility()
 	queue_redraw()
 
@@ -538,7 +539,8 @@ func _refresh_academy() -> void:
 		var hint := Onboarding.fusion_tip(academy,c,p2)
 		if not hint.is_empty(): info.text=hint
 	difficulty_button.text="Difficulty: %s" % ["I","II","III"][difficulty-1]
-	balance_button.text="Finite balance: "+Balance.label(settings.balance_preset)
+	balance_button.text="Finite: "+Balance.label(settings.balance_preset)
+	start_finite.text="Enter 6-minute expedition" if settings.balance_preset==Balance.LONG else "Enter dungeon"
 	lock_button.text="Unlock wizard" if c.locked else "Lock wizard"
 	clear_apprentice.disabled=partner_index<0
 	summon_button.disabled=academy.essence<10
@@ -920,10 +922,10 @@ func _cycle_balance() -> void:
 	var error := settings.save_settings()
 	if screen=="settings":
 		_refresh_settings()
-		settings_notice.text="Frost changes Ice only. Endless stays original." if error==OK else "Preset active; could not save preference."
+		settings_notice.text="Six-minute mode is experimental. Endless original." if error==OK else "Preset active; could not save preference."
 	else:
 		_refresh_academy()
-		status_label.text="Frost changes Ice only. Endless original." if error==OK else "Preset active; could not save preference."
+		status_label.text="Six-minute mode experimental." if error==OK else "Preset active; could not save preference."
 	queue_redraw()
 
 func _cycle_difficulty() -> void:
@@ -939,7 +941,7 @@ func _start(endless: bool) -> void:
 		_show_academy()
 		return
 	var preset := Balance.ORIGINAL if endless else settings.balance_preset
-	run = RunModel.new(active.phenotype, endless, difficulty, 1000 + run_id, Balance.preset(preset),preset==Balance.FROST)
+	run = RunModel.new(active.phenotype, endless, difficulty, 1000 + run_id, Balance.preset(preset),preset in [Balance.FROST,Balance.LONG],preset==Balance.LONG)
 	result_before.clear()
 	result_reward.clear()
 	profiler.reset()
@@ -1285,7 +1287,10 @@ func _draw() -> void:
 		if not hint.is_empty():
 			var lines := hint.split("\n")
 			for i in range(lines.size()): Fantasy.text_at(self,lines[i],Vector2(180,557+i*15),11,Fantasy.GOLD,true)
-	if run.site_notice_time > 0:
+	if run.phased_expedition and RunModel.Phases.warning(run.elapsed):
+		draw_rect(Rect2(8,94,344,23),Color(0.16,0.08,0.10,0.94))
+		_center_text("The dragon approaches! Prepare to fight.",Vector2(180,110),12,Fantasy.GOLD)
+	elif run.site_notice_time > 0:
 		draw_rect(Rect2(8, 94, 344, 23), Color(0.09, 0.07, 0.13, 0.90))
 		_center_text(run.site_notice, Vector2(180, 110), 12, Color("#e6d2ac"))
 	for e in run.enemies:
@@ -1392,7 +1397,13 @@ func _draw_hud() -> void:
 	Fantasy.bar(self,Rect2(12,52,230,18),float(run.xp),float(run.next_xp),Fantasy.XP,-1.0,0.0 if settings.reduced_motion else level_flash)
 	Fantasy.text_at(self,"XP   %d / %d" % [run.xp,run.next_xp],Vector2(127,65),11,Fantasy.IVORY,true)
 	var state := "BLESSED %.0fs" % run.blessing if run.blessing > 0 else ("BOSS ACTIVE" if run.boss_spawned else ("ENDLESS" if run.endless else "DUNGEON"))
-	Fantasy.text_at(self,state,Vector2(12,83),10,Fantasy.MUTED)
+	if run.phased_expedition:
+		var left := maxi(0,ceili(run.boss_after_seconds()-run.elapsed))
+		var phase: Dictionary=RunModel.Phases.PHASES[run.phase_index()]
+		state="DRAGON ACTIVE" if run.boss_spawned else "%s | Dragon %d:%02d" % [str(phase.name).to_upper(),left/60,left%60]
+		if RunModel.Phases.recovery(run.elapsed): state="RECOVERY | Dragon %d:%02d" % [left/60,left%60]
+		if RunModel.Phases.warning(run.elapsed): state="DRAGON IN %ds" % left
+	Fantasy.text_at(self,state,Vector2(12,83),10,Fantasy.GOLD if run.phased_expedition and RunModel.Phases.warning(run.elapsed) else Fantasy.MUTED)
 	if not run.endless:
 		Fantasy.text_at(self,"DIFFICULTY "+["I","II","III"][difficulty-1],Vector2(300,65),10,Fantasy.MUTED,true)
 

@@ -5,6 +5,7 @@ const Abilities = preload("res://gameplay/ability_catalog.gd")
 const Upgrades = preload("res://gameplay/upgrade_catalog.gd")
 const EnemyAI = preload("res://gameplay/enemy_behavior.gd")
 const Balance = preload("res://gameplay/balance_config.gd")
+const Phases = preload("res://gameplay/expedition_schedule.gd")
 const DESPAWN_DISTANCE := 740.0
 const BOSS_RELOCATE_DISTANCE := 950.0
 const TARGET_RANGE := 350.0
@@ -92,13 +93,16 @@ const MAX_HIT_FX := 40
 var player_hit_fx := 0.0
 var balance: Dictionary
 var frost_rules := false
+var phased_expedition := false
+var phase_spawns: Array[int] = [0,0,0,0,0]
 var frost_bonus_hits := 0
 var frost_shatters := 0
 var first_upgrade_time := -1.0
 var level_times: Array[float] = []
 var boss_spawn_time := -1.0
 
-func _init(p: Dictionary, is_endless: bool, level: int, seed: int, parameters: Dictionary = {}, use_frost_rules: bool = false) -> void:
+func _init(p: Dictionary, is_endless: bool, level: int, seed: int, parameters: Dictionary = {}, use_frost_rules: bool = false, use_phases: bool = false) -> void:
+	phased_expedition=use_phases and not is_endless
 	frost_rules=use_frost_rules
 	balance = Balance.validated(parameters)
 	assert(not balance.is_empty(), "Invalid balance parameters")
@@ -143,18 +147,21 @@ func step(dt: float, movement: Vector2, special: bool) -> void:
 		_add_cloud(player, 23.0, 1.3, trail_rate, "fire")
 		trail_cd = 0.32
 	spawn_cd -= dt
-	var normal_limit := MAX_ENEMIES - GUARD_COUNT - (1 if not endless and not boss_spawned else 0)
-	if spawn_cd <= 0 and enemies.size() < normal_limit:
-		var kind := 0
-		if elapsed >= 12 and rng.next_int(100) < 35: kind = 1
-		if elapsed >= 28 and rng.next_int(100) < 28: kind = 2
-		if elapsed >= 42 and rng.next_int(100) < 20: kind = 4
-		_spawn(kind)
-		spawn_cd = Balance.spawn_delay(elapsed, difficulty, boss_spawned, balance)
-	if not endless and elapsed >= FINITE_SECONDS and not boss_spawned:
-		boss_spawned = true
-		boss_spawn_time = elapsed
-		_spawn(3)
+	if phased_expedition:
+		_spawn_phased()
+	else:
+		var normal_limit := MAX_ENEMIES - GUARD_COUNT - (1 if not endless and not boss_spawned else 0)
+		if spawn_cd <= 0 and enemies.size() < normal_limit:
+			var kind := 0
+			if elapsed >= 12 and rng.next_int(100) < 35: kind = 1
+			if elapsed >= 28 and rng.next_int(100) < 28: kind = 2
+			if elapsed >= 42 and rng.next_int(100) < 20: kind = 4
+			_spawn(kind)
+			spawn_cd = Balance.spawn_delay(elapsed, difficulty, boss_spawned, balance)
+		if not endless and elapsed >= FINITE_SECONDS and not boss_spawned:
+			boss_spawned = true
+			boss_spawn_time = elapsed
+			_spawn(3)
 	peak_enemies = maxi(peak_enemies, enemies.size())
 	if auto_cd <= 0:
 		if _cast_basic(): auto_cd = interval
@@ -204,6 +211,42 @@ func step(dt: float, movement: Vector2, special: bool) -> void:
 			level_times.append(elapsed)
 			pending_upgrades += 1
 		if pending_upgrades > 0: ensure_upgrade_offer()
+
+func boss_after_seconds() -> float:
+	return 0.0 if endless else (Phases.BOSS_AT if phased_expedition else FINITE_SECONDS)
+
+func phase_index() -> int:
+	return Phases.index_at(elapsed) if phased_expedition else -1
+
+func _spawn_phased() -> void:
+	# Spawn the unique boss before any reinforcement budget is considered.
+	if elapsed>=Phases.BOSS_AT and not boss_spawned:
+		boss_spawned=true
+		boss_spawn_time=elapsed
+		_spawn(3)
+		spawn_cd=maxf(spawn_cd,Phases.delay(elapsed,difficulty,balance))
+	if spawn_cd>0: return
+	var cap := mini(Phases.density_cap(elapsed,difficulty),MAX_ENEMIES-GUARD_COUNT-(0 if boss_spawned else 1))
+	# Existing enemies remain alive when the cap drops at the boss transition.
+	if enemies.size()>=cap:
+		spawn_cd=0.25
+		return
+	var count := mini(Phases.pack_size(elapsed),cap-enemies.size())
+	for i in range(count):
+		_spawn(Phases.kind_at(elapsed,rng.next_int(100)))
+		phase_spawns[phase_index()]+=1
+	spawn_cd=Phases.delay(elapsed,difficulty,balance)
+
+func _phase_scale(d: Dictionary) -> void:
+	if not phased_expedition: return
+	if int(d.kind)==3:
+		d.hp*=Phases.BOSS_HP_SCALE
+		d.damage*=Phases.BOSS_DAMAGE_SCALE
+	else:
+		var p: Dictionary=Phases.PHASES[phase_index()]
+		d.hp*=float(p.hp)
+		d.damage*=float(p.damage)
+	d.max_hp=d.hp
 
 func ensure_upgrade_offer() -> void:
 	if pending_upgrades > 0 and upgrade_offer.is_empty() and outcome == "":
@@ -335,6 +378,7 @@ func _spawn(kind: int) -> void:
 	d.hp *= (1.0 + (difficulty - 1) * 0.25) * float(balance.enemy_hp) * (float(balance.boss_hp) if int(d.kind) == 3 else 1.0)
 	d.max_hp = d.hp
 	d.damage *= (1.0 + (difficulty - 1) * 0.18) * float(balance.enemy_damage) * (float(balance.boss_damage) if int(d.kind) == 3 else 1.0)
+	_phase_scale(d)
 	d.slow = 0.0
 	d.burn = 0.0
 	d.chill = 0.0
@@ -400,6 +444,7 @@ func _abandon_far_encounter() -> void:
 	_announce("Guarded cache abandoned")
 
 func _start_encounter(site: Dictionary) -> void:
+	if phased_expedition and elapsed<60.0: return
 	var reserve := 1 if not endless and not boss_spawned else 0
 	if not active_encounter.is_empty() or claimed_sites.has(site.id) or enemies.size() + GUARD_COUNT + reserve > MAX_ENEMIES: return
 	active_encounter = site.duplicate()
@@ -421,6 +466,7 @@ func _start_encounter(site: Dictionary) -> void:
 		d.hp *= (1.0 + (difficulty - 1) * 0.25) * float(balance.enemy_hp) * (float(balance.boss_hp) if int(d.kind) == 3 else 1.0)
 		d.max_hp = d.hp
 		d.damage *= (1.0 + (difficulty - 1) * 0.18) * float(balance.enemy_damage) * (float(balance.boss_damage) if int(d.kind) == 3 else 1.0)
+		_phase_scale(d)
 		d.xp = 0
 		d.slow = 0.0
 		d.burn = 0.0
