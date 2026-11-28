@@ -7,7 +7,7 @@ if(!Number.isInteger(seconds)||seconds<1||seconds>3600||!Number.isInteger(count)
 const seeds=Array.from({length:count},(_,i)=>start+i);
 const report={seconds,seeds,decisionTicks:5,variants:{}};
 for(const [name,combatBalance] of [['baseline',{}],['candidate',config.combatBalance]]){
- const results=benchmarkBuilds({...config,combatBalance},{seconds,seeds,decisionTicks:5});
+ const results=benchmarkBuilds({...config,combatBalance,waveDirector:false},{seconds,seeds,decisionTicks:5});
  const summary={runs:results.length,wins:results.filter(r=>r.phase==='victory').length,dragon:results.filter(r=>r.reachedDragon).length,blocked:results.filter(r=>r.phase==='blocked').length,meanSeconds:results.reduce((s,r)=>s+r.seconds,0)/results.length,builds:summarizeBuilds(results)};
  report.variants[name]={combatBalance,summary,results};
  console.log(name,JSON.stringify({...summary,builds:undefined}));
