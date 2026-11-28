@@ -38,7 +38,7 @@ func _label(pos: Vector2,extent: Vector2,font_size: int) -> Label:
 	return label
 
 func configure(id: String,d: Dictionary,rank: int,hue: Color) -> void:
-	var key := id+":"+str(rank)
+	var key := id+":"+str(rank)+":"+str(d.category)
 	if current_key==key: return
 	current_key=key
 	icon_view.texture=Art.icon(Art.upgrade_icon(id,d),hue)
@@ -53,4 +53,4 @@ func configure(id: String,d: Dictionary,rank: int,hue: Color) -> void:
 	add_theme_stylebox_override("normal",Fantasy.style(Color("#292332").lerp(hue,0.08),hue.darkened(0.30)))
 	add_theme_stylebox_override("hover",Fantasy.style(Color("#392f45").lerp(hue,0.16),hue))
 	add_theme_stylebox_override("pressed",Fantasy.style(Color("#201b2a"),hue.lightened(0.25)))
-	tooltip_text=str(d.name)+": "+str(d.text)
+	tooltip_text=str(d.name)+": "+str(d.text)+( " ("+str(d.category)+")" if str(d.category).begins_with("RESONANCE") else "")

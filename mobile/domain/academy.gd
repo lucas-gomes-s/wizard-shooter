@@ -74,6 +74,8 @@ func _normalize_record(record: Dictionary) -> void:
 	# Old saves receive stable, seed-derived talent alleles; existing base stats stay unchanged.
 	g.talents = Genetics.talents_for(g)
 	record.phenotype.passives = Genetics.expressed_talents(g)
+	g.resonance=Genetics.resonance_for(g)
+	record.phenotype.resonance=Genetics.expressed_resonance(g)
 
 func _commit(before: Dictionary) -> bool:
 	if store == null or store.commit(snapshot()):

@@ -38,6 +38,11 @@ static func valid_record(c: Variant) -> bool:
 		if not g.talents is Array or g.talents.size() != 2: return false
 		for talent in g.talents:
 			if not talent in ["resilient", "quickcast", "focused", "flow"]: return false
+	if g.has("resonance"):
+		if not g.resonance is Array or g.resonance.size()!=2: return false
+		for allele in g.resonance:
+			if not allele in ["concentrated","dispersed"]: return false
+	# Phenotype resonance is derived from the validated genome on load, not trusted.
 	if not g.ancestry is Dictionary or not integer(g.ancestry.get("stoneborn", -1)) or not integer(g.ancestry.get("fae", -1)): return false
 	if int(g.ancestry.stoneborn) + int(g.ancestry.fae) != 10000: return false
 	for k in ["hat", "robe", "staff"]:

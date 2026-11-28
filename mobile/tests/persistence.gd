@@ -84,6 +84,7 @@ func _initialize() -> void:
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(future_store.slot_path(0)))
 	_test_backup(prefix+"_backup")
 	_test_economy_receipt(prefix+"_economy")
+	_test_resonance(prefix+"_resonance")
 	print("Wizard Shooter persistence: %d failures" % failures)
 	quit(0 if failures == 0 else 1)
 
@@ -137,3 +138,21 @@ func _test_economy_receipt(prefix: String) -> void:
 	check(reopened.roster.size()==3 and reopened.roster[0].xp==25 and reopened.roster[1].xp==6 and reopened.essence==23,"New economy reload exact award")
 	check(not reopened.reward(id,reopened.roster[0],reopened.roster[1],25,true,0,13),"New economy receipt idempotent")
 	for slot in range(2): DirAccess.remove_absolute(ProjectSettings.globalize_path(reopened.store.slot_path(slot)))
+
+func _test_resonance(prefix: String) -> void:
+	var a := Academy.new(42,Store.new(prefix))
+	var old := a.snapshot()
+	var original: Dictionary=old.roster[0].phenotype.duplicate(true)
+	for c in old.roster:
+		c.genome.erase("resonance")
+		c.phenotype.erase("resonance")
+	check(Store.valid_profile(old),"Pre-resonance profile accepted")
+	check(a.restore_backup(old),"Legacy backup restored")
+	check(a.roster[0].phenotype==original,"Seed-derived resonance preserves previous phenotype")
+	var bad := a.snapshot()
+	bad.roster[0].genome.resonance=["invalid","dispersed"]
+	check(not Store.valid_profile(bad),"Invalid resonance allele rejected")
+	check(a.assign(a.roster[0].id,a.roster[1].id),"Normalized profile persists")
+	var restored := Academy.new(99,Store.new(prefix))
+	check(restored.roster[0].genome.resonance==a.roster[0].genome.resonance and restored.roster[0].phenotype.resonance==a.roster[0].phenotype.resonance,"Resonance reload stable")
+	for slot in range(2): DirAccess.remove_absolute(ProjectSettings.globalize_path(restored.store.slot_path(slot)))

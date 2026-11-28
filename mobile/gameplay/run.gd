@@ -101,6 +101,8 @@ var phased_expedition := false
 var mana_rules := false
 var trial_rules := false
 var evolution_rules := false
+var lineage_rules := false
+var evolution_resonance_bonus := 0.0
 var evolution_branch := ""
 var evolution_mastery := ""
 var evolution_hits := 0
@@ -122,11 +124,12 @@ var first_upgrade_time := -1.0
 var level_times: Array[float] = []
 var boss_spawn_time := -1.0
 
-func _init(p: Dictionary, is_endless: bool, level: int, seed: int, parameters: Dictionary = {}, use_frost_rules: bool = false, use_phases: bool = false, use_mana: bool = false, use_trials: bool = false, use_evolution: bool = false) -> void:
+func _init(p: Dictionary, is_endless: bool, level: int, seed: int, parameters: Dictionary = {}, use_frost_rules: bool = false, use_phases: bool = false, use_mana: bool = false, use_trials: bool = false, use_evolution: bool = false, use_lineage: bool = false) -> void:
 	phased_expedition=use_phases and not is_endless
 	mana_rules=use_mana and phased_expedition
 	trial_rules=use_trials and mana_rules
 	evolution_rules=use_evolution and trial_rules
+	lineage_rules=use_lineage and evolution_rules
 	frost_rules=use_frost_rules
 	balance = Balance.validated(parameters)
 	assert(not balance.is_empty(), "Invalid balance parameters")
@@ -337,7 +340,7 @@ func _complete_trial() -> void:
 	_announce("Trial cleared! Evolve your magic." if evolution_rules else "Trial cleared! Choose a relic.")
 
 func evolution_metrics() -> Dictionary:
-	return {"branch":evolution_branch,"mastery":evolution_mastery,"splash_hits":evolution_hits,"extra_shots":evolution_extra_shots}
+	return {"branch":evolution_branch,"mastery":evolution_mastery,"resonance_bonus":evolution_resonance_bonus,"splash_hits":evolution_hits,"extra_shots":evolution_extra_shots}
 
 func trial_metrics() -> Dictionary:
 	return {"cleared":trials_cleared,"active":trial_index,"seconds":trial_seconds,
@@ -371,7 +374,9 @@ func upgrade(choice: int) -> void:
 	if relic_pending:
 		if evolution_rules and not id in Evolution.offer(str(phenotype.affinity),evolution_branch,trials_cleared): return
 		if bool(Upgrades.DEFINITIONS[id].get("evolution",false)):
-			if trials_cleared==1: evolution_branch=id
+			if trials_cleared==1:
+				evolution_branch=id
+				if lineage_rules: evolution_resonance_bonus=Evolution.resonance_bonus(phenotype,id)
 			else: evolution_mastery=id
 			Evolution.apply(self,id)
 		else:
@@ -639,16 +644,17 @@ func _cast_basic() -> bool:
 	var direction := player.direction_to(target.pos)
 	if frost_rules and phenotype.affinity=="ice": direction=_frost_aim(target,spec)
 	if direction == Vector2.ZERO: direction = Vector2.UP
+	var evolved_power := 1.0+evolution_resonance_bonus if evolution_branch!="evo_steam_mantle" else 1.0
 	var count := mini(int(spec.get("count",1)),Abilities.MAX_SHOTS-shots.size())
 	for i in range(count):
 		# Central shot is always first, so a tight projectile budget never removes it.
 		var offset := 0.0 if i==0 else floorf(float(i+1)*0.5)*float(spec.get("spread",0.0))*(1.0 if i%2==1 else -1.0)
 		var heading := direction.rotated(offset)
 		shots.append({"pos":player,"vel":heading * float(spec.speed),"life":float(spec.life),
-			"damage":effective_damage() * float(spec.power),"pierce":int(spec.pierce),"hit":{},
+			"damage":effective_damage() * float(spec.power)*evolved_power,"pierce":int(spec.pierce),"hit":{},
 			"effects":spec.effects.duplicate(true),"affinity":phenotype.affinity,
 			"hit_padding":float(spec.get("hit_padding",3.0)),"chilled_bonus":float(spec.get("chilled_bonus",0.0)),
-			"impact_radius":float(spec.get("impact_radius",0.0)),"impact_damage":effective_damage()*float(spec.get("impact_power",0.0)),
+			"impact_radius":float(spec.get("impact_radius",0.0)),"impact_damage":effective_damage()*float(spec.get("impact_power",0.0))*evolved_power,
 			"impact_chill":bool(spec.get("impact_chill",false))})
 	evolution_extra_shots+=maxi(0,count-1)
 	last_basic_direction = direction
@@ -698,7 +704,8 @@ func _cast_special() -> void:
 	trail = float(spec.get("trail", 0.0))
 	trail_cd = 0.0
 	if spec.delivery == "cloud":
-		_add_cloud(player, float(spec.radius), float(spec.duration), float(spec.rate), "steam",bool(spec.get("follow",false)))
+		var evolved_rate := float(spec.rate)*(1.0+evolution_resonance_bonus if evolution_branch=="evo_steam_mantle" else 1.0)
+		_add_cloud(player, float(spec.radius), float(spec.duration), evolved_rate, "steam",bool(spec.get("follow",false)))
 	else:
 		for enemy in enemies:
 			if enemy.hp <= 0 or player.distance_to(enemy.pos) > float(spec.radius): continue

@@ -95,6 +95,7 @@ func _initialize() -> void:
 	_test_mana(p)
 	_test_trials(p)
 	_test_evolution(p)
+	_test_lineage(p)
 	_test_economy(p)
 	_test_upgrades(p)
 	_test_enemies(p)
@@ -709,3 +710,50 @@ func _test_evolution(base: Dictionary) -> void:
 			check(run.phenotype==p,"Evolution never mutates phenotype")
 	var old := RunModel.new(base,false,1,7,RunModel.Balance.TRIAL_20,true,true,true,true)
 	check(not old.evolution_rules,"Relic-only reference unchanged")
+
+func _test_lineage(base: Dictionary) -> void:
+	var a := Genetics.founder(17)
+	var b := Genetics.founder(23)
+	a.resonance=["concentrated","concentrated"]
+	b.resonance=["dispersed","dispersed"]
+	var mixed := 0
+	for seed in range(500):
+		var child := Genetics.fuse(a,b,seed)
+		check(child==Genetics.fuse(b,a,seed),"Resonance fusion parent symmetry")
+		if child.resonance==["concentrated","dispersed"]: mixed+=1
+	check(mixed>=450 and mixed<500,"Most opposite homozygotes yield both aptitudes; mutation permits exceptions")
+	var legacy := Genetics.founder(17)
+	var expected: Array=legacy.resonance.duplicate()
+	legacy.erase("resonance")
+	check(Genetics.resonance_for(legacy)==expected,"Legacy deterministic resonance")
+	for affinity in ["fire","ice","steam"]:
+		for branch in RunModel.Evolution.PATHS[affinity]:
+			var p := base.duplicate(true)
+			p.affinity=affinity
+			p.mutation="none"
+			p.passives=[]
+			p.resonance=["concentrated","dispersed"]
+			check(is_equal_approx(RunModel.Evolution.resonance_bonus(p,branch),0.08),"Dual resonance modest bonus")
+			var kind := "concentrated" if branch in RunModel.Evolution.RESONANT_BRANCHES.concentrated else "dispersed"
+			p.resonance=[kind]
+			var run := RunModel.new(p,false,1,7,RunModel.Balance.TRIAL_20,true,true,true,true,true,true)
+			var control := RunModel.new(p,false,1,7,RunModel.Balance.TRIAL_20,true,true,true,true,true)
+			for model in [run,control]:
+				model.trials_cleared=1
+				model.relic_pending=true
+				model.pending_upgrades=1
+				model.ensure_upgrade_offer()
+				check(model.upgrade_offer.size()==2,"Both branches remain viable")
+				model.upgrade(model.upgrade_offer.find(branch))
+				model._spawn(0)
+				model.enemies[0].pos=Vector2(40,0)
+				model._cast_basic()
+				model._cast_special()
+			check(is_equal_approx(run.evolution_resonance_bonus,0.15) and control.evolution_resonance_bonus==0.0,"Lineage mode isolates matching bonus")
+			if branch=="evo_steam_mantle":
+				check(is_equal_approx(float(run.clouds.back().dps),float(control.clouds.back().dps)*1.15),"Resonant mobile cloud damage")
+				check(is_equal_approx(float(run.shots[0].damage),float(control.shots[0].damage)),"Unrelated basic unchanged")
+			else:
+				check(is_equal_approx(float(run.shots[0].damage),float(control.shots[0].damage)*1.15),"Resonant projectile damage")
+			p.resonance=["dispersed" if kind=="concentrated" else "concentrated"]
+			check(RunModel.Evolution.resonance_bonus(p,branch)==0.0,"Nonmatching branch no penalty or bonus")

@@ -502,7 +502,7 @@ func _show_title() -> void:
 	title_note.text = "Open the Academy to review your profile." if unavailable else "%d essence  |  %d wizards" % [academy.essence,academy.roster.size()]
 	if not unavailable and guide.enabled and academy.settled_runs.is_empty(): title_note.text="New? Open Guide, or learn as you play."
 	if not unavailable: title_note.text+="\nFinite: "+Balance.label(settings.balance_preset)
-	if settings.balance_preset in [Balance.LONG,Balance.MANA,Balance.TRIALS,Balance.EVOLUTION]: title_quick.text="6-minute expedition"
+	if settings.balance_preset in [Balance.LONG,Balance.MANA,Balance.TRIALS,Balance.EVOLUTION,Balance.LINEAGE]: title_quick.text="6-minute expedition"
 	_sync_visibility()
 	queue_redraw()
 
@@ -540,7 +540,7 @@ func _refresh_academy() -> void:
 		if not hint.is_empty(): info.text=hint
 	difficulty_button.text="Difficulty: %s" % ["I","II","III"][difficulty-1]
 	balance_button.text="Finite: "+Balance.label(settings.balance_preset)
-	start_finite.text="Enter 6-minute expedition" if settings.balance_preset in [Balance.LONG,Balance.MANA,Balance.TRIALS,Balance.EVOLUTION] else "Enter dungeon"
+	start_finite.text="Enter 6-minute expedition" if settings.balance_preset in [Balance.LONG,Balance.MANA,Balance.TRIALS,Balance.EVOLUTION,Balance.LINEAGE] else "Enter dungeon"
 	lock_button.text="Unlock wizard" if c.locked else "Lock wizard"
 	clear_apprentice.disabled=partner_index<0
 	summon_button.disabled=academy.essence<10
@@ -630,7 +630,7 @@ func _refresh_guide() -> void:
 	lines.append(("✓ " if guide.knows(Onboarding.MOVE) else "□ ")+"Move: drag the lower-left pad (WASD or arrows).")
 	lines.append(("✓ " if guide.knows(Onboarding.BASIC) else "□ ")+"Basic magic attacks automatically.")
 	lines.append(("✓ " if guide.knows(Onboarding.SPECIAL) else "□ ")+"Tap CAST (Space) to use your special.")
-	lines.append(("✓ " if guide.knows(Onboarding.UPGRADE) else "□ ")+"Earn XP and select a run upgrade." if settings.balance_preset not in [Balance.MANA,Balance.TRIALS,Balance.EVOLUTION] else "Collect green mana crystals to level up.")
+	lines.append(("✓ " if guide.knows(Onboarding.UPGRADE) else "□ ")+"Earn XP and select a run upgrade." if settings.balance_preset not in [Balance.MANA,Balance.TRIALS,Balance.EVOLUTION,Balance.LINEAGE] else "Collect green mana crystals to level up.")
 	lines.append("Avoid orange attack zones and charge lines. Defeat the dragon, or extract from endless mode after 30 seconds.")
 	lines.append("")
 	lines.append("BLOODLINE")
@@ -941,7 +941,7 @@ func _start(endless: bool) -> void:
 		_show_academy()
 		return
 	var preset := Balance.ORIGINAL if endless else settings.balance_preset
-	run = RunModel.new(active.phenotype, endless, difficulty, 1000 + run_id, Balance.preset(preset),preset in [Balance.FROST,Balance.LONG,Balance.MANA,Balance.TRIALS,Balance.EVOLUTION],preset in [Balance.LONG,Balance.MANA,Balance.TRIALS,Balance.EVOLUTION],preset in [Balance.MANA,Balance.TRIALS,Balance.EVOLUTION],preset in [Balance.TRIALS,Balance.EVOLUTION],preset==Balance.EVOLUTION)
+	run = RunModel.new(active.phenotype, endless, difficulty, 1000 + run_id, Balance.preset(preset),preset in [Balance.FROST,Balance.LONG,Balance.MANA,Balance.TRIALS,Balance.EVOLUTION,Balance.LINEAGE],preset in [Balance.LONG,Balance.MANA,Balance.TRIALS,Balance.EVOLUTION,Balance.LINEAGE],preset in [Balance.MANA,Balance.TRIALS,Balance.EVOLUTION,Balance.LINEAGE],preset in [Balance.TRIALS,Balance.EVOLUTION,Balance.LINEAGE],preset in [Balance.EVOLUTION,Balance.LINEAGE],preset==Balance.LINEAGE)
 	result_before.clear()
 	result_reward.clear()
 	profiler.reset()
@@ -1065,6 +1065,11 @@ func _refresh_upgrades() -> void:
 		if d.has("affinity"): color = FIRE if d.affinity == "fire" else (ICE if d.affinity == "ice" else STEAM)
 		elif d.category=="Relic": color=Fantasy.GOLD
 		elif d.category != "Universal": color = Color("#c6b5e6")
+		if run.lineage_rules and run.relic_pending and run.trials_cleared==1:
+			var bonus := RunModel.Evolution.resonance_bonus(run.phenotype,id)
+			if bonus>0:
+				d=d.duplicate()
+				d.category="RESONANCE +%d%%" % roundi(bonus*100)
 		button.configure(id,d,int(run.upgrade_ranks.get(id,0)),color)
 
 func _clear_input() -> void:

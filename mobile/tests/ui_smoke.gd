@@ -70,6 +70,8 @@ func _test() -> void:
 	app._cycle_balance()
 	check(app.settings.balance_preset=="expedition-evolution","Evolution experiment selectable")
 	app._cycle_balance()
+	check(app.settings.balance_preset=="expedition-lineage","Lineage experiment selectable")
+	app._cycle_balance()
 	check(app.settings.balance_preset=="original","Original comparison selectable")
 	app._cycle_balance()
 	app._open_backup()
@@ -343,6 +345,23 @@ func _test() -> void:
 	check(app.upgrade_heading.text=="EVOLVE YOUR MAGIC" and app.run.upgrade_offer.size()==2,"Evolution reward cards visible")
 	app._upgrade(0)
 	check(not app.run.evolution_branch.is_empty(),"UI applies branch")
+	app._show_academy()
+	app._cycle_balance()
+	app._start(false)
+	check(app.run.lineage_rules,"Lineage preset selected")
+	app.run.elapsed=120.0
+	app.run._maybe_start_trial()
+	for e in app.run.enemies: e.hp=0
+	app.run.step(1.0/60.0,Vector2.ZERO,false)
+	app._sync_visibility()
+	var matched := -1
+	for i in range(app.run.upgrade_offer.size()):
+		if app.RunModel.Evolution.resonance_bonus(app.run.phenotype,app.run.upgrade_offer[i])>0: matched=i
+	check(matched>=0,"Matching branch visible")
+	if matched>=0:
+		check(app.upgrade_buttons[matched].category_label.text.contains("RESONANCE"),"Resonance label visible")
+		app._upgrade(matched)
+		check(app.run.evolution_resonance_bonus>0,"Resonance bonus selected")
 	app._show_academy()
 	app._start(true)
 	check(app.run.balance==app.Balance.DEFAULTS and not app.run.frost_rules,"Endless keeps original unoptimized balance")

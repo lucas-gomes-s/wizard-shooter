@@ -122,8 +122,8 @@ static func phenotype(p: Dictionary) -> Dictionary:
 
 func start_run(run: Variant,has_apprentice: bool,lessons: int,visual: Dictionary) -> void:
 	current_run=record("run_start",{"mode":"endless" if run.endless else "finite","difficulty":run.difficulty,
-		"wizard":phenotype(run.phenotype),"apprentice":has_apprentice,"lessons":lessons,"visual":visual,
-		"balance_preset":Balance.EVOLUTION if run.evolution_rules else (Balance.TRIALS if run.trial_rules else (Balance.MANA if run.mana_rules else (Balance.LONG if run.phased_expedition else (Balance.FROST if run.frost_rules else Balance.preset_id(run.balance))))),"balance":run.balance.duplicate(true),"boss_after_seconds":run.boss_after_seconds(),"economy":str(run.Economy.VERSION)})
+		"wizard":phenotype(run.phenotype),"resonance":run.phenotype.get("resonance",[]).duplicate(),"apprentice":has_apprentice,"lessons":lessons,"visual":visual,
+		"balance_preset":Balance.LINEAGE if run.lineage_rules else (Balance.EVOLUTION if run.evolution_rules else (Balance.TRIALS if run.trial_rules else (Balance.MANA if run.mana_rules else (Balance.LONG if run.phased_expedition else (Balance.FROST if run.frost_rules else Balance.preset_id(run.balance)))))),"balance":run.balance.duplicate(true),"boss_after_seconds":run.boss_after_seconds(),"economy":str(run.Economy.VERSION)})
 
 func run_event(kind: String,data: Dictionary) -> void:
 	if current_run<=0: return

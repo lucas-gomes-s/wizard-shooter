@@ -4,6 +4,7 @@ const Fantasy = preload("res://presentation/fantasy_ui.gd")
 const Icons = preload("res://presentation/pixel_ui_art.gd")
 const Abilities = preload("res://gameplay/ability_catalog.gd")
 const Academy = preload("res://domain/academy.gd")
+const Evolution = preload("res://gameplay/spell_evolution.gd")
 const PAGE_SIZE := 6
 const FIRE := Color("#ef8052")
 const ICE := Color("#84d7e8")
@@ -64,7 +65,7 @@ static func details(record: Dictionary) -> String:
 	var p: Dictionary = record.phenotype
 	var kit := Abilities.compile(p)
 	var mutation := "None expressed" if p.mutation=="none" else str(p.mutation).replace("_"," ").capitalize()
-	return "Basic: %s\nSpecial: %s  |  %.1fs cooldown\nTalents: %s\nMutation: %s\nTraining: %s" % [kit.basic.name,kit.special.name,float(kit.special.cooldown),Abilities.passive_names(p),mutation,training(record)]
+	return "Basic: %s\nSpecial: %s  |  %.1fs cooldown\nTalents: %s\nMutation: %s\nResonance: %s\nTraining: %s" % [kit.basic.name,kit.special.name,float(kit.special.cooldown),Abilities.passive_names(p),mutation,Evolution.resonance_summary(p),training(record)]
 
 static func tile(canvas: CanvasItem,sprites: Variant,record: Dictionary,r: Rect2,tag: String) -> void:
 	var p: Dictionary = record.phenotype

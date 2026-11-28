@@ -3,6 +3,23 @@ extends RefCounted
 const PATHS := {"fire":["evo_fire_fan","evo_fire_blast"],"ice":["evo_ice_spear","evo_ice_volley"],"steam":["evo_steam_burst","evo_steam_mantle"]}
 const MASTERY := {"evo_fire_fan":"evo_fire_storm","evo_fire_blast":"evo_fire_nova","evo_ice_spear":"evo_ice_glacier","evo_ice_volley":"evo_ice_storm","evo_steam_burst":"evo_steam_rupture","evo_steam_mantle":"evo_steam_eye"}
 
+const RESONANT_BRANCHES := {"concentrated":["evo_fire_blast","evo_ice_spear","evo_steam_burst"],"dispersed":["evo_fire_fan","evo_ice_volley","evo_steam_mantle"]}
+
+static func resonance_bonus(p: Dictionary,branch: String) -> float:
+	var expressed: Array=p.get("resonance",[])
+	for kind in expressed:
+		if branch in RESONANT_BRANCHES.get(kind,[]): return 0.08 if expressed.size()==2 else 0.15
+	return 0.0
+
+static func resonance_summary(p: Dictionary) -> String:
+	var names := PackedStringArray()
+	for branch in PATHS.get(p.affinity,[]):
+		var bonus := resonance_bonus(p,branch)
+		if bonus>0:
+			var label := "Concentrated" if branch in RESONANT_BRANCHES.concentrated else "Dispersed"
+			names.append("%s +%d%%" % [label,roundi(bonus*100)])
+	return " / ".join(names) if not names.is_empty() else "None"
+
 static func offer(affinity: String,branch: String,cleared: int) -> Array[String]:
 	var choices: Array[String]=[]
 	if cleared==1 and branch.is_empty(): choices.assign(PATHS.get(affinity,[]))

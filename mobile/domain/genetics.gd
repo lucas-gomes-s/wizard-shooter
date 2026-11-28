@@ -4,6 +4,7 @@ extends RefCounted
 const SPECIES := ["stoneborn", "fae"]
 const CORES := ["fire", "ice"]
 const PASSIVES := ["resilient", "quickcast", "focused", "flow"]
+const RESONANCES := ["concentrated","dispersed"]
 const MODULUS := 2147483647
 const VERSION := 1
 
@@ -27,7 +28,7 @@ static func founder(seed: int) -> Dictionary:
 		"species": [species, species], "core": [core, other],
 		"ancestry": {"stoneborn": 10000 if species == "stoneborn" else 0, "fae": 10000 if species == "fae" else 0},
 		"hat": rng.next_int(3), "robe": rng.next_int(3), "staff": rng.next_int(3),
-		"mutation": "none", "power": 90 + rng.next_int(21), "talents": legacy_talents(seed)}
+		"mutation": "none", "power": 90 + rng.next_int(21), "talents": legacy_talents(seed), "resonance": legacy_resonance(seed)}
 
 static func fuse(a: Dictionary, b: Dictionary, seed: int) -> Dictionary:
 	if int(a.tier) != 1 or int(b.tier) != 1:
@@ -53,6 +54,13 @@ static func fuse(a: Dictionary, b: Dictionary, seed: int) -> Dictionary:
 	var t2 := talents_for(second)
 	var inherited: Array = [t1[talent_rng.next_int(2)], t2[talent_rng.next_int(2)]]
 	if talent_rng.chance(5): inherited[talent_rng.next_int(2)] = PASSIVES[talent_rng.next_int(4)]
+	var resonance_rng := SeededRandom.new(seed + 821347)
+	var ra := resonance_for(first)
+	var rb := resonance_for(second)
+	var resonance: Array = [ra[resonance_rng.next_int(2)], rb[resonance_rng.next_int(2)]]
+	if resonance_rng.chance(5):
+		var locus := resonance_rng.next_int(2)
+		resonance[locus]=RESONANCES[1-RESONANCES.find(resonance[locus])]
 	var mutation := "none"
 	if rng.chance(30):
 		mutation = "crystal_wings" if rng.chance(50) else "living_flame"
@@ -62,7 +70,7 @@ static func fuse(a: Dictionary, b: Dictionary, seed: int) -> Dictionary:
 		"hat": first.hat if rng.chance(50) else second.hat,
 		"robe": first.robe if rng.chance(50) else second.robe,
 		"staff": first.staff if rng.chance(50) else second.staff,
-		"mutation": mutation, "talents": inherited, "power": clampi(roundi((float(first.power) + float(second.power)) / 2.0) + rng.next_int(11) - 5, 85, 115)}
+		"mutation": mutation, "talents": inherited, "resonance": resonance, "power": clampi(roundi((float(first.power) + float(second.power)) / 2.0) + rng.next_int(11) - 5, 85, 115)}
 
 static func express(g: Dictionary) -> Dictionary:
 	var tier := int(g.tier)
@@ -92,7 +100,7 @@ static func express(g: Dictionary) -> Dictionary:
 		health -= 8.0
 	return {"body": body, "affinity": affinity, "tier": tier, "mutation": mutation,
 		"hat": int(g.hat), "robe": int(g.robe), "staff": int(g.staff),
-		"health": health, "speed": speed, "damage": damage, "interval": interval, "passives": expressed_talents(g),
+		"health": health, "speed": speed, "damage": damage, "interval": interval, "passives": expressed_talents(g), "resonance": expressed_resonance(g),
 		"special": "Crystal burst" if mutation == "crystal_wings" else ("Flame burst" if affinity == "fire" else ("Frost pulse" if affinity == "ice" else "Steam shock"))}
 
 static func legacy_talents(seed: int) -> Array:
@@ -108,3 +116,17 @@ static func expressed_talents(g: Dictionary) -> Array:
 	var expressed: Array = [alleles[0]]
 	if int(g.tier) >= 2 and alleles[1] != alleles[0]: expressed.append(alleles[1])
 	return expressed
+
+static func legacy_resonance(seed: int) -> Array:
+	# Independent substream: existing species, talents, cosmetics and power remain stable.
+	var rng := SeededRandom.new(seed+821347)
+	return [RESONANCES[rng.next_int(2)],RESONANCES[rng.next_int(2)]]
+
+static func resonance_for(g: Dictionary) -> Array:
+	return g.get("resonance",legacy_resonance(int(g.seed))).duplicate()
+
+static func expressed_resonance(g: Dictionary) -> Array:
+	var alleles := resonance_for(g)
+	var result: Array=[alleles[0]]
+	if int(g.tier)>=2 and alleles[1]!=alleles[0]: result.append(alleles[1])
+	return result
