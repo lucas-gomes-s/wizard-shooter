@@ -7,6 +7,9 @@ on:
       - 'styles/**'
       - 'package.json'
       - 'tests/web/**'
+      - 'images/beta/**'
+      - 'scripts/**'
+      - 'docs/WEB_BETA.md'
       - '.github/workflows/web-tests.yml'
   pull_request:
     paths:
@@ -15,6 +18,9 @@ on:
       - 'styles/**'
       - 'package.json'
       - 'tests/web/**'
+      - 'images/beta/**'
+      - 'scripts/**'
+      - 'docs/WEB_BETA.md'
       - '.github/workflows/web-tests.yml'
   workflow_dispatch:
 jobs:
@@ -50,3 +56,40 @@ jobs:
           name: web-smoke-screenshots
           path: web-smoke-artifacts/
           if-no-files-found: ignore
+
+  beta-compatibility:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [chromium, firefox, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save --package-lock=false playwright@1.55.1
+      - run: npx playwright install --with-deps ${{ matrix.engine }}
+      - name: Stress and compatibility
+        run: |
+          python3 -m http.server 8000 --bind 127.0.0.1 >/tmp/beta-server.log 2>&1 &
+          server=$!
+          trap 'kill "$server" 2>/dev/null || true' EXIT
+          for attempt in {1..20}; do curl -fsS http://127.0.0.1:8000/ >/dev/null && break; sleep 1; done
+          node tests/web/beta-stress.mjs ${{ matrix.engine }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: beta-${{ matrix.engine }}-diagnostics
+          path: web-beta-artifacts/
+          if-no-files-found: ignore
+
+  beta-package:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/package-web-beta.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wizard-shooter-web-beta
+          path: dist/*.zip
