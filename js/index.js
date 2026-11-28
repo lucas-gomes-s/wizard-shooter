@@ -295,7 +295,8 @@ function step(){
 $('betaVersion').textContent=RELEASE;
 $('betaReport').addEventListener('click',()=>{
  const report=makeReport(game,{screen,effects:fx.mode,surface,frames,browser:browserFamily(navigator.userAgent),contract:progressSession?.contract||'standard'});
- const output=$('betaReportText');output.value=JSON.stringify(report,null,2);$('betaReportPanel').hidden=false;output.focus();output.select();
+ if(screen==='play')setScreen('pause');
+ const output=$('betaReportText');$('betaCopyStatus').textContent='';output.value=JSON.stringify(report,null,2);$('betaReportPanel').hidden=false;output.focus();output.select();
 });
 $('closeBetaReport').addEventListener('click',()=>{$('betaReportPanel').hidden=true;$('betaReport').focus()});
 $('copyBetaReport').addEventListener('click',async()=>{const output=$('betaReportText');try{await navigator.clipboard.writeText(output.value);$('betaCopyStatus').textContent='Copied.';}catch{output.focus();output.select();$('betaCopyStatus').textContent='Copy the selected text manually.';}});
