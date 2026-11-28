@@ -11,6 +11,7 @@ const Abilities = preload("res://gameplay/ability_catalog.gd")
 const Upgrades = preload("res://gameplay/upgrade_catalog.gd")
 const EnemyAI = preload("res://gameplay/enemy_behavior.gd")
 const Rig = preload("res://presentation/directional_rig.gd")
+const Bots = preload("res://tools/advanced_bots.gd")
 var failures := 0
 
 func check(condition: bool, message: String) -> void:
@@ -97,6 +98,7 @@ func _initialize() -> void:
 	_test_evolution(p)
 	_test_lineage(p)
 	_test_artifacts(p)
+	_test_advanced_bots(p)
 	_test_economy(p)
 	_test_upgrades(p)
 	_test_enemies(p)
@@ -819,3 +821,38 @@ func _test_artifacts(base: Dictionary) -> void:
 	var old := RunModel.new(base,false,1,7,RunModel.Balance.TRIAL_20,true,true,true,true,true,true)
 	old.elapsed=60
 	check(not old.artifact_available(site),"Lineage reference has no artifacts")
+
+func _test_advanced_bots(p: Dictionary) -> void:
+	for body in ["stoneborn","fae","hybrid"]:
+		for affinity in ["fire","ice","steam"]:
+			var sample := Bots.generated(affinity,body,310000019)
+			check(not sample.is_empty(),"Legal generated cell "+body+"/"+affinity)
+			if sample.is_empty(): continue
+			check(sample==Bots.generated(affinity,body,310000019),"Generated fixture deterministic")
+			var g: Dictionary=sample.genome
+			if int(g.tier)==1: check(g==Genetics.founder(g.seed),"Actual founder provenance")
+			else: check(g==Genetics.fuse(Genetics.founder(sample.parent_seeds[0]),Genetics.founder(sample.parent_seeds[1]),g.seed),"Actual fusion provenance")
+			check(sample.phenotype==Genetics.express(g),"No synthetic trait editing")
+	var run := RunModel.new(p,false,1,7,RunModel.Balance.TRIAL_20,true,true,true,true,true,true,true)
+	run._spawn(2)
+	var e: Dictionary=run.enemies[0]
+	e.pos=Vector2(-80,0)
+	EnemyAI.windup(e,"charge_windup",Vector2.ZERO,0.2)
+	var nearby := Bots.targets(run)
+	check(Bots.danger(run,Vector2.ZERO,nearby)>Bots.danger(run,Vector2(0,55),nearby),"Charge corridor risk recognized")
+	var decision := Bots.steering(run,"aggressive",Vector2.RIGHT,Genetics.SeededRandom.new(42))
+	check(decision.move.length()<=1.00001 and absf(decision.move.y)>0.1,"Charge dodge chooses lateral motion")
+	run.enemies.clear()
+	run.mana.drop(Vector2(45,0),10,0,7)
+	decision=Bots.steering(run,"explorer",Vector2.LEFT,Genetics.SeededRandom.new(42))
+	check(decision.goal=="mana" and decision.move.x>0,"Visible mana pursued")
+	run._spawn(3)
+	run.enemies[0].pos=Vector2(80,0)
+	run.boss_spawned=true
+	decision=Bots.steering(run,"explorer",Vector2.LEFT,Genetics.SeededRandom.new(42))
+	check(decision.goal=="combat","Explorer prioritizes boss over mana")
+	run.hp=run.max_hp*0.3
+	run.upgrade_offer.assign(["power","vitality","haste"])
+	check(Bots.choose_upgrade(run,"aggressive")==1,"Low health prioritizes healing")
+	run.upgrade_offer.assign(["artifact_magnet","artifact_blood","artifact_echo"])
+	check(Bots.choose_upgrade(run,"explorer")==1,"Low health prioritizes sustain artifact")
