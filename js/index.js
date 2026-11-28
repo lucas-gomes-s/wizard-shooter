@@ -117,7 +117,7 @@ for(const [id,catalog,key] of [['contractSelect',contracts,'contract'],['sigilSe
 refreshProfileControls();
 function startRun(){
   if(!ready)return;
-  checkpoint();game.config=environmentConfig(runConfig(config,profile.selection.contract),profile.selection.environment);progressSession=newProgressSession(profile.selection.contract,profile.selection.environment);runSigil=profile.selection.sigil;
+  checkpoint();game.config=environmentConfig({...runConfig(config,profile.selection.contract),waveDirector:$('pacingSelect').value==='waves'},profile.selection.environment);progressSession=newProgressSession(profile.selection.contract,profile.selection.environment);runSigil=profile.selection.sigil;
   Object.assign(game,viewportFor(surface.width,surface.height));game.start(startingSchool);
   frames.reset();audio.reset();void audio.unlock();fx.clear();lastHud='';setScreen('play');
 }
