@@ -300,3 +300,35 @@ No new external assets or dependencies. Existing potion and basic-upgrade artwor
 ## Web closed beta candidate (v1.19.0-beta.1)
 
 See [beta instructions and release gates](docs/WEB_BETA.md). The release candidate consolidates the stacked web work into one draft integration PR against master, leaving mobile changes intact. Original SVGs replace the remaining seven runtime legacy icons; the static beta ZIP excludes legacy artwork, mobile and development data. Report issue creates a local, manually shareable snapshot with rolling frame statistics and no automatic uploads. CI adds a Chromium/Firefox/WebKit synthetic stress matrix and ZIP artifact. The prior graphical release passed all 161 Node tests and Chromium smoke; candidate CI, visual inspection, real-device performance, legal rights review and human playtesting are pending. No balance changes.
+
+## Experimental wave director (Magic Survival-inspired)
+
+Browser experimentation branch based on the complete RC1 web build, not a release commitment. Dynamic waves are selected by default; choose Classic in the title's Pacing selector for the prior spawn curve. This selection is fixed for each run. The simulation is still manually aimed.
+
+The first minute uses the original spawn curve. From 1:00 onward, a repeating 90-second open-loop cycle modifies regular spawn intervals relative to the existing biome and time-ramp rules:
+
+| Phase | Duration | Base spawn rate |
+| --- | ---: | ---: |
+| Gathering shadows | 30s | 90% |
+| Enemy surge | 25s | 122% |
+| Overwhelming horde | 15s | 145% |
+| Breathing room | 20s | 52% |
+
+Swarm (Goblin/Spider/Zombie), Assault (Orc/Knight/Vampire), Nightmare (Reaper/Demon/Spider) rotate each cycle. During surge and peak, favored unlocked species receive a further 1.12 rate multiplier; others receive 0.94. Enemy unlock times, health, damage, elite cadence, cap, events, merchants and guardians are unchanged. No adaptive scaling to current player power, no extra RNG, no despawning or health restoration during recovery. The original final-dragon spawn slowdown overrides waves while the dragon encounter is active; cycles resume in endless mode. The HUD displays the phase, theme and remaining seconds. The existing balance comparison CLI explicitly retains classic pacing for comparability.
+
+New pacing metrics sample living visible enemies once per simulated second, record regular spawned/cap-blocked counts, phase-level sample aggregates, quiet seconds (at most 3 visible enemies), crowded seconds (at least 25), and 15-second snapshots of density/level/kills/health (last 240 windows). Level-up gaps include the ongoing gap at run end; this is a progression proxy, not a measurement of perceived meaningful upgrades. Reported spawns exclude dungeon-event summons and scheduled bosses. These measurements use no RNG and do not change combat. Exported in build benchmarks.
+
+Initial matched-seed exploratory experiment: all 25 ordered build targets, seed 1, standard Crypt, ten-minute cap, 5-tick bot decisions, 50 simulations total.
+
+| Metric | Classic | Dynamic |
+| --- | ---: | ---: |
+| Reached ten minutes | 24/25 | 23/25 |
+| Mean visible enemies | 12.63 | 16.92 |
+| Quiet fraction | 14.91% | 20.91% |
+| Crowded fraction | 13.21% | 16.95% |
+| Mean final level | 22.96 | 22.56 |
+| Mean longest level-up gap | 53.42s | 54.06s |
+
+Directed phase aggregate spawn rates: advance 1.27/s, surge 1.68/s, peak 2.07/s, recovery 0.65/s. Mean visible enemies: 17.00, 18.70, 20.82, 18.19 respectively. Remaining enemies carry over into recovery; it is not necessarily safe. Pooled statistics are exposure-weighted and include unequal run durations, different unlocked rosters and changing RNG trajectories. One seed and a ten-minute limit do not establish full-run balance, human enjoyment, or equivalence to Magic Survival's actual parameters. No claim of reverse-engineering Magic Survival's timing. The next experiment should test full-length multi-seed runs and tune recovery if backlog persists, then introduce independently operating spell systems.
+
+Reproduce: `npm run balance:waves -- 600 1 1 waves.json`. Full-length comparison: `npm run balance:waves -- 1800 5 1 waves-full.json`. Raw results are in benchmarks/waves/. Four new and eight existing balance checks passed in a direct JS harness. Browser CI not yet verified for this experimental branch. Mobile untouched.
