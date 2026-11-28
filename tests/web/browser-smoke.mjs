@@ -54,6 +54,17 @@ try{
   await page.waitForFunction(()=>document.getElementById('timer').textContent!=='00:00');
   await page.keyboard.up('KeyD');await page.keyboard.up('ArrowRight');
   await page.screenshot({path:'web-smoke-artifacts/gameplay.png'});
+  // Show every enemy silhouette simultaneously, with fixed positions and zero danger.
+  await page.evaluate(()=>{
+    const g=window.__wizardTestGame,p=g.player;
+    const templates=g.config.monsters;
+    g.enemies=templates.map((m,i)=>({...m,x:p.x+(i%3-1)*130,y:p.y-170+Math.floor(i/3)*120,width:m.width,height:m.height,health:m.maxHealth,maxSpeed:0,damage:0,expGiven:0,nextAttack:Infinity,elite:i===3,cd:1000,action:null,facing:0}));
+  });
+  await page.waitForTimeout(100);
+  await page.screenshot({path:'web-smoke-artifacts/new-actor-roster.png'});
+  assert.ok(await page.locator('#nextEncounter').textContent());
+  await page.evaluate(()=>{window.__wizardTestGame.enemies=[];});
+
   // Force a safe showcase through test-only access to simulation state.
   await page.evaluate(()=>{
     const g=window.__wizardTestGame,p=g.player,x=p.x+p.width/2,y=p.y+p.height/2,t=g.tick;
