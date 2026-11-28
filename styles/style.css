@@ -105,3 +105,42 @@ blockquote{margin:0;color:var(--gold);font-family:Georgia,serif;font-style:itali
 .profile-options{display:flex;align-items:center;justify-content:center;gap:6px 14px;flex-wrap:wrap;width:100%}.profile-options label{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}.profile-options select{max-width:240px;background:#211e2b;border:1px solid var(--border);color:var(--text);padding:5px;border-radius:6px}.profile-options p{flex-basis:100%;max-width:none!important}.home{gap:10px}.profile-panel{width:min(100%,1050px);align-items:stretch}.profile-panel p{max-width:none!important}.codex-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:12px;text-align:left}.codex-group{background:#211d2b;border:1px solid #473b50;border-radius:8px;padding:10px}.codex-group h3{font-size:13px;color:var(--gold);margin:0 0 6px}.codex-entry{border-top:1px solid #3c3447;padding:7px 0;color:#b3a8ba}.codex-entry strong,.codex-entry span{display:block}.codex-entry span{font-size:11px;line-height:1.4}.codex-entry.discovered strong{color:#8ae1ae}.unlock-notice{color:#8ae1ae!important;font-weight:650;font-size:13px;max-width:none!important}.unlock-notice:empty{display:none}
 
 .audio-menu{position:relative;z-index:12}.audio-menu summary{cursor:pointer;list-style:none;font-size:12px;padding:7px 10px}.audio-menu summary::-webkit-details-marker{display:none}.audio-controls{position:absolute;right:0;top:calc(100% + 6px);width:205px;background:#211b2a;border:1px solid #61516c;box-shadow:0 8px 24px #0009;border-radius:8px;padding:12px;display:grid;gap:10px}.audio-controls label{display:grid;grid-template-columns:50px 1fr;align-items:center;gap:6px;font-size:12px}.audio-controls input{width:100%;accent-color:#c3a2ff}.audio-controls small{font-size:10px;color:#b3a8ba}.audio-controls button{width:100%}
+
+/* Reforged visual pass: restrained brass ornament, slate stone and school accents. */
+:root{--bg:#11131b;--panel:#191b26;--border:#4c4553;--text:#f1e7d7;--muted:#b9b3c3;--gold:#e8c58d;--violet:#c4afea;--red:#ed7883}
+body{background:radial-gradient(ellipse at 50% 0,#292332 0,transparent 55%),#11131b}
+.game-shell{gap:8px;padding:12px clamp(10px,1.7vw,28px)}
+.brand-mark{width:44px;height:44px;border-radius:9px;background:linear-gradient(145deg,#46374f,#1c1b26);box-shadow:inset 0 0 0 3px #211c2a,0 2px 8px #0006;color:#f3d5a0}
+.brand h1{font-variant:small-caps;letter-spacing:.02em}
+.edition{color:#cdb58c}
+.hud{background:linear-gradient(180deg,#262632,#191b25);border-color:#554a51;padding:9px clamp(12px,1.8vw,24px);box-shadow:inset 0 1px #ffffff0c}
+.health .track i{background:linear-gradient(90deg,#9d394b,#ec7882)}
+.experience .track i{background:linear-gradient(90deg,#725ab2,#c4afea)}
+.track{box-shadow:inset 0 1px 4px #0006}
+.run-time{min-width:125px}.next-encounter{display:block;font-size:10px;color:#d2b98e;white-space:nowrap;line-height:1.2}
+.journey-track{height:3px;background:#4c414d;margin:3px 0 4px;overflow:hidden;border-radius:2px}.journey-track i{display:block;height:100%;width:0;background:var(--gold)}
+.arena{border-color:#6c5c55;box-shadow:0 4px 30px #0007,inset 0 0 0 1px #cbb28b44;background:#171922}
+.vignette{background:radial-gradient(ellipse at center,transparent 65%,#10101940 100%)}
+.overlay{background:rgba(12,13,21,.69);padding:clamp(8px,2vw,22px)}
+.panel{position:relative;background:radial-gradient(ellipse at top,#302a3c,#1b1d29 60%);border:1px solid #927958;border-radius:12px;box-shadow:inset 0 0 0 4px #191923,inset 0 0 0 5px #c7a77d24,0 18px 48px #000a;padding:clamp(16px,2.4vw,30px)}
+.panel::before,.panel::after{content:'';position:absolute;top:8px;width:18px;height:18px;border-top:1px solid #c9a575;pointer-events:none}.panel::before{left:8px;border-left:1px solid #c9a575}.panel::after{right:8px;border-right:1px solid #c9a575}
+.panel h2{letter-spacing:.015em;font-size:clamp(26px,3vw,42px);text-shadow:0 2px 3px #0009}
+.home{gap:10px}.home .sigil{border-color:#b59b81;background:radial-gradient(circle,#665078,#292331 68%);box-shadow:inset 0 0 0 4px #24202d,0 0 15px #c4afea30}
+button.primary{background:linear-gradient(180deg,#efd6ac,#c9a36e);border-color:#f2d7aa;box-shadow:0 3px 9px #0004,inset 0 1px #fff3}
+.starter-card,.upgrade-card{background:linear-gradient(155deg,#2e2939,#1e202b 70%);border-color:#625364;box-shadow:inset 0 1px #ffffff10}
+.starter-card{min-height:90px}.starter-card[aria-pressed="true"]{background:linear-gradient(155deg,#40334d,#242432);box-shadow:inset 0 0 0 1px var(--school),0 3px 8px #0004}
+.starter-glyph{font-size:28px;line-height:1.1;text-shadow:0 0 10px var(--school)}
+.upgrade-card{border-top:3px solid var(--school,#b29a79);padding:13px}.upgrade-card[aria-current="true"]{border-top:3px solid var(--school,var(--gold));padding:12px}
+.spell-glyph{background:radial-gradient(circle,#393044,#191a27 70%);border-radius:12px;text-shadow:0 0 10px var(--school);box-shadow:inset 0 0 0 3px #171925}
+.spell-chip,.gear-chip{background:#1b1c27;border-color:color-mix(in srgb,var(--school,var(--rarity,#71657f)) 60%,#282735);border-radius:5px;padding:3px 8px}
+.gear-row{justify-content:space-between}.active-bar{padding:3px 6px;background:#1b1c27;border:1px solid #46404e;border-radius:6px}
+.boss-hud{background:#211d29f2;border-color:#b96c63;box-shadow:0 3px 9px #0007}
+.boss-hud .track{height:10px}.boss-hud .track i{background:linear-gradient(90deg,#a34051,#f18c78)}
+.event-hud,.treasure-hint,.merchant-hint{background:#1c1e29f2;box-shadow:0 2px 9px #0005}
+.result-stats div,.codex-group{background:#1b1d27;border-color:#524957}
+.result-stats strong{color:#f1d7ad}.codex-entry.discovered{background:#2a443221}
+.profile-options select,.toggle select{background:#1b1e29;border-color:#635665}
+.footer{font-size:11px}
+@media(max-width:700px){.game-shell{padding:8px;gap:6px}.run-time{min-width:70px}.next-encounter{font-size:8px}.hud{gap:7px;padding:8px}.starter-card{min-height:74px}.gear-row{gap:4px}.active-bar{font-size:10px}.panel{padding:14px}.shop-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.shop-cards{grid-template-columns:1fr}.next-encounter{white-space:normal;max-width:70px}}
+@media(max-height:600px){.home .sigil{display:none}.home{gap:7px}.starter-card{min-height:0}.starter-card span:last-child{display:none}}

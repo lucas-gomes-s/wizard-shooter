@@ -1,3 +1,4 @@
+import {DungeonArt,drawSigil,drawTargetRing,drawLight} from './dungeon-art.js';
 import {GameAudio,loadAudio,saveAudio} from './audio.js';
 import {environments,environmentById,environmentConfig} from './environments.js';
 import {loadProfile,saveProfile,recordProgress,newProgressSession,runConfig,available,contracts,sigils,achievements} from './progression.js';
@@ -16,6 +17,7 @@ import { viewportFor, fitViewport, formatTime, skillPreview } from './presentati
 const $=id=>document.getElementById(id);
 const canvas=$('gameArea'), ctx=canvas.getContext('2d'), arena=$('arena');
 const game=new Game(config), clock=new FixedClock();
+const art=new DungeonArt((w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c});
 let storage=null;try{storage=window.localStorage}catch{}
 const audio=new GameAudio(loadAudio(storage),window.AudioContext||window.webkitAudioContext||null);
 function audioControls(){
@@ -45,7 +47,9 @@ const fx=new CombatFX(matchMedia('(prefers-reduced-motion: reduce)').matches?'of
 $('effectsMode').value=fx.mode;
 $('effectsMode').addEventListener('change',()=>{fx.setMode($('effectsMode').value);dirty=true;if(screen==='play')focus(canvas)});
 const images=new Map();
-const urls=new Set(['./images/dungeonfloor.jpg','./images/wizard-hat.png',...config.monsters.map(m=>m.imageSrc),...config.potionInfo.map(p=>p.imageSrc),...config.skills.map(s=>s.img)]);
+const urls=new Set([...config.potionInfo.map(p=>p.imageSrc),...config.skills.map(s=>s.img)]);
+$('titleWizard').src=art.actor('Wizard').toDataURL();
+const journey=[...config.minibosses.map(b=>[b.minute*60,'Next guardian']),[1500,'Dragon']];
 function preload(url){return new Promise(resolve=>{
   const image=new Image();image.onload=()=>{images.set(url,image);resolve(true)};
   image.onerror=()=>{console.warn('Missing game asset:',url);resolve(false)};image.src=url;
@@ -270,6 +274,9 @@ function updateBuild(){const m=game.player.magic,signature=JSON.stringify([m.ran
 function meter(id,value){const percent=Math.round(Math.max(0,Math.min(1,value))*100),node=$(id);node.firstElementChild.style.width=percent+'%';node.setAttribute('aria-valuenow',percent);}
 function updateBoss(){const boss=game.boss||game.miniboss,signature=boss?[boss.title||boss.name,Math.ceil(boss.health),boss.bossPhase].join('|'):String(game.endless);if(signature===lastBoss)return;lastBoss=signature;const node=$('bossHud');node.hidden=!boss&&!game.endless;if(boss){$('bossName').textContent=boss.boss?(boss.title||'Ancient Dragon')+' · Phase '+boss.bossPhase+' / 3':boss.title;$('bossHealth').textContent=Math.ceil(boss.health)+' / '+boss.maxHealth;meter('bossMeter',boss.health/boss.maxHealth);$('bossMeter').hidden=false}else{$('bossName').textContent='Endless survival';$('bossHealth').textContent='Dragon defeated';$('bossMeter').hidden=true}}
 function updateHud(){
+  const sec=game.seconds,upcoming=journey.find(([t])=>t>sec),next=upcoming?upcoming[1]+' '+formatTime(upcoming[0]):game.bossDefeated?'Endless survival':'Dragon encounter';
+  if($('nextEncounter').textContent!==next)$('nextEncounter').textContent=next;
+  $('runProgress').style.width=Math.min(100,sec/15)+'%';
   const env=environmentById(screen==='home'||screen==='profile'?profile.selection.environment:game.config.environment);if($('biomeName').textContent!==env.name)$('biomeName').textContent=env.name;
   updateBoss();updateGear();updateDungeon();updateMarket();
   updateBuild();const p=game.player,health=Math.ceil(p.health),max=p.maxHealth,maxed=p.level>=config.maxLevel;
@@ -284,25 +291,10 @@ function step(){
   audio.collect(game.events.filter(e=>e.type!=='victory'));audio.collect(game.visualEvents);audio.observe(game);return running;
 }
 function background(){
-  const W=game.width,H=game.height,c=game.camera,tile=600,env=environmentById(screen==='home'||screen==='profile'?profile.selection.environment:game.config.environment);
-  const x=-((c.x%tile+tile)%tile),y=-((c.y%tile+tile)%tile);
-  ctx.fillStyle=env.ground;ctx.fillRect(0,0,W,H);
-  const floor=images.get('./images/dungeonfloor.jpg');
-  if(floor){for(let iy=y;iy<H;iy+=tile)for(let ix=x;ix<W;ix+=tile)ctx.drawImage(floor,ix,iy,tile,tile);ctx.fillStyle=env.tint;ctx.fillRect(0,0,W,H);}
-  if(env.id!=='crypt')drawBiomeFloor(env,c,W,H);
-}
-// World-anchored decorations: deterministic, no simulation RNG or collidable obstacles.
-function drawBiomeFloor(env,c,W,H){
- const cell=115,frost=env.id==='frost';ctx.save();
- for(let iy=Math.floor(c.y/cell);iy<=Math.floor((c.y+H)/cell);iy++)for(let ix=Math.floor(c.x/cell);ix<=Math.floor((c.x+W)/cell);ix++){
-  const n=(Math.imul(ix,73856093)^Math.imul(iy,19349663))>>>0;
-  if(n%3===0)continue;
-  const x=ix*cell-c.x+24+n%64,y=iy*cell-c.y+18+(n>>>8)%72;
-  ctx.lineWidth=1.5;ctx.strokeStyle=frost?'#82c9ed55':'#e38a4855';ctx.fillStyle=frost?'#78c9ec22':'#de6b2522';
-  if(frost){ctx.beginPath();ctx.moveTo(x-15,y+8);ctx.lineTo(x-5,y-12);ctx.lineTo(x+1,y-2);ctx.lineTo(x+7,y-22);ctx.lineTo(x+15,y+8);ctx.closePath();ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(x+7,y-22);ctx.lineTo(x+4,y+8);ctx.stroke();}
-  else{ctx.beginPath();ctx.moveTo(x-25,y-10);ctx.lineTo(x-8,y+2);ctx.lineTo(x-2,y-5);ctx.lineTo(x+12,y+13);ctx.lineTo(x+24,y+7);ctx.stroke();if(n%5===1){ctx.fillRect(x-13,y-13,26,26);ctx.strokeRect(x-13,y-13,26,26);for(let j=-7;j<=7;j+=7){ctx.beginPath();ctx.moveTo(x+j,y-11);ctx.lineTo(x+j,y+11);ctx.stroke();}}}
- }
- ctx.restore();
+ const c=game.camera,env=environmentById(screen==='home'||screen==='profile'?profile.selection.environment:game.config.environment);
+ art.drawFloor(ctx,env.id,c,game.width,game.height);
+ const p=game.player;
+ drawLight(ctx,game.width,game.height,p.x+p.width/2-c.x,p.y+p.height/2-c.y,env.id,fx.mode);
 }
 function shadow(x,y,w,h){ctx.fillStyle='rgba(6,5,11,.43)';ctx.beginPath();ctx.ellipse(x+w/2,y+h*.88,w*.44,h*.18,0,0,Math.PI*2);ctx.fill();}
 function bar(x,y,w,h,fraction,color){const f=Math.max(0,Math.min(1,fraction));ctx.fillStyle='#1c1723';ctx.fillRect(x,y,w,h);ctx.fillStyle=color;ctx.fillRect(x,y,w*f,h);}
@@ -374,10 +366,23 @@ function render(){
   for(const h of game.hazards)if(game.visible({x:h.x-h.radius,y:h.y-h.radius,width:h.radius*2,height:h.radius*2},30))drawHazard(ctx,h,c,game.tick,fx.mode);
   for(const e of game.enemies)if(e.action&&game.visible(e,350))drawEnemyWarning(ctx,e,c,game.tick,fx.mode);
   for(const o of game.potions)if(game.visible(o,0)){const px=o.x-c.x,py=o.y-c.y;shadow(px,py,o.width,o.height);ctx.strokeStyle='#8ae1ae99';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(px+o.width/2,py+o.height/2,17,0,Math.PI*2);ctx.stroke();sprite(o.imageSrc,px,py,o.width,o.height,'#82dba5');}
-  for(const e of game.enemies)if(game.visible(e,0)){const px=e.x-c.x,py=e.y-c.y;shadow(px,py,e.width,e.height);sprite(e.imageSrc,px,py,e.width,e.height,'#799653');if(e.elite||e.miniboss){ctx.strokeStyle='#e5c48b';ctx.lineWidth=2;ctx.strokeRect(px-3,py-3,e.width+6,e.height+6);ctx.fillStyle='#e5c48b';ctx.font='bold 11px system-ui';ctx.textAlign='center';ctx.fillText(e.eventGuardian?'GUARDIAN':e.miniboss?'MINIBOSS':'ELITE',px+e.width/2,py-13)}drawEnemyStatus(ctx,e,c,game.tick,fx.mode);if(keys.has('KeyQ')||e.eventGuardian)bar(px,py-8,e.width,4,e.health/e.maxHealth,'#e27279');}
+  const variant=environmentById(game.config.environment).id;
+  // Stable depth ordering, independent of the simulation's enemy array.
+  const actors=[...game.enemies.filter(e=>game.visible(e,0)).map(e=>({entity:e,player:false})),{entity:p,player:true}].sort((a,b)=>a.entity.y+a.entity.height-b.entity.y-b.entity.height);
+  const sigilColor=sigils.find(s=>s.id===runSigil)?.color||'#d6b8ff';
+  for(const {entity:e,player} of actors){
+   const x=e.x-c.x,y=e.y-c.y;
+   if(player)drawSigil(ctx,x+e.width/2,y+e.height*.88,24,sigilColor,game.tick,fx.mode);
+   else if(e.elite||e.miniboss||e.boss)drawTargetRing(ctx,x,y,e.width,e.height,e.boss?'#ef8978':'#e5c48b',e.boss?'boss':'elite');
+   shadow(x,y,e.width,e.height);
+   art.drawActor(ctx,player?'Wizard':e.name,x,y,e.width,e.height,{variant,tick:game.tick,animate:fx.mode==='full'&&!e.action&&!(e.freezeUntil>game.tick),flip:player?e.lastDirection?.[0]<0:Math.cos(e.facing||0)<0});
+   if(!player){
+    drawEnemyStatus(ctx,e,c,game.tick,fx.mode);
+    if(e.elite||e.miniboss||e.boss){ctx.fillStyle=e.boss?'#f5a592':'#e5c48b';ctx.font='bold 10px system-ui';ctx.textAlign='center';ctx.fillText(e.boss?'DRAGON':e.eventGuardian?'GUARDIAN':e.miniboss?'MINIBOSS':'ELITE',x+e.width/2,y-13);}
+    if(keys.has('KeyQ')||e.eventGuardian||e.miniboss||e.boss)bar(x,y-8,e.width,4,e.health/e.maxHealth,'#e27279');
+   }
+  }
   const px=p.x-c.x,py=p.y-c.y;
-  ctx.strokeStyle=(sigils.find(s=>s.id===runSigil)?.color||'#d6b8ff')+'80';ctx.lineWidth=1.5;ctx.beginPath();ctx.ellipse(px+p.width/2,py+p.height*.82,22,12,0,0,Math.PI*2);ctx.stroke();
-  shadow(px,py,p.width,p.height);sprite('./images/wizard-hat.png',px,py,p.width,p.height,'#bda0ed');
   if(p.magic.shieldReady)drawShield(ctx,px+p.width/2,py+p.height/2,game.tick,fx.mode);
   if(keys.has('KeyQ'))bar(px,py-8,p.width,4,p.health/p.maxHealth,'#e27279');
   for(const s of game.shots)if(game.visible(s,0))drawProjectile(ctx,s,c,game.tick,fx.mode);

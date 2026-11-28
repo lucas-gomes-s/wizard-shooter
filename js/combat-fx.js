@@ -99,7 +99,16 @@ export function drawProjectile(ctx,s,c,tick,mode,hostile=false){
  }
  if(s.school==='ice'&&!hostile)crystal(ctx,x,y,r+2,Math.atan2(dy,dx));
  else if(s.school==='arcane'&&!hostile){path(ctx,[polar(x,y,r+2,0),polar(x,y,r+2,Math.PI/2),polar(x,y,r+2,Math.PI),polar(x,y,r+2,3*Math.PI/2)],true);ctx.fillStyle=color;ctx.fill();ctx.strokeStyle='#fff0ff';ctx.lineWidth=1;ctx.stroke()}
- else ring(ctx,x,y,r,hostile?'#ffedab':'#fff2da',1.1,color);
+ else if(!hostile&&s.school==='fire'){
+  const a=Math.atan2(dy,dx),tip=polar(x,y,r+1,a),back=polar(x,y,r*1.8,a+Math.PI);
+  path(ctx,[tip,polar(x,y,r,a+Math.PI/2),back,polar(x,y,r,a-Math.PI/2)],true);
+  ctx.fillStyle=color;ctx.fill();ctx.strokeStyle='#fff1bf';ctx.lineWidth=1;ctx.stroke();
+ }else if(!hostile&&s.school==='lightning'){
+  path(ctx,[[x-dx*r-dy*r,y-dy*r+dx*r],[x+dx*r+dy*r*.4,y+dy*r-dx*r*.4],[x+dx*r*.3-dy*r*.2,y+dy*r*.3+dx*r*.2],[x+dx*r*1.4+dy*r*.7,y+dy*r*1.4-dx*r*.7]],false);
+  ctx.strokeStyle='#fff4b2';ctx.lineWidth=2.5;ctx.stroke();
+ }else if(!hostile&&s.school==='necro'){
+  ring(ctx,x,y,r+1,color,1.5,'#274d48');ring(ctx,x,y,Math.max(1,r*.4),'#c6ffcf',1,'#c6ffcf');
+ }else ring(ctx,x,y,r,hostile?'#ffedab':'#fff2da',1.1,color);
  ctx.restore();
 }
 export class CombatFX{
