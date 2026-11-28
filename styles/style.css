@@ -144,3 +144,5 @@ button.primary{background:linear-gradient(180deg,#efd6ac,#c9a36e);border-color:#
 @media(max-width:700px){.game-shell{padding:8px;gap:6px}.run-time{min-width:70px}.next-encounter{font-size:8px}.hud{gap:7px;padding:8px}.starter-card{min-height:74px}.gear-row{gap:4px}.active-bar{font-size:10px}.panel{padding:14px}.shop-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:480px){.shop-cards{grid-template-columns:1fr}.next-encounter{white-space:normal;max-width:70px}}
 @media(max-height:600px){.home .sigil{display:none}.home{gap:7px}.starter-card{min-height:0}.starter-card span:last-child{display:none}}
+
+.beta-report{position:fixed;z-index:20;top:12%;left:50%;transform:translateX(-50%);width:min(620px,94vw);max-height:80vh;overflow:auto;padding:20px;border:1px solid var(--gold);border-radius:12px;background:#1b1d29;box-shadow:0 15px 60px #000b;display:grid;gap:10px}.beta-report textarea{width:100%;resize:vertical;background:#12141c;color:var(--text);border:1px solid var(--border);padding:8px;font:12px monospace}.beta-report p{font-size:12px;color:var(--muted)}
