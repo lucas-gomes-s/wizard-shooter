@@ -25,6 +25,11 @@ jobs:
           echo "/tmp/godot" >> "$GITHUB_PATH"
       - name: Check ability catalog syntax
         run: Godot_v4.5.1-stable_linux.x86_64 --headless --path mobile --check-only --script gameplay/ability_catalog.gd
+      - name: Check evolution and simulation syntax
+        run: |
+          set -euo pipefail
+          Godot_v4.5.1-stable_linux.x86_64 --headless --path mobile --check-only --script gameplay/spell_evolution.gd
+          Godot_v4.5.1-stable_linux.x86_64 --headless --path mobile --check-only --script gameplay/run.gd
       - name: Check benchmark syntax
         run: Godot_v4.5.1-stable_linux.x86_64 --headless --path mobile --check-only --script tools/balance_benchmark.gd
       - name: Import project

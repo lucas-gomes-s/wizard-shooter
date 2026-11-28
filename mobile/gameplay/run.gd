@@ -642,7 +642,7 @@ func _cast_basic() -> bool:
 	var count := mini(int(spec.get("count",1)),Abilities.MAX_SHOTS-shots.size())
 	for i in range(count):
 		# Central shot is always first, so a tight projectile budget never removes it.
-		var offset := 0.0 if i==0 else float((i+1)/2)*float(spec.get("spread",0.0))*(1.0 if i%2==1 else -1.0)
+		var offset := 0.0 if i==0 else floorf(float(i+1)*0.5)*float(spec.get("spread",0.0))*(1.0 if i%2==1 else -1.0)
 		var heading := direction.rotated(offset)
 		shots.append({"pos":player,"vel":heading * float(spec.speed),"life":float(spec.life),
 			"damage":effective_damage() * float(spec.power),"pierce":int(spec.pierce),"hit":{},
@@ -771,7 +771,7 @@ func _evolution_impact(primary: Dictionary,shot: Dictionary) -> void:
 
 func _add_cloud(point: Vector2, radius: float, duration: float, rate: float, affinity: String, follow: bool = false) -> void:
 	if clouds.size() >= Abilities.MAX_CLOUDS: clouds.pop_front()
-	clouds.append({"pos":point,"radius":radius,"life":duration,dps":effective_damage() * rate,"affinity":affinity,"follow":follow})
+	clouds.append({"pos":point,"radius":radius,"life":duration,"dps":effective_damage() * rate,"affinity":affinity,"follow":follow})
 
 func _update_clouds(dt: float) -> void:
 	for cloud in clouds:
