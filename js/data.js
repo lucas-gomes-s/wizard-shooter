@@ -28,7 +28,7 @@ export const skills = [
     status: "maxSpeed",
     modifier: 1,
     maxLevel: 5,
-    img: "./images/skills/nimbleFeet.png"
+    img: "./images/beta/speed.svg"
     },
     {name: "Dragon Scales",
     description1: "I've got thick skin and an elastic heart!",
@@ -36,7 +36,7 @@ export const skills = [
     status: "maxHealth",
     modifier: 20,
     maxLevel: 20,
-    img: "./images/skills/dragonScales.png"
+    img: "./images/beta/health.svg"
     },
     {name: "Necronomicon",
     description1: "Give up a little Sanity, gain more power!",
@@ -44,7 +44,7 @@ export const skills = [
     status: "shotDmg",
     modifier: 10,
     maxLevel: 20,
-    img: "./images/skills/necronomicon.jpg"
+    img: "./images/beta/damage.svg"
     },
     {name: "Who is Rambo?",
     description1: "No, really, who is this guy?!",
@@ -52,7 +52,7 @@ export const skills = [
     status: "shotCd",
     modifier: -5,
     maxLevel: 10,
-    img: "./images/skills/machineGun.png"
+    img: "./images/beta/casting.svg"
     }
 ]
 
@@ -241,7 +241,7 @@ export const potionInfo = [
     startMinute: 0,
     cooldown: 1,
     fade: 1000,
-    imageSrc: "./images/potions/potion.png"},
+    imageSrc: "./images/beta/potion-minor.svg"},
 
     {type: "HP Potion",
     recovery: 0.25,
@@ -251,7 +251,7 @@ export const potionInfo = [
     startMinute: 10,
     fade: 1000,
     cooldown: 1,
-    imageSrc: "./images/potions/midPotion.png"},
+    imageSrc: "./images/beta/potion-medium.svg"},
 
     {type: "Great HP Potion",
     recovery: 0.5,
@@ -261,7 +261,7 @@ export const potionInfo = [
     startMinute: 20,
     fade: 1000,
     cooldown: 1,
-    imageSrc: "./images/potions/highPotion.png"}
+    imageSrc: "./images/beta/potion-great.svg"}
 
 ]
 // Encounters are scheduled by elapsed time, never by current player power.
