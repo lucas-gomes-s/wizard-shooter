@@ -10,11 +10,12 @@ static func is_cache(seed: int,site: Dictionary) -> bool:
 	if site.is_empty(): return false
 	if site.kind not in ["treasure","guarded"]: return false
 	var chunk := World.chunk_at(site.pos)
-	return World.sample(seed,chunk.x,chunk.y,83)%100 < (65 if site.kind=="guarded" else 25)
+	var salt := World.sample(seed,chunk.x,chunk.y,83)
+	return World.sample(salt,chunk.x,chunk.y,84)%100 < (65 if site.kind=="guarded" else 25)
 
 static func offer(seed: int,site: Dictionary,owned: Array[String]) -> Array[String]:
 	var chunk := World.chunk_at(site.pos)
-	var rng := Genetics.SeededRandom.new(World.sample(seed,chunk.x,chunk.y,84)+seed)
+	var rng := Genetics.SeededRandom.new(World.sample(World.sample(seed,chunk.x,chunk.y,85),chunk.x,chunk.y,86)+seed)
 	var pool: Array[String]=[]
 	for id in IDS:
 		if id not in owned: pool.append(id)

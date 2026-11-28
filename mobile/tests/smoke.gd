@@ -762,11 +762,18 @@ func _test_lineage(base: Dictionary) -> void:
 func _test_artifacts(base: Dictionary) -> void:
 	var run := RunModel.new(base,false,1,7,RunModel.Balance.TRIAL_20,true,true,true,true,true,true,true)
 	var site: Dictionary={}
+	var totals: Dictionary={"treasure":0,"guarded":0}
+	var rares: Dictionary={"treasure":0,"guarded":0}
 	for x in range(-30,31):
-		var candidate := World.site(7,Vector2i(x,1))
-		if not candidate.is_empty() and candidate.kind=="treasure" and RunModel.Artifacts.is_cache(7,candidate):
-			site=candidate
-			break
+		for y in range(-30,31):
+			var candidate := World.site(7,Vector2i(x,y))
+			if candidate.is_empty() or not totals.has(candidate.kind): continue
+			totals[candidate.kind]+=1
+			if RunModel.Artifacts.is_cache(7,candidate):
+				rares[candidate.kind]+=1
+				if site.is_empty() and candidate.kind=="treasure": site=candidate
+	check(float(rares.treasure)/float(totals.treasure)>0.18 and float(rares.treasure)/float(totals.treasure)<0.32,"Treasure rarity distribution")
+	check(float(rares.guarded)/float(totals.guarded)>0.5 and float(rares.guarded)/float(totals.guarded)<0.8,"Guarded rarity distribution")
 	check(not site.is_empty(),"Deterministic rare cache fixture")
 	if site.is_empty(): return
 	check(not run.artifact_available(site),"Rare caches unlock after early phase")
