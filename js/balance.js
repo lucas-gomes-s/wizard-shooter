@@ -1,3 +1,4 @@
+import {waveAt,waveInterval} from './waves.js';
 // Open-loop balance metrics: no hidden scaling to player level.
 export function spawnInterval(monster,seconds,settings={}){
  return Math.max(1,Math.round(monster.spawn*Math.max(settings.minSpawnFactor??1,1-seconds/60*(settings.spawnRampPerMinute??0))));
@@ -19,7 +20,7 @@ export function forecast(config,minutes=[.25,.5,1,2,5,10,15,20,25],fractions=[.2
    tick++;const seconds=Math.floor(tick/50);
    for(const [i,m] of regular.entries()){
     if(seconds<m.startMinute*60)continue;
-    if(++timers[i]<spawnInterval(m,seconds,settings))continue;
+    if(++timers[i]<waveInterval(spawnInterval(m,seconds,settings),waveAt(seconds,config.waveDirector===true,seconds>=1500),m))continue;
     timers[i]=0;spawns++;
     const elite=seconds>=eliteStart&&++regularCount%eliteEvery===0;
     if(elite)eliteCount++;
@@ -29,7 +30,7 @@ export function forecast(config,minutes=[.25,.5,1,2,5,10,15,20,25],fractions=[.2
    for(const b of config.minibosses||[])if(tick===b.minute*3000){totalHP+=b.health;totalXP+=b.xp;windowHP+=b.health;spawns++;}
    windowSeconds++;
   }
-  const hpPerSecond=regular.filter(m=>Math.floor(target/50)>=m.startMinute*60).reduce((sum,m)=>sum+50*m.maxHealth/spawnInterval(m,target/50,settings)*(target/50>=eliteStart?1+.6/eliteEvery:1),0);
+  const hpPerSecond=regular.filter(m=>Math.floor(target/50)>=m.startMinute*60).reduce((sum,m)=>sum+50*m.maxHealth/waveInterval(spawnInterval(m,target/50,settings),waveAt(target/50,config.waveDirector===true,target>=75000),m)*(target/50>=eliteStart?1+.6/eliteEvery:1),0);
   result.push({minute,spawns,eliteCount,totalHP,totalXP,hpPerSecond:Math.round(hpPerSecond*10)/10,intervalHPPerSecond:Math.round(windowHP/Math.max(1,windowSeconds)*500)/10,levels:fractions.map(f=>levelAtXP(totalXP*f,config.levels,config.maxLevel).level)});
   windowHP=0;windowSeconds=0;
  }

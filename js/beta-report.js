@@ -9,6 +9,6 @@ export class FrameStats{
 }
 export function makeReport(g,{screen,effects,surface,frames,browser,contract='standard'}){
  const p=g.player;
- return {version:RELEASE,screen,environment:g.config.environment||'crypt',contract,elapsedSeconds:Math.floor(g.tick/50),level:p.level,kills:g.kills,health:Math.round(p.health*100)/100,schools:{...p.magic.ranks},equipment:{...p.equipment},effects,viewport:{width:Math.round(surface.width),height:Math.round(surface.height),dpr:surface.dpr},browser,counts:{enemies:g.enemies.length,shots:g.shots.length,hostiles:g.hostiles.length,hazards:g.hazards.length},performance:frames.summary()};
+ return {version:RELEASE,screen,environment:g.config.environment||'crypt',pacing:g.config.waveDirector?'waves':'classic',contract,elapsedSeconds:Math.floor(g.tick/50),level:p.level,kills:g.kills,health:Math.round(p.health*100)/100,schools:{...p.magic.ranks},equipment:{...p.equipment},effects,viewport:{width:Math.round(surface.width),height:Math.round(surface.height),dpr:surface.dpr},browser,counts:{enemies:g.enemies.length,shots:g.shots.length,hostiles:g.hostiles.length,hazards:g.hazards.length},performance:frames.summary()};
 }
 export function browserFamily(ua){return /Firefox\//.test(ua)?'Firefox':/Edg\//.test(ua)?'Edge':/Chrome\//.test(ua)?'Chromium':/Safari\//.test(ua)?'Safari':'Other'}

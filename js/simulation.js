@@ -1,3 +1,4 @@
+import {waveAt,waveInterval,freshPacing,recordSpawn,recordUpgrade,samplePacing,pacingSummary} from './waves.js';
 import {stepEnvironment,environmentById} from './environments.js';
 import {attuned} from './attunements.js';
 import {freshTelemetry,trackDamage,trackIncoming,trackHeal,trackCost,trackCast,trackHit,telemetrySummary} from './telemetry.js';
@@ -29,13 +30,15 @@ export class FixedClock{
 
 export class Game{
  constructor(config,rng=Math.random){this.config=config;this.rng=rng;this.width=600;this.height=600;this.reset()}
- reset(){this.phase='playing';this.tick=0;this.nextEnvironmentHazard=0;this.dungeon=freshEvents();this.market=freshMarket();this.telemetry=freshTelemetry();this.activeHistory=[];this.chests=[];this.nextTreasure=0;this.loot=[];this.lootSource=null;this.lootHistory=[];this.chestsOpened=0;this.kills=0;this.enemies=[];this.shots=[];this.potions=[];this.flash=0;this.events=[];this.visualEvents=[];this.offers=[];this.selected=0;this.deathQueue=[];this.hostiles=[];this.hazards=[];this.spawnCount=0;this.minibossSpawned=new Set();this.bossSpawned=false;this.bossDefeated=false;this.victoryTick=null;this.endless=false;this.enemyTimers=this.config.monsters.map(()=>0);this.potionTimers=this.config.potionInfo.map(()=>0);this.player={x:280,y:280,width:40,height:40,maxSpeed:2,health:100,maxHealth:100,level:1,currentExp:0,expNeeded:this.config.levels[0],shotDmg:10,shotSpd:8,shotSize:5,shotCd:50,cooldown:50,skillLvl:this.config.skills.map(()=>0),gold:0,activeReady:{boots:0,relic:0},lastDirection:[0,0],magic:{...freshMagic(),pureOath:!!this.config.pureOath},equipment:freshEquipment(),gearState:Object.fromEntries(['staff','robe','boots','relic'].map(slot=>[slot,{readyAt:0,activeUntil:0,count:0}]))}}
+ reset(){this.phase='playing';this.tick=0;this.nextEnvironmentHazard=0;this.dungeon=freshEvents();this.market=freshMarket();this.telemetry=freshTelemetry();this.pacing=freshPacing();this.activeHistory=[];this.chests=[];this.nextTreasure=0;this.loot=[];this.lootSource=null;this.lootHistory=[];this.chestsOpened=0;this.kills=0;this.enemies=[];this.shots=[];this.potions=[];this.flash=0;this.events=[];this.visualEvents=[];this.offers=[];this.selected=0;this.deathQueue=[];this.hostiles=[];this.hazards=[];this.spawnCount=0;this.minibossSpawned=new Set();this.bossSpawned=false;this.bossDefeated=false;this.victoryTick=null;this.endless=false;this.enemyTimers=this.config.monsters.map(()=>0);this.potionTimers=this.config.potionInfo.map(()=>0);this.player={x:280,y:280,width:40,height:40,maxSpeed:2,health:100,maxHealth:100,level:1,currentExp:0,expNeeded:this.config.levels[0],shotDmg:10,shotSpd:8,shotSize:5,shotCd:50,cooldown:50,skillLvl:this.config.skills.map(()=>0),gold:0,activeReady:{boots:0,relic:0},lastDirection:[0,0],magic:{...freshMagic(),pureOath:!!this.config.pureOath},equipment:freshEquipment(),gearState:Object.fromEntries(['staff','robe','boots','relic'].map(slot=>[slot,{readyAt:0,activeUntil:0,count:0}]))}}
  start(school){this.reset();if(!Object.hasOwn(this.player.magic.ranks,school))return false;this.player.magic.ranks[school]=1;this.player.magic.primary=school;this.player.cooldown=0;return true}
  emit(type,object,value=0,school=null,extra={}){if(this.events.length<128)this.events.push({type,x:object.x+object.width/2,y:object.y+object.height/2,value,school,...extra})}
  emitVisual(type,object,value=0,school=null,extra={}){if(this.visualEvents.length<128)this.visualEvents.push({type,x:object.x+object.width/2,y:object.y+object.height/2,value,school,...extra})}
  recordDungeonHazard(h,damage){recordEventHazard(this,h,damage)}
  recordCost(source,amount){trackCost(this.telemetry,source,amount)}
  reportCombat(){return telemetrySummary(this.telemetry,this.tick/50)}
+ get wave(){return waveAt(this.seconds,this.config.waveDirector===true,this.bossSpawned&&!this.bossDefeated)}
+ reportPacing(){return pacingSummary(this.pacing,this.tick)}
  get camera(){return {x:this.player.x+this.player.width/2-this.width/2,y:this.player.y+this.player.height/2-this.height/2}}
  get seconds(){return Math.floor(this.tick/50)}
  visible(o,margin=600){const c=this.camera;return o.x+o.width>=c.x-margin&&o.x<=c.x+this.width+margin&&o.y+o.height>=c.y-margin&&o.y<=c.y+this.height+margin}
@@ -166,15 +169,16 @@ export class Game{
    const enemy=this.spawnAtEdge(template);Object.assign(enemy,{miniboss:true,lootTier:encounter.minute>=20?3:encounter.minute>=10?2:1,title:encounter.title,health:encounter.health,maxHealth:encounter.health,damage:encounter.damage,expGiven:encounter.xp});
    this.enemies.push(enemy);this.minibossSpawned.add(encounter.minute);
   }
+  const wave=this.wave;
   this.config.monsters.forEach((m,i)=>{
    if(m.name==='Dragon'||this.seconds<m.startMinute*60)return;
-   const interval=spawnInterval(m,this.seconds,this.config.balanceSettings)*(this.bossSpawned&&!this.bossDefeated?2:1);
+   const interval=waveInterval(spawnInterval(m,this.seconds,this.config.balanceSettings),wave,m)*(this.bossSpawned&&!this.bossDefeated?2:1);
    if(++this.enemyTimers[i]<interval)return;this.enemyTimers[i]=0;
-   if(this.enemies.length>=ENEMY_CAP)return;
+   if(this.enemies.length>=ENEMY_CAP){recordSpawn(this.pacing,wave,true);return;}
    const settings=this.config.balanceSettings||{};const elite=this.seconds>=(settings.eliteStart??180)&&++this.spawnCount%(settings.eliteEvery??12)===0;
    const enemy=this.spawnAtEdge(m,elite);
    if(this.endless){const scale=1+Math.max(0,this.seconds-Math.floor(this.victoryTick/50))/600;enemy.health=enemy.maxHealth=Math.round(enemy.maxHealth*scale);enemy.damage=Math.round(enemy.damage*Math.min(2,scale));}
-   this.enemies.push(enemy);
+   this.enemies.push(enemy);recordSpawn(this.pacing,wave);
   });
  }
  get miniboss(){return this.enemies.find(e=>e.miniboss&&e.health>0)||null}
@@ -224,7 +228,7 @@ export class Game{
  levelUp(){
   const p=this.player;
   if(p.level>=this.config.maxLevel||p.currentExp<p.expNeeded)return;
-  p.currentExp-=p.expNeeded;p.level++;p.expNeeded=p.level<this.config.maxLevel?this.config.levels[p.level-1]:Infinity;
+  p.currentExp-=p.expNeeded;p.level++;recordUpgrade(this.pacing,this.tick);p.expNeeded=p.level<this.config.maxLevel?this.config.levels[p.level-1]:Infinity;
   const before=p.health;p.health=Math.min(p.maxHealth,p.health*1.3);trackHeal(this.telemetry,this.tick,'level-up',p.health-before);
   this.offers=upgradeOffers(p,this.config.skills,this.rng);this.selected=0;
   if(this.offers.length)this.phase='upgrade';else if(p.level<this.config.maxLevel)this.levelUp();
@@ -276,6 +280,6 @@ export class Game{
   if(p.health<=0){stepDungeon(this);this.phase='over';return false}
   if(this.deathQueue.length){this.resolveDeaths(hash);if(this.bossDefeated&&!this.endless){this.phase='victory';return false}}
   this.potions=this.potions.filter(o=>{if(++o.age>=o.fade||!this.visible(o))return false;if(p.health<p.maxHealth&&overlaps(o,p)){const previous=p.health;p.health=Math.min(p.maxHealth,p.health+o.recovery*p.maxHealth*(hasGear(p,'tonic')?1.35:1));trackHeal(this.telemetry,this.tick,'potion',p.health-previous);this.emit('heal',p,p.health-previous);return false}return true});
-  this.spawnEnemies();this.spawnPotions();stepEnvironment(this,HAZARD_CAP);stepDungeon(this);this.stepLoot();if(this.phase==='playing')stepMarket(this);if(this.phase==='playing')this.levelUp();return this.phase==='playing';
+  this.spawnEnemies();samplePacing(this,this.wave);this.spawnPotions();stepEnvironment(this,HAZARD_CAP);stepDungeon(this);this.stepLoot();if(this.phase==='playing')stepMarket(this);if(this.phase==='playing')this.levelUp();return this.phase==='playing';
  }
 }

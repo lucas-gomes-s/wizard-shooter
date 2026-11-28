@@ -5,12 +5,13 @@
   "type": "module",
   "scripts": {
     "test": "node --test tests/web/*.test.js",
-    "check": "node --check js/index.js && node --check js/simulation.js && node --check js/data.js && node --check js/presentation.js && node --check js/magic.js && node --check js/enemies.js && node --check js/balance.js && node --check js/balance-bot.js && node --check scripts/balance.mjs && node --check js/combat-fx.js && node --check js/build-benchmark.js && node --check scripts/benchmark-builds.mjs && node --check js/equipment.js && node --check js/dungeon-events.js && node --check js/active-gear.js && node --check js/merchant.js && node --check js/attunements.js && node --check js/telemetry.js && node --check js/progression.js && node --check js/environments.js && node --check scripts/benchmark-environments.mjs && node --check js/audio.js && node --check scripts/compare-balance.mjs && node --check js/dungeon-art.js && node --check js/beta-report.js && node --check tests/web/beta-stress.mjs",
+    "check": "node --check js/index.js && node --check js/simulation.js && node --check js/data.js && node --check js/presentation.js && node --check js/magic.js && node --check js/enemies.js && node --check js/balance.js && node --check js/balance-bot.js && node --check scripts/balance.mjs && node --check js/combat-fx.js && node --check js/build-benchmark.js && node --check scripts/benchmark-builds.mjs && node --check js/equipment.js && node --check js/dungeon-events.js && node --check js/active-gear.js && node --check js/merchant.js && node --check js/attunements.js && node --check js/telemetry.js && node --check js/progression.js && node --check js/environments.js && node --check scripts/benchmark-environments.mjs && node --check js/audio.js && node --check scripts/compare-balance.mjs && node --check js/dungeon-art.js && node --check js/beta-report.js && node --check tests/web/beta-stress.mjs && node --check js/waves.js && node --check scripts/compare-waves.mjs",
     "balance": "node scripts/balance.mjs",
     "balance:builds": "node scripts/benchmark-builds.mjs",
     "balance:environments": "node scripts/benchmark-environments.mjs",
     "balance:compare": "node scripts/compare-balance.mjs",
-    "beta:package": "python3 scripts/package-web-beta.py"
+    "beta:package": "python3 scripts/package-web-beta.py",
+    "balance:waves": "node scripts/compare-waves.mjs"
   },
   "engines": {
     "node": ">=20"
