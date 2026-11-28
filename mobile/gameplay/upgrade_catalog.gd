@@ -1,6 +1,9 @@
 extends RefCounted
 ## Upgrade metadata and eligibility. No school selection or permanent stat changes.
 const DEFINITIONS := {
+	"relic_power": {"name":"Emberglass seal","text":"+25% spell damage for this run","category":"Relic","cap":2,"relic":true},
+	"relic_focus": {"name":"Chronomancer seal","text":"25% shorter special cooldown (min 2.5s)","category":"Relic","cap":2,"relic":true},
+	"relic_heart": {"name":"Guardian heart","text":"+25 max HP; heal 40 HP","category":"Relic","cap":2,"relic":true},
 	"vitality": {"name":"Vitality","text":"+12 max HP; heal 20 HP","category":"Universal","cap":0},
 	"power": {"name":"Spell power","text":"+10% base spell damage","category":"Universal","cap":8},
 	"haste": {"name":"Haste","text":"10% shorter basic cast interval","category":"Universal","cap":6},
@@ -42,6 +45,7 @@ static func offer(p: Dictionary, ranks: Dictionary, rng: Variant) -> Array[Strin
 	var elemental: Array[String] = []
 	var genetic: Array[String] = []
 	for id in DEFINITIONS:
+		if DEFINITIONS[id].get("relic",false): continue
 		if not eligible(id, p, ranks): continue
 		var d: Dictionary = DEFINITIONS[id]
 		if d.category == "Universal": universal.append(id)

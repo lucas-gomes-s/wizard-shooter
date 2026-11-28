@@ -37,9 +37,9 @@ static func icon(id: String,hue: Color) -> Texture2D:
 static func upgrade_icon(id: String,definition: Dictionary) -> String:
 	if definition.has("affinity"): return str(definition.affinity)
 	match id:
-		"vitality","hybrid": return "heart"
-		"power","focus": return "power"
-		"haste","stride","rapid","fae","flow": return "speed"
+		"vitality","hybrid","relic_heart": return "heart"
+		"power","focus","relic_power": return "power"
+		"haste","stride","rapid","fae","flow","relic_focus": return "speed"
 		"fortify": return "ward"
 		"stone": return "stone"
 		"wingward": return "wing"

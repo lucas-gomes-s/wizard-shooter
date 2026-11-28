@@ -502,7 +502,7 @@ func _show_title() -> void:
 	title_note.text = "Open the Academy to review your profile." if unavailable else "%d essence  |  %d wizards" % [academy.essence,academy.roster.size()]
 	if not unavailable and guide.enabled and academy.settled_runs.is_empty(): title_note.text="New? Open Guide, or learn as you play."
 	if not unavailable: title_note.text+="\nFinite: "+Balance.label(settings.balance_preset)
-	if settings.balance_preset in [Balance.LONG,Balance.MANA]: title_quick.text="6-minute expedition"
+	if settings.balance_preset in [Balance.LONG,Balance.MANA,Balance.TRIALS]: title_quick.text="6-minute expedition"
 	_sync_visibility()
 	queue_redraw()
 
@@ -540,7 +540,7 @@ func _refresh_academy() -> void:
 		if not hint.is_empty(): info.text=hint
 	difficulty_button.text="Difficulty: %s" % ["I","II","III"][difficulty-1]
 	balance_button.text="Finite: "+Balance.label(settings.balance_preset)
-	start_finite.text="Enter 6-minute expedition" if settings.balance_preset in [Balance.LONG,Balance.MANA] else "Enter dungeon"
+	start_finite.text="Enter 6-minute expedition" if settings.balance_preset in [Balance.LONG,Balance.MANA,Balance.TRIALS] else "Enter dungeon"
 	lock_button.text="Unlock wizard" if c.locked else "Lock wizard"
 	clear_apprentice.disabled=partner_index<0
 	summon_button.disabled=academy.essence<10
@@ -630,7 +630,7 @@ func _refresh_guide() -> void:
 	lines.append(("✓ " if guide.knows(Onboarding.MOVE) else "□ ")+"Move: drag the lower-left pad (WASD or arrows).")
 	lines.append(("✓ " if guide.knows(Onboarding.BASIC) else "□ ")+"Basic magic attacks automatically.")
 	lines.append(("✓ " if guide.knows(Onboarding.SPECIAL) else "□ ")+"Tap CAST (Space) to use your special.")
-	lines.append(("✓ " if guide.knows(Onboarding.UPGRADE) else "□ ")+"Earn XP and select a run upgrade." if settings.balance_preset!=Balance.MANA else "Collect green mana crystals to level up.")
+	lines.append(("✓ " if guide.knows(Onboarding.UPGRADE) else "□ ")+"Earn XP and select a run upgrade." if settings.balance_preset not in [Balance.MANA,Balance.TRIALS] else "Collect green mana crystals to level up.")
 	lines.append("Avoid orange attack zones and charge lines. Defeat the dragon, or extract from endless mode after 30 seconds.")
 	lines.append("")
 	lines.append("BLOODLINE")
@@ -941,7 +941,7 @@ func _start(endless: bool) -> void:
 		_show_academy()
 		return
 	var preset := Balance.ORIGINAL if endless else settings.balance_preset
-	run = RunModel.new(active.phenotype, endless, difficulty, 1000 + run_id, Balance.preset(preset),preset in [Balance.FROST,Balance.LONG,Balance.MANA],preset in [Balance.LONG,Balance.MANA],preset==Balance.MANA)
+	run = RunModel.new(active.phenotype, endless, difficulty, 1000 + run_id, Balance.preset(preset),preset in [Balance.FROST,Balance.LONG,Balance.MANA,Balance.TRIALS],preset in [Balance.LONG,Balance.MANA,Balance.TRIALS],preset in [Balance.MANA,Balance.TRIALS],preset==Balance.TRIALS)
 	result_before.clear()
 	result_reward.clear()
 	profiler.reset()
@@ -1054,7 +1054,7 @@ func _sync_visibility() -> void:
 
 func _refresh_upgrades() -> void:
 	run.ensure_upgrade_offer()
-	upgrade_heading.text = "LEVEL UP • %d CHOICE%s" % [run.pending_upgrades, "S" if run.pending_upgrades > 1 else ""]
+	upgrade_heading.text = "TRIAL CLEARED • RELIC" if run.relic_pending else ("LEVEL UP • %d CHOICE%s" % [run.pending_upgrades, "S" if run.pending_upgrades > 1 else ""])
 	for i in range(upgrade_buttons.size()):
 		var button := upgrade_buttons[i]
 		button.visible = i < run.upgrade_offer.size()
@@ -1063,6 +1063,7 @@ func _refresh_upgrades() -> void:
 		var d: Dictionary = Upgrades.DEFINITIONS[id]
 		var color := Color("#e9dfd0")
 		if d.has("affinity"): color = FIRE if d.affinity == "fire" else (ICE if d.affinity == "ice" else STEAM)
+		elif d.category=="Relic": color=Fantasy.GOLD
 		elif d.category != "Universal": color = Color("#c6b5e6")
 		button.configure(id,d,int(run.upgrade_ranks.get(id,0)),color)
 
@@ -1118,10 +1119,10 @@ func _physics_process(dt: float) -> void:
 		var audio_before := GameAudio.snapshot(run)
 		var sim_start := Time.get_ticks_usec()
 		run.step(dt, movement, special_requested or (space and not prev_space))
+		profiler.record_step(Time.get_ticks_usec()-sim_start,run,dungeon_art.cache.size(),sprites.pose_cache.size())
 		var learned_before := guide.learned
 		guide.observe_step(run,previous,int(audio_before.basic),int(audio_before.special))
 		if guide.learned!=learned_before: playtest.run_event("lesson",{"seconds":run.elapsed,"learned_mask":guide.learned,"count":guide.lesson_count()})
-		profiler.record_step(Time.get_ticks_usec()-sim_start,run,dungeon_art.cache.size(),sprites.pose_cache.size())
 		if run.special_casts>audio_before.special: elemental_fx.capture(run)
 		audio.after_step(audio_before,run)
 		_update_motion_art(previous,dt)
@@ -1240,6 +1241,9 @@ func _draw() -> void:
 	dungeon_art.draw_world(self, view)
 	dungeon_art.draw_sites(self, run.claimed_sites, run.active_encounter, run._guards_remaining(), float(run.elapsed))
 	if run.mana_rules: _draw_mana(view)
+	if run.trial_index>=0:
+		draw_arc(run.trial_center,RunModel.Trials.RADIUS,0,TAU,96,Color("#c1a2e8"),2.0)
+		draw_arc(run.trial_center,RunModel.Trials.RADIUS-4,0,TAU,96,Color(0.58,0.35,0.79,0.35),1.0)
 	var color: Color = FIRE if run.phenotype.affinity == "fire" else (ICE if run.phenotype.affinity == "ice" else STEAM)
 	# Ground effects below creatures and hostile telegraphs preserve combat readability.
 	for cloud in run.clouds:
@@ -1258,6 +1262,8 @@ func _draw() -> void:
 	_draw_enemy_hazards(visible_margin)
 	for e in run.enemies:
 		if visible_margin.has_point(e.pos):
+			if int(e.get("trial",-1))>=0:
+				draw_arc(e.pos,float(e.radius)+5,0,TAU,24,Fantasy.GOLD if e.get("elite",false) else Color("#c1a2e8"),2.0)
 			arena_art.draw_enemy(self,e,float(run.elapsed))
 			ElementFX.enemy_status(self,e,float(run.elapsed))
 	for shot in run.shots:
@@ -1290,7 +1296,13 @@ func _draw() -> void:
 		if not hint.is_empty():
 			var lines := hint.split("\n")
 			for i in range(lines.size()): Fantasy.text_at(self,lines[i],Vector2(180,557+i*15),11,Fantasy.GOLD,true)
-	if run.phased_expedition and RunModel.Phases.warning(run.elapsed):
+	if run.trial_index>=0:
+		draw_rect(Rect2(8,94,344,23),Color(0.12,0.07,0.18,0.94))
+		_center_text("%s: %d remain" % [RunModel.Trials.name_at(run.trial_index),run.trial_remaining()],Vector2(180,110),12,Fantasy.GOLD)
+	elif run.trial_rules and RunModel.Trials.warning(run.expedition_time(),run.trials_cleared):
+		draw_rect(Rect2(8,94,344,23),Color(0.12,0.07,0.18,0.94))
+		_center_text("A trial approaches! Prepare for the arena.",Vector2(180,110),12,Fantasy.GOLD)
+	elif run.phased_expedition and RunModel.Phases.warning(run.expedition_time()):
 		draw_rect(Rect2(8,94,344,23),Color(0.16,0.08,0.10,0.94))
 		_center_text("The dragon approaches! Prepare to fight.",Vector2(180,110),12,Fantasy.GOLD)
 	elif run.site_notice_time > 0:
@@ -1399,7 +1411,7 @@ func _draw_player_art(color: Color) -> void:
 		draw_rect(Rect2(spark-Vector2(1,1),Vector2(3,3)),color.lightened(0.55))
 
 func _draw_hud() -> void:
-	var seconds := int(run.elapsed)
+	var seconds := int(run.expedition_time())
 	Fantasy.text_at(self,"%02d:%02d" % [seconds/60,seconds%60],Vector2(12,18),15,Fantasy.GOLD)
 	Fantasy.text_at(self,"KILLS %d" % run.kills,Vector2(82,18),11,Fantasy.MUTED)
 	Fantasy.text_at(self,"LV %d" % run.run_level,Vector2(193,18),13,Fantasy.GOLD)
@@ -1411,12 +1423,16 @@ func _draw_hud() -> void:
 	Fantasy.text_at(self,("MANA   %d / %d" if run.mana_rules else "XP   %d / %d") % [run.xp,run.next_xp],Vector2(127,65),11,Fantasy.IVORY,true)
 	var state := "BLESSED %.0fs" % run.blessing if run.blessing > 0 else ("BOSS ACTIVE" if run.boss_spawned else ("ENDLESS" if run.endless else "DUNGEON"))
 	if run.phased_expedition:
-		var left := maxi(0,ceili(run.boss_after_seconds()-run.elapsed))
+		var left := maxi(0,ceili(run.boss_after_seconds()-run.expedition_time()))
 		var phase: Dictionary=RunModel.Phases.PHASES[run.phase_index()]
 		state="DRAGON ACTIVE" if run.boss_spawned else "%s | Dragon %d:%02d" % [str(phase.name).to_upper(),left/60,left%60]
-		if RunModel.Phases.recovery(run.elapsed): state="RECOVERY | Dragon %d:%02d" % [left/60,left%60]
-		if RunModel.Phases.warning(run.elapsed): state="DRAGON IN %ds" % left
-	Fantasy.text_at(self,state,Vector2(12,83),10,Fantasy.GOLD if run.phased_expedition and RunModel.Phases.warning(run.elapsed) else Fantasy.MUTED)
+		if RunModel.Phases.recovery(run.expedition_time()): state="RECOVERY | Dragon %d:%02d" % [left/60,left%60]
+		if RunModel.Phases.warning(run.expedition_time()): state="DRAGON IN %ds" % left
+	if run.trial_index>=0: state="TRIAL %d/2 | %d REMAIN" % [run.trial_index+1,run.trial_remaining()]
+	elif run.trial_rules and not run.boss_spawned and run.trials_cleared<2:
+		var next_trial := maxi(0,ceili(float(RunModel.Trials.DEFINITIONS[run.trials_cleared].at)-run.expedition_time()))
+		state+=" | Trial %d:%02d" % [next_trial/60,next_trial%60] if state.length()<25 else ""
+	Fantasy.text_at(self,state,Vector2(12,83),10,Fantasy.GOLD if run.trial_index>=0 or (run.phased_expedition and RunModel.Phases.warning(run.expedition_time())) else Fantasy.MUTED)
 	if not run.endless:
 		Fantasy.text_at(self,"DIFFICULTY "+["I","II","III"][difficulty-1],Vector2(300,65),10,Fantasy.MUTED,true)
 

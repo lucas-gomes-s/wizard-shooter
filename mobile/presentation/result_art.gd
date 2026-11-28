@@ -53,7 +53,7 @@ static func draw(canvas: CanvasItem,sprites: Variant,run: Variant,before: Dictio
 	canvas.draw_rect(Rect2(0,0,360,640),Color("#17131f"))
 	var heading := "VICTORY" if run.outcome=="Victory" else ("EXTRACTED" if run.outcome=="Extracted" else "DEFEATED")
 	Pixel.heading(canvas,heading,Vector2(180,38),3,accent)
-	var mode := "Endless survival" if run.endless else ("Mana expedition" if run.mana_rules else ("6-minute expedition" if run.phased_expedition else "Dungeon expedition"))
+	var mode := "Endless survival" if run.endless else ("Trial expedition" if run.trial_rules else ("Mana expedition" if run.mana_rules else ("6-minute expedition" if run.phased_expedition else "Dungeon expedition")))
 	Fantasy.text_at(canvas,mode+" • Difficulty "+["I","II","III"][int(run.difficulty)-1],Vector2(180,56),11,Fantasy.MUTED,true)
 	Fantasy.frame(canvas,Rect2(12,66,336,104),accent.darkened(0.25))
 	var p: Dictionary=before.active.phenotype
@@ -71,7 +71,9 @@ static func draw(canvas: CanvasItem,sprites: Variant,run: Variant,before: Dictio
 	metric(canvas,Vector2(180,198),"KILLS",str(run.kills))
 	metric(canvas,Vector2(290,198),"LEVEL",str(run.run_level))
 	Fantasy.text_at(canvas,"Damage dealt %d   •   Taken %d" % [roundi(run.total_damage_dealt),roundi(run.total_damage_taken)],Vector2(180,248),12,Fantasy.IVORY,true)
-	Fantasy.text_at(canvas,"Caches %d  •  Shrines %d  •  Encounters %d" % [run.treasure_count,run.shrine_count,run.encounters_cleared],Vector2(180,270),11,Fantasy.MUTED,true)
+	var exploration := "Caches %d  •  Shrines %d  •  Encounters %d" % [run.treasure_count,run.shrine_count,run.encounters_cleared]
+	if run.trial_rules: exploration="Trials %d/2  •  Relics %d  •  Caches %d" % [run.trials_cleared,run.relic_choices.size(),run.treasure_count]
+	Fantasy.text_at(canvas,exploration,Vector2(180,270),11,Fantasy.MUTED,true)
 	Fantasy.frame(canvas,Rect2(12,296,336,132),Color("#86719b"))
 	Fantasy.text_at(canvas,"PERMANENT TRAINING",Vector2(180,314),11,Fantasy.GOLD,true)
 	if reward.is_empty():

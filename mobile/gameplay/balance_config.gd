@@ -21,15 +21,17 @@ const CANDIDATE := "trial20-short"
 const FROST := "trial20-frost"
 const LONG := "expedition-six"
 const MANA := "expedition-mana"
-const PRESETS := [ORIGINAL,CANDIDATE,FROST,LONG,MANA]
+const TRIALS := "expedition-trials"
+const PRESETS := [ORIGINAL,CANDIDATE,FROST,LONG,MANA,TRIALS]
 
 static func preset(id: String) -> Dictionary:
 	match id:
 		ORIGINAL: return validated({})
-		CANDIDATE,FROST,LONG,MANA: return validated(TRIAL_20)
+		CANDIDATE,FROST,LONG,MANA,TRIALS: return validated(TRIAL_20)
 	return {}
 
 static func label(id: String) -> String:
+	if id==TRIALS: return "Six-minute + Trials"
 	if id==MANA: return "Six-minute + Mana"
 	if id==LONG: return "Six-minute expedition"
 	if id==FROST: return "Trial 20 + Frost"

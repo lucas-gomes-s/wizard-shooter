@@ -8,6 +8,7 @@ const Balance = preload("res://gameplay/balance_config.gd")
 const Phases = preload("res://gameplay/expedition_schedule.gd")
 const Economy = preload("res://domain/training_economy.gd")
 const Mana = preload("res://gameplay/mana_pickups.gd")
+const Trials = preload("res://gameplay/milestone_trials.gd")
 const DESPAWN_DISTANCE := 740.0
 const BOSS_RELOCATE_DISTANCE := 950.0
 const TARGET_RANGE := 350.0
@@ -97,6 +98,15 @@ var balance: Dictionary
 var frost_rules := false
 var phased_expedition := false
 var mana_rules := false
+var trial_rules := false
+var trial_index := -1
+var trials_cleared := 0
+var trial_center := Vector2.ZERO
+var trial_seconds := 0.0
+var trial_started := 0.0
+var trial_durations: Array[float] = []
+var relic_pending := false
+var relic_choices: Array[String] = []
 var mana := Mana.new()
 var mana_flash := 0.0
 var phase_spawns: Array[int] = [0,0,0,0,0]
@@ -106,9 +116,10 @@ var first_upgrade_time := -1.0
 var level_times: Array[float] = []
 var boss_spawn_time := -1.0
 
-func _init(p: Dictionary, is_endless: bool, level: int, seed: int, parameters: Dictionary = {}, use_frost_rules: bool = false, use_phases: bool = false, use_mana: bool = false) -> void:
+func _init(p: Dictionary, is_endless: bool, level: int, seed: int, parameters: Dictionary = {}, use_frost_rules: bool = false, use_phases: bool = false, use_mana: bool = false, use_trials: bool = false) -> void:
 	phased_expedition=use_phases and not is_endless
 	mana_rules=use_mana and phased_expedition
+	trial_rules=use_trials and mana_rules
 	frost_rules=use_frost_rules
 	balance = Balance.validated(parameters)
 	assert(not balance.is_empty(), "Invalid balance parameters")
@@ -129,11 +140,17 @@ func step(dt: float, movement: Vector2, special: bool) -> void:
 	if outcome != "" or pending_upgrades > 0:
 		return
 	elapsed += dt
+	if trial_rules:
+		if trial_index>=0: trial_seconds+=dt
+		else: _maybe_start_trial()
 	travel_direction = movement.limit_length()
 	webbed = false
 	for web in webs:
 		if web.life > 0 and player.distance_to(web.pos) <= float(web.radius) + PLAYER_RADIUS: webbed = true
-	player = World.move(world_seed, player, travel_direction * speed * (0.50 if webbed else 1.0) * dt, PLAYER_RADIUS)
+	var displacement := travel_direction * speed * (0.50 if webbed else 1.0) * dt
+	if trial_index>=0: displacement=Trials.clamp_point(trial_center,player+displacement)-player
+	var moved := World.move(world_seed,player,displacement,PLAYER_RADIUS)
+	if trial_index<0 or moved.distance_to(trial_center)<=Trials.RADIUS+0.001: player=moved
 	_abandon_far_encounter()
 	_recycle_far_enemies()
 	blessing = maxf(0, blessing - dt)
@@ -153,7 +170,9 @@ func step(dt: float, movement: Vector2, special: bool) -> void:
 		_add_cloud(player, 23.0, 1.3, trail_rate, "fire")
 		trail_cd = 0.32
 	spawn_cd -= dt
-	if phased_expedition:
+	if trial_index>=0:
+		pass # Ordinary reinforcement stops until the marked trial enemies are defeated.
+	elif phased_expedition:
 		_spawn_phased()
 	else:
 		var normal_limit := MAX_ENEMIES - GUARD_COUNT - (1 if not endless and not boss_spawned else 0)
@@ -190,7 +209,11 @@ func step(dt: float, movement: Vector2, special: bool) -> void:
 		enemy.slow = maxf(0, enemy.slow - dt)
 		enemy.freeze = maxf(0, float(enemy.get("freeze", 0.0)) - dt)
 		enemy.chill = maxf(0, float(enemy.get("chill", 0.0)) - dt)
+		var old_position: Vector2=enemy.pos
 		EnemyAI.tick(self, enemy, dt, slow_factor, frozen)
+		if trial_index>=0 and enemy.get("trial",-1)==trial_index and old_position.distance_to(trial_center)<=Trials.RADIUS and enemy.pos.distance_to(trial_center)>Trials.RADIUS:
+			var bounded := Trials.clamp_point(trial_center,enemy.pos)
+			enemy.pos=bounded if World.clear_at(world_seed,bounded,float(enemy.radius)) else old_position
 		if not frozen and enemy.attack == "chase" and player.distance_to(enemy.pos) <= float(enemy.radius) + PLAYER_RADIUS:
 			take_hit(float(enemy.damage), str(enemy.name))
 	if phenotype.affinity == "fire": _burn_death_bursts()
@@ -216,7 +239,9 @@ func step(dt: float, movement: Vector2, special: bool) -> void:
 	elif boss_defeated:
 		outcome = "Victory"
 	else:
-		_update_sites()
+		if trial_index>=0:
+			if trial_remaining()==0: _complete_trial()
+		else: _update_sites()
 		while xp >= next_xp:
 			xp -= next_xp
 			run_level += 1
@@ -229,27 +254,84 @@ func step(dt: float, movement: Vector2, special: bool) -> void:
 func boss_after_seconds() -> float:
 	return 0.0 if endless else (Phases.BOSS_AT if phased_expedition else FINITE_SECONDS)
 
+func expedition_time() -> float:
+	return elapsed-trial_seconds
+
 func phase_index() -> int:
-	return Phases.index_at(elapsed) if phased_expedition else -1
+	return Phases.index_at(expedition_time()) if phased_expedition else -1
 
 func _spawn_phased() -> void:
+	var clock := expedition_time()
 	# Spawn the unique boss before any reinforcement budget is considered.
-	if elapsed>=Phases.BOSS_AT and not boss_spawned:
+	if clock>=Phases.BOSS_AT and not boss_spawned:
 		boss_spawned=true
 		boss_spawn_time=elapsed
 		_spawn(3)
-		spawn_cd=maxf(spawn_cd,Phases.delay(elapsed,difficulty,balance))
+		spawn_cd=maxf(spawn_cd,Phases.delay(clock,difficulty,balance))
 	if spawn_cd>0: return
-	var cap := mini(Phases.density_cap(elapsed,difficulty),MAX_ENEMIES-GUARD_COUNT-(0 if boss_spawned else 1))
+	var cap := mini(Phases.density_cap(clock,difficulty),MAX_ENEMIES-GUARD_COUNT-(0 if boss_spawned else 1))
 	# Existing enemies remain alive when the cap drops at the boss transition.
 	if enemies.size()>=cap:
 		spawn_cd=0.25
 		return
-	var count := mini(Phases.pack_size(elapsed),cap-enemies.size())
+	var count := mini(Phases.pack_size(clock),cap-enemies.size())
 	for i in range(count):
-		_spawn(Phases.kind_at(elapsed,rng.next_int(100)))
+		_spawn(Phases.kind_at(clock,rng.next_int(100)))
 		phase_spawns[phase_index()]+=1
-	spawn_cd=Phases.delay(elapsed,difficulty,balance)
+	spawn_cd=Phases.delay(clock,difficulty,balance)
+
+func trial_remaining() -> int:
+	if trial_index<0: return 0
+	var count := 0
+	for e in enemies:
+		if int(e.get("trial",-1))==trial_index and e.hp>0: count+=1
+	return count
+
+func _maybe_start_trial() -> void:
+	if not trial_rules or trial_index>=0 or trials_cleared>=Trials.DEFINITIONS.size(): return
+	var spec: Dictionary=Trials.DEFINITIONS[trials_cleared]
+	if expedition_time()+0.000001<float(spec.at) or enemies.size()+spec.kinds.size()>MAX_ENEMIES-GUARD_COUNT-1: return
+	trial_index=trials_cleared
+	trial_center=player
+	trial_started=elapsed
+	for i in range(spec.kinds.size()):
+		_spawn(int(spec.kinds[i]))
+		var e: Dictionary=enemies.back()
+		e["trial"]=trial_index
+		e["elite"]=i in spec.elite_indices
+		if e.elite:
+			e.hp*=float(spec.elite_hp)
+			e.max_hp=e.hp
+		# Pick a traversable point on the ring. Sparse pillars must not trap a target.
+		var angle := TAU*float(i)/float(spec.kinds.size())
+		var found := false
+		for radius in [116.0,98.0,80.0]:
+			for attempt in range(24):
+				var point := trial_center+Vector2.from_angle(angle+TAU*attempt/24.0)*float(radius)
+				if not World.clear_at(world_seed,point,float(e.radius)): continue
+				if not World.line_clear(world_seed,trial_center,point,2.0): continue
+				e.pos=point
+				found=true
+				break
+			if found: break
+		# If terrain defeats all ring candidates, retain the offscreen chasing spawn.
+		EnemyAI.recover(e,1.2)
+	_announce(Trials.name_at(trial_index)+": defeat the marked enemies")
+
+func _complete_trial() -> void:
+	if trial_index<0 or trial_remaining()>0 or hp<=0: return
+	trial_durations.append(elapsed-trial_started)
+	trials_cleared+=1
+	trial_index=-1
+	relic_pending=true
+	pending_upgrades+=1
+	upgrade_offer.clear()
+	spawn_cd=maxf(spawn_cd,2.0)
+	_announce("Trial cleared! Choose a relic.")
+
+func trial_metrics() -> Dictionary:
+	return {"cleared":trials_cleared,"active":trial_index,"seconds":trial_seconds,
+		"durations":trial_durations.duplicate(),"relics":relic_choices.duplicate(),"expedition_seconds":expedition_time()}
 
 func _phase_scale(d: Dictionary) -> void:
 	if not phased_expedition: return
@@ -264,7 +346,8 @@ func _phase_scale(d: Dictionary) -> void:
 
 func ensure_upgrade_offer() -> void:
 	if pending_upgrades > 0 and upgrade_offer.is_empty() and outcome == "":
-		upgrade_offer = Upgrades.offer(phenotype, upgrade_ranks, upgrade_rng)
+		if relic_pending: upgrade_offer.assign(Trials.RELICS)
+		else: upgrade_offer = Upgrades.offer(phenotype, upgrade_ranks, upgrade_rng)
 
 func upgrade(choice: int) -> void:
 	if pending_upgrades <= 0 or outcome != "": return
@@ -272,6 +355,10 @@ func upgrade(choice: int) -> void:
 	if choice < 0 or choice >= upgrade_offer.size(): return
 	var id: String = upgrade_offer[choice]
 	if not Upgrades.eligible(id, phenotype, upgrade_ranks): return
+	if bool(Upgrades.DEFINITIONS[id].get("relic",false))!=relic_pending: return
+	if relic_pending:
+		relic_choices.append(id)
+		relic_pending=false
 	_apply_upgrade(id)
 	upgrade_ranks[id] = int(upgrade_ranks.get(id, 0)) + 1
 	pending_upgrades -= 1
@@ -289,6 +376,9 @@ func _modify_effect(spec: Dictionary, kind: String, field: String, amount: float
 
 func _apply_upgrade(id: String) -> void:
 	match id:
+		"relic_power": damage *= 1.25
+		"relic_focus": kit.special.cooldown=maxf(2.5,float(kit.special.cooldown)*0.75)
+		"relic_heart": _heal_upgrade(25.0,40.0)
 		"vitality": _heal_upgrade(12.0, 20.0)
 		"power": damage *= 1.10
 		"haste": interval = maxf(0.16, interval * 0.90)
@@ -380,6 +470,8 @@ func _recycle_far_enemies() -> void:
 			if distance > BOSS_RELOCATE_DISTANCE * BOSS_RELOCATE_DISTANCE:
 				e.pos = _spawn_position(float(e.radius))
 				EnemyAI.recover(e, 1.5)
+		elif int(e.get("trial",-1))>=0:
+			pass # Marked enemies cannot be discarded to skip a mandatory trial.
 		elif str(e.get("encounter", "")) == "" and distance > DESPAWN_DISTANCE * DESPAWN_DISTANCE:
 			enemies.remove_at(i)
 			despawned += 1
@@ -458,7 +550,7 @@ func _abandon_far_encounter() -> void:
 	_announce("Guarded cache abandoned")
 
 func _start_encounter(site: Dictionary) -> void:
-	if phased_expedition and elapsed<60.0: return
+	if phased_expedition and expedition_time()<60.0: return
 	var reserve := 1 if not endless and not boss_spawned else 0
 	if not active_encounter.is_empty() or claimed_sites.has(site.id) or enemies.size() + GUARD_COUNT + reserve > MAX_ENEMIES: return
 	active_encounter = site.duplicate()

@@ -66,6 +66,8 @@ func _test() -> void:
 	app._cycle_balance()
 	check(app.settings.balance_preset=="expedition-mana","Mana experiment selectable")
 	app._cycle_balance()
+	check(app.settings.balance_preset=="expedition-trials","Trial experiment selectable")
+	app._cycle_balance()
 	check(app.settings.balance_preset=="original","Original comparison selectable")
 	app._cycle_balance()
 	app._open_backup()
@@ -313,6 +315,20 @@ func _test() -> void:
 	app.run.mana.drop(Vector2(40,0),5,0,app.run.world_seed)
 	app.queue_redraw()
 	await process_frame
+	app._show_academy()
+	app._cycle_balance()
+	app._start(false)
+	check(app.run.trial_rules and app.run.mana_rules,"Trial mode selected")
+	app.run.elapsed=120.0
+	app.run._maybe_start_trial()
+	app.queue_redraw()
+	await process_frame
+	for e in app.run.enemies: e.hp=0
+	app.run.step(1.0/60.0,Vector2.ZERO,false)
+	app._sync_visibility()
+	check(app.upgrade_panel.visible and app.upgrade_heading.text.contains("RELIC"),"Trial reward uses visible upgrade cards")
+	app._upgrade(1)
+	check(app.run.relic_choices.size()==1 and not app.run.relic_pending,"Relic UI applies selection")
 	app._show_academy()
 	app._start(true)
 	check(app.run.balance==app.Balance.DEFAULTS and not app.run.frost_rules,"Endless keeps original unoptimized balance")

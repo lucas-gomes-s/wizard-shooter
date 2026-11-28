@@ -93,6 +93,7 @@ func _initialize() -> void:
 	_test_frost(p)
 	_test_expedition(p)
 	_test_mana(p)
+	_test_trials(p)
 	_test_economy(p)
 	_test_upgrades(p)
 	_test_enemies(p)
@@ -623,3 +624,40 @@ func _test_mana(p: Dictionary) -> void:
 	check(not short.mana_rules,"Short run retains immediate XP")
 	var old := RunModel.new(p,false,1,7,RunModel.Balance.TRIAL_20,true,true)
 	check(not old.mana_rules,"Six-minute reference unchanged")
+
+func _test_trials(p: Dictionary) -> void:
+	var run := RunModel.new(p,false,1,7,RunModel.Balance.TRIAL_20,true,true,true,true)
+	run.spawn_cd=100.0
+	run.auto_cd=100.0
+	run.elapsed=119.99
+	run.step(1.0/60.0,Vector2.ZERO,false)
+	check(run.trial_index==0 and run.trial_remaining()==6 and run.trials_cleared==0,"Guardian trial starts once")
+	var clock := run.expedition_time()
+	var total := run.elapsed
+	run.step(1.0/60.0,Vector2.ZERO,false)
+	check(absf(run.expedition_time()-clock)<0.001 and run.elapsed>total,"Trial pauses expedition clock but counts active time")
+	check(run.trial_remaining()==6,"No ordinary reinforcement during trial")
+	run.player=run.trial_center+Vector2(RunModel.Trials.RADIUS-0.1,0)
+	run.step(1.0/60.0,Vector2.RIGHT,false)
+	check(run.player.distance_to(run.trial_center)<=RunModel.Trials.RADIUS+0.001,"Trial boundary enforced")
+	for e in run.enemies: e.hp=0
+	run.step(1.0/60.0,Vector2.ZERO,false)
+	check(run.trial_index==-1 and run.trials_cleared==1 and run.relic_pending and run.upgrade_offer==RunModel.Trials.RELICS,"Clear grants exclusive relic choice")
+	var damage := run.damage
+	run.upgrade(0)
+	check(not run.relic_pending and run.relic_choices==["relic_power"] and absf(run.damage-damage*1.25)<0.001,"Chosen relic applied once")
+	run.upgrade(0)
+	check(run.relic_choices.size()==1,"No duplicate relic")
+	while run.pending_upgrades>0: run.upgrade(0)
+	run.elapsed=240.0+run.trial_seconds
+	run.step(1.0/60.0,Vector2.ZERO,false)
+	check(run.trial_index==1 and run.trial_remaining()==9,"Second trial starts at expedition minute four")
+	for e in run.enemies: e.hp=0
+	run.hp=0
+	run.step(1.0/60.0,Vector2.ZERO,false)
+	check(run.outcome=="Defeated" and run.trials_cleared==1 and not run.relic_pending,"Death takes precedence over trial reward")
+	var legacy := RunModel.new(p,false,1,7,RunModel.Balance.TRIAL_20,true,true,true)
+	check(not legacy.trial_rules and legacy.expedition_time()==legacy.elapsed,"Mana reference keeps uninterrupted clock")
+	for i in range(30):
+		var offer := Upgrades.offer(p,{},Genetics.SeededRandom.new(i+100))
+		for id in offer: check(not Upgrades.DEFINITIONS[id].get("relic",false),"Relics excluded from normal upgrade pool")
