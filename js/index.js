@@ -47,7 +47,9 @@ const fx=new CombatFX(matchMedia('(prefers-reduced-motion: reduce)').matches?'of
 $('effectsMode').value=fx.mode;
 $('effectsMode').addEventListener('change',()=>{fx.setMode($('effectsMode').value);dirty=true;if(screen==='play')focus(canvas)});
 const images=new Map();
-const urls=new Set(['./images/dungeonfloor.jpg','./images/wizard-hat.png',...config.monsters.map(m=>m.imageSrc),...config.potionInfo.map(p=>p.imageSrc),...config.skills.map(s=>s.img)]);
+const urls=new Set([...config.potionInfo.map(p=>p.imageSrc),...config.skills.map(s=>s.img)]);
+$('titleWizard').src=art.actor('Wizard').toDataURL();
+const journey=[...config.minibosses.map(b=>[b.minute*60,'Next guardian']),[1500,'Dragon']];
 function preload(url){return new Promise(resolve=>{
   const image=new Image();image.onload=()=>{images.set(url,image);resolve(true)};
   image.onerror=()=>{console.warn('Missing game asset:',url);resolve(false)};image.src=url;
@@ -272,8 +274,7 @@ function updateBuild(){const m=game.player.magic,signature=JSON.stringify([m.ran
 function meter(id,value){const percent=Math.round(Math.max(0,Math.min(1,value))*100),node=$(id);node.firstElementChild.style.width=percent+'%';node.setAttribute('aria-valuenow',percent);}
 function updateBoss(){const boss=game.boss||game.miniboss,signature=boss?[boss.title||boss.name,Math.ceil(boss.health),boss.bossPhase].join('|'):String(game.endless);if(signature===lastBoss)return;lastBoss=signature;const node=$('bossHud');node.hidden=!boss&&!game.endless;if(boss){$('bossName').textContent=boss.boss?(boss.title||'Ancient Dragon')+' · Phase '+boss.bossPhase+' / 3':boss.title;$('bossHealth').textContent=Math.ceil(boss.health)+' / '+boss.maxHealth;meter('bossMeter',boss.health/boss.maxHealth);$('bossMeter').hidden=false}else{$('bossName').textContent='Endless survival';$('bossHealth').textContent='Dragon defeated';$('bossMeter').hidden=true}}
 function updateHud(){
-  const sec=game.seconds,route=[...config.minibosses.map(b=>[b.minute*60,b.title]),[1500,'Dragon']].sort((a,b)=>a[0]-b[0]);
-  const upcoming=route.find(([t])=>t>sec),next=upcoming?'Next guardian '+formatTime(upcoming[0]):game.bossDefeated?'Endless survival':'Dragon encounter';
+  const sec=game.seconds,upcoming=journey.find(([t])=>t>sec),next=upcoming?upcoming[1]+' '+formatTime(upcoming[0]):game.bossDefeated?'Endless survival':'Dragon encounter';
   if($('nextEncounter').textContent!==next)$('nextEncounter').textContent=next;
   $('runProgress').style.width=Math.min(100,sec/15)+'%';
   const env=environmentById(screen==='home'||screen==='profile'?profile.selection.environment:game.config.environment);if($('biomeName').textContent!==env.name)$('biomeName').textContent=env.name;
