@@ -1,3 +1,4 @@
+import {FrameStats,makeReport,browserFamily,RELEASE} from './beta-report.js';
 import {DungeonArt,drawSigil,drawTargetRing,drawLight} from './dungeon-art.js';
 import {GameAudio,loadAudio,saveAudio} from './audio.js';
 import {environments,environmentById,environmentConfig} from './environments.js';
@@ -17,6 +18,7 @@ import { viewportFor, fitViewport, formatTime, skillPreview } from './presentati
 const $=id=>document.getElementById(id);
 const canvas=$('gameArea'), ctx=canvas.getContext('2d'), arena=$('arena');
 const game=new Game(config), clock=new FixedClock();
+const frames=new FrameStats();
 const art=new DungeonArt((w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c});
 let storage=null;try{storage=window.localStorage}catch{}
 const audio=new GameAudio(loadAudio(storage),window.AudioContext||window.webkitAudioContext||null);
@@ -117,9 +119,9 @@ function startRun(){
   if(!ready)return;
   checkpoint();game.config=environmentConfig(runConfig(config,profile.selection.contract),profile.selection.environment);progressSession=newProgressSession(profile.selection.contract,profile.selection.environment);runSigil=profile.selection.sigil;
   Object.assign(game,viewportFor(surface.width,surface.height));game.start(startingSchool);
-  audio.reset();void audio.unlock();fx.clear();lastHud='';setScreen('play');
+  frames.reset();audio.reset();void audio.unlock();fx.clear();lastHud='';setScreen('play');
 }
-function home(){audio.reset();checkpoint();progressSession=null;game.config=config;game.reset();fx.clear();Object.assign(game,viewportFor(surface.width,surface.height));setScreen('home');}
+function home(){frames.reset();audio.reset();checkpoint();progressSession=null;game.config=config;game.reset();fx.clear();Object.assign(game,viewportFor(surface.width,surface.height));setScreen('home');}
 function pause(){if(screen==='play')setScreen('pause');}
 function resume(){if(screen==='pause')setScreen('play');}
 function ask(action){confirmAction=action;setScreen('confirm');}
@@ -290,6 +292,13 @@ function step(){
   fx.advance();const running=game.step(input());fx.collect(game.events);fx.collect(game.visualEvents);
   audio.collect(game.events.filter(e=>e.type!=='victory'));audio.collect(game.visualEvents);audio.observe(game);return running;
 }
+$('betaVersion').textContent=RELEASE;
+$('betaReport').addEventListener('click',()=>{
+ const report=makeReport(game,{screen,effects:fx.mode,surface,frames,browser:browserFamily(navigator.userAgent),contract:progressSession?.contract||'standard'});
+ const output=$('betaReportText');output.value=JSON.stringify(report,null,2);$('betaReportPanel').hidden=false;output.focus();output.select();
+});
+$('closeBetaReport').addEventListener('click',()=>{$('betaReportPanel').hidden=true;$('betaReport').focus()});
+$('copyBetaReport').addEventListener('click',async()=>{const output=$('betaReportText');try{await navigator.clipboard.writeText(output.value);$('betaCopyStatus').textContent='Copied.';}catch{output.focus();output.select();$('betaCopyStatus').textContent='Copy the selected text manually.';}});
 function background(){
  const c=game.camera,env=environmentById(screen==='home'||screen==='profile'?profile.selection.environment:game.config.environment);
  art.drawFloor(ctx,env.id,c,game.width,game.height);
@@ -394,6 +403,7 @@ function render(){
   ctx.restore();
 }
 function frame(now){
+  if(screen==='play'&&!document.hidden)frames.frame(now);else frames.pause();
   if(screen==='play'&&!document.hidden){
     clock.advance(now,step);dirty=true;
     if(game.phase==='upgrade')setScreen('upgrade');else if(game.phase==='loot')setScreen('loot');else if(game.phase==='shop')setScreen('shop');else if(game.phase==='over')setScreen('over');else if(game.phase==='victory')setScreen('victory');
