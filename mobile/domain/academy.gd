@@ -2,6 +2,7 @@ extends RefCounted
 ## Persistent collection use cases. All changes are committed before reporting success.
 const Genetics = preload("res://domain/genetics.gd")
 const Store = preload("res://persistence/profile_store.gd")
+const Economy = preload("res://domain/training_economy.gd")
 const MATURE_XP := 40
 var roster: Array[Dictionary] = []
 var archive: Array[Dictionary] = []
@@ -170,7 +171,7 @@ func allocate_run() -> int:
 	next_run_id += 1
 	return id if _commit(before) else -1
 
-func reward(run_id: int, active: Dictionary, apprentice: Dictionary, earned: int, victory: bool, exploration_essence: int = 0) -> bool:
+func reward(run_id: int, active: Dictionary, apprentice: Dictionary, earned: int, victory: bool, exploration_essence: int = 0, quoted_essence: int = -1) -> bool:
 	if blocked or run_id < 1 or (store != null and run_id >= next_run_id):
 		error = "Invalid run."
 		return false
@@ -188,10 +189,11 @@ func reward(run_id: int, active: Dictionary, apprentice: Dictionary, earned: int
 	var amount := maxi(0, earned)
 	active.xp += amount
 	if not apprentice.is_empty() and apprentice.id != active.id and roster.has(apprentice):
-		apprentice.xp += floori(amount * 0.25)
-	essence += floori(amount / 8.0) + maxi(0, exploration_essence)
+		apprentice.xp += floori(amount * Economy.APPRENTICE_SHARE)
+	# The explicit quote is the total currency award, including any victory bonus.
+	# Keep the old API for historical fixtures and callers, not the live UI.
+	essence += quoted_essence if quoted_essence>=0 else floori(amount/8.0)+maxi(0,exploration_essence)+(10 if victory else 0)
 	if victory:
-		essence += 10
 		_add(Genetics.founder(_seed()))
 	return _commit(before)
 

@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - 'mobile/gameplay/expedition_schedule.gd'
+      - 'mobile/domain/training_economy.gd'
       - '.github/workflows/mobile-expedition.yml'
   workflow_dispatch:
 permissions:
@@ -33,7 +34,7 @@ jobs:
               for strategy in ("stationary","aggressive","kiting","explorer"):
                   rows=[r for r in d["runs"] if r["difficulty"]==level and r["strategy"]==strategy]
                   assert len(rows)==18
-                  result[f"D{level}/{strategy}"]={"n":len(rows),"win":sum(r["outcome"]=="Victory" for r in rows)/len(rows),"boss_reach":sum(r["boss_reached"] for r in rows)/len(rows),"timeout":sum(r["outcome"]=="Timeout" for r in rows)/len(rows),"mean_seconds":statistics.mean(r["seconds"] for r in rows),"mean_training":statistics.mean(r["training_xp"] for r in rows),"mean_peak_enemies":statistics.mean(r["peak_enemies"] for r in rows)}
+                  result[f"D{level}/{strategy}"]={"n":len(rows),"win":sum(r["outcome"]=="Victory" for r in rows)/len(rows),"boss_reach":sum(r["boss_reached"] for r in rows)/len(rows),"timeout":sum(r["outcome"]=="Timeout" for r in rows)/len(rows),"mean_seconds":statistics.mean(r["seconds"] for r in rows),"mean_training":statistics.mean(r["training_xp"] for r in rows),"mean_apprentice":statistics.mean(r["apprentice_xp"] for r in rows),"mean_essence":statistics.mean(r["essence_reward"] for r in rows),"mean_legacy_training":statistics.mean(r["legacy_training_xp"] for r in rows),"mean_peak_enemies":statistics.mean(r["peak_enemies"] for r in rows)}
           print(json.dumps(result,indent=2))
           with open("/tmp/expedition-summary.json","w") as f: json.dump(result,f,indent=2)
           PY

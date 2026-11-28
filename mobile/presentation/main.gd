@@ -634,8 +634,8 @@ func _refresh_guide() -> void:
 	lines.append("Avoid orange attack zones and charge lines. Defeat the dragon, or extract from endless mode after 30 seconds.")
 	lines.append("")
 	lines.append("BLOODLINE")
-	lines.append(("✓ " if not academy.settled_runs.is_empty() else "□ ")+"Finish a run to save training XP and essence, even on defeat.")
-	lines.append("Summon costs 10 essence; victory awards a founder. Assign an apprentice for 25% shared XP.")
+	lines.append(("✓ " if not academy.settled_runs.is_empty() else "□ ")+"Finish a run to earn training XP and essence; time played and capped activity bonuses count.")
+	lines.append("Summon costs 10 essence; victory awards a founder. Apprentice earns 25% XP, rounded down.")
 	lines.append(("✓ " if not academy.archive.is_empty() else "□ ")+"Fuse two unlocked Tier I wizards with 40 XP each. Parents retire permanently; their Tier II child inherits traits.")
 	guide_content.text="\n".join(lines)
 	guide_toggle.text="Hide combat and training tips" if guide.enabled else "Show combat and training tips"
@@ -1001,12 +1001,12 @@ func _replay_result() -> void:
 func _finish() -> void:
 	if run==null or run.outcome=="" or not result_reward.is_empty(): return
 	if screen!="result" and playtest.current_run>0: playtest.end_run(run,profiler.report())
-	var earned: int = run.training_reward()
+	var quote: Dictionary=run.permanent_reward()
 	var active_now := academy.find_active(str(active.id))
 	var apprentice_now := academy.find_active(str(apprentice.get("id", "")))
 	if result_before.is_empty():
 		result_before=Results.before_reward(academy,active_now if not active_now.is_empty() else active,apprentice_now)
-	var saved := academy.reward(run_id, active_now, apprentice_now, earned, run.outcome == "Victory", int(run.exploration_essence))
+	var saved := academy.reward(run_id, active_now, apprentice_now, int(quote.training), run.outcome == "Victory", 0, int(quote.essence))
 	if saved:
 		result_reward=Results.committed(result_before,academy)
 		playtest.reward_saved(result_reward)

@@ -92,6 +92,7 @@ func _initialize() -> void:
 	_test_abilities(p)
 	_test_frost(p)
 	_test_expedition(p)
+	_test_economy(p)
 	_test_upgrades(p)
 	_test_enemies(p)
 	_test_combat_metrics(p)
@@ -566,3 +567,29 @@ func _test_expedition(p: Dictionary) -> void:
 	check(short.boss_after_seconds()==90.0 and not short.phased_expedition,"Historical protocol unchanged")
 	var endless := RunModel.new(p,true,1,7,{},false,true)
 	check(endless.boss_after_seconds()==0 and not endless.phased_expedition,"Endless cannot enable phase schedule")
+
+func _test_economy(p: Dictionary) -> void:
+	var economy=RunModel.Economy
+	check(economy.quote(0.0,999,999,999,false).training==0,"No zero-time training farming")
+	check(economy.quote(17.99,999,999,999,false).training==0,"Time gate cannot be bypassed by kill count")
+	var six: Dictionary=economy.quote(360.0,200,40,20,true)
+	check(six.training==25 and six.apprentice==6 and six.essence==13,"Six-minute clear with capped bonuses")
+	var loss: Dictionary=economy.quote(180.0,80,16,8,false)
+	check(loss.training==12 and loss.apprentice==3 and loss.essence==4,"Defeat earns scaled reward")
+	var flood: Dictionary=economy.quote(360.0,99999,99999,99999,false)
+	check(flood.training==25 and flood.essence==9,"Farm reward bounded by active time")
+	check(economy.quote(72.0,20,0,3,false)=={"training":5,"apprentice":1,"essence":1,"base_training":4,"bonus_training":1,"base_essence":1,"discovery_essence":0,"victory_essence":0},"Short comparison quote")
+	var run := RunModel.new(p,false,1,7)
+	run.elapsed=360.0
+	run.kills=200
+	run.exploration_xp=40
+	run.exploration_essence=20
+	run.outcome="Victory"
+	check(run.permanent_reward()==six and run.training_reward()==25 and run.legacy_training_reward()==530,"Actual run uses shared quote; legacy counter available")
+	var academy:=Academy.new()
+	var active: Dictionary=academy.roster[0]
+	var apprentice: Dictionary=academy.roster[1]
+	for i in range(6):
+		check(academy.reward(i+1,active,apprentice,six.training,true,0,six.essence),"Committed normalized reward")
+	check(apprentice.xp==36 and not academy.eligible(active,apprentice),"Six ideal clear runs do not mature apprentice")
+	check(academy.reward(7,active,apprentice,six.training,true,0,six.essence) and academy.eligible(active,apprentice),"Seventh ideal clear enables fusion")

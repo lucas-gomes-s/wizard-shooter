@@ -17,3 +17,6 @@ Academy or title Settings: choose Finite balance Trial 20 or Original. Start a f
 
 ## Implementation update
 The six-minute phase schedule now exists as optional `expedition-six`; see gameplay/expedition_schedule.gd for exact provisional values. The old 90s presets remain available. The long-run benchmark uses 540s horizon, fresh exploratory seed start 310000019, two seeds per cell (216 simulations). Do not compare its aggregate win rate directly to the 150s protocol. No long-run optimizer yet. Next: inspect survival/progression and calibrate permanent XP/essence, then improve bots and long-run objective.
+
+## Permanent economy update
+All modes now use training-v2 (see domain/training_economy.gd), independent of historical combat tuning and unchanged maturity XP40. Example six-minute successful run: 20 base training, up to 5 activity bonus, 5–6 apprentice, 10–13 essence with victory bonus, plus a founder. Fixed pair needs about 42–48 active minutes at that pace; swapping active roles speeds it up. Actual time depends on survival and per-run rounding. Keep existing progress. Prior benchmarks used legacy XP; new benchmark emits both, do not compare incompatible fields. Re-evaluate after six-minute results, then decide whether short presets should grant rewards or be debug-only.

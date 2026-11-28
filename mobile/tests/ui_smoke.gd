@@ -226,13 +226,13 @@ func _test() -> void:
 	await process_frame
 	check(app.special_button.disabled and app.special_button.remaining>0,"Cast cooldown shown")
 	check(Fantasy.fraction(-2,10)==0 and Fantasy.fraction(15,10)==1 and Fantasy.fraction(5,0)==0,"Bar fraction bounded")
-	app.run.elapsed=40.0
-	app.run.kills=5
+	app.run.elapsed=72.0
+	app.run.kills=20
 	app.run.exploration_xp=0
 	app.run.exploration_essence=3
 	app.run.outcome="Defeated"
-	app.academy.roster[app.selected].xp=25
-	app.academy.roster[app.partner_index].xp=38
+	app.academy.roster[app.selected].xp=35
+	app.academy.roster[app.partner_index].xp=39
 	var old_essence: int=app.academy.essence
 	app.academy.blocked=true
 	app._finish()
@@ -240,12 +240,12 @@ func _test() -> void:
 	check(app.academy.essence==old_essence,"Failed reward does not credit essence")
 	app.academy.blocked=false
 	app._finish()
-	check(app.result_reward.active_gain==20 and app.result_reward.apprentice_gain==5,"Actual training deltas")
-	check(app.result_reward.essence_gain==5 and app.result_reward.essence_total==old_essence+5,"Actual total essence delta")
+	check(app.result_reward.active_gain==5 and app.result_reward.apprentice_gain==1,"Actual training deltas")
+	check(app.result_reward.essence_gain==1 and app.result_reward.essence_total==old_essence+1,"Actual total essence delta")
 	check(app.result_reward.fusion_ready and app.result_return.visible and not app.result_retry.visible,"Successful retry reveals fusion readiness")
 	check(Guide.fusion_tip(app.academy,app.academy.roster[app.selected],app.academy.roster[app.partner_index]).contains("ready"),"First fusion guidance reflects committed training")
 	app._finish()
-	check(app.academy.essence==old_essence+5,"Results cannot settle rewards twice")
+	check(app.academy.essence==old_essence+1,"Results cannot settle rewards twice")
 	var logged: Dictionary=app.playtest.report().counts
 	check(logged.get("run_end",0)==1 and logged.get("reward_saved",0)==1,"Retry does not duplicate outcome or reward log")
 	await process_frame
@@ -286,7 +286,7 @@ func _test() -> void:
 	app.run.kills=0
 	app._finish()
 	check(app.academy.roster.size()==prior_count+1 and not app.result_reward.newcomer.is_empty(),"Victory shows actual awarded founder")
-	check(app.result_reward.essence_gain==12,"Victory bonus included")
+	check(app.result_reward.essence_gain==2,"Victory bonus included exactly once")
 	app._replay_result()
 	check(app.screen=="run" and app.result_reward.is_empty() and app.result_before.is_empty(),"Replay resets result state")
 	app.run.endless=true

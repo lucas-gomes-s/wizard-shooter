@@ -83,6 +83,7 @@ func _initialize() -> void:
 	check(future.blocked, "Future schema blocks overwrite")
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(future_store.slot_path(0)))
 	_test_backup(prefix+"_backup")
+	_test_economy_receipt(prefix+"_economy")
 	print("Wizard Shooter persistence: %d failures" % failures)
 	quit(0 if failures == 0 else 1)
 
@@ -121,3 +122,18 @@ func _test_backup(prefix: String) -> void:
 	check(c.active_id==second and c.apprentice_id=="","Restored profile survives restart")
 	for slot in range(2):
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(c.store.slot_path(slot)))
+
+func _test_economy_receipt(prefix: String) -> void:
+	var a:=Academy.new(42,Store.new(prefix))
+	var id:=a.allocate_run()
+	var before:=a.snapshot()
+	var path: String=ProjectSettings.globalize_path(a.store.slot_path(1-a.store.current_slot))
+	DirAccess.remove_absolute(path)
+	DirAccess.make_dir_absolute(path)
+	check(not a.reward(id,a.roster[0],a.roster[1],25,true,0,13) and a.snapshot()==before,"New economy failed write rolls back XP, essence, founder and receipt")
+	DirAccess.remove_absolute(path)
+	check(a.reward(id,a.roster[0],a.roster[1],25,true,0,13),"New economy receipt saved")
+	var reopened:=Academy.new(99,Store.new(prefix))
+	check(reopened.roster.size()==3 and reopened.roster[0].xp==25 and reopened.roster[1].xp==6 and reopened.essence==23,"New economy reload exact award")
+	check(not reopened.reward(id,reopened.roster[0],reopened.roster[1],25,true,0,13),"New economy receipt idempotent")
+	for slot in range(2): DirAccess.remove_absolute(ProjectSettings.globalize_path(reopened.store.slot_path(slot)))

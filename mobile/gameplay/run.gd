@@ -6,6 +6,7 @@ const Upgrades = preload("res://gameplay/upgrade_catalog.gd")
 const EnemyAI = preload("res://gameplay/enemy_behavior.gd")
 const Balance = preload("res://gameplay/balance_config.gd")
 const Phases = preload("res://gameplay/expedition_schedule.gd")
+const Economy = preload("res://domain/training_economy.gd")
 const DESPAWN_DISTANCE := 740.0
 const BOSS_RELOCATE_DISTANCE := 950.0
 const TARGET_RANGE := 350.0
@@ -404,7 +405,7 @@ func _claim(site: Dictionary) -> void:
 			_gain_xp(6)
 			exploration_xp += 4
 			exploration_essence += 2
-			_announce("Treasure: +6 run XP, +2 essence")
+			_announce("Treasure: +6 run XP, reward credit")
 		"healing":
 			if max_hp - hp < 10.0: return
 			var healed := minf(max_hp - hp, max_hp * 0.35)
@@ -424,7 +425,7 @@ func _claim(site: Dictionary) -> void:
 			exploration_xp += 8
 			exploration_essence += 4
 			active_encounter = {}
-			_announce("Guarded cache: +12 run XP, +4 essence")
+			_announce("Guarded cache: +12 run XP, reward credit")
 		_: return
 	claimed_sites[id] = true
 
@@ -490,8 +491,14 @@ func _update_sites() -> void:
 	elif distance <= 20.0:
 		_claim(site)
 
-func training_reward() -> int:
+func legacy_training_reward() -> int:
 	return floori(elapsed / 4.0) + kills * 2 + exploration_xp
+
+func permanent_reward() -> Dictionary:
+	return Economy.quote(elapsed,kills,exploration_xp,exploration_essence,outcome=="Victory")
+
+func training_reward() -> int:
+	return int(permanent_reward().training)
 
 func _cast_basic() -> bool:
 	var spec: Dictionary = kit.basic
