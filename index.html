@@ -20,7 +20,7 @@
     </header>
     <section class="hud" aria-label="Run statistics">
       <div class="meter health"><div class="meter-label"><span>Vitality</span><strong id="healthText">100 / 100</strong></div><div id="healthMeter" class="track" role="progressbar" aria-label="Health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><i></i></div></div>
-      <div class="run-time"><span class="eyebrow">Survived</span><strong id="timer">00:00</strong></div>
+      <div class="run-time"><span class="eyebrow">Survived</span><strong id="timer">00:00</strong><div class="journey-track" aria-hidden="true"><i id="runProgress"></i></div><span id="nextEncounter" class="next-encounter">Next guardian 05:00</span></div>
       <div class="kill-count"><span class="eyebrow">Kills</span><strong id="kills">0</strong></div>
       <div class="meter experience"><div class="meter-label"><span>Level <strong id="level">1</strong></span><strong id="xpText">0 / 5 XP</strong></div><div id="xpMeter" class="track" role="progressbar" aria-label="Experience" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div></div>
     </section>
@@ -38,7 +38,7 @@
           <div class="sigil" aria-hidden="true"><img src="./images/wizard-hat.png" alt=""></div>
           <p class="eyebrow accent">A dungeon survival roguelite</p>
           <h2 id="homeTitle">The dungeon awaits.</h2>
-          <p>After a wild night out, you wake up somewhere unfamiliar. The monsters do not look friendly.</p>
+          <p>Descend into the forgotten realms. Master your magic, recover ancient relics and survive until the dragon awakens.</p>
           <p class="eyebrow accent">Choose your starting school</p><p class="small">Your primary school defines your build. A second school unlocks at level 10. Maximum two schools per run, or exclusive mastery at level 15 and rank V.</p>
           <div id="starterCards" class="starter-cards" role="group" aria-label="Starting magic school"></div>
           <div class="profile-options"><label>Dungeon <select id="environmentSelect" aria-label="Dungeon environment"></select></label><p id="environmentDescription" class="small"></p><label>Expedition <select id="contractSelect" aria-label="Expedition contract"></select></label><label>Wizard sigil <select id="sigilSelect" aria-label="Wizard sigil"></select></label><p id="contractDescription" class="small"></p></div><button id="startButton" class="primary" type="button" disabled>Loading assets…</button>
@@ -52,7 +52,7 @@
           <p id="pauseHint" class="small">Escape to resume.</p>
         </section>
         <section id="confirmPanel" class="panel" aria-labelledby="confirmTitle" hidden>
-          <p class="eyebrow accent">Leave current run?</p><h2 id="confirmTitle">Abandon this run?</h2><p>Your current progress will be lost.</p>
+          <p class="eyebrow accent">Leave current run?</p><h2 id="confirmTitle">Abandon this run?</h2><p>Your current expedition ends. Discovered items and achievements are recorded in your chronicles.</p>
           <div class="menu-buttons"><button id="confirmButton" class="primary" type="button">Confirm</button><button id="cancelButton" class="quiet" type="button">Keep playing</button></div>
         </section>
         <section id="upgradePanel" class="panel upgrade-panel" aria-labelledby="upgradeTitle" hidden>
